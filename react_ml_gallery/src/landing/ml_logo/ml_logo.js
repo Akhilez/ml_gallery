@@ -11,7 +11,7 @@ class MLLogo extends React.Component {
         };
         return (
             <div align="center">
-                <img alt="ml_logo" src={logo} height={"300px"} width={"400px"} style={imgStyle}/>
+                <img alt="ml_logo" src={logo} style={imgStyle}/>
             </div>
         );
     }
