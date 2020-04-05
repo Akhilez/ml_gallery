@@ -8,6 +8,8 @@ class MLLogo extends React.Component {
         let imgStyle = {
             marginTop: "100px",
             marginBottom: "100px",
+            maxWidth: "100%",
+            height: "auto",
         };
         return (
             <div align="center">
