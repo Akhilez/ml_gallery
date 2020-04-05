@@ -1,3 +1,11 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@300;400;700&display=swap');
+
+.page {
+    font-family: 'Roboto Condensed', sans-serif;
+    color: #834f65;
+    background-color: #f2f3f4;
+}
+
 .nav-link {
     color: #f44336;
     transition-duration: 0.4s;
@@ -22,6 +30,7 @@
 .project-image {
     height: auto;
     width: 95%;
+    min-width: 400px;
     display: block;
     border-radius: 8px;
     margin: auto;
@@ -30,4 +39,8 @@
 
 .project-image:hover {
     width: 100%;
+}
+
+.project-text-block {
+    padding: 10px;
 }

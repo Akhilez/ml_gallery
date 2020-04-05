@@ -1,0 +1,11 @@
+{
+  "projects": [
+    {
+      "title": "Colorizer",
+      "desc": "A web application that colorizes grayscale images using a Convolutional Neural Network. This was my major project in my undergrad.",
+      "links": {
+        "source": "https://akhilez.com/colorizer/"
+      }
+    }
+  ]
+}
