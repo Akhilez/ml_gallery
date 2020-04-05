@@ -1,0 +1,16 @@
+.nav-link {
+    color: #f44336;
+    transition-duration: 0.4s;
+    text-decoration: none; /* no underline */
+}
+
+.nav-link:link {
+    text-decoration: none;
+}
+
+.nav-link:hover {
+    text-decoration: none;
+    color: white;
+    background-color: #f44336;
+    border-radius: 8px;
+}
