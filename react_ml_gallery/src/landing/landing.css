@@ -14,3 +14,20 @@
     background-color: #f44336;
     border-radius: 8px;
 }
+
+.projectImageContainer {
+    alignment: center;
+}
+
+.project-image {
+    height: auto;
+    width: 95%;
+    display: block;
+    border-radius: 8px;
+    margin: auto;
+    transition-duration: 0.4s;
+}
+
+.project-image:hover {
+    width: 100%;
+}
