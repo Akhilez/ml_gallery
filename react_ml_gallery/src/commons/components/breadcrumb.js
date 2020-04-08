@@ -1,0 +1,43 @@
+import React from "react";
+import routes from '../../routes';
+import Row from "react-bootstrap/Row";
+import Col from "react-bootstrap/Col";
+import Icon from '@material-ui/core/Icon';
+
+
+export default class BreadCrumb extends React.Component {
+    render() {
+        let links = this.getLinks(this.props.path);
+        return (
+            <div>
+                <Row>
+                    {links.map((link, index) => {
+                        return (
+                            <Col xs="auto">
+                                <Row>
+                                <Col xs="auto" style={{padding: 0}}><a href={link.link}>{link.title}</a></Col>
+                                    <Col xs="auto" style={{padding: 0}}>{index !== links.length - 1 && <Icon>navigate_next</Icon>}</Col>
+                                </Row>
+                            </Col>
+                        )
+                    })}
+                </Row>
+            </div>
+        );
+    }
+
+    getLinks(path) {
+        let links = [];
+        let pages = path.split("/");
+        let tree = routes.tree;
+        for (let i = 0; i < pages.length; i++) {
+            let link = '/' + pages[i];
+            tree = tree.children[link];
+            links.push({
+                title: tree.title,
+                link: tree.link,
+            });
+        }
+        return links;
+    }
+}

@@ -1,0 +1,29 @@
+{
+  "paths": {
+    "/": "Home",
+    "/mnist_gan": {
+      "/": "MNIST GAN",
+      "/report": "MNIST GAN Report"
+    }
+  },
+  "tree": {
+    "children": {
+      "/": {
+        "title": "Home",
+        "link": "/",
+        "children": {
+          "/mnist_gan": {
+            "title": "MNIST GAN",
+            "link": "/mnist_gan",
+            "children": {
+              "/report": {
+                "title": "Report",
+                "link": "/mnist_gan/report"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
