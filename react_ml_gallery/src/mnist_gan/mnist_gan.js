@@ -11,6 +11,8 @@ import './mnist_gan.css';
 import {Switch, Route, useRouteMatch} from "react-router-dom";
 import MnistGanReport from "./report";
 import BreadCrumb from '../commons/components/breadcrumb';
+import theme from '../commons/theme';
+import {MuiThemeProvider} from '@material-ui/core/styles';
 
 
 export default function MnistGanPage() {
@@ -45,22 +47,24 @@ class MnistGanMain extends React.Component {
 
                         <OutlinedButtonLink text={"How it works"} link={"/mnist_gan/report"}/><br/>
 
-                        <FormControl variant="outlined" id={"charDropdown"}>
-                            <InputLabel id="character-selector">Character</InputLabel>
-                            <Select variant={"outlined"}
-                                    labelId="character-selector"
-                                    id="demo-simple-select-outlined"
-                                    value={this.state.selectedCharacter}
-                                    onChange={(event) => {
-                                        this.setSelectedCharacter(event.target.value)
-                                    }}
-                                    label="Character"
-                            >
-                                {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map((index, value) =>
-                                    <MenuItem value={value}>{value}</MenuItem>
-                                )}
-                            </Select>
-                        </FormControl>
+                        <MuiThemeProvider theme={theme()}>
+                            <FormControl variant="outlined" id={"charDropdown"}>
+                                <InputLabel id="character-selector">Character</InputLabel>
+                                <Select variant={"outlined"}
+                                        labelId="character-selector"
+                                        id="demo-simple-select-outlined"
+                                        value={this.state.selectedCharacter}
+                                        onChange={(event) => {
+                                            this.setSelectedCharacter(event.target.value)
+                                        }}
+                                        label="Character"
+                                >
+                                    {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map((index, value) =>
+                                        <MenuItem value={value}>{value}</MenuItem>
+                                    )}
+                                </Select>
+                            </FormControl>
+                        </MuiThemeProvider>
                         <button className={"ActionButton"}>GENERATE</button>
 
                     </Centered>

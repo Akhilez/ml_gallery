@@ -1,5 +1,17 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@300;400;700&display=swap');
 
+html, body, #root {
+    height: 100%;
+}
+
+.link {
+    color: #f44336;
+    text-decoration: none;
+}
+.link:hover {
+    color: #d32f2f;
+}
+
 .page {
     font-family: 'Roboto Condensed', sans-serif;
     color: #834f65;
@@ -31,7 +43,7 @@
 .project-image {
     height: auto;
     width: 95%;
-    min-width: 400px;
+    min-width: 300px;
     display: block;
     border-radius: 15px;
     transition-duration: 0.4s;
