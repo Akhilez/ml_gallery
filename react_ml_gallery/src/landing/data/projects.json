@@ -13,7 +13,7 @@
       "desc": "Generate handwritten numbers using Generative Adversarial Network.",
       "image": "colorizer.jpg",
       "links": {
-        "source": "https://akhilez.com/colorizer/"
+        "source": "/mnist_gan"
       }
     }
   ]
