@@ -32,15 +32,32 @@
     width: 95%;
     min-width: 400px;
     display: block;
-    border-radius: 8px;
-    margin: auto;
+    border-radius: 15px;
+
     transition-duration: 0.4s;
 }
 
-.project-image:hover {
-    width: 100%;
+.project-text-block {
+    padding: 10px 30px 10px 10px;
 }
 
-.project-text-block {
-    padding: 10px;
+.ProjectContainer {
+    transition-duration: 0.4s;
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 30px;
+    /* box-shadow: [horizontal offset] [vertical offset] [blur radius] [optional spread radius] [color]; */
+    box-shadow: 0 5px 20px 0 #ebe5e7;
+    margin-bottom: 50px;
+}
+
+.ProjectContainer:hover {
+    background-color: #f44336;
+    background-image: linear-gradient(to bottom left, #f44336, #e91e63);
+    color: #ffffff;
+}
+
+.ProjectContainer:hover img {
+    width: 100%;
+    box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.15);
 }

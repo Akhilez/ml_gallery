@@ -3,10 +3,8 @@ import Container from "@material-ui/core/Container";
 import MLAppBar from '../commons/ml_app_bar';
 import MLLogo from "./ml_logo/ml_logo";
 import 'cytoscape/dist/cytoscape.min';
-import Row from "react-bootstrap/Row";
-import Col from "react-bootstrap/Col";
-import colorizerImage from './images/colorizer.jpg';
 import projectsData from './data/projects';
+import Project from './components/project';
 
 
 class LandingPage extends React.Component {
@@ -16,36 +14,10 @@ class LandingPage extends React.Component {
             <Container>
                 <MLAppBar/>
                 <MLLogo/>
-                <Project project={projectsData.projects[0]} image={colorizerImage}/>
+                <Project project={projectsData.projects[0]}/>
+                <Project project={projectsData.projects[1]}/>
                 <Footer/>
             </Container>
-            </div>
-        );
-    }
-}
-
-class Project extends React.Component {
-    render() {
-        return (
-            <div>
-                <Row>
-                    <Col>
-                        <div className={"projectImageContainer"}>
-                            <a href={this.props.project.links.source}>
-                            <img src={this.props.image} className={"project-image"}
-                                 alt={this.props.project.title + "Image"}/></a>
-                        </div>
-                    </Col>
-                    <Col>
-                        <div className={"project-text-block"}>
-                        <h2>{this.props.project.title}</h2>
-                        <p>{this.props.project.desc}</p>
-                        </div>
-                    </Col>
-                </Row>
-                {this.props.children !== null &&
-                <Row>{this.props.children}</Row>
-                }
             </div>
         );
     }
