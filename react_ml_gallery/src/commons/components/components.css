@@ -1,0 +1,93 @@
+
+.breadcrumbIcon {
+    color: #d32f2f;
+    font-size: 8px;
+    margin-top: 7px;
+}
+
+a {
+    text-decoration: none;
+}
+
+.breadcrumbLink{
+    transition-duration: 0.4s;
+    padding: 5px;
+    border-radius: 8px;
+    text-decoration: none;
+}
+
+.breadcrumbLink:hover {
+    transition-duration: 0.4s;
+    background-image: linear-gradient(to bottom left, #ea1c0d, #e91e63);
+    color: white;
+    text-decoration: none;
+}
+
+.breadcrumbLink:hover a {
+    transition-duration: 0.4s;
+    text-decoration: none;
+    color: white;
+}
+
+.breadcrumbContainer {
+    padding: 0 25px
+}
+
+.ActionButton {
+    min-width: 100px;
+    min-height: 50px;
+    background-image: linear-gradient(to bottom left, #ea1c0d, #e91e63);
+    transition-duration: 0.4s;
+    border-radius: 8px;
+    color: white;
+    padding: 10px;
+    box-shadow: none;
+    border: 0;
+    font-size: 16px;
+    margin: 10px;
+}
+
+.ActionButton:hover {
+    box-shadow: 0 3px 8px 0 rgba(0, 0, 0, 0.3);
+    color: white;
+    font-size: 17px;
+}
+
+.ActionButton:active {
+    outline: none;
+    background-color: transparent;
+    background-image: linear-gradient(to bottom left, #d32f2f, #c2185b);
+}
+
+.ActionButton:focus {
+    outline: none;
+    background-image: linear-gradient(to bottom left, #d32f2f, #e91e63);
+    color: lightgray;
+}
+
+.outlinedButtonLink {
+    transition-duration: 0.4s;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #ea1c0d;
+    min-width: 100px;
+    min-height: 50px;
+    text-decoration: none;
+    color: #ea1c0d;
+    margin: 10px;
+}
+
+.outlinedButtonLink:hover {
+    color: white;
+    text-decoration: none;
+    border: none;
+    background-image: linear-gradient(to bottom left, #ea1c0d, #e91e63);
+}
+
+.outlinedButtonLink:active {
+    outline: none;
+    background-color: transparent;
+    background-image: linear-gradient(to bottom left, #d32f2f, #c2185b);
+}
+
+

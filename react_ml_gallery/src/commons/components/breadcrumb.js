@@ -3,7 +3,7 @@ import routes from '../../routes';
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import Icon from '@material-ui/core/Icon';
-import './breadcrumb.css';
+import './components.css';
 
 
 export default class BreadCrumb extends React.Component {
@@ -19,7 +19,7 @@ export default class BreadCrumb extends React.Component {
                                     <Col xs="auto" style={{padding: "5px 10px"}} className={"breadcrumbLink"}><a
                                         className={"link"} href={link.link}>{link.title}</a></Col>
                                     <Col xs="auto" style={{padding: 0}}>{index !== links.length - 1 &&
-                                    <Icon fontSize={"small"} className={"icon"}>navigate_next</Icon>}</Col>
+                                    <Icon fontSize={"small"} className={"breadcrumbIcon"}>navigate_next</Icon>}</Col>
                                 </Row>
                             </Col>
                         )

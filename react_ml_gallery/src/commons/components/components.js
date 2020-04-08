@@ -1,6 +1,7 @@
 import React from "react";
+import './components.css';
 
-export function Centered (props) {
+export function Centered(props) {
     return (
         <div align={"center"}>
             {props.children}
@@ -10,6 +11,8 @@ export function Centered (props) {
 
 export function OutlinedButtonLink(props) {
     return (
-        <a href={props.link}>{props.text}</a>
+        <div>
+            <a className={"outlinedButtonLink"} href={props.link}>{props.text}</a>
+        </div>
     );
 }

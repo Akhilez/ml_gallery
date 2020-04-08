@@ -1,7 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@300;400;700&display=swap');
 
-html, body, #root {
-    height: 100%;
+html, body {
+    background-color: #f2f3f4;
 }
 
 .link {
@@ -14,7 +14,7 @@ html, body, #root {
 
 .page {
     font-family: 'Roboto Condensed', sans-serif;
-    color: #834f65;
+    color: #c62828;
     background-color: #f2f3f4;
     height: 100%;
 }
@@ -73,36 +73,3 @@ html, body, #root {
     width: 100%;
     box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.15);
 }
-
-.ActionButton {
-    min-width: 100px;
-    min-height: 50px;
-    background-image: linear-gradient(to bottom left, #ea1c0d, #e91e63);
-    transition-duration: 0.4s;
-    border-radius: 8px;
-    color: white;
-    padding: 10px;
-    box-shadow: none;
-    border: 0;
-    font-size: 16px;
-    margin: 10px;
-}
-
-.ActionButton:hover {
-    box-shadow: 0 3px 8px 0 rgba(0, 0, 0, 0.3);
-    color: white;
-    font-size: 17px;
-}
-
-.ActionButton:active {
-    outline: none;
-    background-color: transparent;
-    background-image: linear-gradient(to bottom left, #d32f2f, #c2185b);
-}
-
-.ActionButton:focus {
-    outline: none;
-    background-image: linear-gradient(to bottom left, #d32f2f, #e91e63);
-    color: lightgray;
-}
-
