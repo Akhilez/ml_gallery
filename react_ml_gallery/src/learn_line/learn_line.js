@@ -1,10 +1,10 @@
 import React from "react";
-import {Container as BootstrapContainer} from "react-bootstrap";
+import {Container} from "react-bootstrap";
 import MLAppBar from "../commons/ml_app_bar";
-import {Centered} from "../commons/components/components";
+import {Centered, OutlinedButtonLink} from "../commons/components/components";
 import '../landing/landing.css';
 import ProjectsNav from "../commons/components/projects_nav";
-import {Button, Container, Sidebar} from "rsuite";
+import BreadCrumb from "../commons/components/breadcrumb";
 
 
 export default class LearnLinePage extends React.Component {
@@ -12,15 +12,23 @@ export default class LearnLinePage extends React.Component {
         return (
             <div>
                 <div style={{float: "left"}}>
-                    <ProjectsNav/>
+                    <ProjectsNav activeKey={this.props.project.id}/>
                 </div>
-                <BootstrapContainer>
+                <Container>
                     <MLAppBar/>
+                    <BreadCrumb path={this.props.project.links.app}/>
                     <Centered>
                         <h1>Learn A Line</h1>
                         <p>Predict the m and c values of the straight line (y = mx + c) equation.</p>
+                        <OutlinedButtonLink text={"How it works"} link={"#how_it_works"}/>
                     </Centered>
-                </BootstrapContainer>
+                    <div>
+                        <h3>Learn from equation</h3>
+                    </div>
+                    <div>
+                        <h3>Learn from points</h3>
+                    </div>
+                </Container>
             </div>
         );
     }

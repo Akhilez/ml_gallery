@@ -23,7 +23,6 @@ export default class MnistGanPage extends React.Component {
         this.state = {
             selectedCharacter: "0",
         };
-        this.path = '/mnist_gan';
     }
 
     render(){
@@ -35,12 +34,12 @@ export default class MnistGanPage extends React.Component {
                 </div>
                 <Container>
                     <MLAppBar/>
-                    <BreadCrumb path={this.path}/>
+                    <BreadCrumb path={this.props.project.links.path}/>
                     <Centered>
                         <h1>MNIST GAN</h1>
                         <p className={"header_desc"}>Generate AI-powered hand-drawn character images.</p>
 
-                        <OutlinedButtonLink text={"How it works"} link={"/mnist_gan/report"}/><br/>
+                        <OutlinedButtonLink text={"How it works"} link={"#how_it_works"}/><br/>
 
                         <MuiThemeProvider theme={theme()}>
                             <FormControl variant="outlined" id={"charDropdown"}>

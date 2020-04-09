@@ -1,11 +1,4 @@
 {
-  "paths": {
-    "/": "Home",
-    "/mnist_gan": {
-      "/": "MNIST GAN",
-      "/report": "MNIST GAN Report"
-    }
-  },
   "tree": {
     "children": {
       "/": {
@@ -14,13 +7,11 @@
         "children": {
           "/mnist_gan": {
             "title": "MNIST GAN",
-            "link": "/mnist_gan",
-            "children": {
-              "/report": {
-                "title": "Report",
-                "link": "/mnist_gan/report"
-              }
-            }
+            "link": "/mnist_gan"
+          },
+          "/learn_line": {
+            "title": "Learn A Line",
+            "link": "/learn_line"
           }
         }
       }
