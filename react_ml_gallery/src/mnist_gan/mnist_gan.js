@@ -8,26 +8,14 @@ import MenuItem from "@material-ui/core/MenuItem";
 import {Centered, OutlinedButtonLink} from "../commons/components/components";
 import FormControl from "@material-ui/core/FormControl";
 import './mnist_gan.css';
-import {Switch, Route, useRouteMatch} from "react-router-dom";
-import MnistGanReport from "./report";
 import BreadCrumb from '../commons/components/breadcrumb';
 import theme from '../commons/theme';
 import {MuiThemeProvider} from '@material-ui/core/styles';
 import {MLHelper} from './neural_net';
+import ProjectsNav from "../commons/components/projects_nav";
 
 
-export default function MnistGanPage() {
-    let match = useRouteMatch();
-    return (
-        <Switch>
-            <Route path={`${match.path}/report`}><MnistGanReport/></Route>
-            <Route path={match.path}> <MnistGanMain/> </Route>
-        </Switch>
-    );
-}
-
-
-class MnistGanMain extends React.Component {
+export default class MnistGanPage extends React.Component {
 
     constructor(props) {
         super(props);
@@ -42,6 +30,9 @@ class MnistGanMain extends React.Component {
         new MLHelper().train(0);
         return (
             <div className={"page"}>
+                <div style={{float: "left"}}>
+                    <ProjectsNav activeKey={this.props.project.id}/>
+                </div>
                 <Container>
                     <MLAppBar/>
                     <BreadCrumb path={this.path}/>
@@ -64,7 +55,7 @@ class MnistGanMain extends React.Component {
                                         label="Character"
                                 >
                                     {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map((index, value) =>
-                                        <MenuItem value={value}>{value}</MenuItem>
+                                        <MenuItem value={value} key={index}>{value}</MenuItem>
                                     )}
                                 </Select>
                             </FormControl>

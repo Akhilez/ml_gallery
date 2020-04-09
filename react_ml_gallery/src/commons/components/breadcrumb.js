@@ -14,7 +14,7 @@ export default class BreadCrumb extends React.Component {
                 <Row>
                     {links.map((link, index) => {
                         return (
-                            <Col xs="auto">
+                            <Col xs="auto" key={index}>
                                 <Row>
                                     <Col xs="auto" style={{padding: "5px 10px"}} className={"breadcrumbLink"}><a
                                         className={"link"} href={link.link}>{link.title}</a></Col>

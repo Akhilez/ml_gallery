@@ -61,13 +61,13 @@
       }
     },
     {
-      "title": "MNIST GAN",
+      "title": "Number Detector",
       "id": 7,
-      "desc": "Generate handwritten numbers using Generative Adversarial Network.",
+      "desc": "Find the location of all the numbers in a large box and recognize what numbers they are.",
       "image": "colorizer.jpg",
       "links": {
-        "app": "/mnist_gan",
-        "source": "/mnist_gan"
+        "app": "/number_detector",
+        "source": "/number_detector"
       }
     },
     {

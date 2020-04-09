@@ -3,6 +3,8 @@ import './App.css';
 import LandingPage from "./landing/landing";
 import projects from './landing/data/projects';
 import ComingSoon from "./landing/coming_soon";
+import 'rsuite/dist/styles/rsuite-default.css';
+
 
 import {
     BrowserRouter as Router,
@@ -14,16 +16,21 @@ import LearnLinePage from "./learn_line/learn_line";
 
 
 export default function App() {
-    let routerTargets = {
-        1: <LearnLinePage />,
-        2: <ComingSoon />,
-        3: <ComingSoon />,
-        4: <ComingSoon />,
-        5: <MnistGanPage />,
-        6: <ComingSoon />,
-        7: <ComingSoon />,
-        8: <ComingSoon />,
+
+    const getProjectComponent = function (project) {
+        let routerTargets = {
+            1: <LearnLinePage project={project}/>,
+            2: <ComingSoon project={project}/>,
+            3: <ComingSoon project={project}/>,
+            4: <ComingSoon project={project}/>,
+            5: <MnistGanPage project={project}/>,
+            6: <ComingSoon project={project}/>,
+            7: <ComingSoon project={project}/>,
+            8: <ComingSoon project={project}/>,
+        };
+        return routerTargets[project.id];
     };
+
     return (
         <Router>
             <Switch>
@@ -31,12 +38,15 @@ export default function App() {
                     projects.projects.map((project) => {
                         return (
                             <Route path={project.links.app} key={project.id}>
-                                {routerTargets[project.id]}
+                                {getProjectComponent(project)}
                             </Route>
                         );
                     })
                 }
                 <Route path="/">
+                    <LandingPage/>
+                </Route>
+                <Route path="">
                     <LandingPage/>
                 </Route>
             </Switch>
