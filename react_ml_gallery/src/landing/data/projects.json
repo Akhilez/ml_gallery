@@ -1,19 +1,83 @@
 {
   "projects": [
     {
-      "title": "Colorizer",
-      "desc": "A web application that colorizes grayscale images using a Convolutional Neural Network. This was my major project in my undergrad.",
+      "title": "Learn a Line",
+      "id": 1,
+      "desc": "Visualize the learning of a basic neural network by learning a straight line equation.",
       "image": "colorizer.jpg",
       "links": {
+        "app": "/learn_line",
+        "source": "https://akhilez.com/colorizer/"
+      }
+    },
+    {
+      "title": "Linear Classifier",
+      "id": 2,
+      "desc": "Visualize the learning of a linear classifier: learns to distinguish between two different type of points in space that are linearly separable.",
+      "image": "colorizer.jpg",
+      "links": {
+        "app": "/linear_classifier",
+        "source": "https://akhilez.com/colorizer/"
+      }
+    },
+    {
+      "title": "Deep Iris",
+      "id": 3,
+      "desc": "Visualize how a multi-layer neural network tries to classify flowers from its petal and sepal dimensions",
+      "image": "colorizer.jpg",
+      "links": {
+        "app": "/deep_iris",
+        "source": "https://akhilez.com/colorizer/"
+      }
+    },
+    {
+      "title": "Which Letter?",
+      "id": 4,
+      "desc": "Visualize the convolutions in recognizing handwritten letters",
+      "image": "colorizer.jpg",
+      "links": {
+        "app": "/which_letter",
         "source": "https://akhilez.com/colorizer/"
       }
     },
     {
       "title": "MNIST GAN",
+      "id": 5,
+      "desc": "Generate handwritten numbers using Generative Adversarial Network fused with a Classifier.",
+      "image": "colorizer.jpg",
+      "links": {
+        "app": "/mnist_gan",
+        "source": "/mnist_gan"
+      }
+    },
+    {
+      "title": "Colorizer",
+      "id": 6,
+      "desc": "A web application that colorizes grayscale images using a Convolutional Neural Network. This was my major project in my undergrad.",
+      "image": "colorizer.jpg",
+      "links": {
+        "app": "https://akhilez.com/colorizer/",
+        "source": "https://akhilez.com/colorizer/"
+      }
+    },
+    {
+      "title": "MNIST GAN",
+      "id": 7,
       "desc": "Generate handwritten numbers using Generative Adversarial Network.",
       "image": "colorizer.jpg",
       "links": {
+        "app": "/mnist_gan",
         "source": "/mnist_gan"
+      }
+    },
+    {
+      "title": "Next Char",
+      "id": 8,
+      "desc": "Visualize how a Recurrent Neural Network predicts which letter comes next.",
+      "image": "colorizer.jpg",
+      "links": {
+        "app": "/next_char",
+        "source": "/next_char"
       }
     }
   ]

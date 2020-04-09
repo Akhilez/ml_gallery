@@ -12,7 +12,11 @@ html, body {
     color: #d32f2f;
 }
 
-.page {
+p {
+    font-size: 22px;
+}
+
+#root {
     font-family: 'Roboto Condensed', sans-serif;
     color: #c62828;
     background-color: #f2f3f4;

@@ -1,6 +1,5 @@
 import React from "react";
 import logo from "./ml_logo.png";
-import ml_logo_network from './ml_logo_network';
 
 
 class MLLogo extends React.Component {

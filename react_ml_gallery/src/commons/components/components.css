@@ -78,6 +78,7 @@ a {
 }
 
 .outlinedButtonLink:hover {
+    transition-duration: 0.4s;
     color: white;
     text-decoration: none;
     border: none;

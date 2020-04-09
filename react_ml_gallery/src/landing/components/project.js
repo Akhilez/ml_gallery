@@ -1,7 +1,6 @@
 import React from "react";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
-import projImage from '../images/colorizer.jpg';
 
 class Project extends React.Component {
     render() {
@@ -13,8 +12,8 @@ class Project extends React.Component {
                     </Col>
                     <Col>
                         <div className={"project-text-block"}>
-                            <h2>{this.props.project.title}</h2>
-                            <p>{this.props.project.desc}</p>
+                            <h2 style={{fontSize: 42}}>{this.props.project.title}</h2>
+                            <p style={{fontSize: 20}}>{this.props.project.desc}</p>
                         </div>
                     </Col>
                 </Row>
@@ -28,7 +27,7 @@ class Project extends React.Component {
     ProjectImage(props){
         return (
             <div className={"projectImageContainer"}>
-                <a href={props.project.links.source}>
+                <a href={props.project.links.app}>
                     <img src={require('../images/' + props.project.image)} className={"project-image"}
                          alt={props.project.title + "Image"}/></a>
             </div>
