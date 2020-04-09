@@ -13,6 +13,7 @@ import MnistGanReport from "./report";
 import BreadCrumb from '../commons/components/breadcrumb';
 import theme from '../commons/theme';
 import {MuiThemeProvider} from '@material-ui/core/styles';
+import {MLHelper} from './neural_net';
 
 
 export default function MnistGanPage() {
@@ -25,7 +26,9 @@ export default function MnistGanPage() {
     );
 }
 
+
 class MnistGanMain extends React.Component {
+
     constructor(props) {
         super(props);
         this.props = props;
@@ -35,7 +38,8 @@ class MnistGanMain extends React.Component {
         this.path = '/mnist_gan';
     }
 
-    render() {
+    render(){
+        new MLHelper().train(0);
         return (
             <div className={"page"}>
                 <Container>
