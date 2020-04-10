@@ -5,6 +5,8 @@ import {Centered, OutlinedButtonLink} from "../commons/components/components";
 import '../landing/landing.css';
 import ProjectsNav from "../commons/components/projects_nav";
 import BreadCrumb from "../commons/components/breadcrumb";
+import EquationTrainer from "./equation_trainer";
+import PointsTrainer from "./points_trainer";
 
 
 export default class LearnLinePage extends React.Component {
@@ -22,12 +24,8 @@ export default class LearnLinePage extends React.Component {
                         <p>Predict the m and c values of the straight line (y = mx + c) equation.</p>
                         <OutlinedButtonLink text={"How it works"} link={"#how_it_works"}/>
                     </Centered>
-                    <div>
-                        <h3>Learn from equation</h3>
-                    </div>
-                    <div>
-                        <h3>Learn from points</h3>
-                    </div>
+                    <EquationTrainer/>
+                    <PointsTrainer/>
                 </Container>
             </div>
         );
