@@ -60,6 +60,7 @@ export default class EquationTrainer extends React.Component {
                         <FlexboxGrid.Item> x + </FlexboxGrid.Item>
                         <FlexboxGrid.Item>
                             {this.getParamsPicker("C")}
+                            {console.log(this.state.c)}
                         </FlexboxGrid.Item>
                     </FlexboxGrid>
                 </div>
@@ -93,7 +94,24 @@ export default class EquationTrainer extends React.Component {
             randomY: randomData.y,
         });
 
+        this.train(randomData.x, randomData.y);
 
+    }
+
+    train(x, y) {
+        for (let i = 0; i < x.length; i++) {
+            let loss = this.nn.fullPass(x[i], y[i]);
+            this.showLoss(loss, i);
+            this.updatePredLine();
+        }
+    }
+
+    showLoss(loss, index) {
+        // TODO: Show loss
+    }
+
+    updatePredLine(){
+        // TODO: Update prediction line
     }
 
     getGraph() {
@@ -128,8 +146,9 @@ export default class EquationTrainer extends React.Component {
                 {
                     this.state.randomX.map((value, index) => {
                         return (
-                            <FlexboxGrid.Item
-                                key={index}>({parseFloat(this.state.randomX[index]).toFixed(2)}, {parseFloat(this.state.randomY[index]).toFixed(2)})</FlexboxGrid.Item>
+                            <FlexboxGrid.Item style={{margin: 3}} key={index}>
+                                ({parseFloat(this.state.randomX[index]).toFixed(2)}, {parseFloat(this.state.randomY[index]).toFixed(2)})
+                            </FlexboxGrid.Item>
                         );
                     })
                 }
@@ -148,11 +167,14 @@ export default class EquationTrainer extends React.Component {
                     this.setState({m: value})
                 }}/>
             );
-        else if (params === "C")
+        else if (params === "C") {
             return (
                 <Input className={"inputBox"} placeholder="c" type={"number"} onChange={(value, event) => {
+                    console.log("Changing c");
+                    console.log(value);
                     this.setState({c: value})
                 }}/>
             );
+        }
     }
 }
