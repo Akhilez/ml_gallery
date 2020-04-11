@@ -9,17 +9,17 @@ export default class MLHelper {
     }
 
     fullPass (x, y) {
-        x = tf.tensor(x);
-        y = tf.tensor(y);
+        x = tf.tensor([x]);
+        y = tf.tensor([y]);
 
-        let f = (m, c) => y.sub(m.dot(x).add(c)).square();
+        let f = (m, c) => y.sub(m.mul(x).add(c)).square();
         let g = tf.grads(f);
 
         let loss = f(this.m, this.c);
 
         let [dm, dc] = g([this.m, this.c]);
-        this.m -= this.lr * dm;
-        this.c -= this.lr * dc;
+        this.m = this.m.sub(dm.mul(this.lr));
+        this.c = this.c.sub(dc.mul(this.lr));
 
         return loss;
     }

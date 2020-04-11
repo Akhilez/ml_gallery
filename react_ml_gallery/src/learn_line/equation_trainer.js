@@ -16,31 +16,10 @@ export default class EquationTrainer extends React.Component {
             randomY: [],
             predM: null,
             predC: null,
-            realM: null,
-            realC: null,
-            data: [
-                {
-                    name: 'Page A', uv: 4000, pv: 2400, amt: 2400,
-                },
-                {
-                    name: 'Page B', uv: 3000, pv: 1398, amt: 2210,
-                },
-                {
-                    name: 'Page C', uv: 2000, pv: 9800, amt: 2290,
-                },
-                {
-                    name: 'Page D', uv: 2780, pv: 3908, amt: 2000,
-                },
-                {
-                    name: 'Page E', uv: 1890, pv: 4800, amt: 2181,
-                },
-                {
-                    name: 'Page F', uv: 2390, pv: 3800, amt: 2500,
-                },
-                {
-                    name: 'Page G', uv: 3490, pv: 4300, amt: 2100,
-                },
-            ],
+            data: [],
+            lossData: [],
+            didTrainingStart: false,
+            isTraining: false,
         };
         this.nn = new MLHelper();
     }
@@ -48,7 +27,7 @@ export default class EquationTrainer extends React.Component {
 
     render() {
         return (
-            <div style={{marginTop: 50, marginBottom: 50}}>
+            <div style={{margin: 50}}>
                 <h3>Learn from equation</h3>
                 <p>Set "m" and "c" values and train the Neural Network to predict these values.</p>
                 <div style={{fontSize: 40}}>
@@ -60,13 +39,15 @@ export default class EquationTrainer extends React.Component {
                         <FlexboxGrid.Item> x + </FlexboxGrid.Item>
                         <FlexboxGrid.Item>
                             {this.getParamsPicker("C")}
-                            {console.log(this.state.c)}
                         </FlexboxGrid.Item>
                     </FlexboxGrid>
                 </div>
                 <button className={"ActionButton"} onClick={() => this.startTrainingPipeline()}>TRAIN</button>
+                {this.state.didTrainingStart && this.showStopTrainingButton()}
                 {this.showTrainingData()}
-                {this.getGraph()}
+                {this.state.didTrainingStart && `Predicted (m, c) = (${this.state.predM}, ${this.state.predC})`}
+                {this.state.didTrainingStart && this.getGraph()}
+                {this.state.didTrainingStart && this.getLossGraph()}
             </div>
         );
     }
@@ -92,26 +73,88 @@ export default class EquationTrainer extends React.Component {
             realC: c,
             randomX: randomData.x,
             randomY: randomData.y,
+            isTraining: true,
+            didTrainingStart: true,
+            lossData: [],
+            data: this.createRealData(randomData.x, randomData.y)
+        }, () => {
+            this.train(randomData.x, randomData.y);
         });
-
-        this.train(randomData.x, randomData.y);
 
     }
 
     train(x, y) {
+        let epochs = 1000;
+        let t = 0;
+        let self = this;
+
+        let trainingLoop = function (epoch) {
+            if (epoch <= epochs) {
+                setTimeout(() => {
+
+                    let randomIndex = Math.floor(Math.random() * x.length);
+
+                    if (!self.state.isTraining) {
+                        epoch = epochs;
+                        return
+                    }
+                    let loss = self.nn.fullPass(x[randomIndex], y[randomIndex]);
+
+                    self.showLoss(loss, t++);
+                    self.updatePredLine();
+
+                    trainingLoop(epoch + 1);
+
+                }, 100);  // wait 5000 milliseconds then recheck
+            }
+        };
+
+        trainingLoop(0);
+
+    }
+
+    createRealData(x, y) {
+        let data = [];
         for (let i = 0; i < x.length; i++) {
-            let loss = this.nn.fullPass(x[i], y[i]);
-            this.showLoss(loss, i);
-            this.updatePredLine();
+            data.push({realX: x[i], realY: y[i]});
         }
+        return data;
     }
 
     showLoss(loss, index) {
-        // TODO: Show loss
+        this.setState({lossData: this.state.lossData.concat([{index: index, loss: loss.dataSync()[0]}])});
     }
 
-    updatePredLine(){
-        // TODO: Update prediction line
+    getLossGraph() {
+        return (
+            <LineChart
+                width={500}
+                height={300}
+                data={this.state.lossData}
+                margin={{
+                    top: 5, right: 30, left: 20, bottom: 5,
+                }}
+            >
+                <CartesianGrid strokeDasharray="3 3"/>
+                <XAxis dataKey="index" type="number" scale="auto"/>
+                <YAxis/>
+                <Tooltip/>
+                <Legend/>
+                <Line type="monotone" dataKey="loss" stroke="#8884d8"/>
+            </LineChart>
+        );
+    }
+
+    updatePredLine() {
+        let data = [];
+        let predParams = this.nn.getWeights();
+        for (let i = 0; i < this.state.data.length; i++) {
+            let column = this.state.data[i];
+            column.predX = column.realX;
+            column.predY = parseFloat(column.realX) * parseFloat(predParams.m[0]) + parseFloat(predParams.c[0]);
+            data.push(column);
+        }
+        this.setState({data: data, predM: predParams.m, predC: predParams.c});
     }
 
     getGraph() {
@@ -126,12 +169,12 @@ export default class EquationTrainer extends React.Component {
                     }}
                 >
                     <CartesianGrid strokeDasharray="3 3"/>
-                    <XAxis dataKey="name"/>
+                    <XAxis dataKey="realX" type="number" scale="auto"/>
                     <YAxis/>
                     <Tooltip/>
                     <Legend/>
-                    <Line type="monotone" dataKey="pv" stroke="#8884d8" activeDot={{r: 8}}/>
-                    <Line type="monotone" dataKey="uv" stroke="#82ca9d"/>
+                    <Line type="monotone" dataKey="realY" stroke="#8884d8"/>
+                    <Line type="monotone" dataKey="predY" stroke="#82ca9d"/>
                 </LineChart>
             </div>
         );
@@ -156,6 +199,12 @@ export default class EquationTrainer extends React.Component {
         );
     }
 
+    showStopTrainingButton() {
+        return (
+            <button className={"ActionButton"} onClick={() => this.setState({isTraining: false})}>Stop</button>
+        );
+    }
+
     showError(message) {
         alert(message);
     }
@@ -170,8 +219,6 @@ export default class EquationTrainer extends React.Component {
         else if (params === "C") {
             return (
                 <Input className={"inputBox"} placeholder="c" type={"number"} onChange={(value, event) => {
-                    console.log("Changing c");
-                    console.log(value);
                     this.setState({c: value})
                 }}/>
             );
