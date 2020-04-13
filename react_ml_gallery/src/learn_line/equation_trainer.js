@@ -4,6 +4,7 @@ import {LineChart, CartesianGrid, XAxis, YAxis, Tooltip, Legend, Line} from 'rec
 import './learn_line.css';
 import '../commons/components/components.css';
 import MLHelper from "./neural_net";
+import * as d3 from '../commons/d3.min';
 
 
 export default class EquationTrainer extends React.Component {
@@ -24,24 +25,12 @@ export default class EquationTrainer extends React.Component {
         this.nn = new MLHelper();
     }
 
-
     render() {
         return (
             <div style={{margin: 50}}>
                 <h3>Learn from equation</h3>
                 <p>Set "m" and "c" values and train the Neural Network to predict these values.</p>
-                <div style={{fontSize: 40}}>
-                    <FlexboxGrid>
-                        <FlexboxGrid.Item>y = </FlexboxGrid.Item>
-                        <FlexboxGrid.Item>
-                            {this.getParamsPicker("M")}
-                        </FlexboxGrid.Item>
-                        <FlexboxGrid.Item> x + </FlexboxGrid.Item>
-                        <FlexboxGrid.Item>
-                            {this.getParamsPicker("C")}
-                        </FlexboxGrid.Item>
-                    </FlexboxGrid>
-                </div>
+                {this.getEquationInput()}
                 <button className={"ActionButton"} onClick={() => this.startTrainingPipeline()}>TRAIN</button>
                 {this.state.didTrainingStart && this.showStopTrainingButton()}
                 {this.showTrainingData()}
@@ -111,6 +100,23 @@ export default class EquationTrainer extends React.Component {
 
         trainingLoop(0);
 
+    }
+
+    getEquationInput(){
+        return (
+            <div style={{fontSize: 40}}>
+                <FlexboxGrid>
+                    <FlexboxGrid.Item>y = </FlexboxGrid.Item>
+                    <FlexboxGrid.Item>
+                        {this.getParamsPicker("M")}
+                    </FlexboxGrid.Item>
+                    <FlexboxGrid.Item> x + </FlexboxGrid.Item>
+                    <FlexboxGrid.Item>
+                        {this.getParamsPicker("C")}
+                    </FlexboxGrid.Item>
+                </FlexboxGrid>
+            </div>
+        );
     }
 
     createRealData(x, y) {

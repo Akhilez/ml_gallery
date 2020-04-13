@@ -1,3 +1,4 @@
+/*
 import mnist_test from '../data/mnist/mnist_handwritten_test';
 import mnist_train from '../data/mnist/mnist_handwritten_train';
 import * as tf from '@tensorflow/tfjs';
@@ -46,3 +47,4 @@ export class MLHelper {
 }
 
 
+*/
