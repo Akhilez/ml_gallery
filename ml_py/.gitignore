@@ -1,4 +1,5 @@
 venv/
+data/
 
 ### OSX ###
 .DS_Store
