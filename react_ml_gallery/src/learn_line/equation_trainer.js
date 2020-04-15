@@ -4,7 +4,7 @@ import {LineChart, CartesianGrid, XAxis, YAxis, Tooltip, Legend, Line} from 'rec
 import './learn_line.css';
 import '../commons/components/components.css';
 import MLHelper from "./neural_net";
-import * as d3 from '../commons/d3.min';
+import * as d3 from "d3";
 
 
 export default class EquationTrainer extends React.Component {
@@ -23,11 +23,14 @@ export default class EquationTrainer extends React.Component {
             isTraining: false,
         };
         this.nn = new MLHelper();
+        this.d3Bridge = new D3Bridge();
     }
 
     render() {
         return (
-            <div style={{margin: 50}}>
+            <div>
+                <Neuron bridge={this.d3Bridge}/>
+                {/*this.getNeuron()*/}
                 <h3>Learn from equation</h3>
                 <p>Set "m" and "c" values and train the Neural Network to predict these values.</p>
                 {this.getEquationInput()}
@@ -65,11 +68,12 @@ export default class EquationTrainer extends React.Component {
             isTraining: true,
             didTrainingStart: true,
             lossData: [],
-            data: this.createRealData(randomData.x, randomData.y)
+            data: this.createRealData(randomData.x, randomData.y),
         }, () => {
             this.train(randomData.x, randomData.y);
         });
 
+        this.d3Bridge.d3Component.update({radius: 50});
     }
 
     train(x, y) {
@@ -102,7 +106,22 @@ export default class EquationTrainer extends React.Component {
 
     }
 
-    getEquationInput(){
+    getNeuron() {
+        return (
+            <svg width={"500px"} height={"300px"}>
+                <circle cx={""}/>
+                <line />
+
+                <circle />
+                <line />
+
+                <circle cx={50} cy={50} r={10} fill="red"/>
+                <line/>
+            </svg>
+        );
+    }
+
+    getEquationInput() {
         return (
             <div style={{fontSize: 40}}>
                 <FlexboxGrid>
@@ -229,5 +248,67 @@ export default class EquationTrainer extends React.Component {
                 }}/>
             );
         }
+    }
+}
+
+class D3Bridge {
+    constructor() {
+        this.d3Component = null;
+        this.update = (data) => {
+        };
+    }
+}
+
+class Neuron extends React.Component {
+
+    constructor(props) {
+        super(props);
+        this.svg = null;
+        this.bridge = props.bridge;
+        props.bridge.d3Component = this;
+        this.bridge.update = this.update;
+        this.data = [{radius: 10}];
+    }
+
+    update(data) {
+        console.log("Updating the svg");
+        console.log(data);
+        this.data = [data];
+        this.svg.data(this.data)
+            .enter()
+            .attr("r", 100);
+    }
+
+    build() {
+        console.log("data: ");
+        console.log(this.data);
+        this.svg.data(this.data)
+            .append("circle")
+            .attr("cx", 150)
+            .attr("cy", 70)
+            .attr("r", 6);
+    }
+
+    componentDidMount() {
+        // D3 Code to create the chart
+        // using this._rootNode as container
+
+        let container = d3.select(this._rootNode);
+        this.svg = container.append('svg');
+    }
+
+    shouldComponentUpdate(nextProps, nextState, nextContext) {
+        // Prevents component re-rendering
+        return false;
+    }
+
+    _setRef(componentNode) {
+        this._rootNode = componentNode;
+    }
+
+    render() {
+        return (
+            <div ref={this._setRef.bind(this)}/>
+        );
     }
 }
