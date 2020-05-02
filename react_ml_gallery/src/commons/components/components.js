@@ -16,3 +16,10 @@ export function OutlinedButtonLink(props) {
         </div>
     );
 }
+
+
+export function SizedBox(props) {
+    return (
+        <div style={{width: props.width, height: props.height}}/>
+    )
+}

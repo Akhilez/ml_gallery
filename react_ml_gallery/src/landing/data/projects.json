@@ -21,6 +21,17 @@
       }
     },
     {
+      "title": "Learn A Curve!",
+      "id": 9,
+      "desc": "Neural Networks can learn any continuous function! Here's a model that visualizes this concept. You can add data points and the network will learn its mathematical function.",
+      "image": "colorizer.jpg",
+      "links": {
+        "app": "/learn_curve",
+        "source": "https://github.com/Akhilez/ml_gallery",
+        "colab": "https://github.com/Akhilez/ml_gallery"
+      }
+    },
+    {
       "title": "Deep Iris",
       "id": 3,
       "desc": "Visualize how a multi-layer neural network tries to classify flowers from its petal and sepal dimensions",
