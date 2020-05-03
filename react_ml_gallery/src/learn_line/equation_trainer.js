@@ -1,10 +1,9 @@
-import {FlexboxGrid, Input} from 'rsuite';
+import {Input} from 'rsuite';
 import React from "react";
 import {LineChart, CartesianGrid, XAxis, YAxis, Tooltip, Legend, Line} from 'recharts';
 import './learn_line.css';
 import '../commons/components/components.css';
 import MLHelper from "./neural_net";
-import * as d3 from "d3";
 
 
 export default class EquationTrainer extends React.Component {
@@ -23,23 +22,71 @@ export default class EquationTrainer extends React.Component {
             isTraining: false,
         };
         this.nn = new MLHelper();
-        this.d3Bridge = new D3Bridge();
+        this.neuronRef = React.createRef();
+        this.neuronContext = null;
     }
 
     render() {
         return (
             <div>
-                <Neuron bridge={this.d3Bridge}/>
-                {/*this.getNeuron()*/}
-                <h3>Learn from equation</h3>
+                <h3 style={{marginTop: "50px"}}>Learn from equation</h3>
+                {this.getNeuron()}
                 <p>Set "m" and "c" values and train the Neural Network to predict these values.</p>
                 {this.getEquationInput()}
                 <button className={"ActionButton"} onClick={() => this.startTrainingPipeline()}>TRAIN</button>
                 {this.state.didTrainingStart && this.showStopTrainingButton()}
-                {this.showTrainingData()}
-                {this.state.didTrainingStart && `Predicted (m, c) = (${this.state.predM}, ${this.state.predC})`}
                 {this.state.didTrainingStart && this.getGraph()}
+                {this.state.didTrainingStart && this.getParametersGraph()}
                 {this.state.didTrainingStart && this.getLossGraph()}
+            </div>
+        );
+    }
+
+    componentDidMount() {
+        console.log(this.neuronRef.current);
+        this.neuronContext = this.neuronRef.current.getContext("2d");
+        this.drawNeuron()
+    }
+
+    getNeuron() {
+        return (
+            <div>
+                <canvas ref={this.neuronRef} width={500} height={500} />
+            </div>
+        );
+    }
+
+    drawNeuron(){
+        const ctx = this.neuronContext;
+        ctx.beginPath();
+        ctx.arc(250, 250, 50, 0, 2 * Math.PI, false);
+        ctx.fillStyle = 'green';
+        ctx.fill();
+        ctx.lineWidth = 5;
+        ctx.strokeStyle = '#003300';
+        ctx.stroke();
+    }
+
+    getParametersGraph() {
+        return (
+            <div>
+                <table className={"table"} style={{width: 300}}>
+                    <tr>
+                        <th/>
+                        <th>Real</th>
+                        <th>Predicted</th>
+                    </tr>
+                    <tr>
+                        <td>m</td>
+                        <td>{this.state.m}</td>
+                        <td>{this.state.predM}</td>
+                    </tr>
+                    <tr>
+                        <td>c</td>
+                        <td>{this.state.c}</td>
+                        <td>{this.state.predC}</td>
+                    </tr>
+                </table>
             </div>
         );
     }
@@ -73,7 +120,6 @@ export default class EquationTrainer extends React.Component {
             this.train(randomData.x, randomData.y);
         });
 
-        this.d3Bridge.d3Component.update({radius: 50});
     }
 
     train(x, y) {
@@ -106,34 +152,13 @@ export default class EquationTrainer extends React.Component {
 
     }
 
-    getNeuron() {
-        return (
-            <svg width={"500px"} height={"300px"}>
-                <circle cx={""}/>
-                <line />
-
-                <circle />
-                <line />
-
-                <circle cx={50} cy={50} r={10} fill="red"/>
-                <line/>
-            </svg>
-        );
-    }
-
     getEquationInput() {
         return (
             <div style={{fontSize: 40}}>
-                <FlexboxGrid>
-                    <FlexboxGrid.Item>y = </FlexboxGrid.Item>
-                    <FlexboxGrid.Item>
-                        {this.getParamsPicker("M")}
-                    </FlexboxGrid.Item>
-                    <FlexboxGrid.Item> x + </FlexboxGrid.Item>
-                    <FlexboxGrid.Item>
-                        {this.getParamsPicker("C")}
-                    </FlexboxGrid.Item>
-                </FlexboxGrid>
+                <div className={"inline"}>y =</div>
+                <div className={"inline"}>{this.getParamsPicker("M")}</div>
+                <div className={"inline"}> x +</div>
+                <div className={"inline"}>{this.getParamsPicker("C")}</div>
             </div>
         );
     }
@@ -186,8 +211,8 @@ export default class EquationTrainer extends React.Component {
         return (
             <div>
                 <LineChart
-                    width={500}
-                    height={300}
+                    width={800}
+                    height={500}
                     data={this.state.data}
                     margin={{
                         top: 5, right: 30, left: 20, bottom: 5,
@@ -202,25 +227,6 @@ export default class EquationTrainer extends React.Component {
                     <Line type="monotone" dataKey="predY" stroke="#82ca9d"/>
                 </LineChart>
             </div>
-        );
-    }
-
-    showTrainingData() {
-        if (this.state.randomX.length === 0)
-            return (<p>Change the values of M and C and click on TRAIN button.</p>);
-        return (
-            <FlexboxGrid>
-                <FlexboxGrid.Item>Training Data: </FlexboxGrid.Item>
-                {
-                    this.state.randomX.map((value, index) => {
-                        return (
-                            <FlexboxGrid.Item style={{margin: 3}} key={index}>
-                                ({parseFloat(this.state.randomX[index]).toFixed(2)}, {parseFloat(this.state.randomY[index]).toFixed(2)})
-                            </FlexboxGrid.Item>
-                        );
-                    })
-                }
-            </FlexboxGrid>
         );
     }
 
@@ -248,67 +254,5 @@ export default class EquationTrainer extends React.Component {
                 }}/>
             );
         }
-    }
-}
-
-class D3Bridge {
-    constructor() {
-        this.d3Component = null;
-        this.update = (data) => {
-        };
-    }
-}
-
-class Neuron extends React.Component {
-
-    constructor(props) {
-        super(props);
-        this.svg = null;
-        this.bridge = props.bridge;
-        props.bridge.d3Component = this;
-        this.bridge.update = this.update;
-        this.data = [{radius: 10}];
-    }
-
-    update(data) {
-        console.log("Updating the svg");
-        console.log(data);
-        this.data = [data];
-        this.svg.data(this.data)
-            .enter()
-            .attr("r", 100);
-    }
-
-    build() {
-        console.log("data: ");
-        console.log(this.data);
-        this.svg.data(this.data)
-            .append("circle")
-            .attr("cx", 150)
-            .attr("cy", 70)
-            .attr("r", 6);
-    }
-
-    componentDidMount() {
-        // D3 Code to create the chart
-        // using this._rootNode as container
-
-        let container = d3.select(this._rootNode);
-        this.svg = container.append('svg');
-    }
-
-    shouldComponentUpdate(nextProps, nextState, nextContext) {
-        // Prevents component re-rendering
-        return false;
-    }
-
-    _setRef(componentNode) {
-        this._rootNode = componentNode;
-    }
-
-    render() {
-        return (
-            <div ref={this._setRef.bind(this)}/>
-        );
     }
 }

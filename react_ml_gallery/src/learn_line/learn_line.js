@@ -23,9 +23,9 @@ export default class LearnLinePage extends React.Component {
                         <h1>Learn A Line</h1>
                         <p>Predict the m and c values of the straight line (y = mx + c) equation.</p>
                         <OutlinedButtonLink text={"How it works"} link={"#how_it_works"}/>
+                        <EquationTrainer/>
+                        <PointsTrainer/>
                     </Centered>
-                    <EquationTrainer/>
-                    <PointsTrainer/>
                 </Container>
             </div>
         );
