@@ -4,6 +4,7 @@ import {LineChart, CartesianGrid, XAxis, YAxis, Tooltip, Legend, Line} from 'rec
 import './learn_line.css';
 import '../commons/components/components.css';
 import MLHelper from "./neural_net";
+import Sketch from "react-p5";
 
 
 export default class EquationTrainer extends React.Component {
@@ -22,15 +23,15 @@ export default class EquationTrainer extends React.Component {
             isTraining: false,
         };
         this.nn = new MLHelper();
+
         this.neuronRef = React.createRef();
-        this.neuronContext = null;
     }
 
     render() {
         return (
             <div>
                 <h3 style={{marginTop: "50px"}}>Learn from equation</h3>
-                {this.getNeuron()}
+                {<Neuron ref={this.neuronRef}/>}
                 <p>Set "m" and "c" values and train the Neural Network to predict these values.</p>
                 {this.getEquationInput()}
                 <button className={"ActionButton"} onClick={() => this.startTrainingPipeline()}>TRAIN</button>
@@ -40,31 +41,6 @@ export default class EquationTrainer extends React.Component {
                 {this.state.didTrainingStart && this.getLossGraph()}
             </div>
         );
-    }
-
-    componentDidMount() {
-        console.log(this.neuronRef.current);
-        this.neuronContext = this.neuronRef.current.getContext("2d");
-        this.drawNeuron()
-    }
-
-    getNeuron() {
-        return (
-            <div>
-                <canvas ref={this.neuronRef} width={500} height={500} />
-            </div>
-        );
-    }
-
-    drawNeuron(){
-        const ctx = this.neuronContext;
-        ctx.beginPath();
-        ctx.arc(250, 250, 50, 0, 2 * Math.PI, false);
-        ctx.fillStyle = 'green';
-        ctx.fill();
-        ctx.lineWidth = 5;
-        ctx.strokeStyle = '#003300';
-        ctx.stroke();
     }
 
     getParametersGraph() {
@@ -139,8 +115,11 @@ export default class EquationTrainer extends React.Component {
                     }
                     let loss = self.nn.fullPass(x[randomIndex], y[randomIndex]);
 
+                    let predParams = self.nn.getWeights();
+
                     self.showLoss(loss, t++);
-                    self.updatePredLine();
+                    self.updatePredLine(predParams);
+                    self.neuronRef.current.set({w: predParams.m, b: predParams.c});
 
                     trainingLoop(epoch + 1);
 
@@ -195,9 +174,8 @@ export default class EquationTrainer extends React.Component {
         );
     }
 
-    updatePredLine() {
+    updatePredLine(predParams) {
         let data = [];
-        let predParams = this.nn.getWeights();
         for (let i = 0; i < this.state.data.length; i++) {
             let column = this.state.data[i];
             column.predX = column.realX;
@@ -254,5 +232,74 @@ export default class EquationTrainer extends React.Component {
                 }}/>
             );
         }
+    }
+}
+
+class Neuron extends React.Component {
+
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            w: 0.2,
+            b: 0.2,
+        };
+
+        this.height = 300;
+        this.width = 600;
+
+        this.cx = this.width / 2;
+        this.cy = this.height / 2;
+
+    }
+
+    render() {
+        return (
+            <Sketch setup={(p5, parent) => this.setup(p5, parent)} draw={p5 => this.draw(p5)}/>
+        );
+    }
+
+    set(state) {
+        this.setState(state);
+    }
+
+    setup(p5, parent) {
+        p5.createCanvas(this.width, this.height).parent(parent);
+        p5.frameRate(10);
+    }
+
+    draw(p5) {
+        p5.background(243);
+
+        // Weight
+        if (this.state.w < 0)
+            p5.stroke(247, 120, 35);
+        else
+            p5.stroke(235, 16, 93);
+        p5.strokeWeight(this.rescale(this.state.w));
+        p5.line(this.cx, this.cy, this.cx - 100, this.cy - 50);
+
+        // Bias
+        if (this.state.b < 0)
+            p5.stroke(247, 120, 35);
+        else
+            p5.stroke(235, 16, 93);
+        p5.strokeWeight(this.rescale(this.state.b));
+        p5.line(this.cx, this.cy, this.cx - 100, this.cy + 50);
+
+        // y
+        p5.stroke(100, 100, 100);
+        p5.strokeWeight(1);
+        p5.line(this.cx, this.cy, this.cx + 100, this.cy);
+
+        // Circle
+        p5.fill(235, 16, 93);
+        p5.noStroke();
+        p5.ellipse(this.cx, this.cy, 50);
+
+    }
+
+    rescale(t) {
+        return Math.tanh(t);
     }
 }
