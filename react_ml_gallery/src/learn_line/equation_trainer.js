@@ -241,8 +241,8 @@ class Neuron extends React.Component {
         super(props);
 
         this.state = {
-            w: 0.2,
-            b: 0.2,
+            w: 0.1,
+            b: 0.1,
         };
 
         this.height = 300;
@@ -250,6 +250,8 @@ class Neuron extends React.Component {
 
         this.cx = this.width / 2;
         this.cy = this.height / 2;
+
+        this.lineLength = 150;
 
     }
 
@@ -270,14 +272,14 @@ class Neuron extends React.Component {
 
     draw(p5) {
         p5.background(243);
+        p5.textSize(18);
 
         // Weight
-        if (this.state.w < 0)
-            p5.stroke(247, 120, 35);
-        else
-            p5.stroke(235, 16, 93);
+        if (this.state.w < 0) p5.stroke(247, 120, 35);
+        else p5.stroke(235, 16, 93);
         p5.strokeWeight(this.rescale(this.state.w));
-        p5.line(this.cx, this.cy, this.cx - 100, this.cy - 50);
+        p5.line(this.cx, this.cy, this.cx - this.lineLength, this.cy - 50);
+        p5.text(`m = ${this.state.w}`, this.cx - 110, this.cy - 50);
 
         // Bias
         if (this.state.b < 0)
@@ -285,17 +287,28 @@ class Neuron extends React.Component {
         else
             p5.stroke(235, 16, 93);
         p5.strokeWeight(this.rescale(this.state.b));
-        p5.line(this.cx, this.cy, this.cx - 100, this.cy + 50);
+        p5.line(this.cx, this.cy, this.cx - this.lineLength, this.cy + 50);
+        p5.text(`c = ${this.state.b}`, this.cx - 110, this.cy + 60);
 
         // y
         p5.stroke(100, 100, 100);
         p5.strokeWeight(1);
-        p5.line(this.cx, this.cy, this.cx + 100, this.cy);
+        p5.line(this.cx, this.cy, this.cx + this.lineLength, this.cy);
 
         // Circle
         p5.fill(235, 16, 93);
         p5.noStroke();
         p5.ellipse(this.cx, this.cy, 50);
+
+        // x
+        p5.text('x', this.cx - this.lineLength - 20, this.cy - 45);
+
+        // 1
+        p5.text('1', this.cx - this.lineLength - 20, this.cy + 55);
+
+        // y
+        p5.text('y', this.cx + this.lineLength + 20, this.cy + 5);
+
 
     }
 
