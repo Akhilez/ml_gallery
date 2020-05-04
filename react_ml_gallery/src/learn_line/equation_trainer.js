@@ -4,7 +4,7 @@ import {LineChart, CartesianGrid, XAxis, YAxis, Tooltip, Legend, Line} from 'rec
 import './learn_line.css';
 import '../commons/components/components.css';
 import MLHelper from "./neural_net";
-import Sketch from "react-p5";
+import Neuron from "./neuron";
 
 
 export default class EquationTrainer extends React.Component {
@@ -30,15 +30,21 @@ export default class EquationTrainer extends React.Component {
     render() {
         return (
             <div>
-                <h3 style={{marginTop: "50px"}}>Learn from equation</h3>
+                <h2 style={{marginTop: "50px"}}>Learn from equation</h2>
                 {<Neuron ref={this.neuronRef}/>}
                 <p>Set "m" and "c" values and train the Neural Network to predict these values.</p>
                 {this.getEquationInput()}
                 <button className={"ActionButton"} onClick={() => this.startTrainingPipeline()}>TRAIN</button>
                 {this.state.didTrainingStart && this.showStopTrainingButton()}
                 {this.state.didTrainingStart && this.getGraph()}
-                {this.state.didTrainingStart && this.getParametersGraph()}
-                {this.state.didTrainingStart && this.getLossGraph()}
+                <div>
+                    <div className={"inline"}>
+                        {this.state.didTrainingStart && this.getParametersGraph()}
+                    </div>
+                    <div className={"inline"}>
+                        {this.state.didTrainingStart && this.getLossGraph()}
+                    </div>
+                </div>
             </div>
         );
     }
@@ -47,6 +53,7 @@ export default class EquationTrainer extends React.Component {
         return (
             <div>
                 <table className={"table"} style={{width: 300}}>
+                    <tbody>
                     <tr>
                         <th/>
                         <th>Real</th>
@@ -62,6 +69,7 @@ export default class EquationTrainer extends React.Component {
                         <td>{this.state.c}</td>
                         <td>{this.state.predC}</td>
                     </tr>
+                    </tbody>
                 </table>
             </div>
         );
@@ -179,7 +187,7 @@ export default class EquationTrainer extends React.Component {
         for (let i = 0; i < this.state.data.length; i++) {
             let column = this.state.data[i];
             column.predX = column.realX;
-            column.predY = parseFloat(column.realX) * parseFloat(predParams.m[0]) + parseFloat(predParams.c[0]);
+            column.predY = parseFloat(column.realX) * parseFloat(predParams.m) + parseFloat(predParams.c);
             data.push(column);
         }
         this.setState({data: data, predM: predParams.m, predC: predParams.c});
@@ -187,7 +195,7 @@ export default class EquationTrainer extends React.Component {
 
     getGraph() {
         return (
-            <div>
+            <div style={{marginTop: 100, marginBottom: 100}}>
                 <LineChart
                     width={800}
                     height={500}
@@ -235,84 +243,4 @@ export default class EquationTrainer extends React.Component {
     }
 }
 
-class Neuron extends React.Component {
 
-    constructor(props) {
-        super(props);
-
-        this.state = {
-            w: 0.1,
-            b: 0.1,
-        };
-
-        this.height = 300;
-        this.width = 600;
-
-        this.cx = this.width / 2;
-        this.cy = this.height / 2;
-
-        this.lineLength = 150;
-
-    }
-
-    render() {
-        return (
-            <Sketch setup={(p5, parent) => this.setup(p5, parent)} draw={p5 => this.draw(p5)}/>
-        );
-    }
-
-    set(state) {
-        this.setState(state);
-    }
-
-    setup(p5, parent) {
-        p5.createCanvas(this.width, this.height).parent(parent);
-        p5.frameRate(10);
-    }
-
-    draw(p5) {
-        p5.background(243);
-        p5.textSize(18);
-
-        // Weight
-        if (this.state.w < 0) p5.stroke(247, 120, 35);
-        else p5.stroke(235, 16, 93);
-        p5.strokeWeight(this.rescale(this.state.w));
-        p5.line(this.cx, this.cy, this.cx - this.lineLength, this.cy - 50);
-        p5.text(`m = ${this.state.w}`, this.cx - 110, this.cy - 50);
-
-        // Bias
-        if (this.state.b < 0)
-            p5.stroke(247, 120, 35);
-        else
-            p5.stroke(235, 16, 93);
-        p5.strokeWeight(this.rescale(this.state.b));
-        p5.line(this.cx, this.cy, this.cx - this.lineLength, this.cy + 50);
-        p5.text(`c = ${this.state.b}`, this.cx - 110, this.cy + 60);
-
-        // y
-        p5.stroke(100, 100, 100);
-        p5.strokeWeight(1);
-        p5.line(this.cx, this.cy, this.cx + this.lineLength, this.cy);
-
-        // Circle
-        p5.fill(235, 16, 93);
-        p5.noStroke();
-        p5.ellipse(this.cx, this.cy, 50);
-
-        // x
-        p5.text('x', this.cx - this.lineLength - 20, this.cy - 45);
-
-        // 1
-        p5.text('1', this.cx - this.lineLength - 20, this.cy + 55);
-
-        // y
-        p5.text('y', this.cx + this.lineLength + 20, this.cy + 5);
-
-
-    }
-
-    rescale(t) {
-        return Math.tanh(t);
-    }
-}

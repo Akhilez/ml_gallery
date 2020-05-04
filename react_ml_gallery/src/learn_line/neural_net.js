@@ -26,8 +26,8 @@ export default class MLHelper {
 
     getWeights(){
         return {
-            m: Array.from(this.m.dataSync()),
-            c: Array.from(this.c.dataSync())
+            m: Array.from(this.m.dataSync())[0],
+            c: Array.from(this.c.dataSync())[0]
         }
     }
 
