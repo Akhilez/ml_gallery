@@ -31,7 +31,7 @@ export default class EquationTrainer extends React.Component {
         return (
             <div>
                 <h2 style={{marginTop: "50px"}}>Learn from equation</h2>
-                {<Neuron ref={this.neuronRef}/>}
+                <Neuron ref={this.neuronRef}/>
                 <p>Set "m" and "c" values and train the Neural Network to predict these values.</p>
                 {this.getEquationInput()}
                 <button className={"ActionButton"} onClick={() => this.startTrainingPipeline()}>TRAIN</button>
