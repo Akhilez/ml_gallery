@@ -1,3 +1,3 @@
-class TrailManager {
+export default class TrailManager {
 
 }

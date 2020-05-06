@@ -4,7 +4,7 @@ import Sketch from "react-p5";
 import TrailManager from '../commons/trail_manager';
 
 
-export default class PointsTrainer extends React.Component {
+class PointsTrainer extends React.Component {
 
     constructor(props){
         super(props);
@@ -35,9 +35,10 @@ class Graph extends React.Component{
         this.state = {
             points: [],
             m: 0,
-            c: 0
+            c: 0,
+            isTraining: false,
         };
-        this.trails = TrailManager();
+        this.trails = new TrailManager();
     }
 
     render() {
@@ -55,6 +56,8 @@ class Graph extends React.Component{
         p5.background(200);
 
         // TODO: Draw the axes.
+
+
 
     }
 }
