@@ -1,6 +1,7 @@
 import React from "react";
 import Neuron from "./neuron";
 import Sketch from "react-p5";
+import TrailManager from '../commons/trail_manager';
 
 
 export default class PointsTrainer extends React.Component {
@@ -9,8 +10,8 @@ export default class PointsTrainer extends React.Component {
         super(props);
         this.state = {};
         this.neuronRef = React.createRef();
+        this.graphRef = React.createRef();
     }
-
 
     render() {
         return (
@@ -18,14 +19,31 @@ export default class PointsTrainer extends React.Component {
                 <h2>Learn from points</h2>
                 <p>Create points that are approximately linear and train the Neural Network to predict the best line equation.</p>
                 <Neuron ref={this.neuronRef}/>
-                {this.getSketch()}
+                <Graph ref={this.graphRef}/>
                 <button className={"ActionButton"}>TRAIN</button>
             </div>
         );
     }
 
-    getSketch(){
-        return (<Sketch setup={(p5, parent) => this.setup(p5, parent)} draw={p5 => this.draw(p5)}/>);
+}
+
+
+class Graph extends React.Component{
+
+    constructor(props){
+        super(props);
+        this.state = {
+            points: [],
+            m: 0,
+            c: 0
+        };
+        this.trails = TrailManager();
+    }
+
+    render() {
+        return (
+            <Sketch setup={(p5, parent) => this.setup(p5, parent)} draw={p5 => this.draw(p5)}/>
+        );
     }
 
     setup(p5, parent){
@@ -34,12 +52,9 @@ export default class PointsTrainer extends React.Component {
     }
 
     draw(p5){
+        p5.background(200);
+
+        // TODO: Draw the axes.
 
     }
-
-}
-
-
-class Canvas extends React.Component{
-    // TODO: Make all the input and equation visualization in this canvas.
 }
