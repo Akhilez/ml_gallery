@@ -1,7 +1,8 @@
 jupyter==1.00
 django==3.0.5
 gunicorn
-torch==1.4.0+cpu  # pip install torch==1.4.0+cpu torchvision==0.5.0+cpu -f https://download.pytorch.org/whl/torch_stable.html
+# torch==1.4.0  # pip install torch==1.4.0+cpu torchvision==0.5.0+cpu -f https://download.pytorch.org/whl/torch_stable.html
+# torchvision==0.5.0
 torchvision==0.5.0+cpu
 matplotlib==3.2.1
 channels==2.4.0
