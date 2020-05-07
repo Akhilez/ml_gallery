@@ -100,3 +100,30 @@ a {
 .rounded {
     border-radius: 8px;
 }
+
+
+.ProjectPaginatorBox {
+    padding: 50px;
+    font-size: 20px;
+    border-radius: 20px;
+    transition-duration: 0.4s;
+}
+
+.ProjectPaginatorBox:hover {
+    transition-duration: 0.4s;
+    background-color: transparent;
+    background-image: linear-gradient(to bottom left, #d32f2f, #c2185b);
+    color: white;
+    border-radius: 20px;
+}
+
+.ProjectPaginatorBox:hover a {
+    transition-duration: 0.4s;
+    color: white;
+}
+
+.ProjectPaginatorBox a {
+    font-size: 26px;
+    text-decoration: none;
+    color: #ea1c0d;
+}

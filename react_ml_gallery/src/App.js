@@ -27,6 +27,7 @@ export default function App() {
             6: <ComingSoon project={project}/>,
             7: <ComingSoon project={project}/>,
             8: <ComingSoon project={project}/>,
+            9: <ComingSoon project={project}/>,
         };
         return routerTargets[project.id];
     };

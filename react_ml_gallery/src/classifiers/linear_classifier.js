@@ -8,7 +8,7 @@ import TrainingTracker from "../commons/utils/training_tracker";
 import Chartist from "../commons/utils/chartist";
 import LinearClassifierNeuron from "./linear_classifier_neuron";
 import Neuron from "../commons/components/neuron";
-import {Centered} from "../commons/components/components";
+import {Centered, OutlinedButtonLink} from "../commons/components/components";
 import ProjectPaginator from "../commons/components/project_paginator";
 import '../commons/components/components.css';
 
@@ -16,7 +16,7 @@ import '../commons/components/components.css';
 export default class LinearClassifierPage extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {};
+        this.state = {isTraining: false};
         this.graphRef = React.createRef();
         this.neuronRef = React.createRef();
     }
@@ -30,11 +30,20 @@ export default class LinearClassifierPage extends React.Component {
                     <BreadCrumb path={this.props.project.links.app}/>
                     <Centered>
                         <h1>Linear Classifier</h1>
+                        <br/><p>The goal is to predict a line that divides red points from blue points.<br/>
+                        Use the <b>Left Mouse Button</b> to add a red point and <b>Shift + Left Mouse Button</b> to add blue points.</p><br/>
+                        <OutlinedButtonLink text={"How it works"} link={"#how_it_works"}/><br/>
                         <Neuron ref={this.neuronRef}/>
-                        <button className={"ActionButton"} onClick={() => this.graphRef.current.startTraining()}>TRAIN
+                        <button className={"ActionButton"} onClick={() => {
+                            this.graphRef.current.startTraining();
+                            this.setState({isTraining: true})
+                        }}>TRAIN
                         </button>
-                        <button className={"ActionButton"} onClick={() => this.graphRef.current.stopTraining()}>STOP
-                        </button>
+                        {this.state.isTraining && <button className={"ActionButton"} onClick={() => {
+                            this.graphRef.current.stopTraining();
+                            this.setState({isTraining: false})
+                        }}>STOP
+                        </button>}
                         <button className={"ActionButton"} onClick={() => this.graphRef.current.removeData()}>CLEAR
                             DATA
                         </button>
@@ -68,7 +77,7 @@ class Graph extends React.Component {
 
     render() {
         return (
-            <div className={"rounded"}>
+            <div className={"rounded"} style={{marginTop: 100}}>
                 <Sketch setup={(p5, parent) => this.setup(p5, parent)} draw={p5 => this.draw(p5)}
                         mouseClicked={(p5) => this.handleInput(p5)}/>
             </div>

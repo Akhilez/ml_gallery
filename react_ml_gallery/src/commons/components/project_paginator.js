@@ -1,5 +1,6 @@
 import React from "react";
 import projects from "../../landing/data/projects";
+import '../components/components.css';
 
 
 export default class ProjectPaginator extends React.Component {
@@ -11,22 +12,26 @@ export default class ProjectPaginator extends React.Component {
     render() {
         let prevNextProjects = this.getPrevAndNextProjects(this.project);
         return (
-            <div className={"row"}>
+            <div style={{marginTop: 100}}>
+                <hr/>
+                <div className={"row"}>
                 <div className={"col-md-6"}>
                     {(prevNextProjects.prev != null) &&
-                    <div>
-                        Prev
+                    <div align={"right"} className={"ProjectPaginatorBox"}>
+                        Prev<br/>
                         <a href={prevNextProjects.prev.links.app}>{prevNextProjects.prev.title}</a>
                     </div>
                     }
                 </div>
                 <div className={"col-md-6"}>
                     {(prevNextProjects.next != null) &&
-                    <div>
+                    <div className={"ProjectPaginatorBox"}>
                         Next
+                        <br/>
                         <a href={prevNextProjects.next.links.app}>{prevNextProjects.next.title}</a>
                     </div>
                     }
+                </div>
                 </div>
             </div>
         );
