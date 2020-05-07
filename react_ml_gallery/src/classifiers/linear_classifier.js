@@ -7,6 +7,8 @@ import Sketch from "react-p5";
 import TrainingTracker from "../commons/utils/training_tracker";
 import Chartist from "../commons/utils/chartist";
 import LinearClassifierNeuron from "./linear_classifier_neuron";
+import Neuron from "../commons/components/neuron";
+import {Centered} from "../commons/components/components";
 
 
 export default class LinearClassifierPage extends React.Component {
@@ -14,6 +16,7 @@ export default class LinearClassifierPage extends React.Component {
         super(props);
         this.state = {};
         this.graphRef = React.createRef();
+        this.neuronRef = React.createRef();
     }
 
     render() {
@@ -23,8 +26,11 @@ export default class LinearClassifierPage extends React.Component {
                 <Container>
                     <MLAppBar/>
                     <BreadCrumb path={this.props.project.links.app}/>
-                    <h1>Linear Classifier</h1>
-                    <Graph ref={this.graphRef}/>
+                    <Centered>
+                        <h1>Linear Classifier</h1>
+                        <Neuron ref={this.neuronRef}/>
+                        <Graph ref={this.graphRef} neuronRef={this.neuronRef}/>
+                    </Centered>
                 </Container>
             </div>
         );
@@ -32,15 +38,13 @@ export default class LinearClassifierPage extends React.Component {
 }
 
 
-class Graph extends React.Component{
+class Graph extends React.Component {
 
-    constructor(props){
+    constructor(props) {
         super(props);
         this.neuron = new LinearClassifierNeuron();
         this.state = {
-            points: this.neuron.getDataPoints(),
-            m: 0,
-            c: 0,
+            points: this.neuron.getDataPoints()
         };
 
         this.height = 500;
@@ -48,6 +52,8 @@ class Graph extends React.Component{
 
         this.tracker = new TrainingTracker();
         this.chartist = null;
+
+        this.neuronRef = props.neuronRef;
     }
 
     render() {
@@ -56,13 +62,13 @@ class Graph extends React.Component{
         );
     }
 
-    setup(p5, parent){
+    setup(p5, parent) {
         p5.createCanvas(this.width, this.height).parent(parent);
         p5.frameRate(this.tracker.frameRate);
         this.chartist = new Chartist(p5, this.width, this.height);
     }
 
-    draw(p5){
+    draw(p5) {
         p5.background(200);
 
         this.chartist.drawPoints(this.neuron.getDataPoints());
@@ -73,6 +79,11 @@ class Graph extends React.Component{
             return;
 
         this.tracker.updateFrame();
+
+        if (this.tracker.isNewEpoch()) {
+            this.neuron.fullPass();
+            this.neuronRef.current.set({w: params.w, b: params.b});
+        }
 
         // TODO: Get mouse input
 

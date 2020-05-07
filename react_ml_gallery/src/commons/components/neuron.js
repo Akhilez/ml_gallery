@@ -91,7 +91,7 @@ export default class Neuron extends React.Component {
     }
 
     rescale(t) {
-        return 5 * Math.tanh(t) ** 2;
+        return 5 * Math.tanh(t) ** 2 + 0.1;
     }
 
 }

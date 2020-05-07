@@ -11,11 +11,11 @@ export default class LinearClassifierNeuron {
     }
 
     fullPass() {
-        let data = tf.util.shuffle(this.data);
-        let x = data.slice([0, 0], [-1, 2]);
-        let y = data.slice([0, 2]);
+        tf.util.shuffle(this.data);
+        let x = this.data.slice([0, 0], [-1, 2]);
+        let y = this.data.slice([0, 2]).reshape([-1]);
 
-        let forward = (w, b) => tf.losses.sigmoidCrossEntropy(y, x.matMul(w).add(b));
+        let forward = (w, b) => tf.losses.sigmoidCrossEntropy(y, x.dot(w).add(b));
 
         let grad = tf.grads(forward);
 
@@ -26,6 +26,7 @@ export default class LinearClassifierNeuron {
         this.w = this.w.sub(dw.mul(this.lr));
         this.b = this.b.sub(db.mul(this.lr));
 
+        // loss.print();
         return loss;
     }
 
@@ -57,8 +58,8 @@ export default class LinearClassifierNeuron {
          */
 
         return {
-            m: -w[0] / w[1],
-            c: (-c + 0.5) / w[1]
+            w: -w[0] / w[1],
+            b: (-c + 0.5) / w[1]
         };
     }
 
