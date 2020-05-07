@@ -4,3 +4,6 @@ gunicorn
 torch==1.4.0+cpu  # pip install torch==1.4.0+cpu torchvision==0.5.0+cpu -f https://download.pytorch.org/whl/torch_stable.html
 torchvision==0.5.0+cpu
 matplotlib==3.2.1
+channels==2.4.0
+asgi_redis==1.4.3
+channels-redis==2.4.2
