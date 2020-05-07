@@ -5,7 +5,7 @@ export default class LinearClassifierNeuron {
         this.data = this.getRandomX();
 
         this.w = tf.randomUniform([2], -0.1, 0.1);
-        this.b = tf.randomUniform([1], -0.1, 0.1);
+        this.b = tf.randomUniform([1], 0, 1);
 
         this.lr = 0.5;
     }
@@ -61,6 +61,15 @@ export default class LinearClassifierNeuron {
             w: -w[0] / w[1],
             b: (-c + 0.5) / w[1]
         };
+    }
+
+    removeData() {
+        this.data = tf.tensor([]);
+    }
+
+    addDataPoint(x, y, label) {
+        let newPoint = tf.tensor([x, y, label]).reshape([1, -1]);
+        this.data = this.data.concat(newPoint);
     }
 
 }

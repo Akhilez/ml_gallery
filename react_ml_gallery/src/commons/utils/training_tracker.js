@@ -2,10 +2,10 @@ export default class TrainingTracker {
 
     constructor() {
         this.frame = -1;
-        this.framesPerEpoch = 10;
+        this.framesPerEpoch = 1;
         this.frameRate = 60;
         this.epoch = -1;
-        this.epochs = 1000;
+        this.epochs = 10000;
     }
 
     isComplete() {

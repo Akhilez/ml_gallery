@@ -10,7 +10,7 @@ export default class Chartist {
         points = [[x1, x2, y], [x1, x2, y]]
          */
 
-        let pointDiameter = 5;
+        let pointDiameter = 10;
 
         for (let point of points) {
             let x = point[0] * this.width;
