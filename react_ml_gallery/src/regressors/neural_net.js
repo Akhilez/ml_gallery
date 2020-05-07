@@ -2,13 +2,13 @@ import * as tf from "@tensorflow/tfjs";
 
 export default class MLHelper {
 
-    constructor(){
+    constructor() {
         this.m = tf.randomUniform([1], -0.5, 0.5);
         this.c = tf.randomUniform([1], -0.5, 0.5);
         this.lr = 0.1;
     }
 
-    fullPass (x, y) {
+    fullPass(x, y) {
         x = tf.tensor([x]);
         y = tf.tensor([y]);
 
@@ -24,7 +24,7 @@ export default class MLHelper {
         return loss;
     }
 
-    getWeights(){
+    getWeights() {
         return {
             m: Array.from(this.m.dataSync())[0],
             c: Array.from(this.c.dataSync())[0]

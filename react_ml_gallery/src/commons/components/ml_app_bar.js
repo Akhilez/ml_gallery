@@ -1,8 +1,8 @@
 import React from "react";
 import Navbar from "react-bootstrap/Navbar";
 import Nav from "react-bootstrap/Nav";
-import ak_logo from '../commons/images/AK_logo.svg';
-import '../landing/landing.css';
+import ak_logo from '../images/AK_logo.svg';
+import '../../landing/landing.css';
 
 
 class MLAppBar extends React.Component {

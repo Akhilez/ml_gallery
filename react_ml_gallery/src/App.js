@@ -4,15 +4,15 @@ import LandingPage from "./landing/landing";
 import projects from './landing/data/projects';
 import ComingSoon from "./landing/coming_soon";
 import 'rsuite/dist/styles/rsuite-default.css';
-
+import MnistGanPage from "./mnist_gan/mnist_gan";
+import LearnLinePage from "./regressors/learn_line";
+import LinearClassifierPage from "./classifiers/linear_classifier";
 
 import {
     BrowserRouter as Router,
     Switch,
     Route,
 } from "react-router-dom";
-import MnistGanPage from "./mnist_gan/mnist_gan";
-import LearnLinePage from "./learn_line/learn_line";
 
 
 export default function App() {
@@ -20,7 +20,7 @@ export default function App() {
     const getProjectComponent = function (project) {
         let routerTargets = {
             1: <LearnLinePage project={project}/>,
-            2: <ComingSoon project={project}/>,
+            2: <LinearClassifierPage project={project}/>,
             3: <ComingSoon project={project}/>,
             4: <ComingSoon project={project}/>,
             5: <MnistGanPage project={project}/>,

@@ -1,6 +1,6 @@
 import React from "react";
 import Container from "react-bootstrap/Container";
-import MLAppBar from "../commons/ml_app_bar";
+import MLAppBar from "../commons/components/ml_app_bar";
 import '../landing/landing.css';
 import InputLabel from "@material-ui/core/InputLabel";
 import Select from "@material-ui/core/Select";

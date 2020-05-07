@@ -12,6 +12,10 @@
           "/learn_line": {
             "title": "Learn A Line",
             "link": "/learn_line"
+          },
+          "/linear_classifier": {
+            "title": "Linear Classifier",
+            "link": "/linear_classifier"
           }
         }
       }

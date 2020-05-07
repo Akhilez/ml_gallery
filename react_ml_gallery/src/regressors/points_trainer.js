@@ -1,5 +1,5 @@
 import React from "react";
-import Neuron from "./neuron";
+import Neuron from "../commons/components/neuron";
 import Sketch from "react-p5";
 import TrailManager from '../commons/trail_manager';
 

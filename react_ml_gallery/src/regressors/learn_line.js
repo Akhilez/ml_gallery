@@ -1,6 +1,6 @@
 import React from "react";
 import {Container} from "react-bootstrap";
-import MLAppBar from "../commons/ml_app_bar";
+import MLAppBar from "../commons/components/ml_app_bar";
 import {Centered, OutlinedButtonLink} from "../commons/components/components";
 import '../landing/landing.css';
 import './learn_line.css';
@@ -8,7 +8,7 @@ import '../commons/components/components.css';
 import ProjectsNav from "../commons/components/projects_nav";
 import BreadCrumb from "../commons/components/breadcrumb";
 import MLHelper from "./neural_net";
-import Neuron from "./neuron";
+import Neuron from "../commons/components/neuron";
 import ProjectPaginator from "../commons/components/project_paginator";
 import {CartesianGrid, Legend, Line, LineChart, Tooltip, XAxis, YAxis} from "recharts";
 import {Input} from "rsuite";
@@ -18,9 +18,7 @@ export default class LearnLinePage extends React.Component {
     render() {
         return (
             <div>
-                <div style={{float: "left"}}>
-                    <ProjectsNav activeKey={this.props.project.id}/>
-                </div>
+                <ProjectsNav activeKey={this.props.project.id}/>
                 <Container>
                     <MLAppBar/>
                     <BreadCrumb path={this.props.project.links.app}/>

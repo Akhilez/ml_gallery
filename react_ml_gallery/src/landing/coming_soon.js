@@ -1,7 +1,7 @@
 import React from "react";
 import './landing.css';
 import underConstructionImage from './images/under_construction.png';
-import MLAppBar from "../commons/ml_app_bar";
+import MLAppBar from "../commons/components/ml_app_bar";
 import {Centered} from "../commons/components/components";
 
 
