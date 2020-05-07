@@ -4,10 +4,10 @@ export default class LinearClassifierNeuron {
     constructor() {
         this.data = this.getRandomX();
 
-        this.w = tf.randomUniform([2], -0.5, 0.5);
-        this.b = tf.randomUniform([1], -0.5, 0.5);
+        this.w = tf.randomUniform([2], -0.1, 0.1);
+        this.b = tf.randomUniform([1], -0.1, 0.1);
 
-        this.lr = 0.1;
+        this.lr = 0.5;
     }
 
     fullPass() {
@@ -31,7 +31,7 @@ export default class LinearClassifierNeuron {
     }
 
     getRandomX() {
-        let size = 10;
+        let size = 5;
 
         let points_a = tf.randomUniform([size, 2], 0, 0.5);
         let points_b = tf.randomUniform([size, 2], 0.5, 1);
@@ -43,7 +43,7 @@ export default class LinearClassifierNeuron {
     }
 
     getDataPoints() {
-        return this.data.dataSync();
+        return this.data.arraySync();
     }
 
     getMC() {

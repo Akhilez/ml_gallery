@@ -9,6 +9,7 @@ import Chartist from "../commons/utils/chartist";
 import LinearClassifierNeuron from "./linear_classifier_neuron";
 import Neuron from "../commons/components/neuron";
 import {Centered} from "../commons/components/components";
+import ProjectPaginator from "../commons/components/project_paginator";
 
 
 export default class LinearClassifierPage extends React.Component {
@@ -31,6 +32,7 @@ export default class LinearClassifierPage extends React.Component {
                         <Neuron ref={this.neuronRef}/>
                         <Graph ref={this.graphRef} neuronRef={this.neuronRef}/>
                     </Centered>
+                    <ProjectPaginator project={this.props.project}/>
                 </Container>
             </div>
         );
@@ -69,11 +71,11 @@ class Graph extends React.Component {
     }
 
     draw(p5) {
-        p5.background(200);
+        p5.background(255);
 
         this.chartist.drawPoints(this.neuron.getDataPoints());
         let params = this.neuron.getMC();
-        this.chartist.drawLine(params.m, params.c);
+        this.chartist.drawLine(params.w, params.b);
 
         if (this.tracker.isComplete())
             return;
