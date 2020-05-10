@@ -37,7 +37,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'MLGallery.apps.MlgalleryConfig',
-    'channels'
+    'channels',
+    'experiments',
 ]
 
 MIDDLEWARE = [
