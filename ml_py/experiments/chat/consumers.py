@@ -1,4 +1,4 @@
-# chat/consumers.py
+import time
 import json
 from channels.generic.websocket import WebsocketConsumer
 
@@ -16,4 +16,10 @@ class ChatConsumer(WebsocketConsumer):
 
         self.send(text_data=json.dumps({
             'message': message
+        }))
+
+        time.sleep(5)
+
+        self.send(text_data=json.dumps({
+            'message': 'This is sent after 5 seconds.'
         }))
