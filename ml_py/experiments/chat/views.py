@@ -6,4 +6,4 @@ def chat(request):
 
 
 def chat_room(request, room):
-    return render(request, 'experiments/chat/index.html', {})
+    return render(request, 'experiments/chat/room.html', {'room_name': room})
