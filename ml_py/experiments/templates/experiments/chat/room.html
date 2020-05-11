@@ -9,7 +9,15 @@
 <textarea id="chat-log" cols="100" rows="20"></textarea><br>
 <input id="chat-message-input" type="text" size="100"><br>
 <input id="chat-message-submit" type="button" value="Send">
+<input id="revButton" type="button" value="Reverse">
+
 <script>
+    let traceId = 'RandomStringHere,ProbablyUUID';
+    let messageWrapper = {
+        traceId: traceId,
+        type: null,
+        message: null,
+    };
 
     const chatSocket = new WebSocket(
         'ws://'
@@ -28,12 +36,19 @@
 
     document.querySelector('#chat-message-submit').onclick = function (e) {
         const messageInputDom = document.querySelector('#chat-message-input');
-        const message = messageInputDom.value;
-        chatSocket.send(JSON.stringify({
-            'message': message
-        }));
+        messageWrapper.message = messageInputDom.value;
+        messageWrapper.type = 'sendMessage';
+        chatSocket.send(JSON.stringify(messageWrapper));
         messageInputDom.value = '';
     };
+
+    document.querySelector('#revButton').onclick = (e) => {
+        messageWrapper.message = 'reverse';
+        messageWrapper.type = 'action';
+        chatSocket.send(JSON.stringify(messageWrapper));
+    };
+
+
 </script>
 </body>
 </html>
