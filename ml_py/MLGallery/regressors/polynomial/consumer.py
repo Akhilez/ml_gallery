@@ -1,0 +1,43 @@
+import uuid
+
+from channels.generic.websocket import WebsocketConsumer
+import json
+
+from lib.trace_manager import TraceManager
+
+
+class PolyRegConsumer(WebsocketConsumer):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.trace_id = None
+        self.trainer = None
+
+    def connect(self):
+        self.accept()
+        self.trainer = PolyRegConsumer()
+
+    def disconnect(self, close_code):
+        self.trainer.stop_training()
+        if self.trace_id is not None:
+            del TraceManager.jobs[self.trace_id]
+
+    def receive(self, text_data=None, bytes_data=None):
+        data = json.loads(text_data)
+
+        if self.trace_id is None:
+            self.trace_id = uuid.uuid1()
+            TraceManager.jobs[self.trace_id] = self
+
+        action = data['action']
+
+        if action == 'start_training':
+            self.start_training(data)
+
+        if action == 'stop_training':
+            self.trainer.stop_training()
+
+    def start_training(self, data):
+        self.trainer.start_training(data['data'])
+
+    def send_status(self):
+        pass  # TODO: Collect data from trainer and send it to the client.
