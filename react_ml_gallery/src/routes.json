@@ -16,6 +16,10 @@
           "/linear_classifier": {
             "title": "Linear Classifier",
             "link": "/linear_classifier"
+          },
+          "/learn_curve": {
+            "title": "Learn A Curve",
+            "link": "/learn_curve"
           }
         }
       }

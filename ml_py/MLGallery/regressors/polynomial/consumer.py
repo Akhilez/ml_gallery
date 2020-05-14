@@ -7,6 +7,28 @@ from lib.trace_manager import TraceManager
 
 
 class PolyRegConsumer(WebsocketConsumer):
+    """
+    Receives a json of the following type:
+    {
+        action: start_training | stop_training,
+        trace_id: UUID | None
+        data: data
+    }
+
+    Sends json:
+    {
+        action: status_update
+        trace_id: UUID
+        data: {
+            epoch: 10
+            train_error: 0.1
+            weights: {
+                L1: [1.2, -0.3, 4.5]
+            }
+        }
+    }
+    """
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.trace_id = None

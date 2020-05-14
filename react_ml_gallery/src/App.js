@@ -7,6 +7,8 @@ import 'rsuite/dist/styles/rsuite-default.css';
 import MnistGanPage from "./mnist_gan/mnist_gan";
 import LearnLinePage from "./regressors/learn_line";
 import LinearClassifierPage from "./classifiers/linear_classifier";
+import LearnCurvePage from './regressors/curve/learn_curve'
+
 
 import {
     BrowserRouter as Router,
@@ -27,7 +29,7 @@ export default function App() {
             6: <ComingSoon project={project}/>,
             7: <ComingSoon project={project}/>,
             8: <ComingSoon project={project}/>,
-            9: <ComingSoon project={project}/>,
+            9: <LearnCurvePage project={project}/>,
         };
         return routerTargets[project.id];
     };
