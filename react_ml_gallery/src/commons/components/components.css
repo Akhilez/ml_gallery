@@ -91,6 +91,60 @@ a {
     background-image: linear-gradient(to bottom left, #d32f2f, #c2185b);
 }
 
+.OutlineButton {
+    transition-duration: 0.4s;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #ea1c0d;
+    min-width: 100px;
+    min-height: 50px;
+    text-decoration: none;
+    color: #ea1c0d;
+    margin: 10px;
+    background-color: transparent;
+}
+
+.OutlineButton:hover {
+    transition-duration: 0.4s;
+    color: white;
+    text-decoration: none;
+    border: none;
+    background-image: linear-gradient(to bottom left, #ea1c0d, #e91e63);
+}
+
+.OutlineButton:active {
+    outline: none;
+    background-color: transparent;
+    background-image: linear-gradient(to bottom left, #d32f2f, #c2185b);
+}
+
+.PassiveButton {
+    transition-duration: 0.4s;
+    padding: 10px;
+    border-radius: 8px;
+    border: 0px solid #ea1c0d;
+    min-width: 100px;
+    min-height: 50px;
+    text-decoration: none;
+    color: #ea1c0d;
+    margin: 10px;
+    background-color: transparent;
+}
+
+.PassiveButton:hover {
+    transition-duration: 0.4s;
+    color: white;
+    text-decoration: none;
+    border: none;
+    background-image: linear-gradient(to bottom left, #ea1c0d, #e91e63);
+}
+
+.PassiveButton:active {
+    outline: none;
+    background-color: transparent;
+    background-image: linear-gradient(to bottom left, #d32f2f, #c2185b);
+}
+
 
 .inline {
     display: inline-block;

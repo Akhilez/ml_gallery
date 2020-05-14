@@ -1,5 +1,6 @@
 import torch
 from lib.nn_utils import get_scaled_random_weights
+from ml_py.settings import logger
 
 
 class PolyRegTrainer(torch.nn.Module):
@@ -19,10 +20,18 @@ class PolyRegTrainer(torch.nn.Module):
         self.epoch = 0
         self.loss = 0
 
+    def get_parameters(self):
+        return [self.w, self.b]
+
+    def get_float_parameters(self):
+        w = self.w.tolist()
+        w.extend(self.b.tolist())
+        return w
+
     def init_weights(self):
-        self.w = get_scaled_random_weights(self.order)
+        self.w = get_scaled_random_weights([self.order])
         self.b = torch.zeros(1)
-        self.optimizer = torch.optim.Adam([self.w, self.b])
+        self.optimizer = torch.optim.Adam(self.get_parameters())
 
     def forward(self, x):
         """
@@ -48,7 +57,8 @@ class PolyRegTrainer(torch.nn.Module):
         -------
 
         """
-        data = torch.stack(data)
+        data = torch.tensor(data)
+
         x = data[:, 0]
         y = data[:, 1]
 
@@ -66,7 +76,8 @@ class PolyRegTrainer(torch.nn.Module):
             self.epoch = epoch
 
             if epoch % self.update_interval == 0:
-                self.consumer.send_status()
+                logger.info(f'must train: {self.must_train}. epoch: {epoch}')
+                self.consumer.send_update_status()
 
             if not self.must_train:
                 return

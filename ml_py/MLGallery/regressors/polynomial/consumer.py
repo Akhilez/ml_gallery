@@ -3,7 +3,9 @@ import uuid
 from channels.generic.websocket import WebsocketConsumer
 import json
 
+from MLGallery.regressors.polynomial.trainer import PolyRegTrainer
 from lib.trace_manager import TraceManager
+from ml_py.settings import logger
 
 
 class PolyRegConsumer(WebsocketConsumer):
@@ -36,7 +38,7 @@ class PolyRegConsumer(WebsocketConsumer):
 
     def connect(self):
         self.accept()
-        self.trainer = PolyRegConsumer()
+        self.trainer = PolyRegTrainer(self)
 
     def disconnect(self, close_code):
         self.trainer.stop_training()
@@ -47,7 +49,7 @@ class PolyRegConsumer(WebsocketConsumer):
         data = json.loads(text_data)
 
         if self.trace_id is None:
-            self.trace_id = uuid.uuid1()
+            self.trace_id = str(uuid.uuid1())
             TraceManager.jobs[self.trace_id] = self
 
         action = data['action']
@@ -56,10 +58,20 @@ class PolyRegConsumer(WebsocketConsumer):
             self.start_training(data)
 
         if action == 'stop_training':
+            logger.info(f'must train in consumer: {self.trainer.must_train}')
             self.trainer.stop_training()
 
     def start_training(self, data):
         self.trainer.start_training(data['data'])
 
-    def send_status(self):
-        pass  # TODO: Collect data from trainer and send it to the client.
+    def send_update_status(self):
+        data = {
+            'action': 'status_update',
+            'trace_id': self.trace_id,
+            'data': {
+                'epoch': self.trainer.epoch,
+                'train_error': float(self.trainer.loss),
+                'weights': self.trainer.get_float_parameters()
+            }
+        }
+        self.send(text_data=json.dumps(data))
