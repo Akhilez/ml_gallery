@@ -70,7 +70,6 @@ export default class LearnCurvePage extends React.Component {
         };
         this.socket.onmessage = (event) => {
             const data = JSON.parse(event.data);
-            console.log(data);
             this.traceId = data.trace_id;
             if (data.action === 'status_update') {
                 this.updateTrainingStatus(data.data);
@@ -79,7 +78,6 @@ export default class LearnCurvePage extends React.Component {
     }
 
     updateTrainingStatus(data) {
-        this.setState({loss: data.loss});
-        console.log(data);
+        this.setState({loss: data.train_error});
     }
 }
