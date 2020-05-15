@@ -36,7 +36,7 @@ export default class LearnCurvePage extends React.Component {
                         <h1>Learn A Curve</h1>
                         <OutlinedButtonLink text={"How it works"} link={"#how_it_works"}/><br/>
                         <button className={"ActionButton"} onClick={() => this.startTraining()}>TRAIN</button>
-                        { this.state.isTraining && <button className={"PassiveButton"} onClick={() => this.stopTraining()}>STOP</button> }
+                        { this.state.isTraining && <button className={"PassiveButton"} onClick={() => this.stopTraining()}>STOP</button> }<br/>
                         loss: {this.state.loss}
                     </Centered>
                     <ProjectPaginator project={this.props.project}/>
