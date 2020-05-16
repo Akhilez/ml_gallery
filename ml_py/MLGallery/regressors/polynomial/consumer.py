@@ -1,16 +1,14 @@
-import asyncio
 import uuid
 
-from channels.generic.websocket import AsyncWebsocketConsumer
+from channels.generic.websocket import WebsocketConsumer
 import json
 
 from MLGallery.regressors.polynomial.trainer import PolyRegTrainer
 from lib.trace_manager import TraceManager
 from ml_py.settings import logger
-from lib.nn_utils import fire_and_forget
 
 
-class PolyRegConsumer(AsyncWebsocketConsumer):
+class PolyRegConsumer(WebsocketConsumer):
     """
     Receives a json of the following type:
     {
@@ -38,16 +36,16 @@ class PolyRegConsumer(AsyncWebsocketConsumer):
         self.trace_id = None
         self.trainer = None
 
-    async def connect(self):
+    def connect(self):
         self.trainer = PolyRegTrainer(self)
-        await self.accept()
+        self.accept()
 
-    async def disconnect(self, close_code):
+    def disconnect(self, close_code):
         self.trainer.stop_training()
         if self.trace_id is not None:
             del TraceManager.jobs[self.trace_id]
 
-    async def receive(self, text_data=None, bytes_data=None):
+    def receive(self, text_data=None, bytes_data=None):
         data = json.loads(text_data)
 
         if self.trace_id is None:
@@ -57,17 +55,17 @@ class PolyRegConsumer(AsyncWebsocketConsumer):
         action = data['action']
 
         if action == 'start_training':
-            await self.start_training(data)
+            self.start_training(data)
 
         if action == 'stop_training':
             logger.info(f'must train in consumer: {self.trainer.must_train}')
             self.trainer.stop_training()
 
-    async def start_training(self, data):
+    def start_training(self, data):
         logger.info(f'{data=}')
-        asyncio.create_task(self.trainer.start_training(data['data']))
+        self.trainer.start_training(data['data'])
 
-    async def send_update_status(self):
+    def send_update_status(self):
         data = {
             'action': 'status_update',
             'trace_id': self.trace_id,
@@ -77,4 +75,4 @@ class PolyRegConsumer(AsyncWebsocketConsumer):
                 'weights': self.trainer.get_float_parameters()
             }
         }
-        await self.send(text_data=json.dumps(data))
+        self.send(text_data=json.dumps(data))

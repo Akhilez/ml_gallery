@@ -48,7 +48,7 @@ class PolyRegTrainer(torch.nn.Module):
         x = torch.stack([x ** i for i in range(self.order, 0, -1)])
         return sum((x.T * self.w).T) + self.b
 
-    async def start_training(self, data):
+    def start_training(self, data):
         """
         1. Initialize model with weights
         Parameters
@@ -79,7 +79,7 @@ class PolyRegTrainer(torch.nn.Module):
 
             if epoch % self.update_interval == 0:
                 logger.info(f'must train: {self.must_train}. epoch: {epoch}')
-                asyncio.create_task(self.consumer.send_update_status())
+                self.consumer.send_update_status()
 
             if not self.must_train:
                 return
