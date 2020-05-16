@@ -1,3 +1,5 @@
+import asyncio
+
 import torch
 from lib.nn_utils import get_scaled_random_weights
 from ml_py.settings import logger
@@ -12,7 +14,7 @@ class PolyRegTrainer(torch.nn.Module):
         self.consumer = consumer
         self.order = 5
         self.epochs = 20000
-        self.update_interval = 100
+        self.update_interval = 1000
         self.optimizer = None
         self.must_train = False
 
@@ -46,7 +48,7 @@ class PolyRegTrainer(torch.nn.Module):
         x = torch.stack([x ** i for i in range(self.order, 0, -1)])
         return sum((x.T * self.w).T) + self.b
 
-    def start_training(self, data):
+    async def start_training(self, data):
         """
         1. Initialize model with weights
         Parameters
@@ -77,7 +79,7 @@ class PolyRegTrainer(torch.nn.Module):
 
             if epoch % self.update_interval == 0:
                 logger.info(f'must train: {self.must_train}. epoch: {epoch}')
-                self.consumer.send_update_status()
+                asyncio.create_task(self.consumer.send_update_status())
 
             if not self.must_train:
                 return

@@ -51,6 +51,7 @@ export default class LearnCurvePage extends React.Component {
             trace_id: this.traceId,
             data: [[1.1, 2.2], [3.3, 4.4]],
         };
+        console.log(JSON.stringify(payload));
         this.socket.send(JSON.stringify(payload));
         this.setState({isTraining: true});
     }
@@ -70,6 +71,7 @@ export default class LearnCurvePage extends React.Component {
         };
         this.socket.onmessage = (event) => {
             const data = JSON.parse(event.data);
+            console.log(data);
             this.traceId = data.trace_id;
             if (data.action === 'status_update') {
                 this.updateTrainingStatus(data.data);
