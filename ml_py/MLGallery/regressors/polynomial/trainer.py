@@ -1,5 +1,3 @@
-import asyncio
-
 import torch
 from lib.nn_utils import get_scaled_random_weights
 from ml_py.settings import logger

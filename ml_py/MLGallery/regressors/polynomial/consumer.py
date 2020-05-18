@@ -63,7 +63,8 @@ class PolyRegConsumer(WebsocketConsumer):
 
     def start_training(self, data):
         logger.info(f'{data=}')
-        self.trainer.start_training(data['data'])
+        import threading
+        threading.Thread(target=self.trainer.start_training, args=(data['data'],)).start()
 
     def send_update_status(self):
         data = {
