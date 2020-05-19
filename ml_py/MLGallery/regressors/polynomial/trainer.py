@@ -79,6 +79,10 @@ class PolyRegTrainer(torch.nn.Module):
     def get_float_data(self):
         return [self.x.tolist(), self.y.tolist()]
 
+    def add_new_point(self, x, y):
+        self.x = torch.cat((self.x, torch.tensor([x])))
+        self.y = torch.cat((self.y, torch.tensor([y])))
+
     def get_random_sample_data(self, size: int):
         """
         1. x = random from -1 to 1

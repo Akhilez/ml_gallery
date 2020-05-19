@@ -140,7 +140,12 @@ export default class LearnCurvePage extends React.Component {
     }
 
     add_new_point(x, y) {
-        // TODO: Add new point to mlpy.
+        this.socket.send(JSON.stringify({
+            action: 'new_point',
+            trace_id: this.traceId,
+            x: x,
+            y: y,
+        }))
     }
 
     drawDataToCanvas(x, y) {

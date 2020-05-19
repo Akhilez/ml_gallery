@@ -62,6 +62,9 @@ class PolyRegConsumer(WebsocketConsumer):
         
         if action == 'change_order':
             self.trainer.change_order()
+
+        if action == 'new_point':
+            self.trainer.add_new_point(data['x'], data['y'])
         
     def init_trainer(self):
         """
