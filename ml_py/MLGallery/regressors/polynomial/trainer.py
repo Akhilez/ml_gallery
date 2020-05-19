@@ -7,31 +7,20 @@ class PolyRegTrainer(torch.nn.Module):
 
     def __init__(self, consumer):
         super().__init__()
-        self.w = None
-        self.b = None
-        self.consumer = consumer
         self.order = 5
+        self.w = get_scaled_random_weights([self.order])
+        self.b = torch.zeros(1, requires_grad=True)
+        self.consumer = consumer
         self.epochs = 20000
         self.update_interval = 1000
-        self.optimizer = None
+        self.optimizer = torch.optim.Adam([self.w, self.b])
         self.must_train = False
+        self.x = None
+        self.y = None
 
         # -------- Current Epoch -----------
         self.epoch = 0
         self.loss = 0
-
-    def get_parameters(self):
-        return [self.w, self.b]
-
-    def get_float_parameters(self):
-        w = self.w.tolist()
-        w.extend(self.b.tolist())
-        return w
-
-    def init_weights(self):
-        self.w = get_scaled_random_weights([self.order])
-        self.b = torch.zeros(1)
-        self.optimizer = torch.optim.Adam(self.get_parameters())
 
     def forward(self, x):
         """
@@ -46,9 +35,8 @@ class PolyRegTrainer(torch.nn.Module):
         x = torch.stack([x ** i for i in range(self.order, 0, -1)])
         return sum((x.T * self.w).T) + self.b
 
-    def start_training(self, data):
+    def start_training(self):
         """
-        1. Initialize model with weights
         Parameters
         ----------
         data: Iterable of shape (any, 2)
@@ -57,30 +45,52 @@ class PolyRegTrainer(torch.nn.Module):
         -------
 
         """
-        data = torch.tensor(data)
 
-        x = data[:, 0]
-        y = data[:, 1]
-
-        self.init_weights()
         self.must_train = True
 
-        for epoch in range(self.epochs):
+        for epoch in range(self.epochs + 1):
 
-            yh = self(x)
-            self.loss = sum((y - yh) ** 2)
+            yh = self(self.x)
+            loss = sum((self.y - yh) ** 2)
 
-            self.loss.backward()
+            loss.backward()
             self.optimizer.step()
             self.optimizer.zero_grad()
             self.epoch = epoch
-
-            if epoch % self.update_interval == 0:
-                logger.info(f'must train: {self.must_train}. epoch: {epoch}')
-                self.consumer.send_update_status()
+            self.loss = float(loss)
 
             if not self.must_train:
-                return
+                return self.consumer.send_update_status()
+
+            if epoch % self.update_interval == 0:
+                self.consumer.send_update_status()
 
     def stop_training(self):
         self.must_train = False
+
+    def change_order(self, new_order):
+        pass  # TODO: Change order and its dependencies
+
+    def get_float_parameters(self):
+        w = self.w.tolist()
+        w.extend(self.b.tolist())
+        return w
+
+    def get_float_data(self):
+        return [self.x.tolist(), self.y.tolist()]
+
+    def get_random_sample_data(self, size: int):
+        """
+        1. x = random from -1 to 1
+        2. w = random from -0.01 to 0.01
+        3. y = wx + b
+        4. return x, y
+        """
+
+        x = torch.FloatTensor(size).uniform_(-1, 1)
+        w = torch.FloatTensor(self.order).uniform_(-0.01, 0.01)
+
+        new_x = torch.stack([x ** i for i in range(self.order, 0, -1)])
+        y = sum((new_x.T * w).T)
+
+        return x, y

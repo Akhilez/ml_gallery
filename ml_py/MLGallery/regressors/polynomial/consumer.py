@@ -37,8 +37,8 @@ class PolyRegConsumer(WebsocketConsumer):
         self.trainer = None
 
     def connect(self):
-        self.trainer = PolyRegTrainer(self)
         self.accept()
+        self.init_trainer()
 
     def disconnect(self, close_code):
         self.trainer.stop_training()
@@ -49,27 +49,44 @@ class PolyRegConsumer(WebsocketConsumer):
         data = json.loads(text_data)
 
         if self.trace_id is None:
-            self.trace_id = str(uuid.uuid1())
-            TraceManager.jobs[self.trace_id] = self
+            logger.error("No trace ID found")
+            return
 
         action = data['action']
 
         if action == 'start_training':
-            self.start_training(data)
+            self.start_training()
 
         if action == 'stop_training':
-            logger.info(f'must train in consumer: {self.trainer.must_train}')
             self.trainer.stop_training()
+        
+        if action == 'change_order':
+            self.trainer.change_order()
+        
+    def init_trainer(self):
+        """
+        1. Initialize order, x, y, w, b, trace_id
+        2. Send sample data to client.
+        """
+        self.trace_id = str(uuid.uuid1())
+        TraceManager.jobs[self.trace_id] = self
 
-    def start_training(self, data):
-        logger.info(f'{data=}')
+        self.trainer = PolyRegTrainer(self)
+        self.trainer.x, self.trainer.y = self.trainer.get_random_sample_data(10)
+
+        self.send(text_data=json.dumps({
+            'action': 'init',
+            'trace_id': self.trace_id,
+            'data': self.trainer.get_float_data(),
+        }))
+
+    def start_training(self):
         import threading
-        threading.Thread(target=self.trainer.start_training, args=(data['data'],)).start()
+        threading.Thread(target=self.trainer.start_training).start()
 
     def send_update_status(self):
         data = {
             'action': 'status_update',
-            'trace_id': self.trace_id,
             'data': {
                 'epoch': self.trainer.epoch,
                 'train_error': float(self.trainer.loss),
