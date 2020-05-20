@@ -1,4 +1,5 @@
 import torch
+import threading
 from lib.nn_utils import get_scaled_random_weights
 from ml_py.settings import logger
 
@@ -8,11 +9,11 @@ class PolyRegTrainer(torch.nn.Module):
     def __init__(self, consumer):
         super().__init__()
         self.order = 5
-        self.w = get_scaled_random_weights([self.order])
+        self.w = torch.zeros(self.order, requires_grad=True)
         self.b = torch.zeros(1, requires_grad=True)
         self.consumer = consumer
         self.epochs = 20000
-        self.update_interval = 1000
+        self.update_interval = 100
         self.optimizer = torch.optim.Adam([self.w, self.b])
         self.must_train = False
         self.x = None
@@ -60,13 +61,16 @@ class PolyRegTrainer(torch.nn.Module):
             self.loss = float(loss)
 
             if not self.must_train:
-                return self.consumer.send_update_status()
+                return self.update_consumer()
 
             if epoch % self.update_interval == 0:
                 self.consumer.send_update_status()
 
     def stop_training(self):
         self.must_train = False
+
+    def update_consumer(self):
+        threading.Thread(target=self.consumer.send_update_status).start()
 
     def change_order(self, new_order):
         pass  # TODO: Change order and its dependencies
@@ -84,8 +88,8 @@ class PolyRegTrainer(torch.nn.Module):
             self.x = torch.tensor([x])
             self.y = torch.tensor([y])
         else:
-            self.x = torch.cat((self.x, torch.tensor([x])))
-            self.y = torch.cat((self.y, torch.tensor([y])))
+            self.x = torch.cat((self.x, torch.tensor([x], dtype=torch.float32)))
+            self.y = torch.cat((self.y, torch.tensor([y], dtype=torch.float32)))
 
     def get_random_sample_data(self, size: int):
         """
@@ -96,7 +100,7 @@ class PolyRegTrainer(torch.nn.Module):
         """
 
         x = torch.FloatTensor(size).uniform_(-1, 1)
-        w = torch.FloatTensor(self.order).uniform_(-0.01, 0.01)
+        w = torch.tensor([0.62, -1, -2.5, 1.1, 1.3])
 
         new_x = torch.stack([x ** i for i in range(self.order, 0, -1)])
         y = sum((new_x.T * w).T)

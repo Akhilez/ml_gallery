@@ -78,7 +78,7 @@ class PolyRegConsumer(WebsocketConsumer):
         TraceManager.jobs[self.trace_id] = self
 
         self.trainer = PolyRegTrainer(self)
-        self.trainer.x, self.trainer.y = self.trainer.get_random_sample_data(10)
+        self.trainer.x, self.trainer.y = self.trainer.get_random_sample_data(20)
 
         self.send(text_data=json.dumps({
             'action': 'init',

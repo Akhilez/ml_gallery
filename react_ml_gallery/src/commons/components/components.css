@@ -76,7 +76,6 @@ a {
     color: #ea1c0d;
     margin: 10px;
 }
-
 .outlinedButtonLink:hover {
     transition-duration: 0.4s;
     color: white;
@@ -84,11 +83,18 @@ a {
     border: none;
     background-image: linear-gradient(to bottom left, #ea1c0d, #e91e63);
 }
-
 .outlinedButtonLink:active {
     outline: none;
     background-color: transparent;
     background-image: linear-gradient(to bottom left, #d32f2f, #c2185b);
+}
+.outlinedButtonLink:focus {
+    text-decoration: none;
+    color: #ea1c0d;
+}
+.outlinedButtonLink:focus:hover {
+    text-decoration: none;
+    color: white;
 }
 
 .OutlineButton {
@@ -143,18 +149,21 @@ a {
     outline: none;
     background-color: transparent;
     background-image: linear-gradient(to bottom left, #d32f2f, #c2185b);
+    border: none;
 }
 
+.PassiveButton:focus {
+    border: none;
+    outline: none;
+}
 
 .inline {
     display: inline-block;
 }
 
-
 .rounded {
     border-radius: 8px;
 }
-
 
 .ProjectPaginatorBox {
     padding: 50px;
