@@ -4,7 +4,7 @@
 
 Technologies used: PyTorch, React, TensorFlow JS
 
-Deployed at: https://ml.akhilez.com\
+Deployed at: https://ml.akhilez.com  
 Main site: https://akhilez.com
 
 
