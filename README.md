@@ -1,9 +1,10 @@
-# Neural Net Gallery
-Neural Net Gallery is a master project of few of my experiments with Neural Networks. It is designed in a way to help a beginner understand the concepts with visualizations. You can train and run the networks live and see the results for yourself. Every project here is followed by an explanation on how it works.
+![MLGalleryLogo](react_ml_gallery/src/landing/ml_logo/ml_logo.png)
 
-Technologies used: deep-learning, react.js, tensorflow, pytorch, keras, javascript
+**Machine Learning Gallery** is a master project of few of my experiments with Neural Networks. It is designed in a way to help a beginner understand the concepts with visualizations. You can train and run the networks live and see the results for yourself. Every project here is followed by an explanation on how it works.
 
-Deployed at: https://ml.akhilez.com
+Technologies used: PyTorch, React, TensorFlow JS
+
+Deployed at: https://ml.akhilez.com\
 Main site: https://akhilez.com
 
 

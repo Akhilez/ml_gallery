@@ -20,18 +20,18 @@ import {
 export default function App() {
 
     const getProjectComponent = function (project) {
-        let routerTargets = {
-            1: <LearnLinePage project={project}/>,
-            2: <LinearClassifierPage project={project}/>,
-            3: <ComingSoon project={project}/>,
-            4: <ComingSoon project={project}/>,
-            5: <MnistGanPage project={project}/>,
-            6: <ComingSoon project={project}/>,
-            7: <ComingSoon project={project}/>,
-            8: <ComingSoon project={project}/>,
-            9: <LearnCurvePage project={project}/>,
-        };
-        return routerTargets[project.id];
+        switch (project.id) {
+            case 1: return <LearnLinePage project={project}/>;
+            case 2: return <LinearClassifierPage project={project}/>;
+            case 3: return <ComingSoon project={project}/>;
+            case 4: return <ComingSoon project={project}/>;
+            case 5: return <MnistGanPage project={project}/>;
+            case 6: return <ComingSoon project={project}/>;
+            case 7: return <ComingSoon project={project}/>;
+            case 8: return <ComingSoon project={project}/>;
+            case 9: return <LearnCurvePage project={project}/>;
+            default: return <ComingSoon project={project}/>;
+        }
     };
 
     return (
