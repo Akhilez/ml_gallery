@@ -65,6 +65,9 @@ class PolyRegConsumer(WebsocketConsumer):
 
         if action == 'new_point':
             self.trainer.add_new_point(data['x'], data['y'])
+
+        if action == 'clear_data':
+            self.trainer.clear_data()
         
     def init_trainer(self):
         """

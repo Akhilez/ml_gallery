@@ -136,7 +136,10 @@ export default class LearnCurvePage extends React.Component {
         this.graphRef.current.x = [];
         this.graphRef.current.y = [];
 
-        // TODO: Clear data on mlpy.
+        this.socket.send(JSON.stringify({
+            action: 'clear_data',
+            trace_id: this.traceId,
+        }));
     }
 
     add_new_point(x, y) {

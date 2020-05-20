@@ -80,8 +80,12 @@ class PolyRegTrainer(torch.nn.Module):
         return [self.x.tolist(), self.y.tolist()]
 
     def add_new_point(self, x, y):
-        self.x = torch.cat((self.x, torch.tensor([x])))
-        self.y = torch.cat((self.y, torch.tensor([y])))
+        if self.x is None:
+            self.x = torch.tensor([x])
+            self.y = torch.tensor([y])
+        else:
+            self.x = torch.cat((self.x, torch.tensor([x])))
+            self.y = torch.cat((self.y, torch.tensor([y])))
 
     def get_random_sample_data(self, size: int):
         """
@@ -98,3 +102,7 @@ class PolyRegTrainer(torch.nn.Module):
         y = sum((new_x.T * w).T)
 
         return x, y
+
+    def clear_data(self):
+        self.x = None
+        self.y = None
