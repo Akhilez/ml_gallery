@@ -1,5 +1,5 @@
 import uuid
-
+import threading
 from channels.generic.websocket import WebsocketConsumer
 import json
 
@@ -55,13 +55,13 @@ class PolyRegConsumer(WebsocketConsumer):
         action = data['action']
 
         if action == 'start_training':
-            self.start_training()
+            threading.Thread(target=self.trainer.start_training).start()
 
         if action == 'stop_training':
             self.trainer.stop_training()
         
         if action == 'change_order':
-            self.trainer.change_order()
+            threading.Thread(target=self.trainer.change_order, args=(data['order'],)).start()
 
         if action == 'new_point':
             self.trainer.add_new_point(data['x'], data['y'])
@@ -85,10 +85,6 @@ class PolyRegConsumer(WebsocketConsumer):
             'trace_id': self.trace_id,
             'data': self.trainer.get_float_data(),
         }))
-
-    def start_training(self):
-        import threading
-        threading.Thread(target=self.trainer.start_training).start()
 
     def send_update_status(self):
         data = {

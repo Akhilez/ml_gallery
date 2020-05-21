@@ -52,8 +52,7 @@ export default class LearnCurvePage extends React.Component {
 
                         {this.state.isTrainerInitialized &&
                         <button className={"ActionButton"} onClick={() => this.startTraining()}>TRAIN</button>}
-                        {this.state.isTraining &&
-                        <button className={"PassiveButton"} onClick={() => this.stopTraining()}>STOP</button>}
+                        <button className={"PassiveButton"} onClick={() => this.stopTraining()}>STOP</button>
                         {this.state.isTrainerInitialized &&
                         <button className={"PassiveButton"} onClick={() => this.clearData()}>CLEAR</button>}
 
@@ -74,7 +73,7 @@ export default class LearnCurvePage extends React.Component {
         let terms = ["y = "];
 
         for (let i = 1; i <= this.state.order; i++) {
-            terms.push(<div className={"inline"}>w<sub>{i}</sub>x<sup>{this.state.order - i + 1}</sup> + &nbsp;</div>);
+            terms.push(<div className={"inline"} key={`eqn-${i}`}>w<sub>{i}</sub>x<sup>{this.state.order - i + 1}</sup> + &nbsp;</div>);
         }
         terms.push("b");
 
@@ -115,7 +114,7 @@ export default class LearnCurvePage extends React.Component {
         };
         this.socket.onmessage = (event) => {
             const data = JSON.parse(event.data);
-            // console.log(data);
+            console.log(data);
             this.traceId = data.trace_id;
             if (data.action === 'status_update') {
                 this.updateTrainingStatus(data.data);
@@ -135,7 +134,7 @@ export default class LearnCurvePage extends React.Component {
     }
 
     changeOrder(change) {
-        if (this.state.order <= 0) return;
+        if (this.state.order <= 1) return;
 
         let newOrder = this.state.order + change;
 
