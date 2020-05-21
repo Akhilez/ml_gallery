@@ -40,3 +40,8 @@ Main site: https://akhilez.com
    - Memorize Please (Associative)
  - Miscellaneous
    - Spiking Neurons
+
+---
+
+Most models are trained with PyTorch on a Django backend server. The front-end is a React app which connects to the backend using Websocket.
+Some larger models are pre-trained.

@@ -7,7 +7,8 @@ import {Centered, OutlinedButtonLink} from "../../commons/components/components"
 import ProjectPaginator from "../../commons/components/project_paginator";
 import {MLPyHost, MLPyPort} from "../../commons/settings";
 import '../../commons/components/components.css';
-import Graph from './sketch_learn_cure';
+import Graph from './sketch_learn_curve';
+import NeuronGraphLearnCurve from "./neuron_graph_learn_curve";
 
 
 export default class LearnCurvePage extends React.Component {
@@ -47,6 +48,8 @@ export default class LearnCurvePage extends React.Component {
                         <h1>Learn A Curve</h1>
                         <OutlinedButtonLink text={"How it works"} link={"#how_it_works"}/><br/>
 
+                        <NeuronGraphLearnCurve/>
+
                         {this.state.isTrainerInitialized &&
                         <button className={"ActionButton"} onClick={() => this.startTraining()}>TRAIN</button>}
                         {this.state.isTraining &&
@@ -54,9 +57,10 @@ export default class LearnCurvePage extends React.Component {
                         {this.state.isTrainerInitialized &&
                         <button className={"PassiveButton"} onClick={() => this.clearData()}>CLEAR</button>}
 
+                        {this.state.isTrainerInitialized && this.getComplexityModifier()}
+
                         <br/>
                         loss: {this.state.loss}
-                        {this.getOrderChanger()}
                         <Graph ref={this.graphRef} new_point_classback={(x, y) => this.add_new_point(x, y)}/>
                     </Centered>
                     <ProjectPaginator project={this.props.project}/>
@@ -65,12 +69,23 @@ export default class LearnCurvePage extends React.Component {
         );
     }
 
-    getOrderChanger() {
+    getComplexityModifier() {
+
+        let terms = ["y = "];
+
+        for (let i = 1; i <= this.state.order; i++) {
+            terms.push(<div className={"inline"}>w<sub>{i}</sub>x<sup>{this.state.order - i + 1}</sup> + &nbsp;</div>);
+        }
+        terms.push("b");
+
         return (
-            <div>
-                Order: {this.state.order}
-                <button onClick={() => this.changeOrder(1)}>+</button>
-                <button onClick={() => this.changeOrder(-1)}>-</button>
+            <div style={{fontSize: 20, marginTop: 50}}>
+                <div style={{fontSize: 28, marginBottom: 20}}>
+                    {terms.map((item) => item)} <br/>
+                </div>
+                Change Complexity:
+                <button className={"PassiveButton"} onClick={() => this.changeOrder(1)}>+</button>
+                <button className={"PassiveButton"} onClick={() => this.changeOrder(-1)}>-</button>
             </div>
         );
     }
