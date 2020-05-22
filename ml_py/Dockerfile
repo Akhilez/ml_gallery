@@ -1,5 +1,6 @@
 # FROM pytorch
 FROM python:3.8
+RUN pip install torch==1.5.0+cpu torchvision==0.6.0+cpu -f https://download.pytorch.org/whl/torch_stable.html
 WORKDIR /PyMLGallery
 COPY requirements.txt .
 RUN pip install -r requirements.txt

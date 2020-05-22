@@ -34,6 +34,8 @@ export default class LearnCurvePage extends React.Component {
         this.graphRef = React.createRef();
         this.neuronRef = React.createRef();
 
+        // new WebSocket('ws://py.ml.akhilez.com:8000/ws/poly_reg');
+
     }
 
     componentDidMount() {
@@ -61,7 +63,8 @@ export default class LearnCurvePage extends React.Component {
 
                         {this.state.isTrainerInitialized &&
                         <button className={"ActionButton"} onClick={() => this.startTraining()}>TRAIN</button>}
-                        <button className={"PassiveButton"} onClick={() => this.stopTraining()}>STOP</button>
+                        {this.state.isTrainerInitialized &&
+                        <button className={"PassiveButton"} onClick={() => this.stopTraining()}>STOP</button>}
                         {this.state.isTrainerInitialized &&
                         <button className={"PassiveButton"} onClick={() => this.clearData()}>CLEAR</button>}
 
