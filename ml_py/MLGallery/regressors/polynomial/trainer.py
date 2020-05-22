@@ -9,19 +9,26 @@ class PolyRegTrainer(torch.nn.Module):
     def __init__(self, consumer):
         super().__init__()
         self.order = 5
-        self.w = torch.zeros(self.order, requires_grad=True)
-        self.b = torch.zeros(1, requires_grad=True)
+        self.w = None
+        self.b = None
         self.consumer = consumer
         self.epochs = 50000
         self.update_interval = 500
-        self.optimizer = torch.optim.Adam([self.w, self.b])
+        self.optimizer = None
         self.must_train = False
         self.x = None
         self.y = None
 
+        self.init_weights()
+
         # -------- Current Epoch -----------
         self.epoch = 0
         self.loss = 0
+
+    def init_weights(self):
+        self.w = torch.zeros(self.order, requires_grad=True)
+        self.b = torch.zeros(1, requires_grad=True)
+        self.optimizer = torch.optim.Adam([self.w, self.b])
 
     def forward(self, x):
         x = torch.stack([x ** i for i in range(self.order, 0, -1)])
@@ -53,6 +60,7 @@ class PolyRegTrainer(torch.nn.Module):
 
         except Exception as e:
             logger.exception(e)
+            self.must_train = False
 
     def stop_training(self):
         self.must_train = False
@@ -66,9 +74,7 @@ class PolyRegTrainer(torch.nn.Module):
             self.stop_training()
         time.sleep(0.5)
         self.order = new_order
-        self.w = torch.zeros(new_order, requires_grad=True)
-        self.b = torch.zeros(1, requires_grad=True)
-        self.optimizer = torch.optim.Adam([self.w, self.b])
+        self.init_weights()
         if prev_training:
             self.start_training()
 
@@ -90,13 +96,15 @@ class PolyRegTrainer(torch.nn.Module):
 
     def get_random_sample_data(self, size: int):
         x = torch.FloatTensor(size).uniform_(-1, 1)
-        w = torch.tensor([0.62, -1, -2.5, 1.1, 1.3])
+        w = torch.tensor([-0.85, -1.6, 2.3, 2.6, -1.2])
+        b = torch.tensor([-0.7])
 
         new_x = torch.stack([x ** i for i in range(self.order, 0, -1)])
-        y = sum((new_x.T * w).T)
+        y = sum((new_x.T * w).T) + b
 
         return x, y
 
     def clear_data(self):
         self.x = None
         self.y = None
+        self.init_weights()

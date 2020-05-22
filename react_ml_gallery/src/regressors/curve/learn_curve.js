@@ -9,6 +9,7 @@ import {MLPyHost, MLPyPort} from "../../commons/settings";
 import '../../commons/components/components.css';
 import Graph from './sketch_learn_curve';
 import NeuronGraphLearnCurve from "./neuron_graph_learn_curve";
+import {CartesianGrid, Legend, Line, LineChart, Tooltip, XAxis, YAxis} from "recharts";
 
 
 export default class LearnCurvePage extends React.Component {
@@ -20,6 +21,7 @@ export default class LearnCurvePage extends React.Component {
             order: 5,
             isTraining: false,
             loss: null,
+            lossData: [],
             isTrainerInitialized: false,
         };
 
@@ -30,6 +32,7 @@ export default class LearnCurvePage extends React.Component {
         this.y = null;
 
         this.graphRef = React.createRef();
+        this.neuronRef = React.createRef();
 
     }
 
@@ -46,9 +49,15 @@ export default class LearnCurvePage extends React.Component {
                     <BreadCrumb path={this.props.project.links.app}/>
                     <Centered>
                         <h1>Learn A Curve</h1>
+                        <p>
+                            A single neuron can approximate any continuous polynomial function in 2D space.<br/>
+                            Here, you can train a single neuron to fit the your own data.<br/>
+                            Click on the canvas below ([-1, 1] graph) to create a point in the 2D space.<br/>
+                            For best results, create your points in a curvy pattern.
+                        </p><br/>
                         <OutlinedButtonLink text={"How it works"} link={"#how_it_works"}/><br/>
 
-                        <NeuronGraphLearnCurve/>
+                        <NeuronGraphLearnCurve ref={this.neuronRef}/>
 
                         {this.state.isTrainerInitialized &&
                         <button className={"ActionButton"} onClick={() => this.startTraining()}>TRAIN</button>}
@@ -59,8 +68,8 @@ export default class LearnCurvePage extends React.Component {
                         {this.state.isTrainerInitialized && this.getComplexityModifier()}
 
                         <br/>
-                        loss: {this.state.loss}
                         <Graph ref={this.graphRef} new_point_classback={(x, y) => this.add_new_point(x, y)}/>
+                        {this.state.isTrainerInitialized && this.getLossGraph()}
                     </Centered>
                     <ProjectPaginator project={this.props.project}/>
                 </Container>
@@ -129,8 +138,12 @@ export default class LearnCurvePage extends React.Component {
     }
 
     updateTrainingStatus(data) {
-        this.setState({loss: data.train_error});
+        this.setState({
+            loss: data.train_error,
+            lossData: this.state.lossData.concat([{index: this.state.lossData.length, loss: data.train_error}])
+        });
         this.graphRef.current.weights = data.weights;
+        this.neuronRef.current.weights = data.weights;
     }
 
     changeOrder(change) {
@@ -139,6 +152,8 @@ export default class LearnCurvePage extends React.Component {
         let newOrder = this.state.order + change;
 
         this.setState({order: newOrder});
+
+        this.neuronRef.current.initializeWeights(newOrder);
 
         this.socket.send(JSON.stringify({
             action: 'change_order',
@@ -164,6 +179,26 @@ export default class LearnCurvePage extends React.Component {
             x: x,
             y: y,
         }))
+    }
+
+    getLossGraph() {
+        return (
+            <LineChart
+                width={500}
+                height={300}
+                data={this.state.lossData}
+                margin={{
+                    top: 5, right: 30, left: 20, bottom: 5,
+                }}
+            >
+                <CartesianGrid strokeDasharray="3 3"/>
+                <XAxis dataKey="index" type="number" scale="auto"/>
+                <YAxis/>
+                <Tooltip/>
+                <Legend/>
+                <Line type="monotone" dataKey="loss" stroke="#8884d8"/>
+            </LineChart>
+        );
     }
 
     drawDataToCanvas(x, y) {
