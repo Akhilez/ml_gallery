@@ -23,12 +23,7 @@ export default function App() {
         switch (project.id) {
             case 1: return <LearnLinePage project={project}/>;
             case 2: return <LinearClassifierPage project={project}/>;
-            case 3: return <ComingSoon project={project}/>;
-            case 4: return <ComingSoon project={project}/>;
             case 5: return <MnistGanPage project={project}/>;
-            case 6: return <ComingSoon project={project}/>;
-            case 7: return <ComingSoon project={project}/>;
-            case 8: return <ComingSoon project={project}/>;
             case 9: return <LearnCurvePage project={project}/>;
             default: return <ComingSoon project={project}/>;
         }
@@ -38,13 +33,11 @@ export default function App() {
         <Router>
             <Switch>
                 {
-                    projects.projects.map((project) => {
-                        return (
-                            <Route path={project.links.app} key={project.id}>
-                                {getProjectComponent(project)}
-                            </Route>
-                        );
-                    })
+                    projects.categories.map(category => category.projects.map((project) =>
+                        <Route path={project.links.app} key={project.id}>
+                            {getProjectComponent(project)}
+                        </Route>
+                    ))
                 }
                 <Route path="/">
                     <LandingPage/>

@@ -26,7 +26,7 @@ export default class MnistGanPage extends React.Component {
     }
 
     render(){
-        new MLHelper().train(0);
+        // (new MLHelper()).train(0);
         return (
             <div className={"page"}>
                 <div style={{float: "left"}}>
@@ -34,7 +34,7 @@ export default class MnistGanPage extends React.Component {
                 </div>
                 <Container>
                     <MLAppBar/>
-                    <BreadCrumb path={this.props.project.links.path}/>
+                    <BreadCrumb path={this.props.project.links.app}/>
                     <Centered>
                         <h1>MNIST GAN</h1>
                         <p className={"header_desc"}>Generate AI-powered hand-drawn character images.</p>

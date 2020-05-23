@@ -17,11 +17,9 @@ class LandingPage extends React.Component {
                     <MLLogo/>
                     <this.Desc/>
                     {
-                        projectsData.projects.map((project) => {
-                            return (
-                                <Project project={project} key={project.id}/>
-                            );
-                        })
+                        projectsData.categories.map(category => category.projects.map((project) =>
+                            <Project project={project} key={project.id}/>
+                        ))
                     }
                     <Footer/>
                 </Container>
@@ -52,7 +50,7 @@ function Footer() {
     return (
         <div><br/>
             <hr/>
-            <br/>Footer<br/></div>
+            <br/><Centered>ML Gallery</Centered><br/></div>
     );
 }
 

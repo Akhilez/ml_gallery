@@ -1,8 +1,15 @@
 ![MLGalleryLogo](react_ml_gallery/src/landing/ml_logo/ml_logo.png)
 
-**Machine Learning Gallery** is a master project of few of my experiments with Neural Networks. It is designed in a way to help a beginner understand the concepts with visualizations. You can train and run the networks live and see the results for yourself. Every project here is followed by an explanation on how it works.
+**Machine Learning Gallery** is a master project of few of my experiments with Neural Networks.
+It is designed in a way to help a beginner understand the concepts with visualizations.
+You can train and run the networks live and see the results for yourself.
 
-Technologies used: PyTorch, React, TensorFlow JS
+Every project here is followed by an explanation on how it works.
+Most models are trained with PyTorch on a Django backend server.
+The front-end is a React app which connects to the backend using Websocket.
+Some larger models are pre-trained.
+
+Technologies used: __PyTorch, React, TensorFlow JS__
 
 Deployed at: https://ml.akhilez.com  
 Main site: https://akhilez.com
@@ -36,12 +43,10 @@ Main site: https://akhilez.com
    - Ping-Pong
    - Racer
  - Unsupervised Learning
+   - AutoEncoder: V1
+   - AutoEncoder: V2 (VAE?)
    - MNIST Feature Maps
    - Memorize Please (Associative)
  - Miscellaneous
    - Spiking Neurons
 
----
-
-Most models are trained with PyTorch on a Django backend server. The front-end is a React app which connects to the backend using Websocket.
-Some larger models are pre-trained.
