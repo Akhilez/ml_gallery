@@ -31,7 +31,7 @@ class LandingPage extends React.Component {
         return (
             <Centered>
                 <div style={{fontSize: 22, marginBottom: 100}}>
-                    <p>Machine Learning Gallery is a master project of few of my experiments with Neural Networks.
+                    <p><b>Machine Learning Gallery</b> is a master project of few of my experiments with Neural Networks.
                         It is designed in a way to help a beginner understand the concepts with visualizations.
                         You can train and run the networks live and see the results for yourself.
                         Every project here is followed by an explanation on how it works.
