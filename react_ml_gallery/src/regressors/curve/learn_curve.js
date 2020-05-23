@@ -59,6 +59,8 @@ export default class LearnCurvePage extends React.Component {
                         </p><br/>
                         <OutlinedButtonLink text={"How it works"} link={"#how_it_works"}/><br/>
 
+                        {!this.state.isTrainerInitialized && <p>Connecting to webserver ...</p>}
+
                         <NeuronGraphLearnCurve ref={this.neuronRef}/>
 
                         {this.state.isTrainerInitialized &&
