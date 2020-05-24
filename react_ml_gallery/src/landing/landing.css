@@ -40,16 +40,14 @@ p {
     border-radius: 8px;
 }
 
-.projectImageContainer {
-    alignment: center;
-}
-
 .project-image {
     height: auto;
     width: 95%;
-    min-width: 300px;
+    padding: 7px;
+    min-width: 350px;
     display: block;
-    border-radius: 15px;
+    margin-bottom: 5px;
+    border-radius: 20px;
     transition-duration: 0.4s;
 }
 
@@ -59,6 +57,7 @@ p {
 
 .ProjectContainer {
     transition-duration: 0.4s;
+    height: 550px;
     background-color: #ffffff;
     padding: 20px;
     border-radius: 30px;
@@ -74,8 +73,11 @@ p {
 }
 
 .ProjectContainer:hover img {
+    padding: 0;
+    margin-bottom: 5px;
     width: 100%;
     box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.15);
+    border-radius: 15px;
 }
 
 .ProjectContainer:hover a {
@@ -85,4 +87,10 @@ p {
 
 .ProjectContainer:hover a:hover {
     text-decoration: none;
+}
+
+.ProjectCategoryTitle {
+    font-size: 48px;
+    text-align: center;
+    margin-bottom: 50px;
 }

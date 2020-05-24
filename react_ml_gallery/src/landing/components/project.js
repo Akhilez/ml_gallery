@@ -1,28 +1,25 @@
 import React from "react";
 import Row from "react-bootstrap/Row";
-import Col from "react-bootstrap/Col";
 import CodeIcon from '@material-ui/icons/Code';
 import colabImage from '../../landing/images/colab.png';
+import '../landing.css';
+import {Centered} from "../../commons/components/components";
 
 
 class Project extends React.Component {
     render() {
         return (
             <div className={"ProjectContainer"}>
-                <Row>
-                    <Col>
-                        <this.ProjectImage project={this.props.project}/>
-                    </Col>
-                    <Col>
-                        <div className={"project-text-block"}>
-                            <h2 style={{fontSize: 42}}><a className={"link"}
-                                                          href={this.props.project.links.app}>{this.props.project.title}</a>
-                            </h2>
-                            <p style={{fontSize: 20}}>{this.props.project.desc}</p>
-                            {this.getIconLinks(this.props.project)}
-                        </div>
-                    </Col>
-                </Row>
+
+                <this.ProjectImage project={this.props.project}/>
+
+                <div className={"project-text-block"}>
+                    <h2 style={{fontSize: 32}}><a className={"link"}
+                                                  href={this.props.project.links.app}>{this.props.project.title}</a>
+                    </h2>
+                    <p style={{fontSize: 20}}>{this.props.project.desc}</p>
+                    {this.getIconLinks(this.props.project)}
+                </div>
                 {this.props.children !== null &&
                 <Row>{this.props.children}</Row>
                 }
@@ -52,11 +49,11 @@ class Project extends React.Component {
 
     ProjectImage(props) {
         return (
-            <div className={"projectImageContainer"}>
+            <Centered>
                 <a href={props.project.links.app}>
                     <img src={require('../images/' + props.project.image)} className={"project-image"}
                          alt={props.project.title + "Image"}/></a>
-            </div>
+            </Centered>
         );
     }
 }

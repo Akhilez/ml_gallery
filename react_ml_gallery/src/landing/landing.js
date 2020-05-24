@@ -6,6 +6,7 @@ import 'cytoscape/dist/cytoscape.min';
 import projectsData from './data/projects';
 import Project from './components/project';
 import {Centered, OutlinedButtonLink} from "../commons/components/components";
+import {Row, Col} from 'react-bootstrap';
 
 
 class LandingPage extends React.Component {
@@ -17,9 +18,7 @@ class LandingPage extends React.Component {
                     <MLLogo/>
                     <this.Desc/>
                     {
-                        projectsData.categories.map(category => category.projects.map((project) =>
-                            <Project project={project} key={project.id}/>
-                        ))
+                        projectsData.categories.map(category => <this.Category category={category} key={category.title}/>)
                     }
                     <Footer/>
                 </Container>
@@ -31,7 +30,8 @@ class LandingPage extends React.Component {
         return (
             <Centered>
                 <div style={{fontSize: 22, marginBottom: 100}}>
-                    <p><b>Machine Learning Gallery</b> is a master project of few of my experiments with Neural Networks.
+                    <p><b>Machine Learning Gallery</b> is a master project of few of my experiments with Neural
+                        Networks.
                         It is designed in a way to help a beginner understand the concepts with visualizations.
                         You can train and run the networks live and see the results for yourself.
                         Every project here is followed by an explanation on how it works.
@@ -44,6 +44,26 @@ class LandingPage extends React.Component {
             </Centered>
         );
     }
+
+    Category(props) {
+        let category = props.category;
+        return (
+            <div>
+                <h3 className={"ProjectCategoryTitle"}>{category.title}</h3>
+                <Row>
+                    {category.projects.map(project =>
+                        <Col sm="4" key={project.id}>
+                            <Project project={project}/>
+                        </Col>
+                    )}
+                </Row>
+                <hr/><br/><br/>
+            </div>
+        );
+    }
+
+
+
 }
 
 function Footer() {
