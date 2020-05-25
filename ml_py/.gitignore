@@ -2,6 +2,7 @@ venv/
 data/
 .ipynb_checkpoints/
 env.py
+*.gz
 
 ### OSX ###
 .DS_Store
