@@ -10,10 +10,10 @@ class MNISTAug:
         self.scale = 4  # height(out_img) / height(in_image)
         self.overflow = 0.3  # An in_image can't overflow more than 50% out of the image
 
-        self.min_objects = 4
+        self.min_objects = 5
         self.max_objects = 10
 
-        self.spacing = 0.8  # Fraction: distance(c1, c2) / (r1 + r2)
+        self.spacing = 0.7  # Fraction: distance(c1, c2) / (r1 + r2)
 
     def get_augmented(self, x: np.ndarray, y: np.ndarray, n_out: int):
         """
@@ -86,7 +86,7 @@ class MNISTAug:
             aug_y.append(aug_yi)
             aug_x[i][aug_x[i] > 1] = 1.0
 
-            DataManager.plot_num(aug_x[i])
+            DataManager.plot_num(aug_x[i], aug_yi)
 
         return aug_x, aug_y
 
@@ -122,7 +122,26 @@ class DataManager:
         self.y_test = np.load(f'{self.dir}/y_test.npy')
 
     @staticmethod
-    def plot_num(x):
+    def plot_num(x, bounding_boxes=None):
         import matplotlib.pyplot as plt
-        plt.imshow(x, cmap='gray')
-        plt.show()
+
+        fig = plt.figure()
+        ax = fig.add_subplot(1, 1, 1)
+
+        ax.imshow(x, cmap='gray')
+
+        if bounding_boxes is not None:
+            import matplotlib.patches as patches
+
+            for i in range(len(bounding_boxes)):
+                c, x1, y1, x2, y2 = bounding_boxes[i]
+                c = DataManager.one_hot_to_num(c)
+                rect = patches.Rectangle((y1, x1), y2 - y1, x2 - x1, linewidth=1, edgecolor='r', facecolor='none')
+                ax.add_patch(rect)
+                ax.text(y1, x1, c, size=8, ha="left", va="top", bbox=dict(boxstyle="square", fc=(1., 0.8, 0.8)))
+
+        fig.show()
+
+    @staticmethod
+    def one_hot_to_num(x):
+        return np.argmax(x)
