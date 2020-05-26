@@ -44,9 +44,10 @@ class MNISTAug:
 
             n_objects = random.randint(self.min_objects, self.max_objects)
             aug_yi = []
+            centers = []
+            widths = []
 
             for j in range(n_objects):
-
                 rand_i = random.randrange(0, len(x))
                 x_in = int(max(0, np.random.normal(1, 0.25, 1)) * x.shape[1])
                 # x_in = int(random.uniform(self.min_resize, self.max_resize) * x.shape[1])
@@ -56,8 +57,11 @@ class MNISTAug:
                 # rand_x, rand_y are the coordinates of object
                 # rand_x = random * (x_out - (x_in * (1-overflow)))
                 # TODO: This does not take into account the overlap on left and top edge.
-                rand_x = int(random.random() * (x_out - (x_in * (1-self.overflow))))
-                rand_y = int(random.random() * (x_out - (x_in * (1-self.overflow))))
+                rand_x = int(random.random() * (x_out - (x_in * (1 - self.overflow))))
+                rand_y = int(random.random() * (x_out - (x_in * (1 - self.overflow))))
+
+                widths.append(x_in)
+                centers.append((rand_x + x_in / 2, rand_y + x_in / 2))
 
                 # TODO: Add spacing to rand_x and rand_y
 
