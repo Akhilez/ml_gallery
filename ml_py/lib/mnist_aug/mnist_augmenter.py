@@ -13,10 +13,7 @@ class MNISTAug:
         self.min_objects = 4
         self.max_objects = 10
 
-        self.min_resize = 0.2  # The smallest object size in the out_image WRT original object size
-        self.max_resize = 3
-
-        self.spacing = 1  # Fraction: distance(c1, c2) / (r1 + r2)
+        self.spacing = 0.8  # Fraction: distance(c1, c2) / (r1 + r2)
 
     def get_augmented(self, x: np.ndarray, y: np.ndarray, n_out: int):
         """
@@ -54,16 +51,22 @@ class MNISTAug:
 
                 resized_object = resize(x[rand_i], (x_in, x_in))
 
-                # rand_x, rand_y are the coordinates of object
-                # rand_x = random * (x_out - (x_in * (1-overflow)))
-                # TODO: This does not take into account the overlap on left and top edge.
-                rand_x = int(random.random() * (x_out - (x_in * (1 - self.overflow))))
-                rand_y = int(random.random() * (x_out - (x_in * (1 - self.overflow))))
+                attempts = 1
+                while attempts < self.max_objects * 10:
+                    attempts += 1
+                    # rand_x, rand_y are the coordinates of object
+                    # rand_x = random * (x_out - (x_in * (1-overflow)))
+                    # TODO: This does not take into account the overlap on left and top edge.
+                    rand_x = int(random.random() * (x_out - (x_in * (1 - self.overflow))))
+                    rand_y = int(random.random() * (x_out - (x_in * (1 - self.overflow))))
+
+                    if len(centers) == 0 or not self.is_overlapping(rand_x, rand_y, x_in, centers, widths):
+                        break
+                else:
+                    continue
 
                 widths.append(x_in)
                 centers.append((rand_x + x_in / 2, rand_y + x_in / 2))
-
-                # TODO: Add spacing to rand_x and rand_y
 
                 # Clip the H and W of x if it is overflowing.
                 localized_dim_x = min(x_out - rand_x, x_in)
@@ -81,8 +84,22 @@ class MNISTAug:
                 ])
 
             aug_y.append(aug_yi)
+            aug_x[i][aug_x[i] > 1] = 1.0
+
+            DataManager.plot_num(aug_x[i])
 
         return aug_x, aug_y
+
+    def is_overlapping(self, x, y, width, centers, widths):
+        cx, cy = x + width / 2, y + width / 2
+        for i in range(len(centers)):
+            diameter = (width + widths[i]) * 0.5 * self.spacing
+            distance = np.linalg.norm(np.array([cx, cy]) - np.array(centers[i]))
+
+            if distance < diameter:
+                return True
+
+        return False
 
 
 class DataManager:
