@@ -1,17 +1,22 @@
 import numpy as np
-import matplotlib.pyplot as plt
-import torch
-from random import random
+import random
 from skimage.transform import resize
 
 
 class MNISTAug:
     def __init__(self):
         self.dm = DataManager()
-        self.scale = 4
-        self.overflow = 0.5
-        self.min_numbers_out = 4
-        self.max_numbers_out = 10
+
+        self.scale = 4  # height(out_img) / height(in_image)
+        self.overflow = 0.3  # An in_image can't overflow more than 50% out of the image
+
+        self.min_objects = 4
+        self.max_objects = 10
+
+        self.min_resize = 0.2  # The smallest object size in the out_image WRT original object size
+        self.max_resize = 3
+
+        self.spacing = 1  # Fraction: distance(c1, c2) / (r1 + r2)
 
     def get_augmented(self, x: np.ndarray, y: np.ndarray, n_out: int):
         """
@@ -24,28 +29,54 @@ class MNISTAug:
 
         Returns
         -------
-        aug_x: a tensor of shape [1000, 112, 112]
-        aug_y: a tensor of shape [n_out, numbers_out, 5] | 5 => [class, x1, y1, x2, y2]
+        aug_x: np.ndarray: a tensor of shape [1000, 112, 112]
+        aug_y: list: a tensor of shape [n_out, numbers_out, 5] | 5 => [class, x1, y1, x2, y2]
 
         """
 
-        self.dm.load_test()
-
-        x_in = x.shape[1]
+        # x_out = width of output image
         x_out = x.shape[1] * self.scale
 
-        aug_x = np.zeros((x.shape[0], x_out, x_out))
+        aug_x = np.zeros((n_out, x_out, x_out))
+        aug_y = []
 
-        i = 0
+        for i in range(n_out):
 
-        rand_x = int(random() * x_in * (self.scale - self.overflow))
-        rand_y = int(random() * x_in * (self.scale - self.overflow))
+            n_objects = random.randint(self.min_objects, self.max_objects)
+            aug_yi = []
 
-        localized_dim_x = min(aug_x - rand_x, x_in)
-        localized_dim_y = min(aug_x - rand_y, x_in)
+            for j in range(n_objects):
 
-        localized_xi = x[i][:localized_dim_x, :localized_dim_y]
-        aug_x[i][rand_x:rand_x + localized_dim_x, rand_y:rand_y + localized_dim_y] += localized_xi
+                rand_i = random.randrange(0, len(x))
+                x_in = int(max(0, np.random.normal(1, 0.25, 1)) * x.shape[1])
+                # x_in = int(random.uniform(self.min_resize, self.max_resize) * x.shape[1])
+
+                resized_object = resize(x[rand_i], (x_in, x_in))
+
+                # rand_x, rand_y are the coordinates of object
+                # rand_x = random * (x_out - (x_in * (1-overflow)))
+                # TODO: This does not take into account the overlap on left and top edge.
+                rand_x = int(random.random() * (x_out - (x_in * (1-self.overflow))))
+                rand_y = int(random.random() * (x_out - (x_in * (1-self.overflow))))
+
+                # TODO: Add spacing to rand_x and rand_y
+
+                # Clip the H and W of x if it is overflowing.
+                localized_dim_x = min(x_out - rand_x, x_in)
+                localized_dim_y = min(x_out - rand_y, x_in)
+                localized_xi = resized_object[:localized_dim_x, :localized_dim_y]
+
+                aug_x[i][rand_x:rand_x + localized_dim_x, rand_y:rand_y + localized_dim_y] += localized_xi
+
+                aug_yi.append([
+                    y[rand_i],  # Class of i
+                    rand_x,
+                    rand_y,
+                    rand_x + localized_dim_x,
+                    rand_y + localized_dim_y
+                ])
+
+            aug_y.append(aug_yi)
 
         return aug_x, aug_y
 
@@ -71,4 +102,6 @@ class DataManager:
 
     @staticmethod
     def plot_num(x):
+        import matplotlib.pyplot as plt
         plt.imshow(x, cmap='gray')
+        plt.show()
