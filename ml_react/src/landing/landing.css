@@ -27,6 +27,7 @@ p {
     color: #f44336;
     transition-duration: 0.4s;
     text-decoration: none; /* no underline */
+    border-radius: 8px;
 }
 
 .nav-link:link {
@@ -38,6 +39,7 @@ p {
     color: white;
     background-color: #f44336;
     border-radius: 8px;
+    margin-left: 10px;
 }
 
 .project-image {
