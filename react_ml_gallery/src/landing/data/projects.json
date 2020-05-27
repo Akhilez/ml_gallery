@@ -8,6 +8,7 @@
           "id": 1,
           "desc": "Visualize the learning of a basic neural network by learning a straight line equation.",
           "image": "colorizer.jpg",
+          "status": "in_progress",
           "links": {
             "app": "/learn_line",
             "source": "https://akhilez.com/colorizer/"
@@ -18,6 +19,7 @@
           "id": 2,
           "desc": "Visualize the learning of a linear classifier: learns to distinguish between two different type of points in space that are linearly separable.",
           "image": "colorizer.jpg",
+          "status": "in_progress",
           "links": {
             "app": "/linear_classifier",
             "source": "https://akhilez.com/colorizer/"
@@ -28,6 +30,7 @@
           "id": 9,
           "desc": "Neural Networks can learn any continuous function! Here's a model that visualizes this concept. You can add data points and the network will learn its mathematical function.",
           "image": "colorizer.jpg",
+          "status": "in_progress",
           "links": {
             "app": "/learn_curve",
             "source": "https://github.com/Akhilez/ml_gallery",
@@ -39,6 +42,7 @@
           "id": 3,
           "desc": "Visualize how a multi-layer neural network tries to classify flowers from its petal and sepal dimensions",
           "image": "colorizer.jpg",
+          "status": "to_do",
           "links": {
             "app": "/deep_iris",
             "source": "https://akhilez.com/colorizer/"
@@ -54,6 +58,7 @@
           "id": 4,
           "desc": "Visualize the convolutions in recognizing handwritten letters",
           "image": "colorizer.jpg",
+          "status": "to_do",
           "links": {
             "app": "/which_letter",
             "source": "https://akhilez.com/colorizer/"
@@ -64,6 +69,7 @@
           "id": 5,
           "desc": "Generate handwritten numbers using Generative Adversarial Network fused with a Classifier.",
           "image": "colorizer.jpg",
+          "status": "to_do",
           "links": {
             "app": "/mnist_gan",
             "source": "/mnist_gan"
@@ -74,6 +80,7 @@
           "id": 6,
           "desc": "A web application that colorizes grayscale images using a Convolutional Neural Network. This was my major project in my undergrad.",
           "image": "colorizer.jpg",
+          "status": "to_do",
           "links": {
             "app": "https://akhilez.com/colorizer/",
             "source": "https://akhilez.com/colorizer/"
@@ -84,6 +91,7 @@
           "id": 7,
           "desc": "Find the location of all the numbers in a large box and recognize what numbers they are.",
           "image": "colorizer.jpg",
+          "status": "to_do",
           "links": {
             "app": "/number_detector",
             "source": "/number_detector"
@@ -94,6 +102,7 @@
           "id": 10,
           "desc": "",
           "image": "colorizer.jpg",
+          "status": "to_do",
           "links": {
             "app": "/coming_soon",
             "source": ""
@@ -104,6 +113,7 @@
           "id": 11,
           "desc": "",
           "image": "colorizer.jpg",
+          "status": "to_do",
           "links": {
             "app": "/coming_soon",
             "source": ""
@@ -114,6 +124,7 @@
           "id": 12,
           "desc": "",
           "image": "colorizer.jpg",
+          "status": "to_do",
           "links": {
             "app": "/coming_soon",
             "source": ""
@@ -124,6 +135,7 @@
           "id": 13,
           "desc": "",
           "image": "colorizer.jpg",
+          "status": "to_do",
           "links": {
             "app": "/coming_soon",
             "source": ""
@@ -134,6 +146,7 @@
           "id": 14,
           "desc": "",
           "image": "colorizer.jpg",
+          "status": "to_do",
           "links": {
             "app": "/coming_soon",
             "source": ""
@@ -149,6 +162,7 @@
           "id": 15,
           "desc": "Visualize how a Recurrent Neural Network predicts which letter comes next.",
           "image": "colorizer.jpg",
+          "status": "to_do",
           "links": {
             "app": "/next_char",
             "source": "/next_char"
@@ -159,6 +173,7 @@
           "id": 16,
           "desc": "",
           "image": "colorizer.jpg",
+          "status": "to_do",
           "links": {
             "app": "/coming_soon",
             "source": ""
@@ -169,6 +184,7 @@
           "id": 17,
           "desc": "",
           "image": "colorizer.jpg",
+          "status": "to_do",
           "links": {
             "app": "/coming_soon",
             "source": ""
@@ -179,6 +195,7 @@
           "id": 18,
           "desc": "",
           "image": "colorizer.jpg",
+          "status": "to_do",
           "links": {
             "app": "/coming_soon",
             "source": ""
@@ -189,6 +206,7 @@
           "id": 19,
           "desc": "",
           "image": "colorizer.jpg",
+          "status": "to_do",
           "links": {
             "app": "/coming_soon",
             "source": ""
@@ -204,6 +222,7 @@
           "id": 20,
           "desc": "",
           "image": "colorizer.jpg",
+          "status": "to_do",
           "links": {
             "app": "/coming_soon",
             "source": ""
@@ -214,6 +233,7 @@
           "id": 21,
           "desc": "",
           "image": "colorizer.jpg",
+          "status": "to_do",
           "links": {
             "app": "/coming_soon",
             "source": ""
@@ -224,6 +244,7 @@
           "id": 22,
           "desc": "",
           "image": "colorizer.jpg",
+          "status": "to_do",
           "links": {
             "app": "/coming_soon",
             "source": ""
@@ -239,6 +260,7 @@
           "id": 23,
           "desc": "",
           "image": "colorizer.jpg",
+          "status": "to_do",
           "links": {
             "app": "/coming_soon",
             "source": ""
@@ -249,6 +271,7 @@
           "id": 24,
           "desc": "",
           "image": "colorizer.jpg",
+          "status": "to_do",
           "links": {
             "app": "/coming_soon",
             "source": ""
@@ -259,6 +282,7 @@
           "id": 25,
           "desc": "",
           "image": "colorizer.jpg",
+          "status": "to_do",
           "links": {
             "app": "/coming_soon",
             "source": ""
@@ -269,6 +293,7 @@
           "id": 26,
           "desc": "",
           "image": "colorizer.jpg",
+          "status": "to_do",
           "links": {
             "app": "/coming_soon",
             "source": ""
@@ -284,6 +309,18 @@
           "id": 27,
           "desc": "",
           "image": "colorizer.jpg",
+          "status": "to_do",
+          "links": {
+            "app": "/coming_soon",
+            "source": ""
+          }
+        },
+        {
+          "title": "MNIST Detection Dataset",
+          "id": 28,
+          "desc": "",
+          "image": "colorizer.jpg",
+          "status": "in_progress",
           "links": {
             "app": "/coming_soon",
             "source": ""

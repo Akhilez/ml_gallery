@@ -6,7 +6,7 @@ import '../landing.css';
 import {Centered} from "../../commons/components/components";
 
 
-class Project extends React.Component {
+export default class Project extends React.Component {
     render() {
         return (
             <div className={"ProjectContainer"}>
@@ -18,11 +18,10 @@ class Project extends React.Component {
                                                   href={this.props.project.links.app}>{this.props.project.title}</a>
                     </h2>
                     <p style={{fontSize: 20}}>{this.props.project.desc}</p>
+                    {this.props.project.status !== "done" && `status: ${this.props.project.status}`}
                     {this.getIconLinks(this.props.project)}
                 </div>
-                {this.props.children !== null &&
-                <Row>{this.props.children}</Row>
-                }
+                {this.props.children !== null && <Row>{this.props.children}</Row>}
             </div>
         );
     }
@@ -57,6 +56,3 @@ class Project extends React.Component {
         );
     }
 }
-
-
-export default Project;

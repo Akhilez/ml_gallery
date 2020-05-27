@@ -49,4 +49,5 @@ Main site: https://akhilez.com
    - Memorize Please (Associative)
  - Miscellaneous
    - Spiking Neurons
+   - MNIST Detection Dataset
 

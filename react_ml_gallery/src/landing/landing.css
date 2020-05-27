@@ -57,7 +57,7 @@ p {
 
 .ProjectContainer {
     transition-duration: 0.4s;
-    height: 550px;
+    min-height: 550px;
     background-color: #ffffff;
     padding: 20px;
     border-radius: 30px;
