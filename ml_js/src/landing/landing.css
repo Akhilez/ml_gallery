@@ -11,6 +11,9 @@ html, body {
 .link:hover {
     color: #d32f2f;
 }
+.link:focus {
+    color: #d32f2f;
+}
 
 p {
     font-size: 22px;

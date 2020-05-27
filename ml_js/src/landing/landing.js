@@ -29,7 +29,8 @@ class LandingPage extends React.Component {
     Desc(props) {
         return (
             <Centered>
-                <div style={{fontSize: 22, marginBottom: 100}}>
+                <div style={{fontSize: 22, marginBottom: 70}}>
+                    <p>Developed by <a className={"link"} href={"http://akhilez.com"} target={"_blank"}><b><i>Akhilez</i></b></a></p>
                     <p><b>Machine Learning Gallery</b> is a master project of few of my experiments with Neural
                         Networks.
                         It is designed in a way to help a beginner understand the concepts with visualizations.
@@ -49,6 +50,7 @@ class LandingPage extends React.Component {
         let category = props.category;
         return (
             <div>
+                <hr/><br/>
                 <h3 className={"ProjectCategoryTitle"}>{category.title}</h3>
                 <Row>
                     {category.projects.map(project =>
@@ -57,7 +59,7 @@ class LandingPage extends React.Component {
                         </Col>
                     )}
                 </Row>
-                <hr/><br/><br/>
+                <br/>
             </div>
         );
     }
