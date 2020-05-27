@@ -6,7 +6,7 @@ aug = MNISTAug()
 dm = DataManager()
 dm.load_test()
 
-x, y = aug.get_augmented(dm.x_test, dm.y_test, 10)
+x, y = aug.get_augmented(dm.x_test, dm.y_test, 2)
 
 print(x.shape, y)
 

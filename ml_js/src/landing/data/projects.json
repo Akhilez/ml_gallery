@@ -68,7 +68,7 @@
           "title": "MNIST GAN",
           "id": 5,
           "desc": "Generate handwritten numbers using Generative Adversarial Network fused with a Classifier.",
-          "image": "under_construction2.png",
+          "image": "mnist_gan.png",
           "status": "to_do",
           "links": {
             "app": "/mnist_gan",
@@ -90,7 +90,7 @@
           "title": "Find The Number",
           "id": 7,
           "desc": "Find the location of all the numbers in a large box and recognize what numbers they are.",
-          "image": "under_construction2.png",
+          "image": "find_number.png",
           "status": "to_do",
           "links": {
             "app": "/number_detector",
@@ -101,7 +101,7 @@
           "title": "Find All Numbers: V1",
           "id": 10,
           "desc": "",
-          "image": "under_construction2.png",
+          "image": "faster_rcnn.png",
           "status": "to_do",
           "links": {
             "app": "/coming_soon",
@@ -112,7 +112,7 @@
           "title": "Find All Numbers: V2",
           "id": 11,
           "desc": "",
-          "image": "under_construction2.png",
+          "image": "faster_rcnn.png",
           "status": "to_do",
           "links": {
             "app": "/coming_soon",
@@ -221,7 +221,7 @@
           "title": "TicTacToe",
           "id": 20,
           "desc": "",
-          "image": "under_construction2.png",
+          "image": "tictactoe.jpg",
           "status": "to_do",
           "links": {
             "app": "/coming_soon",
@@ -232,7 +232,7 @@
           "title": "Ping-Pong",
           "id": 21,
           "desc": "",
-          "image": "under_construction2.png",
+          "image": "pong.jpg",
           "status": "to_do",
           "links": {
             "app": "/coming_soon",

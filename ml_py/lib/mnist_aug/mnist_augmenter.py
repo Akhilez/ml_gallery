@@ -10,8 +10,8 @@ class MNISTAug:
         self.scale = 4  # height(out_img) / height(in_image)
         self.overflow = 0.3  # An in_image can't overflow more than 50% out of the image
 
-        self.min_objects = 5
-        self.max_objects = 10
+        self.min_objects = 1
+        self.max_objects = 1
 
         self.spacing = 0.7  # Fraction: distance(c1, c2) / (r1 + r2)
 
@@ -87,6 +87,7 @@ class MNISTAug:
             aug_x[i][aug_x[i] > 1] = 1.0
 
             DataManager.plot_num(aug_x[i], aug_yi)
+            DataManager.plot_num(aug_x[i])
 
         return aug_x, aug_y
 
