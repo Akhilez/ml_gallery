@@ -7,29 +7,29 @@
           "title": "Learn a Line",
           "id": 1,
           "desc": "Visualize the learning of a basic neural network by learning a straight line equation.",
-          "image": "colorizer.jpg",
+          "image": "learn_line.jpg",
           "status": "in_progress",
           "links": {
             "app": "/learn_line",
-            "source": "https://akhilez.com/colorizer/"
+            "source": "https://github.com/Akhilez/ml_gallery"
           }
         },
         {
           "title": "Linear Classifier",
           "id": 2,
           "desc": "Visualize the learning of a linear classifier: learns to distinguish between two different type of points in space that are linearly separable.",
-          "image": "colorizer.jpg",
+          "image": "linear_classifier.png",
           "status": "in_progress",
           "links": {
             "app": "/linear_classifier",
-            "source": "https://akhilez.com/colorizer/"
+            "source": "https://github.com/Akhilez/ml_gallery"
           }
         },
         {
           "title": "Learn A Curve!",
           "id": 9,
           "desc": "Neural Networks can learn any continuous function! Here's a model that visualizes this concept. You can add data points and the network will learn its mathematical function.",
-          "image": "colorizer.jpg",
+          "image": "learn_curve.png",
           "status": "in_progress",
           "links": {
             "app": "/learn_curve",
@@ -41,11 +41,11 @@
           "title": "Deep Iris",
           "id": 3,
           "desc": "Visualize how a multi-layer neural network tries to classify flowers from its petal and sepal dimensions",
-          "image": "colorizer.jpg",
+          "image": "deep_iris.png",
           "status": "to_do",
           "links": {
             "app": "/deep_iris",
-            "source": "https://akhilez.com/colorizer/"
+            "source": "https://github.com/Akhilez/ml_gallery"
           }
         }
       ]
@@ -57,18 +57,18 @@
           "title": "Which Character?",
           "id": 4,
           "desc": "Visualize the convolutions in recognizing handwritten letters",
-          "image": "colorizer.jpg",
+          "image": "which_char.png",
           "status": "to_do",
           "links": {
             "app": "/which_letter",
-            "source": "https://akhilez.com/colorizer/"
+            "source": "https://github.com/Akhilez/ml_gallery"
           }
         },
         {
           "title": "MNIST GAN",
           "id": 5,
           "desc": "Generate handwritten numbers using Generative Adversarial Network fused with a Classifier.",
-          "image": "colorizer.jpg",
+          "image": "under_construction2.png",
           "status": "to_do",
           "links": {
             "app": "/mnist_gan",
@@ -83,14 +83,14 @@
           "status": "to_do",
           "links": {
             "app": "https://akhilez.com/colorizer/",
-            "source": "https://akhilez.com/colorizer/"
+            "source": "https://github.com/Akhilez/ml_gallery"
           }
         },
         {
           "title": "Find The Number",
           "id": 7,
           "desc": "Find the location of all the numbers in a large box and recognize what numbers they are.",
-          "image": "colorizer.jpg",
+          "image": "under_construction2.png",
           "status": "to_do",
           "links": {
             "app": "/number_detector",
@@ -101,7 +101,7 @@
           "title": "Find All Numbers: V1",
           "id": 10,
           "desc": "",
-          "image": "colorizer.jpg",
+          "image": "under_construction2.png",
           "status": "to_do",
           "links": {
             "app": "/coming_soon",
@@ -112,7 +112,7 @@
           "title": "Find All Numbers: V2",
           "id": 11,
           "desc": "",
-          "image": "colorizer.jpg",
+          "image": "under_construction2.png",
           "status": "to_do",
           "links": {
             "app": "/coming_soon",
@@ -123,7 +123,7 @@
           "title": "Attention, Attention!",
           "id": 12,
           "desc": "",
-          "image": "colorizer.jpg",
+          "image": "under_construction2.png",
           "status": "to_do",
           "links": {
             "app": "/coming_soon",
@@ -134,7 +134,7 @@
           "title": "Style, Please: V1",
           "id": 13,
           "desc": "",
-          "image": "colorizer.jpg",
+          "image": "under_construction2.png",
           "status": "to_do",
           "links": {
             "app": "/coming_soon",
@@ -145,7 +145,7 @@
           "title": "Style, Please: V2",
           "id": 14,
           "desc": "",
-          "image": "colorizer.jpg",
+          "image": "under_construction2.png",
           "status": "to_do",
           "links": {
             "app": "/coming_soon",
@@ -161,7 +161,7 @@
           "title": "Next Char",
           "id": 15,
           "desc": "Visualize how a Recurrent Neural Network predicts which letter comes next.",
-          "image": "colorizer.jpg",
+          "image": "under_construction2.png",
           "status": "to_do",
           "links": {
             "app": "/next_char",
@@ -172,7 +172,7 @@
           "title": "Word To Vector: V1",
           "id": 16,
           "desc": "",
-          "image": "colorizer.jpg",
+          "image": "under_construction2.png",
           "status": "to_do",
           "links": {
             "app": "/coming_soon",
@@ -183,7 +183,7 @@
           "title": "Next Word",
           "id": 17,
           "desc": "",
-          "image": "colorizer.jpg",
+          "image": "under_construction2.png",
           "status": "to_do",
           "links": {
             "app": "/coming_soon",
@@ -194,7 +194,7 @@
           "title": "Word To Vector: V2",
           "id": 18,
           "desc": "",
-          "image": "colorizer.jpg",
+          "image": "under_construction2.png",
           "status": "to_do",
           "links": {
             "app": "/coming_soon",
@@ -205,7 +205,7 @@
           "title": "Next Sentence",
           "id": 19,
           "desc": "",
-          "image": "colorizer.jpg",
+          "image": "under_construction2.png",
           "status": "to_do",
           "links": {
             "app": "/coming_soon",
@@ -221,7 +221,7 @@
           "title": "TicTacToe",
           "id": 20,
           "desc": "",
-          "image": "colorizer.jpg",
+          "image": "under_construction2.png",
           "status": "to_do",
           "links": {
             "app": "/coming_soon",
@@ -232,7 +232,7 @@
           "title": "Ping-Pong",
           "id": 21,
           "desc": "",
-          "image": "colorizer.jpg",
+          "image": "under_construction2.png",
           "status": "to_do",
           "links": {
             "app": "/coming_soon",
@@ -243,7 +243,7 @@
           "title": "Racer",
           "id": 22,
           "desc": "",
-          "image": "colorizer.jpg",
+          "image": "under_construction2.png",
           "status": "to_do",
           "links": {
             "app": "/coming_soon",
@@ -259,7 +259,7 @@
           "title": "AutoEncoder: V1",
           "id": 23,
           "desc": "",
-          "image": "colorizer.jpg",
+          "image": "under_construction2.png",
           "status": "to_do",
           "links": {
             "app": "/coming_soon",
@@ -270,7 +270,7 @@
           "title": "AutoEncoder: V2",
           "id": 24,
           "desc": "",
-          "image": "colorizer.jpg",
+          "image": "under_construction2.png",
           "status": "to_do",
           "links": {
             "app": "/coming_soon",
@@ -281,7 +281,7 @@
           "title": "MNIST Feature Maps",
           "id": 25,
           "desc": "",
-          "image": "colorizer.jpg",
+          "image": "under_construction2.png",
           "status": "to_do",
           "links": {
             "app": "/coming_soon",
@@ -292,7 +292,7 @@
           "title": "Memorize Please",
           "id": 26,
           "desc": "",
-          "image": "colorizer.jpg",
+          "image": "under_construction2.png",
           "status": "to_do",
           "links": {
             "app": "/coming_soon",
@@ -308,7 +308,7 @@
           "title": "Spiking Neurons",
           "id": 27,
           "desc": "",
-          "image": "colorizer.jpg",
+          "image": "under_construction2.png",
           "status": "to_do",
           "links": {
             "app": "/coming_soon",
@@ -319,7 +319,7 @@
           "title": "MNIST Detection Dataset",
           "id": 28,
           "desc": "",
-          "image": "colorizer.jpg",
+          "image": "under_construction2.png",
           "status": "in_progress",
           "links": {
             "app": "/coming_soon",

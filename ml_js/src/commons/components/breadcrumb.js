@@ -1,5 +1,6 @@
 import React from "react";
 import routes from '../../routes';
+import projecsData from '../../landing/data/projects';
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import Icon from '@material-ui/core/Icon';
@@ -30,7 +31,26 @@ export default class BreadCrumb extends React.Component {
     }
 
     getLinks(path) {
+        /*
+        1. Check if the any project has this path.
+        2. Check if the path exists in routes.
+         */
+
         let links = [];
+        projecsData.categories.forEach(category=>{
+            category.projects.forEach(project=>{
+                if (project.links.app === path) {
+                    links = [
+                        {title: 'Home', link: '/'},
+                        {title: project.title, link: project.links.app}
+                    ];
+                }
+            })
+        });
+
+        if (links.length > 0)
+            return links;
+
         let pages = path.split("/");
         let tree = routes.tree;
         for (let i = 0; i < pages.length; i++) {
