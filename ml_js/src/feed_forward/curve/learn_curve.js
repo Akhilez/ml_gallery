@@ -10,6 +10,7 @@ import Graph from './sketch_learn_curve';
 import NeuronGraphLearnCurve from "./neuron_graph_learn_curve";
 import {CartesianGrid, Legend, Line, LineChart, Tooltip, XAxis, YAxis} from "recharts";
 import WebsocketTransporter from "../../commons/utils/transporter/websocket_transporter";
+import AjaxTransporter from "../../commons/utils/transporter/ajax_transporter";
 
 
 export default class LearnCurvePage extends React.Component {
@@ -25,7 +26,7 @@ export default class LearnCurvePage extends React.Component {
             isTrainerInitialized: false,
         };
 
-        this.transporter = new WebsocketTransporter('learn_curve', (data) => this.receive_data(data));
+        this.transporter = new AjaxTransporter('learn_curve', (data) => this.receive_data(data));
 
         this.x = null;
         this.y = null;

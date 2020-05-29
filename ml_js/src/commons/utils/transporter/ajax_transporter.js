@@ -15,13 +15,15 @@ export default class AjaxTransporter extends Transporter {
 
     send(data) {
         data['trace_id'] = this.trace_id;
+        console.log(data);
 
         fetch(this.mlPyUrl, {
             method: "POST",
-            body: JSON.stringify(data)
-        }).then(res => {
-            let received_data = res.json();
-            this.received(received_data);
+            body: JSON.stringify(data),
+            
+        }).then(res => res.json()).then(result => {
+            console.log(result);
+            this.call_back(result);
         });
     }
 

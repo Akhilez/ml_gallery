@@ -17,7 +17,7 @@ class CommonConsumer:
         self.trainer = PolyRegTrainer(self)
         self.trainer.x, self.trainer.y = self.trainer.get_random_sample_data(50)
 
-        self.transporter.send(data={
+        return self.transporter.send(data={
             'action': 'init',
             'data': self.trainer.get_float_data(),
         })

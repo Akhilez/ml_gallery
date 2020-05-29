@@ -23,6 +23,7 @@ export default class WebsocketTransporter extends Transporter {
     send(data) {
         if (data.action === 'listen') return;
         data['trace_id'] = this.trace_id;
+        console.log(data);
         this.socket.send(JSON.stringify(data));
     }
 
