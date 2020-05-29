@@ -1,11 +1,10 @@
-import uuid
 import threading
 from channels.generic.websocket import WebsocketConsumer
 import json
-
-from MLGallery.regressors.polynomial.trainer import PolyRegTrainer
+from lib.transporter.websocket_transporter import WebsocketTransporter
 from lib.trace_manager import TraceManager
 from ml_py.settings import logger
+from MLGallery.feed_forward.polynomial.common_consumer import CommonConsumer
 
 
 class PolyRegConsumer(WebsocketConsumer):
@@ -33,12 +32,11 @@ class PolyRegConsumer(WebsocketConsumer):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.trace_id = None
-        self.trainer = None
+        self.consumer = CommonConsumer(WebsocketTransporter('learn_curve', consumer=self))
 
     def connect(self):
         self.accept()
-        self.init_trainer()
+        self.consumer.init_trainer()
 
     def disconnect(self, close_code):
         self.trainer.stop_training()
@@ -68,23 +66,6 @@ class PolyRegConsumer(WebsocketConsumer):
 
         if action == 'clear_data':
             self.trainer.clear_data()
-        
-    def init_trainer(self):
-        """
-        1. Initialize order, x, y, w, b, trace_id
-        2. Send sample data to client.
-        """
-        self.trace_id = str(uuid.uuid1())
-        TraceManager.jobs[self.trace_id] = self
-
-        self.trainer = PolyRegTrainer(self)
-        self.trainer.x, self.trainer.y = self.trainer.get_random_sample_data(50)
-
-        self.send(text_data=json.dumps({
-            'action': 'init',
-            'trace_id': self.trace_id,
-            'data': self.trainer.get_float_data(),
-        }))
 
     def send_update_status(self):
         data = {

@@ -1,16 +1,16 @@
 import React from "react";
 import {Container} from "react-bootstrap";
-import ProjectsNav from "../commons/components/projects_nav";
-import BreadCrumb from "../commons/components/breadcrumb";
-import MLAppBar from "../commons/components/ml_app_bar";
+import ProjectsNav from "../../commons/components/projects_nav";
+import BreadCrumb from "../../commons/components/breadcrumb";
+import MLAppBar from "../../commons/components/ml_app_bar";
 import Sketch from "react-p5";
-import TrainingTracker from "../commons/utils/training_tracker";
-import Chartist from "../commons/utils/chartist";
+import TrainingTracker from "../../commons/utils/training_tracker";
+import Chartist from "../../commons/utils/chartist";
 import LinearClassifierNeuron from "./linear_classifier_neuron";
-import Neuron from "../commons/components/neuron";
-import {Centered, OutlinedButtonLink} from "../commons/components/components";
-import ProjectPaginator from "../commons/components/project_paginator";
-import '../commons/components/components.css';
+import Neuron from "../../commons/components/neuron";
+import {Centered, OutlinedButtonLink} from "../../commons/components/components";
+import ProjectPaginator from "../../commons/components/project_paginator";
+import '../../commons/components/components.css';
 
 
 export default class LinearClassifierPage extends React.Component {

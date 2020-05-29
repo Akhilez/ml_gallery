@@ -5,11 +5,11 @@ import MLAppBar from "../../commons/components/ml_app_bar";
 import BreadCrumb from "../../commons/components/breadcrumb";
 import {Centered, OutlinedButtonLink} from "../../commons/components/components";
 import ProjectPaginator from "../../commons/components/project_paginator";
-import {MLPyHost, MLPyPort} from "../../commons/settings";
 import '../../commons/components/components.css';
 import Graph from './sketch_learn_curve';
 import NeuronGraphLearnCurve from "./neuron_graph_learn_curve";
 import {CartesianGrid, Legend, Line, LineChart, Tooltip, XAxis, YAxis} from "recharts";
+import WebsocketTransporter from "../../commons/utils/transporter/websocket_transporter";
 
 
 export default class LearnCurvePage extends React.Component {
@@ -25,9 +25,8 @@ export default class LearnCurvePage extends React.Component {
             isTrainerInitialized: false,
         };
 
-        this.mlPyUrl = `ws://${MLPyHost}:${MLPyPort}/ws/poly_reg`;
-        this.traceId = null;
-        this.socket = new WebSocket(this.mlPyUrl);
+        this.transporter = new WebsocketTransporter('learn_curve', (data) => this.receive_data(data));
+
         this.x = null;
         this.y = null;
 
@@ -39,7 +38,7 @@ export default class LearnCurvePage extends React.Component {
     }
 
     componentDidMount() {
-        this.setupSocketListeners();
+        this.transporter.init();
     }
 
     render() {
@@ -87,7 +86,8 @@ export default class LearnCurvePage extends React.Component {
         let terms = ["y = "];
 
         for (let i = 1; i <= this.state.order; i++) {
-            terms.push(<div className={"inline"} key={`eqn-${i}`}>w<sub>{i}</sub>x<sup>{this.state.order - i + 1}</sup> + &nbsp;</div>);
+            terms.push(<div className={"inline"}
+                            key={`eqn-${i}`}>w<sub>{i}</sub>x<sup>{this.state.order - i + 1}</sup> + &nbsp;</div>);
         }
         terms.push("b");
 
@@ -106,40 +106,29 @@ export default class LearnCurvePage extends React.Component {
     startTraining() {
         let payload = {
             action: 'start_training',
-            trace_id: this.traceId,
         };
-        console.log(JSON.stringify(payload));
-        this.socket.send(JSON.stringify(payload));
+        this.transporter.send(payload);
         this.setState({isTraining: true});
     }
 
     stopTraining() {
         let payload = {
             action: 'stop_training',
-            trace_id: this.traceId,
         };
-        this.socket.send(JSON.stringify(payload));
+        this.transporter.send(payload);
         this.setState({isTraining: false});
     }
 
-    setupSocketListeners() {
-        this.socket.onclose = () => {
-            console.error('Chat socket closed unexpectedly')
-        };
-        this.socket.onmessage = (event) => {
-            const data = JSON.parse(event.data);
-            console.log(data);
-            this.traceId = data.trace_id;
-            if (data.action === 'status_update') {
-                this.updateTrainingStatus(data.data);
-            } else if (data.action === 'init') {
-                this.x = data.data[0];
-                this.y = data.data[1];
-                this.traceId = data.trace_id;
-                this.setState({isTrainerInitialized: true});
-                this.drawDataToCanvas(this.x, this.y);
-            }
-        };
+    receive_data(data) {
+        console.log(data);
+        if (data.action === 'status_update') {
+            this.updateTrainingStatus(data.data);
+        } else if (data.action === 'init') {
+            this.x = data.data[0];
+            this.y = data.data[1];
+            this.setState({isTrainerInitialized: true});
+            this.drawDataToCanvas(this.x, this.y);
+        }
     }
 
     updateTrainingStatus(data) {
@@ -160,30 +149,29 @@ export default class LearnCurvePage extends React.Component {
 
         this.neuronRef.current.initializeWeights(newOrder);
 
-        this.socket.send(JSON.stringify({
+        this.transporter.send({
             action: 'change_order',
-            order: newOrder,
-            trace_id: this.traceId,
-        }));
+            data: newOrder,
+        });
     }
 
     clearData() {
         this.graphRef.current.x = [];
         this.graphRef.current.y = [];
 
-        this.socket.send(JSON.stringify({
+        this.transporter.send({
             action: 'clear_data',
-            trace_id: this.traceId,
-        }));
+        });
     }
 
     add_new_point(x, y) {
-        this.socket.send(JSON.stringify({
+        this.transporter.send({
             action: 'new_point',
-            trace_id: this.traceId,
-            x: x,
-            y: y,
-        }))
+            data: {
+                x: x,
+                y: y,
+            },
+        });
     }
 
     getLossGraph() {

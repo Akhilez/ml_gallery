@@ -4,10 +4,10 @@ import LandingPage from "./landing/landing";
 import projects from './landing/data/projects';
 import ComingSoon from "./landing/coming_soon";
 import 'rsuite/dist/styles/rsuite-default.css';
-import MnistGanPage from "./mnist_gan/mnist_gan";
-import LearnLinePage from "./regressors/learn_line";
-import LinearClassifierPage from "./classifiers/linear_classifier";
-import LearnCurvePage from './regressors/curve/learn_curve'
+import MnistGanPage from "./vision/mnist_gan/mnist_gan";
+import LearnLinePage from "./feed_forward/learn_line/learn_line";
+import LinearClassifierPage from "./feed_forward/linear_classifier/linear_classifier";
+import LearnCurvePage from './feed_forward/curve/learn_curve'
 
 
 import {

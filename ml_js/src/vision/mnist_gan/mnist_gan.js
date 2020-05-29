@@ -1,18 +1,17 @@
 import React from "react";
 import Container from "react-bootstrap/Container";
-import MLAppBar from "../commons/components/ml_app_bar";
-import '../landing/landing.css';
+import MLAppBar from "../../commons/components/ml_app_bar";
+import '../../landing/landing.css';
 import InputLabel from "@material-ui/core/InputLabel";
 import Select from "@material-ui/core/Select";
 import MenuItem from "@material-ui/core/MenuItem";
-import {Centered, OutlinedButtonLink} from "../commons/components/components";
+import {Centered, OutlinedButtonLink} from "../../commons/components/components";
 import FormControl from "@material-ui/core/FormControl";
 import './mnist_gan.css';
-import BreadCrumb from '../commons/components/breadcrumb';
-import theme from '../commons/theme';
+import BreadCrumb from '../../commons/components/breadcrumb';
+import theme from '../../commons/theme';
 import {MuiThemeProvider} from '@material-ui/core/styles';
-import {MLHelper} from './neural_net';
-import ProjectsNav from "../commons/components/projects_nav";
+import ProjectsNav from "../../commons/components/projects_nav";
 
 
 export default class MnistGanPage extends React.Component {

@@ -4,7 +4,7 @@ from numpy import load
 import torch
 import torchvision
 
-data_path = "../../data/mnist/"
+data_path = "../../../data/mnist/"
 
 train_loader = torch.utils.data.DataLoader(
     torchvision.datasets.MNIST(data_path, train=True, download=True,

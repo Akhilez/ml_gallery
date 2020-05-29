@@ -9,5 +9,6 @@ app_name = 'quiz'
 
 urlpatterns = [
     path('selective_generator', views.selective_generator_page, name='selective_generator'),
+    path('ajax/learn_curve', views.rest_learn_curve, name='rest-learn-curve'),
     path('', views.home, name='home'),
 ]
