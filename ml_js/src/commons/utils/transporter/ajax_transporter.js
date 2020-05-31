@@ -19,8 +19,7 @@ export default class AjaxTransporter extends Transporter {
 
         fetch(this.mlPyUrl, {
             method: "POST",
-            body: JSON.stringify(data),
-            
+            body: JSON.stringify(data)
         }).then(res => res.json()).then(result => {
             console.log(result);
             this.call_back(result);

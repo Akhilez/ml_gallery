@@ -1,0 +1,74 @@
+/* Timeline */
+.timeline {
+    border-left: 4px solid #d0e0e3;
+    border-bottom-right-radius: 4px;
+    border-top-right-radius: 4px;
+    background: rgba(255, 255, 255, 0.03);
+    color: #d0e0e3;
+    font-family: 'Roboto Condensed', sans-serif;
+    margin: 50px;
+    letter-spacing: 0.5px;
+    line-height: 1.4em;
+    font-size: 1.03em;
+    padding: 15px 50px;
+    list-style: none;
+    text-align: left;
+    font-weight: 100;
+    max-width: 1080px;
+}
+
+.timeline h2,
+.timeline h3 {
+    font-family: 'Roboto Condensed', sans-serif;
+    font-weight: 300;
+    font-size: 24px;
+    margin-bottom: 7px;
+}
+
+.timeline p {
+    font-family: 'Roboto Condensed', sans-serif;
+    font-weight: 300;
+    font-size: 20px;
+}
+
+.timeline .event {
+    border-bottom: 1px dashed rgba(255, 255, 255, 0.1);
+    padding-bottom: 15px;
+    margin-bottom: 5px;
+    position: relative;
+}
+
+.timeline .event:last-of-type {
+    padding-bottom: 0;
+    margin-bottom: 0;
+    border: none;
+}
+
+.timeline .event:before,
+.timeline .event:after {
+    position: absolute;
+    display: block;
+    top: 0;
+}
+
+.timeline .event:before {
+    left: -200px;
+    color: rgba(255, 255, 255, 0.4);
+    content: attr(data-date);
+    text-align: right;
+    font-weight: 300;
+    font-size: 15px;
+    min-width: 120px;
+    font-family: 'Roboto Condensed', sans-serif;
+}
+
+.timeline .event:after {
+    box-shadow: 0 0 0 4px #d0e0e3;
+    left: -57.85px;
+    background: #313534;
+    border-radius: 50%;
+    height: 11px;
+    width: 11px;
+    content: "";
+    top: 5px;
+}

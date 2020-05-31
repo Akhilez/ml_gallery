@@ -7,7 +7,8 @@ import 'rsuite/dist/styles/rsuite-default.css';
 import MnistGanPage from "./vision/mnist_gan/mnist_gan";
 import LearnLinePage from "./feed_forward/learn_line/learn_line";
 import LinearClassifierPage from "./feed_forward/linear_classifier/linear_classifier";
-import LearnCurvePage from './feed_forward/curve/learn_curve'
+import LearnCurvePage from './feed_forward/curve/learn_curve';
+import ProfilePage from './profile/profile';
 
 
 import {
@@ -32,6 +33,9 @@ export default function App() {
     return (
         <Router>
             <Switch>
+                <Route path="/profile">
+                    <ProfilePage/>
+                </Route>
                 {
                     projects.categories.map(category => category.projects.map((project) =>
                         <Route path={project.links.app} key={project.id}>
