@@ -18,10 +18,10 @@ export default class ProfileNavBar extends React.Component {
                     <Navbar.Body>
                         <Nav pullRight onSelect={() => {
                         }} activeKey={'activeKey'}>
-                            <Nav.Item eventKey="profile">PROFILE</Nav.Item>
-                            <Nav.Item eventKey="ai">AI</Nav.Item>
-                            <Nav.Item eventKey="projects">PROJECTS</Nav.Item>
-                            <Nav.Item eventKey="resume">RESUME</Nav.Item>
+                            <Nav.Item href="/profile" eventKey="profile">PROFILE</Nav.Item>
+                            <Nav.Item href="/" eventKey="ai">MACHINE LEARNING</Nav.Item>
+                            <Nav.Item href="/profile/all_projects" eventKey="projects">PROJECTS</Nav.Item>
+                            <Nav.Item href="/resume" eventKey="resume">RESUME</Nav.Item>
                         </Nav>
                     </Navbar.Body>
                 </Navbar>

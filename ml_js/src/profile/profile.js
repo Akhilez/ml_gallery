@@ -53,17 +53,13 @@ export default class ProfilePage extends React.Component {
                     of
                     the
                     administrative operations.</p>
-                <p className="para no_href_p">In my spare time, I work on my own <a
-                    href="http://akhilez.com/home/resume/">independent
-                    projects</a>. I
-                    developed a number of applications for the web and mobile over the years because I enjoy coding and
-                    designing.
-                    Lately, I’ve developed a deep interest in Artificial Intelligence and Space. Now, I associate my
-                    goals
-                    strongly
-                    with pioneering the advancements in Artificial General Intelligence for further space exploration
-                    and
-                    more.</p>
+                <p className="para no_href_p">
+                    I am extremely passionate about modern Artificial Intelligence. In my spare time, I try to recreate
+                    famous research works in deep learning and deploy them with user interaction. I also work on my own
+                    independent projects. I developed a number of applications for the web and mobile over the years
+                    because I enjoy coding and designing. I associate my long-term goals strongly with pioneering the
+                    advancements in Artificial General Intelligence for further space exploration and more.
+                </p>
 
                 <div className="header1" style={{fontSize: 20, paddingTop: 20}}>
                     <img src={toggle_img} alt="toggle" height="30px"/>
@@ -123,7 +119,8 @@ export default class ProfilePage extends React.Component {
                 <h3 className="header1 no_href_p"><a target="_blank" href="https://github.com/Akhilez"
                                                      style={{fontWeight: 700}}>
                     Coding Activity</a></h3>
-
+                <br/>
+                The live GitHub contributions below shows my commitment to writing code
                 <GithubCalendar/>
 
                 <div className="row">

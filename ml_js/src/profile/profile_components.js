@@ -58,7 +58,7 @@ export function Social(props) {
 export class GithubCalendar extends React.Component {
     render() {
         return (
-            <div className="calendar" style={{marginTop: 50, marginBottom: 50, width: "100%"}}>
+            <div className="calendar" style={{marginTop: 20, marginBottom: 50, width: "100%"}}>
                 Loading the data just for you.
             </div>
         );
