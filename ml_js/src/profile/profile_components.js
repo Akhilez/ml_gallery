@@ -4,7 +4,7 @@ import profile_photo from './media/profile_photo.jpg';
 import './css/profile_style.css';
 import './css/fontawesome/css/font-awesome.min.css';
 import './css/fontawesome/css/fonts.css';
-import ReactGithubCalendar from '@axetroy/react-github-calendar';
+import './css/github_calendar.css';
 
 export function ProfileBadge(props) {
     return (
@@ -53,9 +53,13 @@ export function Social(props) {
 export class GithubCalendar extends React.Component {
     render() {
         return (
-            <div>
-                <ReactGithubCalendar name="axetroy" />
+            <div className="calendar" style={{marginTop: 50, marginBottom: 50, width: "100%"}}>
+                Loading the data just for you.
             </div>
         );
+    }
+
+    componentDidMount() {
+        window.GitHubCalendar(".calendar", "Akhilez", {responsive: true});
     }
 }

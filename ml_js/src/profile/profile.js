@@ -4,6 +4,7 @@ import ProfileNavBar from "./navbar";
 import {ProfileBadge, GithubCalendar} from './profile_components';
 import toggle_img from './media/toggle.png';
 import './css/timeline.css';
+import code_art_img from './media/cover_code_art_with_bg_dark.png';
 
 
 export default class ProfilePage extends React.Component {
@@ -113,7 +114,7 @@ export default class ProfilePage extends React.Component {
                 <GithubCalendar/>
 
                 <div className="row">
-                    <img src="media/cover_code_art_with_bg_dark.png" alt="CoverPhoto" width="400"/>
+                    <img src={code_art_img} alt="CoverPhoto" width="400"/>
                 </div>
             </div>
         );
