@@ -45,6 +45,11 @@
     text-decoration: none;
     font-weight: 300;
 }
+.no_href a:hover {
+    color: white;
+    text-decoration: none;
+    font-weight: 300;
+}
 
 .navbar-ak {
     background: #1b2b34;
@@ -120,11 +125,18 @@
 .project_box {
     padding: 50px 0;
 }
+.project_box:hover img {
+    padding: 0;
+    transition: all ease 1s;
+    border-radius: 8px;
+}
 
 .project_image {
-    border-radius: 7px;
+    border-radius: 16px;
     max-width: 100%;
     height: auto;
+    padding: 10px;
+    transition: all ease 1s;
 }
 
 .view_source_button {
@@ -177,7 +189,6 @@
     padding: 15px;
     text-align: center;
     background-color: #1b2b34;
-    height: 125px;
 }
 
 .round-frame {
@@ -257,4 +268,13 @@ textarea {
 .nav-apps-btn {
     background-color: transparent;
     border: 0;
+}
+
+.timeline_heading {
+    padding-top: 20px;
+}
+
+.projectLinkText {
+    font-size: 15px;
+    padding-bottom: 5px;
 }

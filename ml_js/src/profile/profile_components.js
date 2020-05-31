@@ -24,14 +24,19 @@ export function ProfileBadge(props) {
                             href="mailto:akhilkannadev@gmail.com">akhilkannadev@gmail.com</a></div>
 
                         <Social/>
-
-                        <div>
-                            <a target="_blank" href="http://akhilez.com/home/resume/"
-                               className="btn btn-outline-secondary resume-button">RESUME</a>
-                        </div>
+                        <ResumeButton/>
                     </div>
                 </Col>
             </Row>
+        </div>
+    );
+}
+
+export function ResumeButton(props) {
+    return (
+        <div>
+            <a target="_blank" href="http://akhilez.com/home/resume/"
+               className="btn btn-outline-secondary resume-button">RESUME</a>
         </div>
     );
 }
