@@ -21,7 +21,7 @@ export function ProfileBadge(props) {
                             Computer Science Engineer
                         </div>
                         <div style={{fontSize: 18}} className="roboto-light-ak no_href"><a
-                            href="mailto:akhilkannadev@gmail.com">akhilkannadev@gmail.com</a></div>
+                            href="mailto: ak@akhil.ai"> ak@akhil.ai</a></div>
 
                         <Social/>
                         <ResumeButton/>

@@ -402,9 +402,8 @@ export default class ProfilePage extends React.Component {
 
                     <hr/>
 
-                    <div style={{fontSize: 10, marginTop: 15}} className="roboto-light-ak no_href"><a
-                        href="mailto:akhilkannadev@gmail.com">akhilkannadev@gmail.com</a></div>
-
+                    <div style={{marginTop: 15}} className="roboto-light-ak no_href"><a
+                        href="mailto: ak@akhil.ai"> ak@akhil.ai</a></div>
                     <Social/>
 
                     <ResumeButton/>
