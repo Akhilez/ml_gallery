@@ -1,5 +1,5 @@
 import React from "react";
-import {Container} from "react-bootstrap";
+import {Container, Row, Col} from "react-bootstrap";
 import ProfileNavBar from "./navbar";
 import {ProfileBadge, GithubCalendar, Social, ResumeButton} from './profile_components';
 import toggle_img from './media/toggle.png';
@@ -13,6 +13,7 @@ import vegan_img from './media/chicken.jpg';
 import kmitra_img from './media/kmitraLogo.jpg';
 import ezio_img from './media/ezio.jpg';
 import mlg_img from '../landing/ml_logo/ml_logo.png';
+import {Link} from 'react-router-dom';
 
 
 export default class ProfilePage extends React.Component {
@@ -57,10 +58,11 @@ export default class ProfilePage extends React.Component {
                     administrative operations.</p>
                 <p className="para no_href_p">
                     I am extremely passionate about modern Artificial Intelligence. In my spare time, I try to recreate
-                    famous research works in deep learning and deploy them with user interaction. I also work on my own
-                    independent projects. I developed a number of applications for the web and mobile over the years
-                    because I enjoy coding and designing. I associate my long-term goals strongly with pioneering the
-                    advancements in Artificial General Intelligence for further space exploration and more.
+                    famous research works in deep learning and deploy them with user interaction at <Link
+                    to={"/"}>akhil.ai</Link>. I also work on my own independent projects. I developed a number of
+                    applications for the web and mobile over the years because I enjoy coding and designing. I associate
+                    my long-term goals strongly with pioneering the advancements in Artificial General Intelligence for
+                    further space exploration and more.
                 </p>
 
                 <div className="header1" style={{fontSize: 20, paddingTop: 20}}>
@@ -115,12 +117,54 @@ export default class ProfilePage extends React.Component {
         );
     }
 
-    DeepLearning(props){
+    DeepLearning(props) {
+        let topics = [
+            {
+                title: "Computer Vision",
+                projects: "MNSIT GAN (ACGAN), Colorizer, Find All Numbers (Faster-RCNN)"
+            },
+            {
+                title: "Natural Language Processing",
+                projects: "Next Char (LSTM), Next Word (word2vev), Next Sentence (seq2seq with attention), BERT"
+            },
+            {
+                title: "Reinforcement Learning",
+                projects: "Policy Gradients - TicTacToe, Pong, Racer"
+            },
+            {
+                title: "Unsupervised Learning",
+                projects: "MNIST AutoEncoder, Self-Organizing Feature-Maps, Associative Memory"
+            },
+            {
+                title: "Other",
+                projects: "Spiking Neurons, MNIST Detection Dataset"
+            },
+        ];
         return (
             <div>
                 <h3 className="header1">Deep Learning</h3>
 
-                <img src={mlg_img} alt={"MLGallery Logo"} height={"75px"}/>
+                <div className="row project_box" style={{marginBottom: -40, marginTop: -30}}>
+                    <div className="col-md-3">
+                        <Link to={"/"}><img src={mlg_img} className="project_image" alt={"MLGallery Logo"} width={"250px"} style={{marginTop: 15}}/></Link>
+                    </div>
+                    <div className="col-md-9">
+                        <p>My passion for deep learning started when I learned CNNs in 2016 - the booming period of deep
+                            learning. Since then, I have been experimenting with Neural Nets in my pet-projects, earned
+                            a Master’s degree in Artificial Intelligence and now, I’m developing a curation of
+                            interesting deep learning tasks (listed below) into a master project called Machine Learning Gallery</p>
+                    </div>
+                </div>
+
+                <div>
+                    {topics.map(topic =>
+                        <Row>
+                            <Col sm={"3"} style={{fontWeight: 400}}>{topic.title}</Col>
+                            <Col sm={"9"}>{topic.projects}</Col>
+                        </Row>
+                    )}
+                </div>
+
             </div>
         );
     }
@@ -128,7 +172,8 @@ export default class ProfilePage extends React.Component {
     CodingActivity(props) {
         return (
             <div>
-                <h3 className="header1 no_href_p"><a target="_blank" rel="noopener noreferrer" href="https://github.com/Akhilez"
+                <h3 className="header1 no_href_p"><a target="_blank" rel="noopener noreferrer"
+                                                     href="https://github.com/Akhilez"
                                                      style={{fontWeight: 700}}>
                     Coding Activity</a></h3>
                 <br/>
@@ -225,7 +270,8 @@ export default class ProfilePage extends React.Component {
                             </div>
                             <div className="col-md-7">
                                 <h4 className="project_title">
-                                    <a target="_blank" rel="noopener noreferrer" href={project.links.app}>{project.title}</a></h4>
+                                    <a target="_blank" rel="noopener noreferrer"
+                                       href={project.links.app}>{project.title}</a></h4>
                                 <div className={"projectLinkText"}>
                                     <a href={project.links.app} style={{color: "#919c9e", fontWeight: 400}}
                                        target={"_blank"} rel="noopener noreferrer">{project.links.app}</a>
@@ -281,11 +327,13 @@ export default class ProfilePage extends React.Component {
                             college
                             e-magazine
                             called
-                            <a target="_blank" rel="noopener noreferrer" href="http://kmit.in/emagazine/author/akhil-kanna/">kMITRA</a>. One of
+                            <a target="_blank" rel="noopener noreferrer"
+                               href="http://kmit.in/emagazine/author/akhil-kanna/">kMITRA</a>. One of
                             the
                             articles I
                             wrote is an interesting short story on AI called
-                            <a target="_blank" rel="noopener noreferrer" href="http://kmit.in/emagazine/article/8934/">“PrecArIous Love”</a>.</p>
+                            <a target="_blank" rel="noopener noreferrer" href="http://kmit.in/emagazine/article/8934/">“PrecArIous
+                                Love”</a>.</p>
                     </div>
                 </div>
 
@@ -379,12 +427,14 @@ export default class ProfilePage extends React.Component {
                     </div>
                 </div>
                 <div className="inspiration_person_title">
-                    <div className="no_href"><a target="_blank" rel="noopener noreferrer" href="https://cs.stanford.edu/people/karpathy/">Andrej
+                    <div className="no_href"><a target="_blank" rel="noopener noreferrer"
+                                                href="https://cs.stanford.edu/people/karpathy/">Andrej
                         Karpathy</a></div>
                     <div className="inspiration_person_description no_href_p">Andrej is very special to me. He was
                         just
                         a
-                        normal <a target="_blank" rel="noopener noreferrer" href="https://www.youtube.com/user/badmephisto">youtuber</a> who
+                        normal <a target="_blank" rel="noopener noreferrer"
+                                  href="https://www.youtube.com/user/badmephisto">youtuber</a> who
                         taught me rubik’s cube with his <a target="_blank" rel="noopener noreferrer"
                                                            href="https://www.youtube.com/user/badmephisto">videos</a>.
                         But he became very successful as I saw him grow older. Today he is the director of AI at

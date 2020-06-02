@@ -10,7 +10,7 @@ class MLAppBar extends React.Component {
         return (
             <Navbar bg="transparent" variant="light">
                 <Nav className="mr-auto">
-                    <Navbar.Brand href="http://akhilez.com/"><img src={ak_logo} alt={"AK Logo"} height={"40px"} /></Navbar.Brand>
+                    <Navbar.Brand href="/profile"><img src={ak_logo} alt={"AK Logo"} height={"40px"} /></Navbar.Brand>
                 </Nav>
                 <Nav.Link href="/" className={"nav-link"}><div>HOME</div></Nav.Link>
                 <Nav.Link href="/profile" className={"nav-link"}><div>PROFILE</div></Nav.Link>

@@ -27,7 +27,7 @@ export function SizedBox(props) {
 
 
 const TitleComponent = ({ title }) => {
-    let defaultTitle = 'ML Gallery &nbsp;•&nbsp; Akhilez';
+    let defaultTitle = 'ML Gallery • Akhilez';
     return (
         <Helmet>
             <title>{title ? title : defaultTitle}</title>

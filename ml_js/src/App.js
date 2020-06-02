@@ -10,6 +10,7 @@ import LinearClassifierPage from "./feed_forward/linear_classifier/linear_classi
 import LearnCurvePage from './feed_forward/curve/learn_curve';
 import ProfilePage from './profile/profile';
 import {BrowserRouter as Router, Switch, Route} from 'react-router-dom';
+import {TitleComponent} from "./commons/components/components";
 
 
 export default class App extends React.Component {
@@ -18,7 +19,7 @@ export default class App extends React.Component {
         return (
             <Router>
                 <Switch>
-                    <Route path="/profile" component={ProfilePage}/>
+                    <Route path="/profile" component={this.withTitle({ component: ProfilePage, title: 'Akhilez' })}/>
                     {
                         projects.categories.map(category => category.projects.map((project) =>
                             <Route path={project.links.app} key={project.id}>
@@ -34,12 +35,30 @@ export default class App extends React.Component {
 
     getProjectComponent(project) {
         switch (project.id) {
-            case 1: return <LearnLinePage project={project}/>;
-            case 2: return <LinearClassifierPage project={project}/>;
-            case 5: return <MnistGanPage project={project}/>;
-            case 9: return <LearnCurvePage project={project}/>;
-            default: return <ComingSoon project={project}/>;
+            case 1:
+                return <LearnLinePage project={project}/>;
+            case 2:
+                return <LinearClassifierPage project={project}/>;
+            case 5:
+                return <MnistGanPage project={project}/>;
+            case 9:
+                return <LearnCurvePage project={project}/>;
+            default:
+                return <ComingSoon project={project}/>;
         }
+    };
+
+    withTitle({component: Component, title}) {
+        return class Title extends Component {
+            render() {
+                return (
+                    <React.Fragment>
+                        <TitleComponent title={title}/>
+                        <Component {...this.props} />
+                    </React.Fragment>
+                );
+            }
+        };
     };
 
 }

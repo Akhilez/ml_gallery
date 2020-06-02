@@ -14,13 +14,13 @@ export function ProfileBadge(props) {
                     <img src={profile_photo} className={"profile_img"} alt={"profilePhoto"}/>
                 </Col>
                 <Col sm={"auto"}>
-                    <div style={{marginTop: 30}}>
-                        <h1 className={"light_font"} style={{fontSize: 58}}>Akhil Devarashetti</h1>
+                    <div style={{marginTop: 20}}>
+                        <h1 className={"light_font"} style={{fontSize: 58}}>Akhil D. <i style={{fontSize: 35}}>(Akhilez)</i></h1>
 
                         <div style={{fontSize: 28, marginTop: -10}}>
-                            Computer Science Engineer
+                            Machine Learning Engineer
                         </div>
-                        <div style={{fontSize: 18}} className="roboto-light-ak no_href"><a
+                        <div style={{fontSize: 22}} className="roboto-light-ak no_href"><a
                             href="mailto: ak@akhil.ai"> ak@akhil.ai</a></div>
 
                         <Social/>
