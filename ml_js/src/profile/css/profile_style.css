@@ -86,8 +86,9 @@
 
 .header1 {
     font-family: 'Roboto Condensed', sans-serif;
-    font-weight: bold;
+    font-weight: 700;
     padding-top: 70px;
+    padding-bottom: 30px;
 }
 
 .header2 {

@@ -8,7 +8,7 @@ export default class ProfileNavBar extends React.Component {
     render() {
         return (
             <div>
-                <Navbar appearance="inverse" activeKey={this.props.active} className={"profile_navbar"}
+                <Navbar appearance="inverse" activekey={this.props.active} className={"profile_navbar"}
                         style={{backgroundColor: "transparent"}}>
                     <Navbar.Header>
                         <a href="#" className="navbar-brand logo">

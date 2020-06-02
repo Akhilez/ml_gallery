@@ -35,7 +35,7 @@ export function ProfileBadge(props) {
 export function ResumeButton(props) {
     return (
         <div>
-            <a target="_blank" href="http://akhilez.com/home/resume/"
+            <a target="_blank" rel="noopener noreferrer" href="http://akhilez.com/home/resume/"
                className="btn btn-outline-secondary resume-button">RESUME</a>
         </div>
     );
@@ -45,9 +45,9 @@ export function Social(props) {
     return (
         <div className="social">
             <ul>
-                <li><a target="_blank" href="https://www.linkedin.com/in/akhilez/">
+                <li><a target="_blank" rel="noopener noreferrer" href="https://www.linkedin.com/in/akhilez/">
                     <i className="fa fa-linkedin"/></a></li>
-                <li><a target="_blank" href="https://github.com/Akhilez">
+                <li><a target="_blank" rel="noopener noreferrer" href="https://github.com/Akhilez">
                     <i className="fa fa-github"/></a>
                 </li>
             </ul>

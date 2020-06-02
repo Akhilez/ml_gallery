@@ -12,6 +12,7 @@ import atheism_img from './media/evolution.jpg';
 import vegan_img from './media/chicken.jpg';
 import kmitra_img from './media/kmitraLogo.jpg';
 import ezio_img from './media/ezio.jpg';
+import mlg_img from '../landing/ml_logo/ml_logo.png';
 
 
 export default class ProfilePage extends React.Component {
@@ -23,6 +24,7 @@ export default class ProfilePage extends React.Component {
                     <ProfileBadge/>
                     <this.Bio/>
                     <this.TimeLine/>
+                    <this.DeepLearning/>
                     <this.CodingActivity/>
                     <this.Achievements/>
                     <this.Projects/>
@@ -113,14 +115,24 @@ export default class ProfilePage extends React.Component {
         );
     }
 
+    DeepLearning(props){
+        return (
+            <div>
+                <h3 className="header1">Deep Learning</h3>
+
+                <img src={mlg_img} alt={"MLGallery Logo"} height={"75px"}/>
+            </div>
+        );
+    }
+
     CodingActivity(props) {
         return (
             <div>
-                <h3 className="header1 no_href_p"><a target="_blank" href="https://github.com/Akhilez"
+                <h3 className="header1 no_href_p"><a target="_blank" rel="noopener noreferrer" href="https://github.com/Akhilez"
                                                      style={{fontWeight: 700}}>
                     Coding Activity</a></h3>
                 <br/>
-                The live GitHub contributions below shows my commitment to writing code
+                The live GitHub contributions below show my commitment to writing code
                 <GithubCalendar/>
 
                 <div className="row">
@@ -172,7 +184,7 @@ export default class ProfilePage extends React.Component {
                              width="600px"/>
                     </div>
                     <div className="col-md-5">
-                        <h4 className="project_title no_href">Won <a target="_blank"
+                        <h4 className="project_title no_href">Won <a target="_blank" rel="noopener noreferrer"
                                                                      href="https://revolutionuc.com/">RevolutionUC</a>
                         </h4>
                         <p className="project_description no_href_p"><a
@@ -203,9 +215,9 @@ export default class ProfilePage extends React.Component {
 
                 <div className="no_href">
                     {projects.projects.map(project =>
-                        <div className="row project_box">
+                        <div className="row project_box" key={project.title}>
                             <div className="col-md-5">
-                                <a target="_blank" href={project.links.app}>
+                                <a target="_blank" rel="noopener noreferrer" href={project.links.app}>
                                     <img className="project_image"
                                          src={require('./media/projects/' + project.image)}
                                          alt={project.image}
@@ -213,16 +225,16 @@ export default class ProfilePage extends React.Component {
                             </div>
                             <div className="col-md-7">
                                 <h4 className="project_title">
-                                    <a target="_blank" href={project.links.app}>{project.title}</a></h4>
+                                    <a target="_blank" rel="noopener noreferrer" href={project.links.app}>{project.title}</a></h4>
                                 <div className={"projectLinkText"}>
                                     <a href={project.links.app} style={{color: "#919c9e", fontWeight: 400}}
-                                       target={"_blank"}>{project.links.app}</a>
+                                       target={"_blank"} rel="noopener noreferrer">{project.links.app}</a>
                                 </div>
                                 <p className="project_description">{project.desc}</p>
 
                                 <div className="row">
                                     {project.tags.map(tag =>
-                                        <div className="col-auto chip_tag">{tag}</div>
+                                        <div className="col-auto chip_tag" key={tag}>{tag}</div>
                                     )}
                                 </div>
 
@@ -231,7 +243,7 @@ export default class ProfilePage extends React.Component {
                                     {project.links.code != null &&
                                     <div className="col-auto view_source_button" data-toggle="tooltip"
                                          title="View source code">
-                                        <a target="_blank" href={project.links.code}>
+                                        <a target="_blank" rel="noopener noreferrer" href={project.links.code}>
                                             <i style={{fontSize: 24}} className="material-icons">code</i></a>
                                     </div>
                                     }
@@ -239,7 +251,7 @@ export default class ProfilePage extends React.Component {
                             </div>
                         </div>
                     )}
-                    <a target="_blank" href="/profile/all_projects"
+                    <a target="_blank" rel="noopener noreferrer" href="/profile/all_projects"
                        className="btn btn-outline-secondary btn-lg resume-button" style={{width: 200, marginTop: 30}}>SHOW
                         MORE</a>
                 </div>
@@ -255,12 +267,12 @@ export default class ProfilePage extends React.Component {
 
                 <div className="row project_box">
                     <div className="col-md-3">
-                        <a target="_blank" href="http://kmit.in/emagazine/article/8934/">
+                        <a target="_blank" rel="noopener noreferrer" href="http://kmit.in/emagazine/article/8934/">
                             <img className="project_image round-frame" src={kmitra_img} alt="kmitra"
                                  width="200px" height="200px"/></a>
                     </div>
                     <div className="col-md-9">
-                        <h4 className="project_title no_href"><a target="_blank"
+                        <h4 className="project_title no_href"><a target="_blank" rel="noopener noreferrer"
                                                                  href="http://kmit.in/emagazine/article/8934/">A
                             short
                             story on
@@ -269,11 +281,11 @@ export default class ProfilePage extends React.Component {
                             college
                             e-magazine
                             called
-                            <a target="_blank" href="http://kmit.in/emagazine/author/akhil-kanna/">kMITRA</a>. One of
+                            <a target="_blank" rel="noopener noreferrer" href="http://kmit.in/emagazine/author/akhil-kanna/">kMITRA</a>. One of
                             the
                             articles I
                             wrote is an interesting short story on AI called
-                            <a target="_blank" href="http://kmit.in/emagazine/article/8934/">“PrecArIous Love”</a>.</p>
+                            <a target="_blank" rel="noopener noreferrer" href="http://kmit.in/emagazine/article/8934/">“PrecArIous Love”</a>.</p>
                     </div>
                 </div>
 
@@ -340,26 +352,26 @@ export default class ProfilePage extends React.Component {
         return (
             <div className="project_box">
                 <h5 className="project_title">Most influential people in my life</h5>
-                <div className="inspiration_person_title no_href"><a target="_blank"
+                <div className="inspiration_person_title no_href"><a target="_blank" rel="noopener noreferrer"
                                                                      href="https://twitter.com/elonmusk">Elon
                     Musk</a>
                     <div className="inspiration_person_description">"Work every waking hour."</div>
                 </div>
-                <div className="inspiration_person_title no_href"><a target="_blank"
+                <div className="inspiration_person_title no_href"><a target="_blank" rel="noopener noreferrer"
                                                                      href="https://twitter.com/neiltyson">Neil
                     DeGrasse Tyson</a>
                     <div className="inspiration_person_description">"Science is true whether or not you believe in
                         it."
                     </div>
                 </div>
-                <div className="inspiration_person_title no_href"><a target="_blank"
+                <div className="inspiration_person_title no_href"><a target="_blank" rel="noopener noreferrer"
                                                                      href="https://twitter.com/GrantCardone">Grant
                     Cardone</a>
                     <div className="inspiration_person_description">“Stay dangerous” from “Be obsessed or be
                         average”
                     </div>
                 </div>
-                <div className="inspiration_person_title no_href"><a target="_blank"
+                <div className="inspiration_person_title no_href"><a target="_blank" rel="noopener noreferrer"
                                                                      href="https://twitter.com/RGVzoomin">Ram
                     Gopal
                     Varma</a>
@@ -367,22 +379,22 @@ export default class ProfilePage extends React.Component {
                     </div>
                 </div>
                 <div className="inspiration_person_title">
-                    <div className="no_href"><a target="_blank" href="https://cs.stanford.edu/people/karpathy/">Andrej
+                    <div className="no_href"><a target="_blank" rel="noopener noreferrer" href="https://cs.stanford.edu/people/karpathy/">Andrej
                         Karpathy</a></div>
                     <div className="inspiration_person_description no_href_p">Andrej is very special to me. He was
                         just
                         a
-                        normal <a target="_blank" href="https://www.youtube.com/user/badmephisto">youtuber</a> who
-                        taught me rubik’s cube with his <a target="_blank"
+                        normal <a target="_blank" rel="noopener noreferrer" href="https://www.youtube.com/user/badmephisto">youtuber</a> who
+                        taught me rubik’s cube with his <a target="_blank" rel="noopener noreferrer"
                                                            href="https://www.youtube.com/user/badmephisto">videos</a>.
                         But he became very successful as I saw him grow older. Today he is the director of AI at
                         Tesla. My career path is a huge inspiration from his career path. Even this website is
                         lightly
-                        inspired from his <a target="_blank"
+                        inspired from his <a target="_blank" rel="noopener noreferrer"
                                              href="https://cs.stanford.edu/people/karpathy/">website.</a>
                     </div>
                 </div>
-                <div className="inspiration_person_title no_href"><a target="_blank"
+                <div className="inspiration_person_title no_href"><a target="_blank" rel="noopener noreferrer"
                                                                      href="https://eecs.ceas.uc.edu/~aminai/">Ali
                     Minai</a>
                     <div className="inspiration_person_description">The most influential professor in my life. He is
