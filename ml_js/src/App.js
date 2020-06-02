@@ -9,18 +9,30 @@ import LearnLinePage from "./feed_forward/learn_line/learn_line";
 import LinearClassifierPage from "./feed_forward/linear_classifier/linear_classifier";
 import LearnCurvePage from './feed_forward/curve/learn_curve';
 import ProfilePage from './profile/profile';
+import {BrowserRouter as Router, Switch, Route} from 'react-router-dom';
 
 
-import {
-    BrowserRouter as Router,
-    Switch,
-    Route,
-} from "react-router-dom";
+export default class App extends React.Component {
 
+    render() {
+        return (
+            <Router>
+                <Switch>
+                    <Route path="/profile" component={ProfilePage}/>
+                    {
+                        projects.categories.map(category => category.projects.map((project) =>
+                            <Route path={project.links.app} key={project.id}>
+                                {this.getProjectComponent(project)}
+                            </Route>
+                        ))
+                    }
+                    <Route path="/" component={LandingPage}/>
+                </Switch>
+            </Router>
+        );
+    }
 
-export default function App() {
-
-    const getProjectComponent = function (project) {
+    getProjectComponent(project) {
         switch (project.id) {
             case 1: return <LearnLinePage project={project}/>;
             case 2: return <LinearClassifierPage project={project}/>;
@@ -29,29 +41,6 @@ export default function App() {
             default: return <ComingSoon project={project}/>;
         }
     };
-
-    return (
-        <Router>
-            <Switch>
-                <Route path="/profile">
-                    <ProfilePage/>
-                </Route>
-                {
-                    projects.categories.map(category => category.projects.map((project) =>
-                        <Route path={project.links.app} key={project.id}>
-                            {getProjectComponent(project)}
-                        </Route>
-                    ))
-                }
-                <Route path="/">
-                    <LandingPage/>
-                </Route>
-                <Route path="">
-                    <LandingPage/>
-                </Route>
-            </Switch>
-        </Router>
-    );
 
 }
 

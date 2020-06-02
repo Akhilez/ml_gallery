@@ -1,5 +1,6 @@
 import React from "react";
 import './components.css';
+import {Helmet} from 'react-helmet';
 
 export function Centered(props) {
     return (
@@ -23,3 +24,14 @@ export function SizedBox(props) {
         <div style={{width: props.width, height: props.height}}/>
     )
 }
+
+
+const TitleComponent = ({ title }) => {
+    let defaultTitle = 'ML Gallery &nbsp;•&nbsp; Akhilez';
+    return (
+        <Helmet>
+            <title>{title ? title : defaultTitle}</title>
+        </Helmet>
+    );
+};
+export { TitleComponent };
