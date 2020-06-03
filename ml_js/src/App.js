@@ -11,6 +11,8 @@ import LearnCurvePage from './feed_forward/curve/learn_curve';
 import ProfilePage from './profile/profile';
 import {BrowserRouter as Router, Switch, Route} from 'react-router-dom';
 import {TitleComponent} from "./commons/components/components";
+import ResumePage from "./profile/resume";
+import urls from './urls';
 
 
 export default class App extends React.Component {
@@ -19,7 +21,6 @@ export default class App extends React.Component {
         return (
             <Router>
                 <Switch>
-                    <Route path="/profile" component={this.withTitle({ component: ProfilePage, title: 'Akhilez' })}/>
                     {
                         projects.categories.map(category => category.projects.map((project) =>
                             <Route path={project.links.app} key={project.id}>
@@ -27,7 +28,9 @@ export default class App extends React.Component {
                             </Route>
                         ))
                     }
-                    <Route path="/" component={LandingPage}/>
+                    <Route path={urls.resume.url} component={this.withTitle({ component: ResumePage, title: urls.resume.title })}/>
+                    <Route path={urls.ml_gallery.url} component={LandingPage}/>
+                    <Route path={urls.profile.url} component={this.withTitle({ component: ProfilePage, title: urls.profile.title })}/>
                 </Switch>
             </Router>
         );

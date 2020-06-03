@@ -14,6 +14,8 @@ import kmitra_img from './media/kmitraLogo.jpg';
 import ezio_img from './media/ezio.jpg';
 import mlg_img from '../landing/ml_logo/ml_logo.png';
 import {Link} from 'react-router-dom';
+import urls from '../urls';
+import {Centered} from "../commons/components/components";
 
 
 export default class ProfilePage extends React.Component {
@@ -41,27 +43,23 @@ export default class ProfilePage extends React.Component {
         return (
             <div>
                 <h3 className="header1">Bio</h3>
-                <p className="para no_href_p">I am a Master’s student at <a href="https://www.uc.edu/">University of
-                    Cincinnati</a> majoring in <a
-                    href="https://webapps2.uc.edu/ecurriculum/degreeprograms/program/detail/20MAS-AI-MENG">Artificial
-                    Intelligence</a>, specializing in Deep Learning architectures for Computer Vision, Reinforcement
-                    Learning
-                    and Complex Intelligent Systems. Previously, I was a full-stack engineer at an AI based startup
-                    called <a href="https://www.aviso.com/">Aviso</a>, where I took the ownership of an internal web-app
-                    that
-                    manages
-                    the cloud infrastructure. During my undergrad, I worked as a part-time Software Developer at the
-                    college’s
-                    administrative department where I developed software applications for digitalization and automation
-                    of
-                    the
-                    administrative operations.</p>
+                <p className="para no_href_p">
+                    I majored in <i>Artificial Intelligence</i> in my Master’s from <a href="https://www.uc.edu/">University
+                    of Cincinnati</a>, specialized in Deep Learning architectures for <i>Computer Vision, NLP,
+                    Reinforcement Learning and Complex Intelligent Systems</i>. Previously, I worked at an AI based
+                    startup called <a href="https://aviso.ai/">Aviso.AI</a> as a <i>Full-Stack Developer</i> with
+                    technologies - <i>Python, AWS and Vue.js</i>. During my undergrad, I worked as a part-time Software
+                    Developer at the college’s administrative department where I developed software applications for
+                    digitalization and automation of the administrative operations.
+                </p>
                 <p className="para no_href_p">
                     I am extremely passionate about modern Artificial Intelligence. In my spare time, I try to recreate
                     famous research works in deep learning and deploy them with user interaction at <Link
-                    to={"/"}>akhil.ai</Link>. I also work on my own independent projects. I developed a number of
+                    to={urls.ml_gallery.url}>akhil.ai/gallery</Link>. I also work on my own independent projects. I
+                    developed a number of
                     applications for the web and mobile over the years because I enjoy coding and designing. I associate
-                    my long-term goals strongly with pioneering the advancements in Artificial General Intelligence for
+                    my long-term goals strongly with pioneering the advancements in <i>Artificial General
+                    Intelligence</i> for
                     further space exploration and more.
                 </p>
 
@@ -146,24 +144,31 @@ export default class ProfilePage extends React.Component {
 
                 <div className="row project_box" style={{marginBottom: -40, marginTop: -30}}>
                     <div className="col-md-3">
-                        <Link to={"/"}><img src={mlg_img} className="project_image" alt={"MLGallery Logo"} width={"250px"} style={{marginTop: 15}}/></Link>
+                        <Link to={"/"}><img src={mlg_img} className="project_image" alt={"MLGallery Logo"}
+                                            width={"250px"} style={{marginTop: 15}}/></Link>
                     </div>
                     <div className="col-md-9">
                         <p>My passion for deep learning started when I learned CNNs in 2016 - the booming period of deep
                             learning. Since then, I have been experimenting with Neural Nets in my pet-projects, earned
                             a Master’s degree in Artificial Intelligence and now, I’m developing a curation of
-                            interesting deep learning tasks (listed below) into a master project called Machine Learning Gallery</p>
+                            interesting deep learning tasks (listed below) into a master project called Machine Learning
+                            Gallery</p>
                     </div>
                 </div>
 
                 <div>
                     {topics.map(topic =>
-                        <Row>
+                        <Row key={topic.title}>
                             <Col sm={"3"} style={{fontWeight: 400}}>{topic.title}</Col>
                             <Col sm={"9"}>{topic.projects}</Col>
                         </Row>
                     )}
                 </div>
+
+                <a href={urls.ml_gallery.url} className="btn btn-outline-secondary btn-lg resume-button"
+                   style={{width: 230, marginTop: 30}}>
+                    VISIT
+                </a>
 
             </div>
         );
@@ -297,8 +302,8 @@ export default class ProfilePage extends React.Component {
                             </div>
                         </div>
                     )}
-                    <a target="_blank" rel="noopener noreferrer" href="/profile/all_projects"
-                       className="btn btn-outline-secondary btn-lg resume-button" style={{width: 200, marginTop: 30}}>SHOW
+                    <a target="_blank" rel="noopener noreferrer" href="http://akhilez.com/home/all_projects"
+                       className="btn btn-outline-secondary btn-lg resume-button" style={{width: 200}}>SHOW
                         MORE</a>
                 </div>
             </div>

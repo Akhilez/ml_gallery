@@ -5,6 +5,8 @@ import './css/profile_style.css';
 import './css/fontawesome/css/font-awesome.min.css';
 import './css/fontawesome/css/fonts.css';
 import './css/github_calendar.css';
+import urls from '../urls';
+
 
 export function ProfileBadge(props) {
     return (
@@ -35,7 +37,7 @@ export function ProfileBadge(props) {
 export function ResumeButton(props) {
     return (
         <div>
-            <a target="_blank" rel="noopener noreferrer" href="http://akhilez.com/home/resume/"
+            <a target="_blank" rel="noopener noreferrer" href={urls.resume.url}
                className="btn btn-outline-secondary resume-button">RESUME</a>
         </div>
     );
