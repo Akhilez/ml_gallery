@@ -7,6 +7,7 @@ import projectsData from './data/projects';
 import Project from './components/project';
 import {Centered, OutlinedButtonLink} from "../commons/components/components";
 import {Row, Col} from 'react-bootstrap';
+import urls from '../urls';
 
 
 class LandingPage extends React.Component {
@@ -30,7 +31,7 @@ class LandingPage extends React.Component {
         return (
             <Centered>
                 <div style={{fontSize: 22, marginBottom: 70}}>
-                    <p>Developed by <a className={"link"} href={"http://akhilez.com"} target={"_blank"} rel="noopener noreferrer"><b><i>Akhilez</i></b></a></p>
+                    <p>Developed by <a className={"link"} href={urls.profile.url}><b><i>Akhilez</i></b></a></p>
                     <p><b>Machine Learning Gallery</b> is a master project of few of my experiments with Neural
                         Networks.
                         It is designed in a way to help a beginner understand the concepts with visualizations.

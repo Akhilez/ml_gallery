@@ -15,7 +15,7 @@ import ezio_img from './media/ezio.jpg';
 import mlg_img from '../landing/ml_logo/ml_logo.png';
 import {Link} from 'react-router-dom';
 import urls from '../urls';
-import {Centered} from "../commons/components/components";
+import {Helmet} from "react-helmet";
 
 
 export default class ProfilePage extends React.Component {
@@ -23,6 +23,7 @@ export default class ProfilePage extends React.Component {
         return (
             <div className={"profile_root"}>
                 <Container>
+                    <this.metaTags/>
                     <ProfileNavBar active={"profile"}/>
                     <ProfileBadge/>
                     <this.Bio/>
@@ -36,6 +37,33 @@ export default class ProfilePage extends React.Component {
                     <this.Footer/>
                 </Container>
             </div>
+        );
+    }
+
+    metaTags(props) {
+        let desc = 'Machine Learning Engineer. Master\'s in AI. Neural Nets, Web, Mobile, Cloud, UI. "Code is Art" - Akhilez';
+        let title = "Akhil D. (Akhilez)";
+        let img = "/static/media/profile_photo.d7a52edb.jpg";
+        return (
+            <Helmet>
+                <meta name="description"
+                      content={desc}/>
+
+                <meta name="twitter:image:src" content={img}/>
+                <meta name="twitter:site" content="@akhilez_"/>
+                <meta name="twitter:creator" content="@akhilez_"/>
+                <meta name="twitter:card" content="summary_large_image"/>
+                <meta name="twitter:title" content={title}/>
+                <meta name="twitter:description" content={desc}/>
+
+                <meta property="og:image" content={img}/>
+                <meta property="og:site_name" content={title}/>
+                <meta property="og:type" content="object"/>
+                <meta property="og:title" content={title}/>
+                <meta property="og:url" content="https://akhil.ai"/>
+                <meta property="og:description" content={desc}/>
+
+            </Helmet>
         );
     }
 

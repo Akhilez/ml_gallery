@@ -4,3 +4,4 @@
 venv/
 migrations/
 dumps/
+.git/
