@@ -13,6 +13,7 @@ import {BrowserRouter as Router, Switch, Route} from 'react-router-dom';
 import {TitleComponent} from "./commons/components/components";
 import ResumePage from "./profile/resume";
 import urls from './urls';
+import AllProjectsPage from "./profile/all_projects";
 
 
 export default class App extends React.Component {
@@ -30,6 +31,8 @@ export default class App extends React.Component {
                     }
                     <Route path={urls.resume.url} component={this.withTitle({ component: ResumePage, title: urls.resume.title })}/>
                     <Route path={urls.ml_gallery.url} component={LandingPage}/>
+                    <Route path={urls.all_projects.url} component={this.withTitle({ component: AllProjectsPage, title: urls.all_projects.title })}/>
+
                     <Route path={urls.profile.url} component={this.withTitle({ component: ProfilePage, title: urls.profile.title })}/>
                 </Switch>
             </Router>

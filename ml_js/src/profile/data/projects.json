@@ -12,6 +12,8 @@
         "p5.js"
       ],
       "date": "2020",
+      "on_profile": true,
+      "status": "deployed",
       "links": {
         "app": "https://akhil.ai/",
         "code": "https://github.com/Akhilez/ml_gallery"
@@ -28,6 +30,8 @@
         "python"
       ],
       "date": "2018",
+      "on_profile": true,
+      "status": "deployed",
       "links": {
         "app": "http://akhilez.com/colorizer/",
         "code": "https://github.com/Akhilez/Colorizer"
@@ -44,6 +48,8 @@
         "mysql"
       ],
       "date": "2017",
+      "on_profile": false,
+      "status": "deployed",
       "links": {
         "app": "https://github.com/Akhilez/StudentFeedback",
         "code": "https://github.com/Akhilez/StudentFeedback"
@@ -63,6 +69,8 @@
         "cloud-firestore"
       ],
       "date": "2016",
+      "on_profile": true,
+      "status": "deployed",
       "links": {
         "app": "https://play.google.com/store/apps/details?id=com.homemade.akhilez.syllabus",
         "code": "https://github.com/Akhilez/Syllabus",
@@ -81,6 +89,8 @@
         "cloud-firestore"
       ],
       "date": "2019",
+      "on_profile": true,
+      "status": "deployed",
       "links": {
         "app": "https://play.google.com/store/apps/details?id=com.akhilez.plabmaster&amp;hl=en",
         "code": "https://github.com/Akhilez/medicwhizz-api",
@@ -101,6 +111,8 @@
         "vue.js"
       ],
       "date": "2019",
+      "on_profile": false,
+      "status": "deployed",
       "links": {
         "app": ""
       }
@@ -117,6 +129,8 @@
         "ios"
       ],
       "date": "2020",
+      "on_profile": false,
+      "status": "deployed",
       "links": {
         "app": "https://devpost.com/software/alster",
         "code": "https://github.com/Akhilez/Alster"

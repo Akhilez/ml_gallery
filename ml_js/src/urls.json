@@ -10,5 +10,9 @@
   "resume": {
     "url": "/resume",
     "title": "Resume | Akhilez"
+  },
+  "all_projects": {
+    "url": "/projects",
+    "title": "Projects | Akhilez"
   }
 }

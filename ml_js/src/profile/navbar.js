@@ -21,8 +21,7 @@ export default class ProfileNavBar extends React.Component {
                         }} activeKey={'activeKey'}>
                             <Nav.Item href={urls.profile.url} eventKey="profile">PROFILE</Nav.Item>
                             <Nav.Item href={urls.ml_gallery.url} eventKey="ai">ML GALLERY</Nav.Item>
-
-                            <Nav.Item href={urls.profile.url + "/#projects"} eventKey="projects">PROJECTS</Nav.Item>
+                            <Nav.Item href={urls.all_projects.url} eventKey="all_projects">PROJECTS</Nav.Item>
                             <Nav.Item href={urls.resume.url} eventKey="resume">RESUME</Nav.Item>
                         </Nav>
                     </Navbar.Body>
