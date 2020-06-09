@@ -15,7 +15,7 @@
       "on_profile": true,
       "status": "deployed",
       "links": {
-        "app": "https://akhil.ai/",
+        "app": "https://akhil.ai/gallery",
         "code": "https://github.com/Akhilez/ml_gallery"
       }
     },
@@ -48,8 +48,8 @@
         "mysql"
       ],
       "date": "2017",
-      "on_profile": false,
-      "status": "deployed",
+      "on_profile": true,
+      "status": "developed",
       "links": {
         "app": "https://github.com/Akhilez/StudentFeedback",
         "code": "https://github.com/Akhilez/StudentFeedback"
@@ -111,8 +111,8 @@
         "vue.js"
       ],
       "date": "2019",
-      "on_profile": false,
-      "status": "deployed",
+      "on_profile": true,
+      "status": "developed",
       "links": {
         "app": ""
       }
@@ -129,8 +129,8 @@
         "ios"
       ],
       "date": "2020",
-      "on_profile": false,
-      "status": "deployed",
+      "on_profile": true,
+      "status": "developed",
       "links": {
         "app": "https://devpost.com/software/alster",
         "code": "https://github.com/Akhilez/Alster"

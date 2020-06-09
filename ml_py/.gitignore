@@ -3,6 +3,7 @@ data/
 .ipynb_checkpoints/
 env.py
 *.gz
+temp/
 
 ### OSX ###
 .DS_Store
