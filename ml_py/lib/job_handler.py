@@ -31,14 +31,15 @@ class JobHandler:
             data: some data
         }
         """
-        if data['action'] == 'init':
+        action = data['action']
+        logger.info(f"{action=}")
+
+        if action == 'init':
             return self.init_session()
 
-        if self.trace_id is None:
-            logger.error("No trace ID found")
+        if self.session.get('job_id') is None:
+            logger.error("No job_id found")
             return
-
-        action = data['action']
 
         if action == 'start_training':
             threading.Thread(target=self.trainer.start_training).start()
@@ -54,3 +55,14 @@ class JobHandler:
 
         if action == 'clear_data':
             self.trainer.clear_data()
+
+        if action == 'listen':
+            return self.send({
+                'job_id': self.session['job_id'],
+                'action': 'status_update',
+                'data': self.trainer.get_status_data()
+            })
+
+        return self.send({
+            'job_id': self.session['job_id'],
+        })

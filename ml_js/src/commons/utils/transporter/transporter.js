@@ -1,8 +1,8 @@
 export default class Transporter {
-    constructor(project_id, call_back, trace_id) {
+    constructor(project_id, call_back, job_id) {
         this.project_id = project_id;
         this.call_back = call_back;
-        this.trace_id = trace_id;
+        this.job = job_id;
     }
 
     init() {
@@ -18,10 +18,10 @@ export default class Transporter {
     }
 
     received(data) {
-        if (this.trace_id == null)
-            this.trace_id = data.trace_id;
-        else if (data.trace_id !== this.trace_id) {
-            console.log("Trace ID does not match.");
+        if (this.job_id == null)
+            this.job_id = data.job_id;
+        else if (data.job_id !== this.job_id) {
+            console.log("job_id does not match.");
             return;
         }
         this.call_back(data);

@@ -49,13 +49,9 @@ class PolyRegConsumer(WebsocketConsumer):
     def send_callback(self, data):
         self.send(text_data=json.dumps(data))
 
-    def send_update_status(self):
+    def send_update_status(self, data):
         data = {
             'action': 'status_update',
-            'data': {
-                'epoch': self.trainer.epoch,
-                'train_error': float(self.trainer.loss),
-                'weights': self.trainer.get_float_parameters()
-            }
+            'data': data
         }
         self.send(text_data=json.dumps(data))

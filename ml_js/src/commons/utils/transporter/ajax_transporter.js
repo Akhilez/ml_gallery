@@ -14,7 +14,7 @@ export default class AjaxTransporter extends Transporter {
     }
 
     send(data) {
-        data['trace_id'] = this.trace_id;
+        data['job_id'] = this.job_id;
         console.log(data);
 
         fetch(this.mlPyUrl, {

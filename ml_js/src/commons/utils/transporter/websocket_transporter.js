@@ -2,8 +2,8 @@ import Transporter from './transporter';
 import {MLPyHost, MLPyPort} from "../../settings";
 
 export default class WebsocketTransporter extends Transporter {
-    constructor(project_id, call_back, trace_id) {
-        super(project_id, call_back, trace_id);
+    constructor(project_id, call_back, job_id) {
+        super(project_id, call_back, job_id);
 
         this.mlPyUrl = `ws://${MLPyHost}:${MLPyPort}/ws/${project_id}`;
         this.socket = new WebSocket(this.mlPyUrl);
@@ -22,7 +22,7 @@ export default class WebsocketTransporter extends Transporter {
 
     send(data) {
         if (data.action === 'listen') return;
-        data['trace_id'] = this.trace_id;
+        data['job_id'] = this.job_id;
         console.log(data);
         this.socket.send(JSON.stringify(data));
     }

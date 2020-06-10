@@ -67,7 +67,14 @@ class PolyRegTrainer(torch.nn.Module):
 
     def update_consumer(self):
         if self.consumer is not None:
-            threading.Thread(target=self.consumer.send_update_status).start()
+            threading.Thread(target=self.consumer.send_update_status, args=(self.get_status_data(),)).start()
+
+    def get_status_data(self):
+        return {
+            'epoch': self.trainer.epoch,
+            'train_error': float(self.trainer.loss),
+            'weights': self.trainer.get_float_parameters()
+        }
 
     def change_order(self, new_order):
         prev_training = self.must_train
