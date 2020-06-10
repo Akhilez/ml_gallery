@@ -6,7 +6,7 @@ from ml_py.settings import logger
 
 class PolyRegTrainer(torch.nn.Module):
 
-    def __init__(self, consumer):
+    def __init__(self, consumer=None):
         super().__init__()
         self.order = 5
         self.w = None
@@ -66,7 +66,8 @@ class PolyRegTrainer(torch.nn.Module):
         self.must_train = False
 
     def update_consumer(self):
-        threading.Thread(target=self.consumer.send_update_status).start()
+        if self.consumer is not None:
+            threading.Thread(target=self.consumer.send_update_status).start()
 
     def change_order(self, new_order):
         prev_training = self.must_train

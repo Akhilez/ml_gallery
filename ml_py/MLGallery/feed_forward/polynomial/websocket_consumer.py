@@ -1,10 +1,8 @@
-import threading
 from channels.generic.websocket import WebsocketConsumer
 import json
-from lib.transporter.websocket_transporter import WebsocketTransporter
+from MLGallery.feed_forward.polynomial.trainer import PolyRegTrainer
+from lib.job_handler import JobHandler
 from lib.trace_manager import TraceManager
-from ml_py.settings import logger
-from MLGallery.feed_forward.polynomial.common_consumer import CommonConsumer
 
 
 class PolyRegConsumer(WebsocketConsumer):
@@ -12,7 +10,7 @@ class PolyRegConsumer(WebsocketConsumer):
     Receives a json of the following type:
     {
         action: start_training | stop_training,
-        trace_id: UUID | None
+        job_id: UUID | None
         data: data
     }
 
@@ -32,11 +30,12 @@ class PolyRegConsumer(WebsocketConsumer):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.consumer = CommonConsumer(WebsocketTransporter('learn_curve', consumer=self))
+        self.trainer = PolyRegTrainer()
+        self.job_handler = JobHandler(self.trainer, 'learn_curve', self.scope['session'], self.send_callback)
 
     def connect(self):
         self.accept()
-        self.consumer.init_trainer()
+        self.job_handler.init_session()
 
     def disconnect(self, close_code):
         self.trainer.stop_training()
@@ -45,27 +44,10 @@ class PolyRegConsumer(WebsocketConsumer):
 
     def receive(self, text_data=None, bytes_data=None):
         data = json.loads(text_data)
+        self.job_handler.receive(data)
 
-        if self.trace_id is None:
-            logger.error("No trace ID found")
-            return
-
-        action = data['action']
-
-        if action == 'start_training':
-            threading.Thread(target=self.trainer.start_training).start()
-
-        if action == 'stop_training':
-            self.trainer.stop_training()
-        
-        if action == 'change_order':
-            threading.Thread(target=self.trainer.change_order, args=(data['order'],)).start()
-
-        if action == 'new_point':
-            self.trainer.add_new_point(data['x'], data['y'])
-
-        if action == 'clear_data':
-            self.trainer.clear_data()
+    def send_callback(self, data):
+        self.send(text_data=json.dumps(data))
 
     def send_update_status(self):
         data = {

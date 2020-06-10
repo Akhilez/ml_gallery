@@ -9,7 +9,6 @@ import '../../commons/components/components.css';
 import Graph from './sketch_learn_curve';
 import NeuronGraphLearnCurve from "./neuron_graph_learn_curve";
 import {CartesianGrid, Legend, Line, LineChart, Tooltip, XAxis, YAxis} from "recharts";
-import WebsocketTransporter from "../../commons/utils/transporter/websocket_transporter";
 import AjaxTransporter from "../../commons/utils/transporter/ajax_transporter";
 
 
@@ -33,8 +32,6 @@ export default class LearnCurvePage extends React.Component {
 
         this.graphRef = React.createRef();
         this.neuronRef = React.createRef();
-
-        // new WebSocket('ws://py.ml.akhilez.com:8000/ws/poly_reg');
 
     }
 

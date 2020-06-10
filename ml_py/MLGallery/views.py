@@ -12,5 +12,5 @@ def selective_generator_page(request):
 
 @csrf_exempt
 def rest_learn_curve(request):
-    from MLGallery.feed_forward.polynomial import view_handler
-    return view_handler.get_view(request)
+    from MLGallery.feed_forward.polynomial import rest_consumer
+    return rest_consumer.receive(request)
