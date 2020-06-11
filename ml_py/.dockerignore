@@ -3,3 +3,6 @@ Dockerfile
 .gitignore
 README.md
 venv/
+.idea/
+.git/
+data/

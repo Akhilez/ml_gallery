@@ -5,3 +5,4 @@ venv/
 migrations/
 dumps/
 .git/
+data/

@@ -23,7 +23,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'channels',
+    # 'channels',
     'corsheaders',
 ] + NN_GALLERY_APPS
 
@@ -36,7 +36,6 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'corsheaders.middleware.CorsMiddleware',
-    'django.middleware.common.CommonMiddleware',
 ]
 
 ROOT_URLCONF = 'ml_py.urls'
@@ -44,8 +43,7 @@ ROOT_URLCONF = 'ml_py.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'templates')]
-        ,
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -59,7 +57,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'ml_py.wsgi.application'
-ASGI_APPLICATION = "ml_py.routing.application"
+# ASGI_APPLICATION = "ml_py.routing.application"
 
 DATABASES = {
     'default': {
@@ -136,4 +134,11 @@ LOGGING = {
 
 logger = logging.getLogger('django')
 
-CORS_ORIGIN_ALLOW_ALL = True
+CORS_ORIGIN_ALLOW_ALL = False
+
+CORS_ORIGIN_WHITELIST = (
+    'http://localhost:8000',
+    'https://py.ml.akhilez.com',
+    'https://akhil.ai',
+    'https://ml.akhil.ai'
+)
