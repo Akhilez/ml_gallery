@@ -1,4 +1,3 @@
 export const DEBUG = false;
 
-export const MLPyHost = (DEBUG)?'localhost': 'py.ml.akhilez.com';
-export const MLPyPort = (DEBUG)?'8000': '80';
+export const MLPyHost = (DEBUG)?'http://localhost:8000': 'https://py.ml.akhilez.com';

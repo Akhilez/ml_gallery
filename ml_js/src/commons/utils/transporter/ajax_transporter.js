@@ -6,7 +6,7 @@ export default class AjaxTransporter extends Transporter {
     constructor(project_id, call_back, trace_id) {
         super(project_id, call_back, trace_id);
 
-        this.mlPyUrl = `http://${MLPyHost}:${MLPyPort}/ajax/${project_id}`;
+        this.mlPyUrl = `${MLPyHost}/ajax/${project_id}`;
     }
 
     init() {

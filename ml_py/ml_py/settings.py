@@ -28,14 +28,14 @@ INSTALLED_APPS = [
 ] + NN_GALLERY_APPS
 
 MIDDLEWARE = [
-    'django.middleware.security.SecurityMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
+    # 'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
+    # 'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
 ]
 
 ROOT_URLCONF = 'ml_py.urls'
@@ -134,11 +134,4 @@ LOGGING = {
 
 logger = logging.getLogger('django')
 
-CORS_ORIGIN_ALLOW_ALL = False
-
-CORS_ORIGIN_WHITELIST = (
-    'http://localhost:8000',
-    'https://py.ml.akhilez.com',
-    'https://akhil.ai',
-    'https://ml.akhil.ai'
-)
+CORS_ORIGIN_ALLOW_ALL = True
