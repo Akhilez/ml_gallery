@@ -71,9 +71,9 @@ class PolyRegTrainer(torch.nn.Module):
 
     def get_status_data(self):
         return {
-            'epoch': self.trainer.epoch,
-            'train_error': float(self.trainer.loss),
-            'weights': self.trainer.get_float_parameters()
+            'epoch': self.epoch,
+            'train_error': float(self.loss),
+            'weights': self.get_float_parameters()
         }
 
     def change_order(self, new_order):

@@ -107,6 +107,11 @@ export default class LearnCurvePage extends React.Component {
         };
         this.transporter.send(payload);
         this.setState({isTraining: true});
+
+        setInterval(()=>{
+            if (this.state.isTraining)
+                this.transporter.send({action: 'listen'});
+        }, 1000)
     }
 
     stopTraining() {
@@ -122,6 +127,7 @@ export default class LearnCurvePage extends React.Component {
         if (data.action === 'status_update') {
             this.updateTrainingStatus(data.data);
         } else if (data.action === 'init') {
+            this.transporter.job_id = data.job_id;
             this.x = data.data[0];
             this.y = data.data[1];
             this.setState({isTrainerInitialized: true});

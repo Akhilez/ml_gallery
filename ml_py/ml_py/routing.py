@@ -2,7 +2,6 @@ from channels.auth import AuthMiddlewareStack
 from channels.routing import ProtocolTypeRouter, URLRouter
 from experiments.chat import routing as chat_routing
 from channels.security.websocket import AllowedHostsOriginValidator
-from channels.sessions import SessionMiddlewareStack
 from MLGallery.feed_forward.polynomial import routing as poly_reg_routing
 
 application = ProtocolTypeRouter({
@@ -10,11 +9,10 @@ application = ProtocolTypeRouter({
     'websocket':
         AllowedHostsOriginValidator(
             AuthMiddlewareStack(
-                SessionMiddlewareStack(
-                    URLRouter(
-                        chat_routing.websocket_urlpatterns +
-                        poly_reg_routing.websocket_urlpatterns
-                    )
+                URLRouter(
+                    chat_routing.websocket_urlpatterns +
+                    poly_reg_routing.websocket_urlpatterns
+
                 )
             )
         ),

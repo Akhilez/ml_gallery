@@ -3,21 +3,24 @@ from ml_py.settings import logger
 import threading
 
 
+all_jobs = {}
+
+
 class JobHandler:
 
-    def __init__(self, trainer, job_title, session, send_callback):
+    def __init__(self, trainer, job_title, send_callback):
         super().__init__()
         self.title = job_title
-        self.session = session
         self.send = send_callback
         self.trainer = trainer
+        self.job_id = str(uuid.uuid1())
 
     def init_session(self):
-        self.session['job_id'] = str(uuid.uuid1())
+        all_jobs[self.job_id] = self
         self.trainer.x, self.trainer.y = self.trainer.get_random_sample_data(50)
         return self.send(data={
             'action': 'init',
-            'job_id': self.session['job_id'],
+            'job_id': self.job_id,
             'data': self.trainer.get_float_data(),
         })
 
@@ -37,9 +40,11 @@ class JobHandler:
         if action == 'init':
             return self.init_session()
 
-        if self.session.get('job_id') is None:
-            logger.error("No job_id found")
-            return
+        # if self.session.get('job_id') is None:
+        if not data.get('job_id'):
+            error_msg = "No job_id found"
+            logger.error(error_msg)
+            return self.send({'error': error_msg})
 
         if action == 'start_training':
             threading.Thread(target=self.trainer.start_training).start()
@@ -58,11 +63,11 @@ class JobHandler:
 
         if action == 'listen':
             return self.send({
-                'job_id': self.session['job_id'],
+                'job_id': self.job_id,
                 'action': 'status_update',
                 'data': self.trainer.get_status_data()
             })
 
         return self.send({
-            'job_id': self.session['job_id'],
+            'job_id': data.get('job_id'),
         })

@@ -2,7 +2,6 @@ from channels.generic.websocket import WebsocketConsumer
 import json
 from MLGallery.feed_forward.polynomial.trainer import PolyRegTrainer
 from lib.job_handler import JobHandler
-from lib.trace_manager import TraceManager
 
 
 class PolyRegConsumer(WebsocketConsumer):
@@ -39,8 +38,7 @@ class PolyRegConsumer(WebsocketConsumer):
 
     def disconnect(self, close_code):
         self.trainer.stop_training()
-        if self.trace_id is not None:
-            del TraceManager.jobs[self.trace_id]
+        #  TODO: del all_jobs[self]
 
     def receive(self, text_data=None, bytes_data=None):
         data = json.loads(text_data)
