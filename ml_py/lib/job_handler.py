@@ -34,8 +34,9 @@ class JobHandler:
             data: some data
         }
         """
+
         action = data['action']
-        logger.info(f"{action=}")
+        logger.info(f"{action=}, {data.get('data')=}")
 
         if action == 'init':
             return self.init_session()
@@ -53,10 +54,10 @@ class JobHandler:
             self.trainer.stop_training()
 
         if action == 'change_order':
-            threading.Thread(target=self.trainer.change_order, args=(data['order'],)).start()
+            threading.Thread(target=self.trainer.change_order, args=(data['data'],)).start()
 
         if action == 'new_point':
-            self.trainer.add_new_point(data['x'], data['y'])
+            self.trainer.add_new_point(data['data']['x'], data['data']['y'])
 
         if action == 'clear_data':
             self.trainer.clear_data()

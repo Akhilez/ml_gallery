@@ -145,7 +145,7 @@ export default class LearnCurvePage extends React.Component {
     }
 
     changeOrder(change) {
-        if (this.state.order <= 1) return;
+        if (this.state.order <= 1 && change < 0) return;
 
         let newOrder = this.state.order + change;
 
