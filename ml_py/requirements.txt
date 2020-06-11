@@ -1,5 +1,5 @@
 jupyter==1.0.0
-django==3.0.5
+django==3.0.7
 gunicorn==20.0.4
 # torch==1.5.0  # pip install torch==1.5.0+cpu torchvision==0.6.0+cpu -f https://download.pytorch.org/whl/torch_stable.html
 # torchvision==0.6.0
