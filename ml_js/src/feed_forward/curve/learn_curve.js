@@ -108,9 +108,16 @@ export default class LearnCurvePage extends React.Component {
         this.transporter.send(payload);
         this.setState({isTraining: true});
 
-        setInterval(()=>{
-            if (this.state.isTraining)
+        let count = 0;
+        let listener = setInterval(() => {
+            if (count > 100) {
+                this.transporter.send({action: 'stop_training'});
+                this.setState({isTraining: false});
+                clearInterval(listener);
+            } else if (this.state.isTraining) {
                 this.transporter.send({action: 'listen'});
+            }
+            count++;
         }, 1000)
     }
 
@@ -142,6 +149,9 @@ export default class LearnCurvePage extends React.Component {
         });
         this.graphRef.current.weights = data.weights;
         this.neuronRef.current.weights = data.weights;
+
+        if (data.is_training === false)
+            this.setState({isTraining: false})
     }
 
     changeOrder(change) {

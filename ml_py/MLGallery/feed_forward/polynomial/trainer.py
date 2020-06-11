@@ -12,7 +12,7 @@ class PolyRegTrainer(torch.nn.Module):
         self.w = None
         self.b = None
         self.consumer = consumer
-        self.epochs = 50000
+        self.epochs = 5000
         self.update_interval = 500
         self.optimizer = None
         self.must_train = False
@@ -60,7 +60,8 @@ class PolyRegTrainer(torch.nn.Module):
 
         except Exception as e:
             logger.exception(e)
-            self.must_train = False
+
+        self.must_train = False
 
     def stop_training(self):
         self.must_train = False
@@ -73,7 +74,8 @@ class PolyRegTrainer(torch.nn.Module):
         return {
             'epoch': self.epoch,
             'train_error': float(self.loss),
-            'weights': self.get_float_parameters()
+            'weights': self.get_float_parameters(),
+            'is_training': self.must_train,
         }
 
     def change_order(self, new_order):
