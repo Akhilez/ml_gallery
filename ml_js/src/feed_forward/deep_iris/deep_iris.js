@@ -15,7 +15,7 @@ export default class DeepIrisPage extends React.Component {
         super(props);
 
         this.state = {
-            nNeurons: [6, 3],
+            nNeurons: [6, 4],
             isTraining: false,
             lossData: [],
         };

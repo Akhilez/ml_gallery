@@ -21,6 +21,7 @@ export default class NeuralGraphIris extends React.Component {
 
         this.flowerSide = 100;
         this.sliderWidth = 100;
+        this.classificationWidth = 100;
 
     }
 
@@ -59,13 +60,21 @@ export default class NeuralGraphIris extends React.Component {
         for (let i = 0; i < this.appState.nNeurons.length; i++) {
             this.draw_layer(this.appState.nNeurons[i], x_start + this.layerSpacing * (i + 1));
         }
-        this.draw_layer(1, x_start + this.layerSpacing * (this.appState.nNeurons.length + 1));
+        x_start = x_start + this.layerSpacing * (this.appState.nNeurons.length + 1);
+        this.draw_layer(3, x_start);
+
+        this.drawClassificationBox(x_start);
+
+        if (x_start + this.classificationWidth !== this.width) {
+            this.width = x_start + this.classificationWidth;
+            this.p5.resizeCanvas(x_start + this.classificationWidth, this.height);
+        }
 
     }
 
     draw_layer(nNeurons, x) {
 
-        let layerHeight = nNeurons * 2 * this.radius + (nNeurons - 1) * this.neuronSpacing;
+        let layerHeight = (nNeurons - 1) * this.neuronSpacing;
 
         let yStart = this.cy - layerHeight / 2;
 
@@ -81,6 +90,10 @@ export default class NeuralGraphIris extends React.Component {
 
     drawSliders() {
         this.p5.rect(this.flowerSide, this.cy - this.sliderWidth / 2, this.sliderWidth, this.sliderWidth);
+    }
+
+    drawClassificationBox(x) {
+        this.p5.rect(x, this.cy - this.classificationWidth / 2, this.classificationWidth, this.classificationWidth);
     }
 
 
