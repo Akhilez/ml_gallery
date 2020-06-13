@@ -14,6 +14,7 @@ import {TitleComponent} from "./commons/components/components";
 import ResumePage from "./profile/resume";
 import urls from './urls';
 import AllProjectsPage from "./profile/all_projects";
+import DeepIrisPage from "./feed_forward/deep_iris/deep_iris";
 
 
 export default class App extends React.Component {
@@ -45,6 +46,8 @@ export default class App extends React.Component {
                 return <LearnLinePage project={project}/>;
             case 2:
                 return <LinearClassifierPage project={project}/>;
+            case 3:
+                return <DeepIrisPage project={project}/>;
             case 5:
                 return <MnistGanPage project={project}/>;
             case 9:

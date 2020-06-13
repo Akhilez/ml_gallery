@@ -29,6 +29,7 @@ class SOFM1D(torch.nn.Module):
             differences = torch.sum((self.w.T - xi) ** 2, dim=1)
             i_min = torch.argmin(differences)
             deltas.append()
+            # TODO: Finish SOFM
 
     def backward(self):
         pass
