@@ -1,6 +1,7 @@
 import React from "react";
 import Sketch from "react-p5";
 import petal_png from './images/petal.png';
+import sepal_png from './images/sepal.png';
 
 
 export default class NeuralGraphIris extends React.Component {
@@ -8,6 +9,13 @@ export default class NeuralGraphIris extends React.Component {
         super(props);
 
         this.appState = props.appState;
+
+        this.state = {
+            petalWidth: (Math.random() + 0.5) * 50,
+            petalHeight: (Math.random() + 0.5) * 50,
+            sepalWidth: (Math.random() + 0.5) * 50,
+            sepalHeight: (Math.random() + 0.5) * 50,
+        };
 
         this.width = 800;
         this.height = 500;
@@ -45,6 +53,8 @@ export default class NeuralGraphIris extends React.Component {
 
         p5.createCanvas(this.width, this.height).parent(parent);
         p5.frameRate(10);
+
+        p5.angleMode(p5.DEGREES);
     }
 
     draw(p5) {
@@ -69,12 +79,11 @@ export default class NeuralGraphIris extends React.Component {
             this.p5.resizeCanvas(x_start + this.classificationWidth, this.height);
         }
 
-        p5.image(this.petalImg, 0, 0);
-
     }
 
     preload(p5) {
         this.petalImg = p5.loadImage(petal_png);
+        this.sepalImg = p5.loadImage(sepal_png);
     }
 
     draw_layer(nNeurons, x) {
@@ -91,6 +100,24 @@ export default class NeuralGraphIris extends React.Component {
 
     drawFlower() {
         this.p5.rect(0, this.cy - this.flowerSide / 2, this.flowerSide, this.flowerSide);
+
+        let cx = this.flowerSide / 2;
+
+        this.p5.image(
+            this.petalImg,
+            cx - this.state.petalWidth/2,
+            this.cy - this.state.petalHeight,
+            this.state.petalWidth,
+            this.state.petalHeight,
+        );
+
+        this.p5.image(
+            this.sepalImg,
+            cx - this.state.petalWidth/2,
+            this.cy,
+            this.state.petalWidth,
+            this.state.petalHeight,
+        );
     }
 
     drawSliders() {
