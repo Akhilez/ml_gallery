@@ -39,7 +39,10 @@ export default class DeepIrisPage extends React.Component {
                         </p><br/>
                         <OutlinedButtonLink text={"How it works"} link={"#how_it_works"}/><br/>
 
-                        <NeuralGraphIris ref={this.graphRef} appState={this.state}/>
+                        <NeuralGraphIris ref={this.graphRef} appState={this.state} actions={{
+                            updateNeurons: (layerNumber, change) => this.updateNeurons(layerNumber, change),
+                            updateLayers: (layerNumber, change) => this.updateLayers(layerNumber, change)
+                        }}/>
 
                         <button className={"ActionButton"} onClick={() => this.startTraining()}>TRAIN</button>
                         {this.state.isTraining &&
@@ -55,8 +58,6 @@ export default class DeepIrisPage extends React.Component {
             </div>
         );
     }
-
-
 
     getLossGraph() {
         return (
@@ -78,5 +79,23 @@ export default class DeepIrisPage extends React.Component {
         );
     }
 
+    startTraining() {
+
+    }
+
+    updateNeurons(layerNumber, change){
+        this.state.nNeurons[layerNumber] += change;
+        this.setState({nNeurons: this.state.nNeurons})
+    }
+
+    updateLayers(layerNumber, change) {
+        if (change > 0) {
+            this.state.nNeurons.splice(layerNumber, 0, 3);
+            this.setState({nNeurons: this.state.nNeurons});
+        } else {
+            this.state.nNeurons.splice(layerNumber, 1);
+            this.setState({nNeurons: this.state.nNeurons});
+        }
+    }
 
 }
