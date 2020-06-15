@@ -172,7 +172,7 @@ export default class ProfilePage extends React.Component {
 
                 <div className="row project_box" style={{marginBottom: -40, marginTop: -30}}>
                     <div className="col-md-3">
-                        <Link to={"/"}><img src={mlg_img} className="project_image" alt={"MLGallery Logo"}
+                        <Link to={urls.ml_gallery.url}><img src={mlg_img} className="project_image" alt={"MLGallery Logo"}
                                             width={"250px"} style={{marginTop: 15}}/></Link>
                     </div>
                     <div className="col-md-9">

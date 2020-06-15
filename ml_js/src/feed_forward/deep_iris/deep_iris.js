@@ -44,6 +44,8 @@ export default class DeepIrisPage extends React.Component {
                             updateLayers: (layerNumber, change) => this.updateLayers(layerNumber, change)
                         }}/>
 
+                        {this.UpdateLayersButtons()}
+
                         <button className={"ActionButton"} onClick={() => this.startTraining()}>TRAIN</button>
                         {this.state.isTraining &&
                         <button className={"PassiveButton"} onClick={() => this.stopTraining()}>STOP</button>}
@@ -83,19 +85,29 @@ export default class DeepIrisPage extends React.Component {
 
     }
 
-    updateNeurons(layerNumber, change){
+    updateNeurons(layerNumber, change) {
         this.state.nNeurons[layerNumber] += change;
         this.setState({nNeurons: this.state.nNeurons})
     }
 
-    updateLayers(layerNumber, change) {
+    updateLayers(change) {
         if (change > 0) {
-            this.state.nNeurons.splice(layerNumber, 0, 3);
+            this.state.nNeurons.push(3);
             this.setState({nNeurons: this.state.nNeurons});
         } else {
-            this.state.nNeurons.splice(layerNumber, 1);
+            this.state.nNeurons.pop();
             this.setState({nNeurons: this.state.nNeurons});
         }
+    }
+
+    UpdateLayersButtons() {
+        return (
+            <div>
+                Change Depth:
+                <button className={"PassiveButton"} onClick={() => this.updateLayers(1)}>+</button>
+                <button className={"PassiveButton"} onClick={() => this.updateLayers(-1)}>-</button>
+            </div>
+        );
     }
 
 }
