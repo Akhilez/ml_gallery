@@ -1,5 +1,6 @@
 import React from "react";
 import Sketch from "react-p5";
+import petal_png from './images/petal.png';
 
 
 export default class NeuralGraphIris extends React.Component {
@@ -23,12 +24,18 @@ export default class NeuralGraphIris extends React.Component {
         this.sliderWidth = 100;
         this.classificationWidth = 100;
 
+        this.petalImg = null;
+
     }
 
     render() {
         return (
             <div className={"rounded"}>
-                <Sketch setup={(p5, parent) => this.setup(p5, parent)} draw={p5 => this.draw(p5)}/>
+                <Sketch
+                    setup={(p5, parent) => this.setup(p5, parent)}
+                    draw={p5 => this.draw(p5)}
+                    preload={p5 => this.preload(p5)}
+                />
             </div>
         );
     }
@@ -42,14 +49,6 @@ export default class NeuralGraphIris extends React.Component {
 
     draw(p5) {
         p5.background(255); //243);
-
-        /*
-        1. Find the total width of the graph.
-        2. Center the graph.
-        3. Find the positions of each layer.
-        4. Find the positions of each neuron.
-        5. Draw edges from one layer to other.
-         */
 
         this.drawFlower();
         this.drawSliders();
@@ -70,6 +69,12 @@ export default class NeuralGraphIris extends React.Component {
             this.p5.resizeCanvas(x_start + this.classificationWidth, this.height);
         }
 
+        p5.image(this.petalImg, 0, 0);
+
+    }
+
+    preload(p5) {
+        this.petalImg = p5.loadImage(petal_png);
     }
 
     draw_layer(nNeurons, x) {
