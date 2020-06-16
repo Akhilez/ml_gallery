@@ -7,6 +7,7 @@ import {Centered, OutlinedButtonLink} from "../../commons/components/components"
 import NeuralGraphIris from "./neural_graph_iris";
 import ProjectPaginator from "../../commons/components/project_paginator";
 import {CartesianGrid, Legend, Line, LineChart, Tooltip, XAxis, YAxis} from "recharts";
+import IrisNet from './iris_net';
 
 
 export default class DeepIrisPage extends React.Component {
@@ -21,6 +22,7 @@ export default class DeepIrisPage extends React.Component {
         };
 
         this.graphRef = React.createRef();
+        this.irisNet = new IrisNet(this);
 
     }
 
@@ -40,8 +42,7 @@ export default class DeepIrisPage extends React.Component {
                         <OutlinedButtonLink text={"How it works"} link={"#how_it_works"}/><br/>
 
                         <NeuralGraphIris ref={this.graphRef} appState={this.state} actions={{
-                            updateNeurons: (layerNumber, change) => this.updateNeurons(layerNumber, change),
-                            updateLayers: (layerNumber, change) => this.updateLayers(layerNumber, change)
+                            updateNeurons: (layerNumber, change) => this.updateNeurons(layerNumber, change)
                         }}/>
 
                         {this.UpdateLayersButtons()}
@@ -82,12 +83,18 @@ export default class DeepIrisPage extends React.Component {
     }
 
     startTraining() {
+        this.setState({isTraining: true});
+        this.irisNet.train();
+    }
 
+    stopTraining() {
+        this.setState({isTraining: false});
     }
 
     updateNeurons(layerNumber, change) {
         this.state.nNeurons[layerNumber] += change;
-        this.setState({nNeurons: this.state.nNeurons})
+        this.setState({nNeurons: this.state.nNeurons});
+        this.irisNet.initialize_net();
     }
 
     updateLayers(change) {
@@ -98,6 +105,7 @@ export default class DeepIrisPage extends React.Component {
             this.state.nNeurons.pop();
             this.setState({nNeurons: this.state.nNeurons});
         }
+        this.irisNet.initialize_net();
     }
 
     UpdateLayersButtons() {
