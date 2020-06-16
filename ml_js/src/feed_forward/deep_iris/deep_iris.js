@@ -47,7 +47,8 @@ export default class DeepIrisPage extends React.Component {
 
                         {this.UpdateLayersButtons()}
 
-                        <button className={"ActionButton"} onClick={() => this.startTraining()}>TRAIN</button>
+                        {!this.state.isTraining &&
+                        <button className={"ActionButton"} onClick={() => this.startTraining()}>TRAIN</button>}
                         {this.state.isTraining &&
                         <button className={"PassiveButton"} onClick={() => this.stopTraining()}>STOP</button>}
 
