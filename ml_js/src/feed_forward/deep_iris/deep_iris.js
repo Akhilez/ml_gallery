@@ -37,7 +37,7 @@ export default class DeepIrisPage extends React.Component {
                     <Centered>
                         <h1>Deep Iris</h1>
                         <p>
-                            Predict the type of the flower based on its petal and sepal length.
+                            [IN PROGRESS] <br/> Predict the type of the flower based on its petal and sepal length.
                         </p><br/>
                         <OutlinedButtonLink text={"How it works"} link={"#how_it_works"}/><br/>
 

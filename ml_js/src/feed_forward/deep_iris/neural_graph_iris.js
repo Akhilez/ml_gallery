@@ -61,7 +61,7 @@ export default class NeuralGraphIris extends React.Component {
     }
 
     draw(p5) {
-        p5.background(255); //243);
+        p5.background(243);
 
         this.drawFlower();
         this.drawSliders();
