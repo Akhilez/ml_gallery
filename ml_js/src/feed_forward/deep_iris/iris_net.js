@@ -47,6 +47,7 @@ export default class IrisNet {
         let self = this;
         function onEpochEnd(epoch, logs) {
             console.log(logs);
+            self.component.state.lossData.push(logs.loss);
             if (!self.component.state.isTraining) {
                 self.net.stopTraining = true;
             }
