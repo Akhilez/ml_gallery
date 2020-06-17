@@ -190,3 +190,8 @@ a {
     text-decoration: none;
     color: #ea1c0d;
 }
+
+.navIcon {
+    margin-top: -5px;
+    margin-right: 3px;
+}
