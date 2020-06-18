@@ -11,8 +11,7 @@ Some larger models are pre-trained.
 
 Technologies used: __PyTorch, React, TensorFlow JS__
 
-Deployed at: https://ml.akhilez.com  
-Main site: https://akhilez.com
+Deployed at: https://akhil.ai
 
 
 ### Intended Projects:
