@@ -5,14 +5,17 @@ import iris from "../../data/iris/iris_train.json"
 export default class IrisNet {
     constructor(component) {
         this.component = component;
-        this.trainingData = new tf.tensor2d(iris.map(item => [
-            item.sepal_length, item.sepal_width, item.petal_length, item.petal_width,
-        ]));
-        this.outputData = new tf.tensor2d(iris.map(item => [
+
+        let iris_x = iris.map(item => [item.sepal_length, item.sepal_width, item.petal_length, item.petal_width]);
+        this.trainingData = tf.tensor(iris_x);
+
+        let iris_y = iris.map(item => [
             item.species === "setosa" ? 1 : 0,
             item.species === "virginica" ? 1 : 0,
-            item.species === "versicolor" ? 1 : 0,
-        ]));
+            item.species === "versicolor" ? 1 : 0
+        ]);
+        this.outputData = tf.tensor(iris_y);
+
         this.initialize_net();
 
         this.is_training = false;

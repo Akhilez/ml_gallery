@@ -15,6 +15,7 @@ import ResumePage from "./profile/resume";
 import urls from './urls';
 import AllProjectsPage from "./profile/all_projects";
 import DeepIrisPage from "./feed_forward/deep_iris/deep_iris";
+import WhichCharPage from "./vision/which_char/which_char";
 
 
 export default class App extends React.Component {
@@ -48,6 +49,8 @@ export default class App extends React.Component {
                 return <LinearClassifierPage project={project}/>;
             case 3:
                 return <DeepIrisPage project={project}/>;
+            case 4:
+                return <WhichCharPage project={project}/>;
             case 5:
                 return <MnistGanPage project={project}/>;
             case 9:
