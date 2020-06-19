@@ -23,6 +23,7 @@ export default class NumberPaintCanvas extends React.Component {
                 <Sketch
                     setup={(p5, parent) => this.setup(p5, parent)}
                     draw={p5 => this.draw(p5)}
+                    mouseReleased={p5 => this.mouseReleased(p5)}
                 />
             </div>
         );
@@ -44,6 +45,11 @@ export default class NumberPaintCanvas extends React.Component {
                 p5.line(p5.mouseX, p5.mouseY, p5.pmouseX, p5.pmouseY);
             }
         }
+    }
+
+    mouseReleased(p5) {
+        p5.loadPixels();
+        console.log(p5.pixels);
     }
 
     getEmptyMatrix(r, c) {
