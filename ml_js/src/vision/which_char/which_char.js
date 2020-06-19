@@ -44,7 +44,7 @@ export default class WhichCharPage extends React.Component {
                         <button className={"PassiveButton"} onClick={() => this.stopTraining()}>STOP</button>}
                         <br/>
 
-                        <NumberPaintCanvas ref={this.paintCanvasRef}/>
+                        <NumberPaintCanvas ref={this.paintCanvasRef} parent={this}/>
 
                     </Centered>
                     <ProjectPaginator project={this.props.project}/>

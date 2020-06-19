@@ -50,6 +50,7 @@ export default class NumberPaintCanvas extends React.Component {
     mouseReleased(p5) {
         p5.loadPixels();
         console.log(p5.pixels);
+        this.props.parent.convNet.captureP5Image(p5.pixels);
     }
 
     getEmptyMatrix(r, c) {
