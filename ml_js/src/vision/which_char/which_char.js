@@ -6,6 +6,7 @@ import BreadCrumb from "../../commons/components/breadcrumb";
 import {Centered, OutlinedButtonLink} from "../../commons/components/components";
 import ProjectPaginator from "../../commons/components/project_paginator";
 import MnistClassifier from "./mnist_classifier";
+import NumberPaintCanvas from "./paint_canvas";
 
 
 export default class WhichCharPage extends React.Component {
@@ -18,7 +19,7 @@ export default class WhichCharPage extends React.Component {
             lossData: [],
         };
 
-        this.graphRef = React.createRef();
+        this.paintCanvasRef = React.createRef();
         this.convNet = new MnistClassifier(this);
 
     }
@@ -42,6 +43,8 @@ export default class WhichCharPage extends React.Component {
                         {this.state.isTraining &&
                         <button className={"PassiveButton"} onClick={() => this.stopTraining()}>STOP</button>}
                         <br/>
+
+                        <NumberPaintCanvas ref={this.paintCanvasRef}/>
 
                     </Centered>
                     <ProjectPaginator project={this.props.project}/>
