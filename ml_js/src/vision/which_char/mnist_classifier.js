@@ -16,8 +16,9 @@ export default class MnistClassifier {
 
     async captureP5Image(pixels) {
         let image = tf.scalar(255).sub(tf.tensor(Array.from(pixels))).div(255).reshape([280, 280, 4]);
-        let [r, g, b, a] = image.split(4, 2);
-        image = tf.stack([r, g, b]).reshape([280, 280, 3]);
+        image = image.split(4, 2)[0];
+        image = image.resizeBilinear([28, 28]);
+
         console.log(image.shape);
 
         console.log(image);
