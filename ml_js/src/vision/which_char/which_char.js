@@ -8,6 +8,8 @@ import ProjectPaginator from "../../commons/components/project_paginator";
 import MnistClassifier from "./mnist_classifier";
 import NumberPaintCanvas from "./paint_canvas";
 import {HOST} from "../../commons/settings";
+import { IconButton } from '@material-ui/core';
+import { Refresh } from '@material-ui/icons';
 
 
 export default class WhichCharPage extends React.Component {
@@ -19,11 +21,16 @@ export default class WhichCharPage extends React.Component {
             isTraining: false,
             lossData: [],
             modelLoaded: false,
+            predicted: null,
         };
 
         this.paintCanvasRef = React.createRef();
         this.convNet = new MnistClassifier(this);
 
+    }
+
+    componentDidMount() {
+        this.convNet.initialize_model();
     }
 
     render() {
@@ -36,13 +43,20 @@ export default class WhichCharPage extends React.Component {
                     <Centered>
                         <h1>Which Character?</h1>
                         <p>
-                            [IN PROGRESS] <br/> Predict which number is being drawn.
+                            Predict which number is being drawn.
                         </p><br/>
                         <OutlinedButtonLink text={"How it works"} link={"#how_it_works"}/><br/>
                         {!this.state.modelLoaded && <>Loading model...<br/></>}
 
                         {this.state.modelLoaded &&
-                        <NumberPaintCanvas ref={this.paintCanvasRef} parent={this}/>}
+                        <>
+                            <NumberPaintCanvas ref={this.paintCanvasRef} parent={this}/>
+                            <div>
+                                <Refresh onClick={()=>this.paintCanvasRef.current.clearCanvas()}/><br/>
+                                Predicted: {this.state.predicted}
+                            </div>
+                        </>
+                        }
 
                     </Centered>
                     <ProjectPaginator project={this.props.project}/>
@@ -51,7 +65,9 @@ export default class WhichCharPage extends React.Component {
         );
     }
 
-    startTraining(){}
+    startTraining() {
+    }
 
-    stopTraining(){}
+    stopTraining() {
+    }
 }

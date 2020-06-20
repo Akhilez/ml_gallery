@@ -6,8 +6,6 @@ export default class MnistClassifier {
     constructor(component) {
         this.component = component;
         this.model = null;
-
-        this.initialize_model();
     }
 
     async initialize_model() {
@@ -21,8 +19,9 @@ export default class MnistClassifier {
         image = image.resizeBilinear([28, 28]).reshape([1, 28, 28, 1]);
 
         let output = this.model.predict(image);
-        output.argMax(1).print();
+        let predicted = output.argMax(1).dataSync();
         output.print();
+        this.component.setState({predicted: predicted});
 
     }
 
