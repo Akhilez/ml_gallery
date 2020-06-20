@@ -7,6 +7,7 @@ import {Centered, OutlinedButtonLink} from "../../commons/components/components"
 import ProjectPaginator from "../../commons/components/project_paginator";
 import MnistClassifier from "./mnist_classifier";
 import NumberPaintCanvas from "./paint_canvas";
+import {HOST} from "../../commons/settings";
 
 
 export default class WhichCharPage extends React.Component {
@@ -17,6 +18,7 @@ export default class WhichCharPage extends React.Component {
         this.state = {
             isTraining: false,
             lossData: [],
+            modelLoaded: false,
         };
 
         this.paintCanvasRef = React.createRef();
@@ -37,14 +39,10 @@ export default class WhichCharPage extends React.Component {
                             [IN PROGRESS] <br/> Predict which number is being drawn.
                         </p><br/>
                         <OutlinedButtonLink text={"How it works"} link={"#how_it_works"}/><br/>
+                        {!this.state.modelLoaded && <>Loading model...<br/></>}
 
-                        {!this.state.isTraining &&
-                        <button className={"ActionButton"} onClick={() => this.startTraining()}>TRAIN</button>}
-                        {this.state.isTraining &&
-                        <button className={"PassiveButton"} onClick={() => this.stopTraining()}>STOP</button>}
-                        <br/>
-
-                        <NumberPaintCanvas ref={this.paintCanvasRef} parent={this}/>
+                        {this.state.modelLoaded &&
+                        <NumberPaintCanvas ref={this.paintCanvasRef} parent={this}/>}
 
                     </Centered>
                     <ProjectPaginator project={this.props.project}/>
@@ -52,4 +50,8 @@ export default class WhichCharPage extends React.Component {
             </div>
         );
     }
+
+    startTraining(){}
+
+    stopTraining(){}
 }
