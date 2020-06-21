@@ -45,7 +45,7 @@ export default class WhichCharPage extends React.Component {
                         <p>
                             Predict which number is being drawn.
                         </p><br/>
-                        <OutlinedButtonLink text={"How it works"} link={"#how_it_works"}/><br/>
+                        {/*<OutlinedButtonLink text={"How it works"} link={"#how_it_works"}/><br/>*/}
                         {!this.state.modelLoaded && <>Loading model...<br/></>}
 
                         {this.state.modelLoaded &&

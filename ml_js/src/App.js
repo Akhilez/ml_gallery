@@ -21,6 +21,7 @@ import WhichCharPage from "./vision/which_char/which_char";
 export default class App extends React.Component {
 
     render() {
+        // tf.setBackend('wasm');
         return (
             <Router>
                 <Switch>

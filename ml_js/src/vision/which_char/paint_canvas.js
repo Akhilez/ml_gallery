@@ -42,6 +42,7 @@ export default class NumberPaintCanvas extends React.Component {
         if (p5.mouseIsPressed) {
             if (p5.mouseButton === p5.LEFT) {
                 p5.strokeWeight(15);
+                // p5.stroke(255,0,0);
                 p5.line(p5.mouseX, p5.mouseY, p5.pmouseX, p5.pmouseY);
             }
         }
