@@ -3,12 +3,10 @@ import ProjectsNav from "../../commons/components/projects_nav";
 import {Container} from "react-bootstrap";
 import MLAppBar from "../../commons/components/ml_app_bar";
 import BreadCrumb from "../../commons/components/breadcrumb";
-import {Centered, OutlinedButtonLink} from "../../commons/components/components";
+import {Centered} from "../../commons/components/components";
 import ProjectPaginator from "../../commons/components/project_paginator";
 import MnistClassifier from "./mnist_classifier";
 import NumberPaintCanvas from "./paint_canvas";
-import {HOST} from "../../commons/settings";
-import { IconButton } from '@material-ui/core';
 import { Refresh } from '@material-ui/icons';
 
 
