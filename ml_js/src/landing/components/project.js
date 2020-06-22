@@ -38,7 +38,8 @@ export default class Project extends React.Component {
                     backgroundSize: 'contain',
                     backgroundRepeat: 'no-repeat'
                 }}>
-                    <a className={"link"} href={project.links.source}>
+                    <a className={"link"} href={project.links.colab}
+                    target="_blank" rel="noopener noreferrer" >
                         <div style={{height: "28px", width: "40px"}}/>
                     </a>
                 </div>}

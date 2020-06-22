@@ -72,7 +72,8 @@
           "status": "to_do",
           "links": {
             "app": "/mnist_gan",
-            "source": "/mnist_gan"
+            "source": "/mnist_gan",
+            "colab": "https://colab.research.google.com/github/Akhilez/ml_gallery/blob/master/ml_py/MLGallery/vision/selective_generator/colab.ipynb"
           }
         },
         {
