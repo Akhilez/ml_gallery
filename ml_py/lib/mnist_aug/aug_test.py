@@ -1,5 +1,4 @@
-from lib.mnist_aug.mnist_augmenter import DataManager
-from lib.mnist_aug.mnist_augmenter import MNISTAug
+from lib.mnist_aug.mnist_augmenter import DataManager, MNISTAug
 
 
 aug = MNISTAug()

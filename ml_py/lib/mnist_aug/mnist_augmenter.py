@@ -75,19 +75,24 @@ class MNISTAug:
 
                 aug_x[i][rand_x:rand_x + localized_dim_x, rand_y:rand_y + localized_dim_y] += localized_xi
 
-                aug_yi.append([
-                    y[rand_i],  # Class of i
-                    rand_x,
-                    rand_y,
-                    rand_x + localized_dim_x,
-                    rand_y + localized_dim_y
-                ])
+                aug_yi.append({
+                    'class': np.argmax(y[rand_i]),
+                    'class_one_hot': y[rand_i],
+                    'x1': rand_x,
+                    'y1': rand_y,
+                    'x2': rand_x + localized_dim_x,
+                    'y2': rand_y + localized_dim_y,
+                    'cx': rand_x + localized_dim_x / 2,
+                    'cy': rand_y + localized_dim_y / 2,
+                    'height': localized_dim_y,
+                    'width': localized_dim_x
+                })
 
             aug_y.append(aug_yi)
             aug_x[i][aug_x[i] > 1] = 1.0
 
-            DataManager.plot_num(aug_x[i], aug_yi)
-            DataManager.plot_num(aug_x[i])
+            # DataManager.plot_num(aug_x[i], aug_yi)
+            # DataManager.plot_num(aug_x[i])
 
         return aug_x, aug_y
 
@@ -135,11 +140,14 @@ class DataManager:
             import matplotlib.patches as patches
 
             for i in range(len(bounding_boxes)):
-                c, x1, y1, x2, y2 = bounding_boxes[i]
-                c = DataManager.one_hot_to_num(c)
+                x1 = bounding_boxes[i]['x1']
+                y1 = bounding_boxes[i]['y1']
+                x2 = bounding_boxes[i]['x2']
+                y2 = bounding_boxes[i]['y2']
                 rect = patches.Rectangle((y1, x1), y2 - y1, x2 - x1, linewidth=1, edgecolor='r', facecolor='none')
                 ax.add_patch(rect)
-                ax.text(y1, x1, c, size=8, ha="left", va="top", bbox=dict(boxstyle="square", fc=(1., 0.8, 0.8)))
+                ax.text(y1, x1, bounding_boxes[i]['class'], size=8, ha="left", va="top",
+                        bbox=dict(boxstyle="square", fc=(1., 0.8, 0.8)))
 
         fig.show()
 
