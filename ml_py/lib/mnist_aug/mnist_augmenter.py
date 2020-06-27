@@ -1,6 +1,7 @@
 import numpy as np
 import random
 from skimage.transform import resize
+import os
 
 
 class MNISTAug:
@@ -120,15 +121,53 @@ class DataManager:
         self.load_test()
 
     def load_train(self):
-        self.x_train = np.load(f'{self.dir}/x_train.npy')
-        self.y_train = np.load(f'{self.dir}/y_train.npy')
+        if not os.path.exists(self.dir + '/x_train.npy'):
+            self.x_train = np.load(f'{self.dir}/x_train.npy')
+            self.y_train = np.load(f'{self.dir}/y_train.npy')
+        else:
+            self.load_train_from_torch()
 
     def load_test(self):
-        self.x_test = np.load(f'{self.dir}/x_test.npy')
-        self.y_test = np.load(f'{self.dir}/y_test.npy')
+        if not os.path.exists(self.dir + '/x_test.npy'):
+            self.x_test = np.load(f'{self.dir}/x_test.npy')
+            self.y_test = np.load(f'{self.dir}/y_test.npy')
+        else:
+            self.load_test_from_torch()
+
+    def load_train_from_torch(self):
+        import torch
+        import torchvision
+        train_loader = torch.utils.data.DataLoader(
+            torchvision.datasets.MNIST(self.dir, train=True, download=True,
+                                       transform=torchvision.transforms.ToTensor()), shuffle=True)
+        x_train = []
+        y_train = []
+
+        for data in train_loader:
+            x_train.append(data[0].reshape(28, 28).numpy())
+            y_train.append(data[1][0])
+
+        self.y_train = torch.tensor(self.to_one_hot(y_train))
+        self.x_train = torch.tensor(x_train)
+
+    def load_test_from_torch(self):
+        import torch
+        import torchvision
+        test_loader = torch.utils.data.DataLoader(
+            torchvision.datasets.MNIST(self.dir, train=False, download=True,
+                                       transform=torchvision.transforms.ToTensor()), shuffle=True)
+        x_test = []
+        y_test = []
+
+        for data in test_loader:
+            x_test.append(data[0].reshape(28, 28).numpy())
+            y_test.append(data[1][0])
+
+        self.y_test = torch.tensor(self.to_one_hot(y_test))
+        self.x_test = torch.tensor(x_test)
 
     @staticmethod
-    def plot_num(x, bounding_boxes=None):
+    def plot_num(x, bounding_boxes: list = None):
         import matplotlib.pyplot as plt
 
         fig = plt.figure()
@@ -146,11 +185,19 @@ class DataManager:
                 y2 = bounding_boxes[i]['y2']
                 rect = patches.Rectangle((y1, x1), y2 - y1, x2 - x1, linewidth=1, edgecolor='r', facecolor='none')
                 ax.add_patch(rect)
-                ax.text(y1, x1, bounding_boxes[i]['class'], size=8, ha="left", va="top",
-                        bbox=dict(boxstyle="square", fc=(1., 0.8, 0.8)))
+
+                if 'class' in bounding_boxes[i]:
+                    ax.text(y1, x1, bounding_boxes[i]['class'], size=8, ha="left", va="top",
+                            bbox=dict(boxstyle="square", fc=(1., 0.8, 0.8)))
 
         fig.show()
 
     @staticmethod
     def one_hot_to_num(x):
         return np.argmax(x)
+
+    @staticmethod
+    def to_one_hot(x):
+        b = np.zeros((len(x), 10), dtype=np.float32)
+        b[np.arange(len(x)), x] = 1
+        return b

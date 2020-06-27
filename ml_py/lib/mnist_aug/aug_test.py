@@ -11,3 +11,7 @@ print(x.shape, y)
 
 # [DataManager.plot_num(xi) for xi in x]
 
+
+print(dm.x_test.shape)
+print(dm.y_test.shape)
+
