@@ -121,14 +121,14 @@ class DataManager:
         self.load_test()
 
     def load_train(self):
-        if not os.path.exists(self.dir + '/x_train.npy'):
+        if os.path.exists(self.dir + '/x_train.npy'):
             self.x_train = np.load(f'{self.dir}/x_train.npy')
             self.y_train = np.load(f'{self.dir}/y_train.npy')
         else:
             self.load_train_from_torch()
 
     def load_test(self):
-        if not os.path.exists(self.dir + '/x_test.npy'):
+        if os.path.exists(self.dir + '/x_test.npy'):
             self.x_test = np.load(f'{self.dir}/x_test.npy')
             self.y_test = np.load(f'{self.dir}/y_test.npy')
         else:
