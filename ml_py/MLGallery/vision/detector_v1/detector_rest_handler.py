@@ -1,4 +1,3 @@
-import torch
 from lib.mnist_aug.mnist_augmenter import DataManager, MNISTAug
 
 aug = MNISTAug()
