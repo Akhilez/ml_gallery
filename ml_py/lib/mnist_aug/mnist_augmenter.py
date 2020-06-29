@@ -11,8 +11,11 @@ class MNISTAug:
         self.scale = 4  # height(out_img) / height(in_image)
         self.overflow = 0.3  # An in_image can't overflow more than 50% out of the image
 
-        self.min_objects = 1
-        self.max_objects = 1
+        self.min_objects = 4
+        self.max_objects = 10
+
+        self.scaling_mean = 1.25
+        self.scaling_sd = 0.4
 
         self.spacing = 0.7  # Fraction: distance(c1, c2) / (r1 + r2)
 
@@ -47,7 +50,7 @@ class MNISTAug:
 
             for j in range(n_objects):
                 rand_i = random.randrange(0, len(x))
-                x_in = int(max(0, np.random.normal(1, 0.25, 1)) * x.shape[1])
+                x_in = int(max(0, np.random.normal(self.scaling_mean, self.scaling_sd, 1)) * x.shape[1])
                 # x_in = int(random.uniform(self.min_resize, self.max_resize) * x.shape[1])
 
                 resized_object = resize(x[rand_i], (x_in, x_in))
@@ -77,7 +80,7 @@ class MNISTAug:
                 aug_x[i][rand_x:rand_x + localized_dim_x, rand_y:rand_y + localized_dim_y] += localized_xi
 
                 aug_yi.append({
-                    'class': np.argmax(y[rand_i]),
+                    'class': int(np.argmax(y[rand_i])),
                     'class_one_hot': y[rand_i],
                     'x1': rand_x,
                     'y1': rand_y,
