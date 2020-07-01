@@ -50,3 +50,9 @@ Deployed at: https://akhil.ai
    - Spiking Neurons
    - MNIST Detection Dataset
 
+
+
+---
+TODO:
+ - Work on detection using mnist aug
+
