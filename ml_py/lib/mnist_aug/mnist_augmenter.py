@@ -53,7 +53,10 @@ class MNISTAug:
                 x_in = int(max(0, np.random.normal(self.scaling_mean, self.scaling_sd, 1)) * x.shape[1])
                 # x_in = int(random.uniform(self.min_resize, self.max_resize) * x.shape[1])
 
-                resized_object = resize(x[rand_i], (x_in, x_in))
+                try:
+                    resized_object = resize(x[rand_i], (x_in, x_in))  # TODO: Find the root cause of this error
+                except:
+                    continue
 
                 attempts = 1
                 while attempts < self.max_objects * 10:
