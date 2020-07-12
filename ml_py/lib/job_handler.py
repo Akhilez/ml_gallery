@@ -1,5 +1,5 @@
 import uuid
-from ml_py.settings import logger
+from mlg.settings import logger
 import threading
 
 

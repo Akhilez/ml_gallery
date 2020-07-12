@@ -1,10 +1,12 @@
 jupyter==1.0.0
-django==3.0.7
+django==3.0.8
 gunicorn==20.0.4
-# torch==1.5.0  # pip install torch==1.5.0+cpu torchvision==0.6.0+cpu -f https://download.pytorch.org/whl/torch_stable.html
-# torchvision==0.6.0
-matplotlib==3.2.1
+torch==1.5.1  # pip install torch==1.5.0+cpu torchvision==0.6.0+cpu -f https://download.pytorch.org/whl/torch_stable.html
+torchvision==0.6.1
+matplotlib==3.2.2
 # channels==2.4.0
 # channels-redis==2.4.2
 scikit-image==0.17.2
-django-cors-headers==3.3.0
+django-cors-headers==3.4.0
+python-decouple==3.3
+django-webpack-loader==0.7.0

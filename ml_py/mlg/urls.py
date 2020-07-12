@@ -1,4 +1,4 @@
-"""ml_py URL Configuration
+"""ml_gallery URL Configuration
 
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/3.0/topics/http/urls/
@@ -19,5 +19,5 @@ from django.urls import path, include
 urlpatterns = [
     #    path('admin/', admin.site.urls),
     path('exp/', include('experiments.urls', namespace='exp')),
-    path('', include('MLGallery.urls', namespace='mlg')),
+    path('', include('app.urls', namespace='mlg')),
 ]

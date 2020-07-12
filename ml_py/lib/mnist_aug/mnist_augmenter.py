@@ -117,7 +117,7 @@ class MNISTAug:
 
 class DataManager:
     def __init__(self):
-        from ml_py.settings import BASE_DIR
+        from mlg.settings import BASE_DIR
         self.dir = f'{BASE_DIR}/data/mnist/numbers'
 
         self.x_train, self.y_train, self.x_test, self.y_test = None, None, None, None

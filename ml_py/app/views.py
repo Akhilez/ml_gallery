@@ -1,9 +1,10 @@
 from django.http import HttpResponse
+from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 
 
 def home(request):
-    return HttpResponse("Home")
+    return render(request, 'app/home.html', {'name': 'Akhil'})
 
 
 def selective_generator_page(request):
@@ -12,5 +13,5 @@ def selective_generator_page(request):
 
 @csrf_exempt
 def rest_learn_curve(request):
-    from MLGallery.feed_forward.polynomial import rest_consumer
+    from app.feed_forward.polynomial import rest_consumer
     return rest_consumer.receive(request)

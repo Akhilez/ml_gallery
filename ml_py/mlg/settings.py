@@ -13,7 +13,7 @@ DEBUG = os.environ.get('DEBUG', False) == 'True'
 ALLOWED_HOSTS = ['*']
 
 NN_GALLERY_APPS = [
-    'MLGallery',
+    'app',
     'experiments',
 ]
 
@@ -25,6 +25,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     # 'channels',
     'corsheaders',
+    'webpack_loader',
 ] + NN_GALLERY_APPS
 
 MIDDLEWARE = [
@@ -38,7 +39,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'ml_py.urls'
+ROOT_URLCONF = 'mlg.urls'
 
 TEMPLATES = [
     {
@@ -56,8 +57,8 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'ml_py.wsgi.application'
-# ASGI_APPLICATION = "ml_py.routing.application"
+WSGI_APPLICATION = 'mlg.wsgi.application'
+# ASGI_APPLICATION = "mlg.routing.application"
 
 DATABASES = {
     'default': {
@@ -94,6 +95,14 @@ USE_L10N = True
 USE_TZ = True
 
 STATIC_URL = '/static/'
+STATICFILES_DIRS = ['static']
+
+WEBPACK_LOADER = {
+    'DEFAULT': {
+        'BUNDLE_DIR_NAME': 'bundles/',
+        'STATS_FILE': os.path.join(BASE_DIR, 'webpack-stats.json'),
+    }
+}
 
 LOGGING = {
     'version': 1,

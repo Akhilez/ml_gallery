@@ -1,5 +1,5 @@
 """
-ASGI config for ml_py project.
+ASGI config for ml_gallery project.
 
 It exposes the ASGI callable as a module-level variable named ``application``.
 
@@ -11,7 +11,7 @@ import os
 import django
 from channels.routing import get_default_application
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'ml_py.settings')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'mlg.settings')
 
 django.setup()
 

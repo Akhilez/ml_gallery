@@ -1,7 +1,7 @@
 import time
 import torch
 import threading
-from ml_py.settings import logger
+from mlg.settings import logger
 
 
 class PolyRegTrainer(torch.nn.Module):

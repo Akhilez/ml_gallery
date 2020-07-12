@@ -1,7 +1,7 @@
 from django.conf.urls import url
 from django.urls import path
 
-from MLGallery import views
+from app import views
 
 __author__ = 'Akhilez'
 

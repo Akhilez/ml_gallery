@@ -4,7 +4,11 @@ data/
 env.py
 *.gz
 temp/
+tmp/
 models/
+node_modules/
+bundles/
+webpack-stats.json
 
 ### OSX ###
 .DS_Store

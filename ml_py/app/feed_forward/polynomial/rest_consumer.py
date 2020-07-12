@@ -1,5 +1,5 @@
 from django.http import HttpResponse
-from MLGallery.feed_forward.polynomial.trainer import PolyRegTrainer
+from app.feed_forward.polynomial.trainer import PolyRegTrainer
 from lib.job_handler import JobHandler, all_jobs
 import json
 

@@ -1,8 +1,8 @@
  # [START runtime]
 runtime: python
 env: flex
-# entrypoint: daphne ml_py.asgi:application --bind 0.0.0.0 --port $PORT --verbosity 1
-entrypoint: gunicorn -b :$PORT ml_py.wsgi
+# entrypoint: daphne mlg.asgi:application --bind 0.0.0.0 --port $PORT --verbosity 1
+entrypoint: gunicorn -b :$PORT mlg.wsgi
 threadsafe: yes
 
 automatic_scaling:
