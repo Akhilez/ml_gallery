@@ -21,11 +21,10 @@ export function ProfileBadge(props) {
                             style={{fontSize: 35}}>(Akhilez)</i></h1>
 
                         <div style={{fontSize: 28, marginTop: -10}}>
-                            Machine Learning Engineer
+                            Deep Learning Researcher
                         </div>
                         <div style={{fontSize: 22}} className="roboto-light-ak no_href"><a
-                            href="mailto: ak@akhil.ai"> ak@akhil.ai</a></div>
-
+                            href="mailto: akhilkannadev@gmail.com"> akhilkannadev@gmail.com</a></div>
                         <Social/>
                         <ResumeButton/>
                     </div>

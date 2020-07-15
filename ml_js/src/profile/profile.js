@@ -108,6 +108,11 @@ export default class ProfilePage extends React.Component {
 
                     <ul className="timeline no_href">
                         <li className="event" data-date="2019">
+                            <h3 className={"timeline_heading"}>Python Developer</h3>
+                            <p><a href="https://vndly.com/">VNDLY</a></p>
+                            <p>Developed a Deep Learning model based on Google BERT for an NLP task of matching candidates to job descriptions.</p>
+                        </li>
+                        <li className="event" data-date="2019">
                             <h3 className={"timeline_heading"}><a
                                 href="https://webapps2.uc.edu/ecurriculum/degreeprograms/program/detail/20MAS-AI-MENG">Master’s
                                 in
