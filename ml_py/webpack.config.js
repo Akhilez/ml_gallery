@@ -32,9 +32,10 @@ module.exports = {
             },
             {
                 test: /\.(png|svg|jpg|gif|jpeg)$/,
-                use: [
-                    'file-loader',
-                ],
+                loader: 'file-loader',
+                options: {
+                    name: '[path][name].[ext]',
+                },
             },
             {
                 test: /\.(json5|json)$/i,

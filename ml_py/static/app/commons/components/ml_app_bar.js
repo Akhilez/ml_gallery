@@ -8,22 +8,23 @@ import {Helmet} from "react-helmet";
 import ml_logo from '../../landing/ml_logo/ml_logo.png';
 import { GitHub, Home, Person } from '@material-ui/icons';
 import './components.css';
+import bootstrap_styles from 'bootstrap/dist/css/bootstrap.min.css';
 
 
 class MLAppBar extends React.Component {
     render() {
         return (
             <Navbar bg="transparent" variant="light">
-                <Nav className="mr-auto">
+                <Nav className={bootstrap_styles.mrAuto}>
                     <Navbar.Brand href="/profile"><img src={ak_logo} alt={"AK Logo"} height={"40px"}/></Navbar.Brand>
                 </Nav>
-                <Nav.Link href={urls.ml_gallery.url} className={"nav-link"}>
+                <Nav.Link href={urls.ml_gallery.url} className={bootstrap_styles.navLink}>
                     <div><Home fontSize={"small"} className={"navIcon"}/> HOME</div>
                 </Nav.Link>
-                <Nav.Link href={urls.profile.url} className={"nav-link"}>
+                <Nav.Link href={urls.profile.url} className={bootstrap_styles.navLink}>
                     <div><Person fontSize={"small"} className={"navIcon"}/> PROFILE</div>
                 </Nav.Link>
-                <Nav.Link href="https://github.com/Akhilez/ml_gallery" className={"nav-link"} target={"_blank"}>
+                <Nav.Link href="https://github.com/Akhilez/ml_gallery" className={bootstrap_styles.navLink} target={"_blank"}>
                     <div><GitHub fontSize={"small"} className={"navIcon"}/> REPO</div>
                 </Nav.Link>
                 <this.metaTags/>
