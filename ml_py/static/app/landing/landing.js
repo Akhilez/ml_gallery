@@ -8,12 +8,12 @@ import Project from './components/project';
 import {Centered, OutlinedButtonLink} from "../commons/components/components";
 import {Row, Col} from 'react-bootstrap';
 import urls from '../urls.json';
+import styles from './landing.css';
 
 
 class LandingPage extends React.Component {
     render() {
         return (
-            <div className={"page"}>
                 <Container>
                     <MLAppBar/>
                     <MLLogo/>
@@ -23,7 +23,6 @@ class LandingPage extends React.Component {
                     }
                     <Footer/>
                 </Container>
-            </div>
         );
     }
 
@@ -31,7 +30,7 @@ class LandingPage extends React.Component {
         return (
             <Centered>
                 <div style={{fontSize: 22, marginBottom: 70}}>
-                    <p>Developed by <a className={"link"} href={urls.profile.url}><b><i>Akhilez</i></b></a></p>
+                    <p>Developed by <a className={styles.link} href={urls.profile.url}><b><i>Akhilez</i></b></a></p>
                     <p><b>Machine Learning Gallery</b> is a master project of few of my experiments with Neural
                         Networks.
                         It is designed in a way to help a beginner understand the concepts with visualizations.
@@ -52,7 +51,7 @@ class LandingPage extends React.Component {
         return (
             <div>
                 <hr/><br/>
-                <h3 className={"ProjectCategoryTitle"}>{category.title}</h3>
+                <h3 className={styles.ProjectCategoryTitle}>{category.title}</h3>
                 <Row>
                     {category.projects.map(project =>
                         <Col sm="4" key={project.id}>
