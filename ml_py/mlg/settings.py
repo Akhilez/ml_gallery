@@ -1,14 +1,12 @@
 import os
 import logging
+from decouple import config
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-if os.path.exists(f"{BASE_DIR}/env.py"):
-    import env
+SECRET_KEY = config('SECRET_KEY')
 
-SECRET_KEY = os.environ['SECRET_KEY']
-
-DEBUG = os.environ.get('DEBUG', False) == 'True'
+DEBUG = config('DEBUG', default=False) == 'True'
 
 ALLOWED_HOSTS = ['*']
 

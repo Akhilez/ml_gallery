@@ -29,7 +29,22 @@ module.exports = {
                 include: [path.resolve(__dirname, 'static'),],
                 exclude: /node_modules/,
                 use: ['babel-loader']
-            }
+            },
+            {
+                test: /\.(png|svg|jpg|gif|jpeg)$/,
+                use: [
+                    'file-loader',
+                ],
+            },
+            {
+                test: /\.(json5|json)$/i,
+                loader: 'json5-loader',
+                type: 'javascript/auto',
+            },
+            {
+                test: /\.css$/i,
+                use: ['style-loader', 'css-loader'],
+            },
         ]
     },
 

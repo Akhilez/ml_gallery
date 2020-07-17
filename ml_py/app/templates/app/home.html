@@ -13,6 +13,11 @@
     window.react_mount = document.getElementById('react');
 </script>
 {% render_bundle 'app' %}
+<script>
+    {% block renderPage %}
+        renderHomePage('react');
+    {% endblock renderPage %}
+</script>
 
 </body>
 </html>

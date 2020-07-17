@@ -1,13 +1,8 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
+import LandingPage from "./landing/landing";
 
 
-function Welcome(props) {
-  console.log(window.context);
-  return <h1>Hello!</h1>;
+window.renderHomePage = (id, props) => {
+  ReactDOM.render(<LandingPage {...props} />, document.getElementById(id))
 }
-
-ReactDOM.render(
-  <Welcome name="world" />,
-  document.getElementById('react')
-);

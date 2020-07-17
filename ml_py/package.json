@@ -1,5 +1,5 @@
 {
-  "name": "ml_js",
+  "name": "ml_gallery",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -12,6 +12,7 @@
     "@testing-library/user-event": "^11.0.0",
     "bootstrap": "^4.4.1",
     "cytoscape": "^3.14.1",
+    "json5": "^2.1.3",
     "react": "^16.13.1",
     "react-bootstrap": "^1.0.0",
     "react-dom": "^16.13.1",
@@ -28,6 +29,8 @@
     "babel-preset-env": "^1.7.0",
     "babel-preset-react": "^6.24.1",
     "clean-webpack-plugin": "^3.0.0",
+    "css-loader": "^3.6.0",
+    "json5-loader": "^4.0.0",
     "webpack": "^4.43.0",
     "webpack-bundle-tracker": "^0.4.3",
     "webpack-cli": "^3.3.12"
