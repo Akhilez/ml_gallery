@@ -36,7 +36,6 @@ yarn-error.log*
 .vercel
 
 venv/
-data/
 .ipynb_checkpoints/
 env.py
 *.gz
