@@ -654,8 +654,7 @@ export default class ProfilePage extends React.Component {
             Ali Minai
           </a>
           <div className="inspiration_person_description">
-            The most influential professor in my life. He is the reason why I
-            love academia so much.
+            The most influential professor of my life. He is the reason why I love academia so much.
           </div>
         </div>
       </div>
