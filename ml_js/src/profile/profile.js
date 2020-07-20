@@ -198,7 +198,7 @@ export default class ProfilePage extends React.Component {
                                                      style={{fontWeight: 700}}>
                     Coding Activity</a></h3>
                 <br/>
-                I absolutely ❤ coding! The live GitHub contributions below proves my love.❤️💙🤍♥️
+                I absolutely ❤ coding! Each green box below represents the amount of coding on that day of the year.
                 <GithubCalendar/>
 
                 <div className="row">
