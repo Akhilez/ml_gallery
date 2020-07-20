@@ -22,11 +22,12 @@ import mlg_img from "../landing/ml_logo/ml_logo.png";
 import { Link } from "react-router-dom";
 import urls from "../urls";
 import { Helmet } from "react-helmet";
-import profilePhoto from "./media/profile_photo.jpg";
 import vndly_logo from "./media/timeline/vndly_logo.png";
 import uc_logo from "./media/timeline/uc.png";
 import aviso_logo from "./media/timeline/aviso.png";
 import kmit_logo from "./media/timeline/kmit.jpg";
+
+const profilePhoto = '/media/profile_photo.jpg';
 
 export default class ProfilePage extends React.Component {
   render() {
@@ -52,7 +53,7 @@ export default class ProfilePage extends React.Component {
 
   metaTags(props) {
     let desc =
-      'Machine Learning Engineer. Master\'s in AI. Neural Nets, Web, Mobile, Cloud, UI. "Code is Art" - Akhilez';
+      'Deep Learning Researcher. Master\'s in AI 🎓. Neural Nets 🧠, Web 🖥, Mobile 📱, Cloud ☁️, UI.';
     let title = "Akhil D. (Akhilez)";
     return (
       <Helmet>
@@ -85,7 +86,7 @@ export default class ProfilePage extends React.Component {
           <b>
             <i>Deep Learning</i>
           </b>{" "}
-          <Emoji>🧠</Emoji>, <i>Productivity</i> <Emoji>👨🏻‍💻</Emoji> and <i>Space Exploration.</i> <Emoji>✨</Emoji>
+          <Emoji>🧠</Emoji>, <i>Productivity</i> <Emoji>👨🏻‍💻</Emoji> and <i>Space Exploration</i> <Emoji>🪐</Emoji>
         </p>
 
         <div className="header1" style={{ fontSize: 20, paddingTop: 20 }}>

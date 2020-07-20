@@ -1,12 +1,12 @@
 import React from "react";
 import {Row, Col} from 'react-bootstrap';
-import profile_photo from './media/profile_photo.jpg';
 import './css/fontawesome/css/font-awesome.min.css';
 import './css/fontawesome/css/fonts.css';
 import './css/github_calendar.css';
 import urls from '../urls';
 import './css/profile_style.css';
 
+const profile_photo = '/media/profile_photo.jpg';
 
 export function ProfileBadge(props) {
     return (
