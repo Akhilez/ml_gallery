@@ -8,10 +8,10 @@ import code_art_img from './media/cover_code_art_with_bg_dark.png';
 import neuralhack from './media/neuralhack.jpg';
 import revolutionUC from './media/revolutionuc.jpg';
 import projects from './data/projects';
-import atheism_img from './media/evolution.jpg';
-import vegan_img from './media/chicken.jpg';
-import kmitra_img from './media/kmitraLogo.jpg';
-import ezio_img from './media/ezio.jpg';
+import atheism_img from './media/misc/evolution.jpg';
+import vegan_img from './media/misc/chicken.jpg';
+import kmitra_img from './media/misc/kmitraLogo.jpg';
+import ezio_img from './media/misc/ezio.jpg';
 import mlg_img from '../landing/ml_logo/ml_logo.png';
 import {Link} from 'react-router-dom';
 import urls from '../urls';
@@ -70,25 +70,8 @@ export default class ProfilePage extends React.Component {
     Bio(props) {
         return (
             <div>
-                <h3 className="header1">Bio</h3>
-                <p className="para no_href_p">
-                    I majored in <i>Artificial Intelligence</i> in my Master’s from <a href="https://www.uc.edu/">University
-                    of Cincinnati</a>, specialized in Deep Learning architectures for <i>Computer Vision, NLP,
-                    Reinforcement Learning and Complex Intelligent Systems</i>. Previously, I worked at an AI based
-                    startup called <a href="https://aviso.ai/">Aviso.AI</a> as a <i>Full-Stack Developer</i> with
-                    technologies - <i>Python, AWS and Vue.js</i>. During my undergrad, I worked as a part-time Software
-                    Developer at the college’s administrative department where I developed software applications for
-                    digitalization and automation of the administrative operations.
-                </p>
-                <p className="para no_href_p">
-                    I am extremely passionate about modern Artificial Intelligence. In my spare time, I try to recreate
-                    famous research works in deep learning and deploy them with user interaction at <Link
-                    to={urls.ml_gallery.url}>akhil.ai/gallery</Link>. I also work on my own independent projects. I
-                    developed a number of
-                    applications for the web and mobile over the years because I enjoy coding and designing. I associate
-                    my long-term goals strongly with pioneering the advancements in <i>Artificial General
-                    Intelligence</i> for
-                    further space exploration and more.
+                <p className="para no_href_p">I am obsessed with <b><i>Deep
+                    Learning</i></b> 🧠, <i>Productivity</i> 👨🏻‍💻 and <i>Space Exploration.</i> ✨
                 </p>
 
                 <div className="header1" style={{fontSize: 20, paddingTop: 20}}>
@@ -110,7 +93,8 @@ export default class ProfilePage extends React.Component {
                         <li className="event" data-date="2019">
                             <h3 className={"timeline_heading"}>Python Developer</h3>
                             <p><a href="https://vndly.com/">VNDLY</a></p>
-                            <p>Developed a Deep Learning model based on Google BERT for an NLP task of matching candidates to job descriptions.</p>
+                            <p>Developed a Deep Learning model based on Google BERT for an NLP task of matching
+                                candidates to job descriptions.</p>
                         </li>
                         <li className="event" data-date="2019">
                             <h3 className={"timeline_heading"}><a
@@ -118,10 +102,8 @@ export default class ProfilePage extends React.Component {
                                 in
                                 Artificial Intelligence</a></h3>
                             <p><a href="https://www.uc.edu/">University of Cincinnati</a></p>
-                            <p><a
-                                href="https://webapps2.uc.edu/ecurriculum/degreeprograms/program/majormap/20MAS-AI-MENG">Courses
-                                taken:</a> Intelligent Systems, ML, AI, Deep Learning, Complex Systems, Computer Vision,
-                                StartupUC</p>
+                            <p>Specializations: <i>Computer Vision, NLP,
+                                Reinforcement Learning and Complex Intelligent Systems</i>.</p>
                         </li>
                         <li className="event" data-date="2018">
                             <h3 className={"timeline_heading"}>Full-Stack Engineer</h3>
@@ -177,8 +159,9 @@ export default class ProfilePage extends React.Component {
 
                 <div className="row project_box" style={{marginBottom: -40, marginTop: -30}}>
                     <div className="col-md-3">
-                        <Link to={urls.ml_gallery.url}><img src={mlg_img} className="project_image" alt={"MLGallery Logo"}
-                                            width={"250px"} style={{marginTop: 15}}/></Link>
+                        <Link to={urls.ml_gallery.url}><img src={mlg_img} className="project_image"
+                                                            alt={"MLGallery Logo"}
+                                                            width={"250px"} style={{marginTop: 15}}/></Link>
                     </div>
                     <div className="col-md-9">
                         <p>My passion for deep learning started when I learned CNNs in 2016 - the booming period of deep
@@ -215,7 +198,7 @@ export default class ProfilePage extends React.Component {
                                                      style={{fontWeight: 700}}>
                     Coding Activity</a></h3>
                 <br/>
-                The live GitHub contributions below show my commitment to writing code
+                I absolutely ❤ coding! The live GitHub contributions below proves my love.❤️💙🤍♥️
                 <GithubCalendar/>
 
                 <div className="row">
@@ -290,7 +273,7 @@ export default class ProfilePage extends React.Component {
     }
 
     Projects(props) {
-        let profile_projects = projects.projects.filter(project=>project.on_profile);
+        let profile_projects = projects.projects.filter(project => project.on_profile);
         return (
             <div>
                 <h3 className="header1 no_href_p"><a href="https://github.com/Akhilez?tab=repositories"
@@ -469,7 +452,7 @@ export default class ProfilePage extends React.Component {
                     <hr/>
 
                     <div style={{marginTop: 15}} className="roboto-light-ak no_href"><a
-                        href="mailto: ak@akhil.ai"> ak@akhil.ai</a></div>
+                        href="mailto: akhilez.ai@gmail.com"> akhilez.ai@gmail.com</a></div>
                     <Social/>
 
                     <ResumeButton/>
