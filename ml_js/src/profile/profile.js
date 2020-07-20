@@ -25,6 +25,8 @@ import {Helmet} from "react-helmet";
 import profilePhoto from "./media/profile_photo.jpg";
 import vndly_logo from "./media/timeline/vndly_logo.png";
 import uc_logo from './media/timeline/uc.png';
+import aviso_logo from './media/timeline/aviso.png';
+import kmit_logo from './media/timeline/kmit.jpg';
 
 export default class ProfilePage extends React.Component {
     render() {
@@ -142,7 +144,7 @@ export default class ProfilePage extends React.Component {
                             brand="VNDLY"
                             role="Python Developer"
                             linkBrand="https://vndly.com/"
-                            description={<p>Developed a Deep Learning model based on Google BERT for an NLP task of matching candidates to job descriptions.</p>}
+                            description={<p>Developed a Deep Learning model based on <b><i>Google's BERT</i></b> for an NLP task of matching candidates to job descriptions.</p>}
                         />
                         <TimeLineItem
                             date="2019"
@@ -160,17 +162,18 @@ export default class ProfilePage extends React.Component {
                                 .
                             </p>}
                         />
+                        <TimeLineItem
+                            date="2018"
+                            image={aviso_logo}
+                            brand="Aviso AI"
+                            role="Full-Stack Engineer"
+                            linkBrand="https://www.aviso.com/"
+                            description={<p>
+                                Reduced the ML cloud cost by <b><i>60%</i></b> <br/>
+                                Technologies used: <i>Django, Kubernetes, AWS, Linux, Puppet, Vue.js</i>
+                            </p>}
+                        />
 
-                        <li className="event" data-date="2018">
-                            <h3 className={"timeline_heading"}>Full-Stack Engineer</h3>
-                            <p>
-                                <a href="https://www.aviso.com/">Aviso Inc.</a>
-                            </p>
-                            <p>
-                                Worked on a wide variety of tasks revolving around the cloud
-                                infrastructure of the Aviso AI product.
-                            </p>
-                        </li>
                         <li className="event" data-date="2015">
                             <h3 className={"timeline_heading"}>Part-Time Developer</h3>
                             <p>
