@@ -325,7 +325,7 @@ export default class ProfilePage extends React.Component {
   Achievements(props) {
     return (
       <div>
-        <h3 className="header1">Achievements</h3>
+        <h3 className="header1">Hackathons</h3>
 
         <div className="row project_box">
           <div className="col-md-7">
