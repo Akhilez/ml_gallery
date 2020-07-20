@@ -76,6 +76,8 @@ export default class ProfilePage extends React.Component {
   }
 
   Bio(props) {
+    const Emoji = (props) => (<span className="emoji_text">{props.children}</span>);
+
     return (
       <div>
         <p className="para no_href_p">
@@ -83,7 +85,7 @@ export default class ProfilePage extends React.Component {
           <b>
             <i>Deep Learning</i>
           </b>{" "}
-          🧠, <i>Productivity</i> 👨🏻‍💻 and <i>Space Exploration.</i> ✨
+          <Emoji>🧠</Emoji>, <i>Productivity</i> <Emoji>👨🏻‍💻</Emoji> and <i>Space Exploration.</i> <Emoji>✨</Emoji>
         </p>
 
         <div className="header1" style={{ fontSize: 20, paddingTop: 20 }}>
