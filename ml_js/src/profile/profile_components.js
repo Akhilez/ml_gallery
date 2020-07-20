@@ -24,7 +24,7 @@ export function ProfileBadge(props) {
                             Deep Learning Researcher
                         </div>
                         <div style={{fontSize: 22}} className="roboto-light-ak no_href"><a
-                            href="mailto: akhilez.ai@gmail.com"> akhilez.ai@gmail.com</a></div>
+                            href="mailto: akhilez.ai@gmail.com"> akhilez.ai<span style={{color: "#8d9599"}}>@gmail.com</span></a></div>
                         <Social/>
                         <ResumeButton/>
                     </div>
