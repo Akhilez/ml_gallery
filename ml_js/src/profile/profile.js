@@ -17,6 +17,7 @@ import {Link} from 'react-router-dom';
 import urls from '../urls';
 import {Helmet} from "react-helmet";
 import profilePhoto from './media/profile_photo.jpg';
+import vndly_logo from './media/timeline/vndly_logo.png';
 
 
 export default class ProfilePage extends React.Component {
@@ -91,10 +92,15 @@ export default class ProfilePage extends React.Component {
 
                     <ul className="timeline no_href">
                         <li className="event" data-date="2019">
-                            <h3 className={"timeline_heading"}>Python Developer</h3>
-                            <p><a href="https://vndly.com/">VNDLY</a></p>
-                            <p>Developed a Deep Learning model based on Google BERT for an NLP task of matching
-                                candidates to job descriptions.</p>
+                            <Row>
+                                <Col sm="auto"><img width="50px" src={vndly_logo} alt="vndly_logo" style={{paddingTop: 25}}/></Col>
+                                <Col>
+                                    <h3 className={"timeline_heading"}>Python Developer</h3>
+                                    <p><a href="https://vndly.com/">VNDLY</a></p>
+                                    <p>Developed a Deep Learning model based on Google BERT for an NLP task of matching
+                                        candidates to job descriptions.</p>
+                                </Col>
+                            </Row>
                         </li>
                         <li className="event" data-date="2019">
                             <h3 className={"timeline_heading"}><a
