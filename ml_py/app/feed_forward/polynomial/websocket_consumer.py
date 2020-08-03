@@ -1,6 +1,6 @@
 from channels.generic.websocket import WebsocketConsumer
 import json
-from MLGallery.feed_forward.polynomial.trainer import PolyRegTrainer
+from app.feed_forward.polynomial.trainer import PolyRegTrainer
 from lib.job_handler import JobHandler
 
 

@@ -13,7 +13,7 @@ DEBUG = os.environ.get('DEBUG', False) == 'True'
 ALLOWED_HOSTS = ['*']
 
 NN_GALLERY_APPS = [
-    'MLGallery',
+    'app',
     'experiments',
 ]
 
