@@ -6,22 +6,26 @@ import {
   MyGithubCalendar,
   Social,
   ResumeButton,
-  ProjectBox,
 } from "./profile_components";
+import Projects from "./sections/Projects";
 import toggle_img from "./media/toggle.png";
 import code_art_img from "./media/cover_code_art_with_bg_dark.png";
 import neuralhack from "./media/neuralhack.jpg";
 import revolutionUC from "./media/revolutionuc.jpg";
-import projects from "./data/projects";
-import atheism_img from "./media/evolution.jpg";
-import vegan_img from "./media/chicken.jpg";
-import kmitra_img from "./media/kmitraLogo.jpg";
-import ezio_img from "./media/ezio.jpg";
-import mlg_img from "../gallery/ml_logo/ml_logo.png";
-import urls from "../../data/urls.json";
+import atheism_img from "./media/misc/evolution.jpg";
+import vegan_img from "./media/misc/chicken.jpg";
+import kmitra_img from "./media/misc/kmitraLogo.jpg";
+import ezio_img from "./media/misc/ezio.jpg";
+import urls from "../urls.json";
 import { Helmet } from "react-helmet";
-import profilePhoto from "./media/profile_photo.jpg";
-import Link from "next/link";
+import vndly_logo from "./media/timeline/vndly_logo.png";
+import uc_logo from "./media/timeline/uc.png";
+import aviso_logo from "./media/timeline/aviso.png";
+import kmit_logo from "./media/timeline/kmit.jpg";
+import { Flex, Image, Text } from "@chakra-ui/core/dist";
+
+const profilePhoto = "/media/profile_photo.jpg";
+const mlg_img = "/media/ml_logo.png";
 
 export default class ProfilePage extends React.Component {
   render() {
@@ -36,7 +40,7 @@ export default class ProfilePage extends React.Component {
           <this.DeepLearning />
           <this.CodingActivity />
           <this.Achievements />
-          <this.Projects />
+          <Projects />
           <this.Misc />
           <this.Influencers />
           <this.Footer />
@@ -47,7 +51,7 @@ export default class ProfilePage extends React.Component {
 
   metaTags(props) {
     let desc =
-      'Machine Learning Engineer. Master\'s in AI. Neural Nets, Web, Mobile, Cloud, UI. "Code is Art" - Akhilez';
+      "Deep Learning Researcher. Master's in AI 🎓. Neural Nets 🧠, Web 🖥, Mobile 📱, Cloud ☁️, UI.";
     let title = "Akhil D. (Akhilez)";
     return (
       <Helmet>
@@ -71,117 +75,146 @@ export default class ProfilePage extends React.Component {
   }
 
   Bio(props) {
+    const Emoji = (props) => (
+      <span className="emoji_text">{props.children}</span>
+    );
+
     return (
       <div>
-        <h3 className="header1">Bio</h3>
         <p className="para no_href_p">
-          I majored in <i>Artificial Intelligence</i> in my Master’s from{" "}
-          <a href="https://www.uc.edu/">University of Cincinnati</a>,
-          specialized in Deep Learning architectures for{" "}
-          <i>
-            Computer Vision, NLP, Reinforcement Learning and Complex Intelligent
-            Systems
-          </i>
-          . Previously, I worked at an AI based startup called{" "}
-          <a href="https://aviso.ai/">Aviso.AI</a> as a{" "}
-          <i>Full-Stack Developer</i> with technologies -{" "}
-          <i>Python, AWS and Vue.js</i>. During my undergrad, I worked as a
-          part-time Software Developer at the college’s administrative
-          department where I developed software applications for digitalization
-          and automation of the administrative operations.
-        </p>
-        <p className="para no_href_p">
-          I am extremely passionate about modern Artificial Intelligence. In my
-          spare time, I try to recreate famous research works in deep learning
-          and deploy them with user interaction at{" "}
-          <Link href={urls.ml_gallery.url}>akhil.ai/gallery</Link>. I also work
-          on my own independent projects. I developed a number of applications
-          for the web and mobile over the years because I enjoy coding and
-          designing. I associate my long-term goals strongly with pioneering the
-          advancements in <i>Artificial General Intelligence</i> for further
-          space exploration and more.
+          I am obsessed with{" "}
+          <b>
+            <i>Deep Learning</i>
+          </b>{" "}
+          <Emoji>🧠</Emoji>, <i>Productivity</i> <Emoji>👨🏻‍💻</Emoji> and{" "}
+          <i>Space Exploration</i> <Emoji>🪐</Emoji>
         </p>
 
-        <div className="header1" style={{ fontSize: 20, paddingTop: 20 }}>
-          <img src={toggle_img} alt="toggle" height="30px" />
-          &nbsp; Available for hire.
-        </div>
+        <Flex className="header1" pt={4}>
+          <Image mr={4} src={toggle_img} alt="toggle" width="50px" />
+          Available for hire.
+        </Flex>
       </div>
     );
   }
 
   TimeLine(props) {
+    const TimeLineItem = ({
+      date,
+      image,
+      brand,
+      role,
+      description,
+      linkRole,
+      linkBrand,
+    }) => {
+      return (
+        <li className="event" data-date={date}>
+          <Row>
+            <Col sm="auto">
+              <img
+                width="50px"
+                src={image}
+                alt={brand}
+                style={{ marginTop: 25, borderRadius: 4 }}
+              />
+            </Col>
+            <Col>
+              <h3 className={"timeline_heading"}>
+                {linkRole ? <a href={linkRole}>{role}</a> : role}
+              </h3>
+              <p>{linkBrand ? <a href={linkBrand}>{brand}</a> : brand}</p>
+              {description}
+            </Col>
+          </Row>
+        </li>
+      );
+    };
     return (
       <div>
         <h3 className="header1">Timeline</h3>
 
         <div id="timeline_section">
           <ul className="timeline no_href">
-            <li className="event" data-date="2019">
-              <h3 className={"timeline_heading"}>Python Developer</h3>
-              <p>
-                <a href="https://vndly.com/">VNDLY</a>
-              </p>
-              <p>
-                Developed a Deep Learning model based on Google BERT for an NLP
-                task of matching candidates to job descriptions.
-              </p>
-            </li>
-            <li className="event" data-date="2019">
-              <h3 className={"timeline_heading"}>
-                <a href="https://webapps2.uc.edu/ecurriculum/degreeprograms/program/detail/20MAS-AI-MENG">
-                  Master’s in Artificial Intelligence
-                </a>
-              </h3>
-              <p>
-                <a href="https://www.uc.edu/">University of Cincinnati</a>
-              </p>
-              <p>
-                <a href="https://webapps2.uc.edu/ecurriculum/degreeprograms/program/majormap/20MAS-AI-MENG">
-                  Courses taken:
-                </a>{" "}
-                Intelligent Systems, ML, AI, Deep Learning, Complex Systems,
-                Computer Vision, StartupUC
-              </p>
-            </li>
-            <li className="event" data-date="2018">
-              <h3 className={"timeline_heading"}>Full-Stack Engineer</h3>
-              <p>
-                <a href="https://www.aviso.com/">Aviso Inc.</a>
-              </p>
-              <p>
-                Worked on a wide variety of tasks revolving around the cloud
-                infrastructure of the Aviso AI product.
-              </p>
-            </li>
-            <li className="event" data-date="2015">
-              <h3 className={"timeline_heading"}>Part-Time Developer</h3>
-              <p>
-                <a href="https://kmit.in/home">
-                  Keshav Memorial Institute of Technology
-                </a>
-              </p>
-              <p>
-                Developed apps for the college’s operations like{" "}
-                <a href="http://akhilez.com/home/all_projects//#student_feedback">
-                  Student Feedback
-                </a>{" "}
-                and{" "}
-                <a href="http://akhilez.com/home/all_projects//#gatepass">
-                  Gate-Pass System
-                </a>
-              </p>
-            </li>
-            <li className="event" data-date="2014">
-              <h3 className={"timeline_heading"}>
-                Bachelor's in Computer Science and Engineering
-              </h3>
-              <p>
-                <a href="https://kmit.in/home">
-                  Keshav Memorial Institute of Technology
-                </a>
-              </p>
-            </li>
+            <TimeLineItem
+              date="2020"
+              image={vndly_logo}
+              brand="VNDLY"
+              role="Python Developer"
+              linkBrand="https://vndly.com/"
+              description={
+                <p>
+                  Developed a Deep Learning model based on{" "}
+                  <b>
+                    <i>Google's BERT</i>
+                  </b>{" "}
+                  for an NLP task of matching candidates to job descriptions.
+                </p>
+              }
+            />
+            <TimeLineItem
+              date="2019"
+              image={uc_logo}
+              brand="University of Cincinnati"
+              role="Master’s in Artificial Intelligence"
+              linkBrand="https://www.uc.edu/"
+              linkRole="https://webapps2.uc.edu/ecurriculum/degreeprograms/program/detail/20MAS-AI-MENG"
+              description={
+                <p>
+                  Specializations:{" "}
+                  <i>
+                    Computer Vision, NLP, Reinforcement Learning and Complex
+                    Intelligent Systems
+                  </i>
+                  .
+                </p>
+              }
+            />
+            <TimeLineItem
+              date="2018"
+              image={aviso_logo}
+              brand="Aviso AI"
+              role="Full-Stack Engineer"
+              linkBrand="https://www.aviso.com/"
+              description={
+                <p>
+                  Reduced the ML cloud cost by{" "}
+                  <b>
+                    <i>60%</i>
+                  </b>{" "}
+                  <br />
+                  Technologies used:{" "}
+                  <i>Django, Kubernetes, AWS, Linux, Puppet, Vue.js</i>
+                </p>
+              }
+            />
+            <TimeLineItem
+              date="2015"
+              image={kmit_logo}
+              brand="Keshav Memorial Institute of Technology"
+              role="Part-Time Developer"
+              linkBrand="https://kmit.in/home"
+              description={
+                <p>
+                  Developed apps for the college’s operations like{" "}
+                  <a href="http://akhilez.com/home/all_projects//#student_feedback">
+                    Student Feedback
+                  </a>{" "}
+                  and{" "}
+                  <a href="http://akhilez.com/home/all_projects//#gatepass">
+                    Gate-Pass System
+                  </a>
+                </p>
+              }
+            />
+
+            <TimeLineItem
+              date="2014"
+              image={kmit_logo}
+              brand="Keshav Memorial Institute of Technology"
+              role="Bachelor's in Computer Science and Engineering"
+              linkBrand="https://kmit.in/home"
+            />
           </ul>
         </div>
       </div>
@@ -223,7 +256,7 @@ export default class ProfilePage extends React.Component {
           style={{ marginBottom: -40, marginTop: -30 }}
         >
           <div className="col-md-3">
-            <Link href={urls.ml_gallery.url}>
+            <a href={urls.ml_gallery.url}>
               <img
                 src={mlg_img}
                 className="project_image"
@@ -231,7 +264,7 @@ export default class ProfilePage extends React.Component {
                 width={"250px"}
                 style={{ marginTop: 15 }}
               />
-            </Link>
+            </a>
           </div>
           <div className="col-md-9">
             <p>
@@ -281,7 +314,8 @@ export default class ProfilePage extends React.Component {
           </a>
         </h3>
         <br />
-        The live GitHub contributions below show my commitment to writing code
+        I absolutely ❤ coding! Each green box below represents the amount of
+        coding on that day of the year.
         <MyGithubCalendar />
         <div className="row">
           <img src={code_art_img} alt="CoverPhoto" width="400" />
@@ -293,7 +327,7 @@ export default class ProfilePage extends React.Component {
   Achievements(props) {
     return (
       <div>
-        <h3 className="header1">Achievements</h3>
+        <h3 className="header1">Hackathons</h3>
 
         <div className="row project_box">
           <div className="col-md-7">
@@ -363,37 +397,6 @@ export default class ProfilePage extends React.Component {
               <div className="col-auto project_date">22nd February, 2020</div>
             </div>
           </div>
-        </div>
-      </div>
-    );
-  }
-
-  Projects(props) {
-    let profile_projects = projects.projects.filter(
-      (project) => project.on_profile
-    );
-    return (
-      <div>
-        <h3 className="header1 no_href_p">
-          <a
-            href="https://github.com/Akhilez?tab=repositories"
-            style={{ fontWeight: 700 }}
-          >
-            Independent Projects
-          </a>
-        </h3>
-
-        <div>
-          {profile_projects.map((project) => (
-            <ProjectBox data={project} key={project.title} />
-          ))}
-          <a
-            href={urls.all_projects.url}
-            className="btn btn-outline-secondary btn-lg resume-button"
-            style={{ width: 200 }}
-          >
-            SHOW MORE
-          </a>
         </div>
       </div>
     );
@@ -624,7 +627,7 @@ export default class ProfilePage extends React.Component {
             Ali Minai
           </a>
           <div className="inspiration_person_description">
-            The most influential professor in my life. He is the reason why I
+            The most influential professor of my life. He is the reason why I
             love academia so much.
           </div>
         </div>
@@ -639,7 +642,7 @@ export default class ProfilePage extends React.Component {
           <hr />
 
           <div style={{ marginTop: 15 }} className="roboto-light-ak no_href">
-            <a href="mailto: ak@akhil.ai"> ak@akhil.ai</a>
+            <a href="mailto: akhilez.ai@gmail.com"> akhilez.ai@gmail.com</a>
           </div>
           <Social />
 

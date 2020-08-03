@@ -1,0 +1,18 @@
+{
+  "profile": {
+    "url": "/",
+    "title": "Akhilez"
+  },
+  "ml_gallery": {
+    "url": "/gallery",
+    "title": "ML Gallery | Akhilez"
+  },
+  "resume": {
+    "url": "/resume",
+    "title": "Resume | Akhilez"
+  },
+  "all_projects": {
+    "url": "/projects",
+    "title": "Projects | Akhilez"
+  }
+}

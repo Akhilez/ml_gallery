@@ -18,7 +18,7 @@ import atheism_img from "./media/misc/evolution.jpg";
 import vegan_img from "./media/misc/chicken.jpg";
 import kmitra_img from "./media/misc/kmitraLogo.jpg";
 import ezio_img from "./media/misc/ezio.jpg";
-import mlg_img from "../landing/ml_logo/ml_logo.png";
+import mlg_img from "../../../ml_next/public/media/ml_logo.png";
 import { Link } from "react-router-dom";
 import urls from "../urls";
 import { Helmet } from "react-helmet";
@@ -27,7 +27,7 @@ import uc_logo from "./media/timeline/uc.png";
 import aviso_logo from "./media/timeline/aviso.png";
 import kmit_logo from "./media/timeline/kmit.jpg";
 
-const profilePhoto = '/media/profile_photo.jpg';
+const profilePhoto = "/media/profile_photo.jpg";
 
 export default class ProfilePage extends React.Component {
   render() {
@@ -53,7 +53,7 @@ export default class ProfilePage extends React.Component {
 
   metaTags(props) {
     let desc =
-      'Deep Learning Researcher. Master\'s in AI 🎓. Neural Nets 🧠, Web 🖥, Mobile 📱, Cloud ☁️, UI.';
+      "Deep Learning Researcher. Master's in AI 🎓. Neural Nets 🧠, Web 🖥, Mobile 📱, Cloud ☁️, UI.";
     let title = "Akhil D. (Akhilez)";
     return (
       <Helmet>
@@ -77,7 +77,9 @@ export default class ProfilePage extends React.Component {
   }
 
   Bio(props) {
-    const Emoji = (props) => (<span className="emoji_text">{props.children}</span>);
+    const Emoji = (props) => (
+      <span className="emoji_text">{props.children}</span>
+    );
 
     return (
       <div>
@@ -86,7 +88,8 @@ export default class ProfilePage extends React.Component {
           <b>
             <i>Deep Learning</i>
           </b>{" "}
-          <Emoji>🧠</Emoji>, <i>Productivity</i> <Emoji>👨🏻‍💻</Emoji> and <i>Space Exploration</i> <Emoji>🪐</Emoji>
+          <Emoji>🧠</Emoji>, <i>Productivity</i> <Emoji>👨🏻‍💻</Emoji> and{" "}
+          <i>Space Exploration</i> <Emoji>🪐</Emoji>
         </p>
 
         <div className="header1" style={{ fontSize: 20, paddingTop: 20 }}>
@@ -657,7 +660,8 @@ export default class ProfilePage extends React.Component {
             Ali Minai
           </a>
           <div className="inspiration_person_description">
-            The most influential professor of my life. He is the reason why I love academia so much.
+            The most influential professor of my life. He is the reason why I
+            love academia so much.
           </div>
         </div>
       </div>

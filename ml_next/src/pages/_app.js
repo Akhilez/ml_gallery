@@ -1,11 +1,12 @@
-import { ThemeProvider, CSSReset, ColorModeProvider } from '@chakra-ui/core'
+import { ThemeProvider, CSSReset, ColorModeProvider } from "@chakra-ui/core";
 
-import theme from '../theme'
-import './profile/css/timeline.css';
-import './profile/css/profile_style.css';
-import './profile/css/fontawesome/css/font-awesome.min.css';
-import './profile/css/fontawesome/css/fonts.css';
-import './profile/css/github_calendar.css';
+import theme from "../theme";
+import "./profile/css/timeline.css";
+import "./profile/css/profile_style.css";
+import "./profile/css/fontawesome/css/font-awesome.min.css";
+import "./profile/css/fontawesome/css/fonts.css";
+import "./profile/css/github_calendar.css";
+import "bootstrap/dist/css/bootstrap.min.css";
 
 function MyApp({ Component, pageProps }) {
   return (
@@ -15,7 +16,7 @@ function MyApp({ Component, pageProps }) {
         <Component {...pageProps} />
       </ColorModeProvider>
     </ThemeProvider>
-  )
+  );
 }
 
-export default MyApp
+export default MyApp;

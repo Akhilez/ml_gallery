@@ -1,8 +1,9 @@
 import React from "react";
 import { Row, Col } from "react-bootstrap";
-import profile_photo from "./media/profile_photo.jpg";
-import urls from "../../data/urls";
+import urls from "../../data/urls.json";
 import GithubCalendar from "github-calendar";
+
+const profilePhoto = "/media/profile_photo.jpg";
 
 export function ProfileBadge(props) {
   return (
@@ -10,7 +11,7 @@ export function ProfileBadge(props) {
       <Row>
         <Col sm={"auto"}>
           <img
-            src={profile_photo}
+            src={profilePhoto}
             className={"profile_img"}
             alt={"profilePhoto"}
           />
