@@ -1,12 +1,12 @@
 import React from "react";
 import {Row, Col} from 'react-bootstrap';
-import profile_photo from './media/profile_photo.jpg';
 import './css/fontawesome/css/font-awesome.min.css';
 import './css/fontawesome/css/fonts.css';
 import './css/github_calendar.css';
 import urls from '../urls';
 import './css/profile_style.css';
 
+const profile_photo = '/media/profile_photo.jpg';
 
 export function ProfileBadge(props) {
     return (
@@ -24,7 +24,7 @@ export function ProfileBadge(props) {
                             Deep Learning Researcher
                         </div>
                         <div style={{fontSize: 22}} className="roboto-light-ak no_href"><a
-                            href="mailto: akhilkannadev@gmail.com"> akhilkannadev@gmail.com</a></div>
+                            href="mailto: akhilez.ai@gmail.com"> akhilez.ai<span style={{color: "#8d9599"}}>@gmail.com</span></a></div>
                         <Social/>
                         <ResumeButton/>
                     </div>

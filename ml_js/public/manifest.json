@@ -1,6 +1,6 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "ML Gallery",
+  "name": "Machine Learning Gallery",
   "icons": [
     {
       "src": "favicon.ico",

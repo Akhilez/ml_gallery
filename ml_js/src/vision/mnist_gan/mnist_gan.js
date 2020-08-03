@@ -9,10 +9,35 @@ import {Centered, OutlinedButtonLink} from "../../commons/components/components"
 import FormControl from "@material-ui/core/FormControl";
 import './mnist_gan.css';
 import BreadCrumb from '../../commons/components/breadcrumb';
-import theme from '../../commons/theme';
-import {MuiThemeProvider} from '@material-ui/core/styles';
+import {createMuiTheme, MuiThemeProvider} from '@material-ui/core/styles';
 import ProjectsNav from "../../commons/components/projects_nav";
 
+
+function theme() {
+    return createMuiTheme({
+        palette: {
+            primary: {
+                // light: will be calculated from palette.primary.main,
+                main: '#f44336',
+                // dark: will be calculated from palette.primary.main,
+                // contrastText: will be calculated to contrast with palette.primary.main
+            },
+            secondary: {
+                light: '#0066ff',
+                main: '#e91e63',
+                // dark: will be calculated from palette.secondary.main,
+                contrastText: '#ffffff',
+            },
+            // Used by `getContrastText()` to maximize the contrast between
+            // the background and the text.
+            contrastThreshold: 3,
+            // Used by the functions below to shift a color's luminance by approximately
+            // two indexes within its tonal palette.
+            // E.g., shift from Red 500 to Red 300 or Red 700.
+            tonalOffset: 0.2,
+        },
+    });
+}
 
 export default class MnistGanPage extends React.Component {
 
