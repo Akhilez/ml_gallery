@@ -2,12 +2,13 @@ import React from "react";
 import { Row, Col } from "react-bootstrap";
 import urls from "../../data/urls.json";
 import GithubCalendar from "github-calendar";
+import { Box } from "@chakra-ui/core/dist";
 
 const profilePhoto = "/media/profile_photo.jpg";
 
-export function ProfileBadge(props) {
+export function ProfileBadge() {
   return (
-    <div className={"profileBadgeContainer"}>
+    <Box className={"profileBadgeContainer"} ml={{ base: "10%", sm: 0 }}>
       <Row>
         <Col sm={"auto"}>
           <img
@@ -36,7 +37,7 @@ export function ProfileBadge(props) {
           </div>
         </Col>
       </Row>
-    </div>
+    </Box>
   );
 }
 
