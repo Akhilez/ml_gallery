@@ -1,61 +1,18 @@
-import { Nav, Navbar } from "rsuite";
 import React from "react";
 import ak_logo from "./media/ak_logo.svg";
 import urls from "../../data/urls.json";
+import { Box, Link, Flex } from "@chakra-ui/core";
 
-export class ProfileNavBar2 extends React.Component {
-  render() {
-    return (
-      <div>
-        <Navbar
-          appearance="inverse"
-          activekey={this.props.active}
-          className={"profile_navbar"}
-          style={{ backgroundColor: "transparent" }}
-        >
-          <Navbar.Header>
-            <a href={urls.profile.url} className="navbar-brand logo">
-              <img
-                src={ak_logo}
-                width={"30px"}
-                alt={"ak_logo"}
-                style={{ paddingTop: 10 }}
-              />
-            </a>
-          </Navbar.Header>
-          <Navbar.Body>
-            <Nav pullRight onSelect={() => {}} activeKey={"activeKey"}>
-              <Nav.Item href={urls.profile.url} eventKey="profile">
-                PROFILE
-              </Nav.Item>
-              <Nav.Item href={urls.ml_gallery.url} eventKey="ai">
-                ML GALLERY
-              </Nav.Item>
-              <Nav.Item href={urls.all_projects.url} eventKey="all_projects">
-                PROJECTS
-              </Nav.Item>
-              <Nav.Item href={urls.resume.url} eventKey="resume">
-                RESUME
-              </Nav.Item>
-            </Nav>
-          </Navbar.Body>
-        </Navbar>
-      </div>
-    );
-  }
+function NavItem({ href, text }) {
+  return (
+    <Link href={href} p={2} fontSize="sm" display="block">
+      {text}
+    </Link>
+  );
 }
-
-import { Box, Heading, Flex, Text, Button } from "@chakra-ui/core";
-
-const MenuItems = ({ children }) => (
-  <Text mt={{ base: 4, md: 0 }} mr={6} display="block">
-    {children}
-  </Text>
-);
 
 export default function ProfileNavBar(props) {
   const [show, setShow] = React.useState(false);
-  const handleToggle = () => setShow(!show);
 
   return (
     <>
@@ -64,12 +21,16 @@ export default function ProfileNavBar(props) {
         alignItems="center"
         justify="space-between"
         wrap="wrap"
-        padding="1.5rem"
-        bg="teal.500"
+        padding="4"
       >
-        <Text>Chakra UI</Text>
+        <a href={urls.profile.url} className="navbar-brand logo">
+          <img src={ak_logo} width={"30px"} alt={"ak_logo"} />
+        </a>
 
-        <Box display={{ base: "block", sm: "none" }} onClick={handleToggle}>
+        <Box
+          display={{ base: "block", sm: "none" }}
+          onClick={() => setShow(!show)}
+        >
           menu
         </Box>
 
@@ -82,10 +43,12 @@ export default function ProfileNavBar(props) {
           display={{ base: show ? "block" : "none", sm: "block" }}
           mt={{ base: 4, sm: 0 }}
         >
-          profile
+          <NavItem href={urls.profile.url} text="PROFILE" />
+          <NavItem href={urls.ml_gallery.url} text="ML GALLERY" />
+          <NavItem href={urls.all_projects.url} text="PROJECTS" />
+          <NavItem href={urls.resume.url} text="RESUME" />
         </Box>
       </Flex>
-      <ProfileNavBar2 />
     </>
   );
 }
