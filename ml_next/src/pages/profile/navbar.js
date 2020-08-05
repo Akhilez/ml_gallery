@@ -5,7 +5,13 @@ import { Box, Link, Flex } from "@chakra-ui/core";
 
 function NavItem({ href, text }) {
   return (
-    <Link href={href} p={2} fontSize="sm" display="block">
+    <Link
+      href={href}
+      p={2}
+      fontSize="sm"
+      display="block"
+      _hover={{ color: "white", textDecoration: "none" }}
+    >
       {text}
     </Link>
   );
@@ -40,7 +46,7 @@ export default function ProfileNavBar(props) {
         />
 
         <Box
-          display={{ base: show ? "block" : "none", sm: "block" }}
+          display={{ base: show ? "block" : "none", sm: "flex" }}
           mt={{ base: 4, sm: 0 }}
         >
           <NavItem href={urls.profile.url} text="PROFILE" />
