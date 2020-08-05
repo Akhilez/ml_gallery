@@ -7,7 +7,8 @@ function NavItem({ href, text }) {
   return (
     <Link
       href={href}
-      p={2}
+      py={2}
+      px={3}
       fontSize="sm"
       display="block"
       _hover={{ color: "white", textDecoration: "none" }}

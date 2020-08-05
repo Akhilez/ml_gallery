@@ -3,6 +3,8 @@ import { Row, Col } from "react-bootstrap";
 import urls from "../../data/urls.json";
 import GithubCalendar from "github-calendar";
 import { Box } from "@chakra-ui/core/dist";
+import { BsCode } from "react-icons/bs";
+import { FaAndroid } from "react-icons/fa";
 
 const profilePhoto = "/media/profile_photo.jpg";
 
@@ -96,7 +98,7 @@ export class MyGithubCalendar extends React.Component {
   }
 
   componentDidMount() {
-    GithubCalendar(".calendar", "Akhilez", { responsive: true });
+    const _ = GithubCalendar(".calendar", "Akhilez", { responsive: true });
   }
 }
 
@@ -158,9 +160,22 @@ export function ProjectBox(props) {
                   rel="noopener noreferrer"
                   href={project.links.code}
                 >
-                  <i style={{ fontSize: 24 }} className="material-icons">
-                    code
-                  </i>
+                  <Box as={BsCode} mt="2px" />
+                </a>
+              </div>
+            )}
+            {project.links.android && (
+              <div
+                className="col-auto view_source_button"
+                data-toggle="tooltip"
+                title="Android App"
+              >
+                <a
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  href={project.links.android}
+                >
+                  <Box as={FaAndroid} mt="2px" />
                 </a>
               </div>
             )}

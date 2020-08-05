@@ -74,7 +74,7 @@ export default class ProfilePage extends React.Component {
     );
   }
 
-  Bio(props) {
+  Bio() {
     const Emoji = (props) => (
       <span className="emoji_text">{props.children}</span>
     );
@@ -98,7 +98,7 @@ export default class ProfilePage extends React.Component {
     );
   }
 
-  TimeLine(props) {
+  TimeLine() {
     const TimeLineItem = ({
       date,
       image,
