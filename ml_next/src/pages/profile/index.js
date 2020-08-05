@@ -16,13 +16,14 @@ import atheism_img from "./media/misc/evolution.jpg";
 import vegan_img from "./media/misc/chicken.jpg";
 import kmitra_img from "./media/misc/kmitraLogo.jpg";
 import ezio_img from "./media/misc/ezio.jpg";
-import urls from "../urls.json";
+import urls from "../../data/urls.json";
 import { Helmet } from "react-helmet";
 import vndly_logo from "./media/timeline/vndly_logo.png";
 import uc_logo from "./media/timeline/uc.png";
 import aviso_logo from "./media/timeline/aviso.png";
 import kmit_logo from "./media/timeline/kmit.jpg";
-import { Flex, Image, Text } from "@chakra-ui/core/dist";
+import { Flex, Image } from "@chakra-ui/core/dist";
+import NextLink from "next/link";
 
 const profilePhoto = "/media/profile_photo.jpg";
 const mlg_img = "/media/ml_logo.png";
@@ -49,7 +50,7 @@ export default class ProfilePage extends React.Component {
     );
   }
 
-  metaTags(props) {
+  metaTags() {
     let desc =
       "Deep Learning Researcher. Master's in AI 🎓. Neural Nets 🧠, Web 🖥, Mobile 📱, Cloud ☁️, UI.";
     let title = "Akhil D. (Akhilez)";
@@ -123,7 +124,18 @@ export default class ProfilePage extends React.Component {
               <h3 className={"timeline_heading"}>
                 {linkRole ? <a href={linkRole}>{role}</a> : role}
               </h3>
-              <p>{linkBrand ? <a href={linkBrand}>{brand}</a> : brand}</p>
+              <p>
+                {linkBrand ? (
+                  <a
+                    href={linkBrand}
+                    style={{ color: "#919c9e", fontWeight: 400 }}
+                  >
+                    {brand}
+                  </a>
+                ) : (
+                  brand
+                )}
+              </p>
               {description}
             </Col>
           </Row>
@@ -221,7 +233,7 @@ export default class ProfilePage extends React.Component {
     );
   }
 
-  DeepLearning(props) {
+  DeepLearning() {
     let topics = [
       {
         title: "Computer Vision",
@@ -256,15 +268,17 @@ export default class ProfilePage extends React.Component {
           style={{ marginBottom: -40, marginTop: -30 }}
         >
           <div className="col-md-3">
-            <a href={urls.ml_gallery.url}>
-              <img
-                src={mlg_img}
-                className="project_image"
-                alt={"MLGallery Logo"}
-                width={"250px"}
-                style={{ marginTop: 15 }}
-              />
-            </a>
+            <NextLink href={urls.ml_gallery.url}>
+              <a href={urls.ml_gallery.url}>
+                <img
+                  src={mlg_img}
+                  className="project_image"
+                  alt={"MLGallery Logo"}
+                  width={"250px"}
+                  style={{ marginTop: 15 }}
+                />
+              </a>
+            </NextLink>
           </div>
           <div className="col-md-9">
             <p>
@@ -289,13 +303,15 @@ export default class ProfilePage extends React.Component {
           ))}
         </div>
 
-        <a
-          href={urls.ml_gallery.url}
-          className="btn btn-outline-secondary btn-lg resume-button"
-          style={{ width: 230, marginTop: 30 }}
-        >
-          VISIT
-        </a>
+        <NextLink href={urls.ml_gallery.url}>
+          <a
+            href={urls.ml_gallery.url}
+            className="btn btn-outline-secondary btn-lg resume-button"
+            style={{ width: 230, marginTop: 30 }}
+          >
+            VISIT
+          </a>
+        </NextLink>
       </div>
     );
   }

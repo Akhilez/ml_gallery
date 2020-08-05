@@ -2,23 +2,26 @@ import React from "react";
 import ak_logo from "./media/ak_logo.svg";
 import urls from "../../data/urls.json";
 import { Box, Link, Flex } from "@chakra-ui/core";
+import NextLink from "next/link";
 
 function NavItem({ href, text }) {
   return (
-    <Link
-      href={href}
-      py={2}
-      px={3}
-      fontSize="sm"
-      display="block"
-      _hover={{ color: "white", textDecoration: "none" }}
-    >
-      {text}
-    </Link>
+    <NextLink href={href}>
+      <Link
+        py={2}
+        px={3}
+        href={href}
+        fontSize="sm"
+        display="block"
+        _hover={{ color: "white", textDecoration: "none" }}
+      >
+        {text}
+      </Link>
+    </NextLink>
   );
 }
 
-export default function ProfileNavBar(props) {
+export default function ProfileNavBar() {
   const [show, setShow] = React.useState(false);
 
   return (

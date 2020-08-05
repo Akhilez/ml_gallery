@@ -5,6 +5,7 @@ import GithubCalendar from "github-calendar";
 import { Box } from "@chakra-ui/core/dist";
 import { BsCode } from "react-icons/bs";
 import { FaAndroid } from "react-icons/fa";
+import NextLink from "next/link";
 
 const profilePhoto = "/media/profile_photo.jpg";
 
@@ -43,17 +44,12 @@ export function ProfileBadge() {
   );
 }
 
-export function ResumeButton(props) {
+export function ResumeButton() {
   return (
     <div>
-      <a
-        target="_blank"
-        rel="noopener noreferrer"
-        href={urls.resume.url}
-        className="btn btn-outline-secondary resume-button"
-      >
-        RESUME
-      </a>
+      <NextLink href={urls.resume.url}>
+        <a className="btn btn-outline-secondary resume-button">RESUME</a>
+      </NextLink>
     </div>
   );
 }

@@ -1,6 +1,6 @@
 {
   "profile": {
-    "url": "/",
+    "url": "/profile",
     "title": "Akhilez"
   },
   "ml_gallery": {
@@ -12,7 +12,7 @@
     "title": "Resume | Akhilez"
   },
   "all_projects": {
-    "url": "/projects",
+    "url": "/profile/all_projects",
     "title": "Projects | Akhilez"
   }
 }

@@ -1,6 +1,6 @@
 import projects from "../data/projects.json";
 import { ProjectBox } from "../profile_components";
-import urls from "../../urls.json";
+import urls from "../../../data/urls.json";
 import React from "react";
 
 export default function Projects() {
