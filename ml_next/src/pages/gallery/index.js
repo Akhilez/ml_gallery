@@ -2,8 +2,8 @@ import React from "react";
 import MLAppBar from "../../components/NavBar";
 import MLLogo from "./ml_logo/ml_logo";
 import "cytoscape/dist/cytoscape.min";
-import projectsData from "./data/projects";
-import Project from "./components/project";
+import { projects } from "./project";
+import Project from "./project";
 import { Centered, OutlinedButtonLink } from "../../components/common";
 import { Row, Col } from "react-bootstrap";
 import urls from "../../data/urls.json";
@@ -17,7 +17,7 @@ export default class LandingPage extends React.Component {
           <MLAppBar />
           <MLLogo />
           <this.Desc />
-          {projectsData.categories.map((category) => (
+          {projects.categories.map((category) => (
             <this.Category category={category} key={category.title} />
           ))}
           <Footer />
