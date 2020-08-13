@@ -6,8 +6,9 @@ export default {
     ...theme.colors,
     primary: "#f44336",
     secondary: "#e91e63",
-    fonts: {
-      body: "roboto-condensed",
-    },
+    background: "red.500",
+  },
+  fonts: {
+    body: "Roboto Condensed, sans-serif",
   },
 };

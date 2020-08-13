@@ -1,7 +1,7 @@
-@import url('https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@300;400;700&display=swap');
-
 html, body {
     background-color: #f2f3f4;
+    font-family: 'Roboto Condensed', sans-serif;
+    color: #c62828;
 }
 
 .link {
@@ -17,13 +17,6 @@ html, body {
 
 p {
     font-size: 22px;
-}
-
-#root {
-    font-family: 'Roboto Condensed', sans-serif;
-    color: #c62828;
-    background-color: #f2f3f4;
-    height: 100%;
 }
 
 .nav-link {
@@ -46,10 +39,8 @@ p {
 }
 
 .project-image {
-    height: auto;
-    width: 95%;
     padding: 7px;
-    min-width: 350px;
+    min-width: 200px;
     display: block;
     margin-bottom: 5px;
     border-radius: 20px;

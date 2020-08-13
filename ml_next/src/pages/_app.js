@@ -8,6 +8,7 @@ import "./profile/css/fontawesome/css/fonts.css";
 import "./profile/css/github_calendar.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./gallery/landing.css";
+import React from "react";
 
 function MyApp({ Component, pageProps }) {
   return (
