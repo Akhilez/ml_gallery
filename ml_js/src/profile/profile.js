@@ -27,7 +27,7 @@ import uc_logo from "./media/timeline/uc.png";
 import aviso_logo from "./media/timeline/aviso.png";
 import kmit_logo from "./media/timeline/kmit.jpg";
 
-const profilePhoto = '/media/profile_photo.jpg';
+const profilePhoto = "/media/profile_photo.jpg";
 
 export default class ProfilePage extends React.Component {
   render() {
@@ -53,7 +53,7 @@ export default class ProfilePage extends React.Component {
 
   metaTags(props) {
     let desc =
-      'Deep Learning Researcher. Master\'s in AI 🎓. Neural Nets 🧠, Web 🖥, Mobile 📱, Cloud ☁️, UI.';
+      "Deep Learning Researcher. Master's in AI 🎓. Neural Nets 🧠, Web 🖥, Mobile 📱, Cloud ☁️, UI.";
     let title = "Akhil D. (Akhilez)";
     return (
       <Helmet>
@@ -77,7 +77,9 @@ export default class ProfilePage extends React.Component {
   }
 
   Bio(props) {
-    const Emoji = (props) => (<span className="emoji_text">{props.children}</span>);
+    const Emoji = (props) => (
+      <span className="emoji_text">{props.children}</span>
+    );
 
     return (
       <div>
@@ -86,7 +88,8 @@ export default class ProfilePage extends React.Component {
           <b>
             <i>Deep Learning</i>
           </b>{" "}
-          <Emoji>🧠</Emoji>, <i>Productivity</i> <Emoji>👨🏻‍💻</Emoji> and <i>Space Exploration</i> <Emoji>🪐</Emoji>
+          <Emoji>🧠</Emoji>, <i>Productivity</i> <Emoji>👨🏻‍💻</Emoji> and{" "}
+          <i>Space Exploration</i> <Emoji>🪐</Emoji>
         </p>
 
         <div className="header1" style={{ fontSize: 20, paddingTop: 20 }}>
@@ -97,7 +100,7 @@ export default class ProfilePage extends React.Component {
     );
   }
 
-  TimeLine(props) {
+  TimeLine() {
     const TimeLineItem = ({
       date,
       image,
@@ -139,15 +142,18 @@ export default class ProfilePage extends React.Component {
               date="2020"
               image={vndly_logo}
               brand="VNDLY"
-              role="Python Developer"
+              role="Deep Learning Engineer"
               linkBrand="https://vndly.com/"
               description={
                 <p>
-                  Developed a Deep Learning model based on{" "}
+                  Boosted the accuracy of production-grade Deep-Learning model
+                  based on
                   <b>
-                    <i>Google's BERT</i>
-                  </b>{" "}
+                    <i> Google's BERT </i>
+                  </b>
                   for an NLP task of matching candidates to job descriptions.
+                  Technologies:
+                  <i>PyTorch, TensorFlow, Django, React</i>
                 </p>
               }
             />
@@ -657,7 +663,8 @@ export default class ProfilePage extends React.Component {
             Ali Minai
           </a>
           <div className="inspiration_person_description">
-            The most influential professor of my life. He is the reason why I love academia so much.
+            The most influential professor of my life. He is the reason why I
+            love academia so much.
           </div>
         </div>
       </div>
