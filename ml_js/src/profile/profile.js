@@ -84,11 +84,11 @@ export default class ProfilePage extends React.Component {
     return (
       <div>
         <p className="para no_href_p">
-          I am obsessed with{" "}
+          I am obsessed with
           <b>
             <i>Deep Learning</i>
-          </b>{" "}
-          <Emoji>🧠</Emoji>, <i>Productivity</i> <Emoji>👨🏻‍💻</Emoji> and{" "}
+          </b>
+          <Emoji>🧠</Emoji>, <i>Productivity</i> <Emoji>👨🏻‍💻</Emoji> and
           <i>Space Exploration</i> <Emoji>🪐</Emoji>
         </p>
 
@@ -100,7 +100,7 @@ export default class ProfilePage extends React.Component {
     );
   }
 
-  TimeLine(props) {
+  TimeLine() {
     const TimeLineItem = ({
       date,
       image,
@@ -142,15 +142,21 @@ export default class ProfilePage extends React.Component {
               date="2020"
               image={vndly_logo}
               brand="VNDLY"
-              role="Python Developer"
+              role="Deep Learning Engineer"
               linkBrand="https://vndly.com/"
               description={
                 <p>
-                  Developed a Deep Learning model based on{" "}
+                  Boosted the accuracy of production-grade Deep-Learning model
+                  based on
                   <b>
-                    <i>Google's BERT</i>
-                  </b>{" "}
+                    <i> Google's BERT </i>
+                  </b>
                   for an NLP task of matching candidates to job descriptions.
+                  Technologies:
+                  <i>PyTorch, TensorFlow, Django, React</i>
+                  <br />
+                  Designed an automated training pipeline for
+                  <strong>active learning</strong>
                 </p>
               }
             />
@@ -163,12 +169,11 @@ export default class ProfilePage extends React.Component {
               linkRole="https://webapps2.uc.edu/ecurriculum/degreeprograms/program/detail/20MAS-AI-MENG"
               description={
                 <p>
-                  Specializations:{" "}
+                  Specializations:
                   <i>
                     Computer Vision, NLP, Reinforcement Learning and Complex
-                    Intelligent Systems
+                    Intelligent Systems.
                   </i>
-                  .
                 </p>
               }
             />
@@ -180,12 +185,12 @@ export default class ProfilePage extends React.Component {
               linkBrand="https://www.aviso.com/"
               description={
                 <p>
-                  Reduced the ML cloud cost by{" "}
+                  Reduced the ML cloud cost by
                   <b>
                     <i>60%</i>
-                  </b>{" "}
+                  </b>
                   <br />
-                  Technologies used:{" "}
+                  Technologies used:
                   <i>Django, Kubernetes, AWS, Linux, Puppet, Vue.js</i>
                 </p>
               }
@@ -198,11 +203,11 @@ export default class ProfilePage extends React.Component {
               linkBrand="https://kmit.in/home"
               description={
                 <p>
-                  Developed apps for the college’s operations like{" "}
+                  Developed apps for the college’s operations like
                   <a href="http://akhilez.com/home/all_projects//#student_feedback">
                     Student Feedback
-                  </a>{" "}
-                  and{" "}
+                  </a>
+                  and
                   <a href="http://akhilez.com/home/all_projects//#gatepass">
                     Gate-Pass System
                   </a>
@@ -375,7 +380,7 @@ export default class ProfilePage extends React.Component {
           </div>
           <div className="col-md-5">
             <h4 className="project_title no_href">
-              Won{" "}
+              Won
               <a
                 target="_blank"
                 rel="noopener noreferrer"
@@ -390,8 +395,8 @@ export default class ProfilePage extends React.Component {
               roughly 400 participants.
             </p>
             <p className="project_description no_href_p">
-              I built an Augmented Reality game called{" "}
-              <a href="http://akhilez.com/home/all_projects//#alster">Alster</a>{" "}
+              I built an Augmented Reality game called
+              <a href="http://akhilez.com/home/all_projects//#alster">Alster</a>
               in 24 hours and won top 5.
             </p>
 
@@ -623,15 +628,15 @@ export default class ProfilePage extends React.Component {
             </a>
           </div>
           <div className="inspiration_person_description no_href_p">
-            Andrej is very special to me. He was just a normal{" "}
+            Andrej is very special to me. He was just a normal
             <a
               target="_blank"
               rel="noopener noreferrer"
               href="https://www.youtube.com/user/badmephisto"
             >
               youtuber
-            </a>{" "}
-            who taught me rubik’s cube with his{" "}
+            </a>
+            who taught me rubik’s cube with his
             <a
               target="_blank"
               rel="noopener noreferrer"
@@ -641,7 +646,7 @@ export default class ProfilePage extends React.Component {
             </a>
             . But he became very successful as I saw him grow older. Today he is
             the director of AI at Tesla. My career path is a huge inspiration
-            from his career path. Even this website is lightly inspired from his{" "}
+            from his career path. Even this website is lightly inspired from his
             <a
               target="_blank"
               rel="noopener noreferrer"
