@@ -27,12 +27,12 @@ export function ProfileBadge() {
             </h1>
 
             <div style={{ fontSize: 28, marginTop: -10 }}>
-              Deep Learning Researcher
+              Deep Learning Engineer
             </div>
             <div style={{ fontSize: 22 }} className="roboto-light-ak no_href">
-              <a href="mailto: akhilkannadev@gmail.com">
+              <a href="mailto: akhilez.ai@gmail.com">
                 {" "}
-                akhilkannadev@gmail.com
+                akhilez.ai<span style={{ color: "#8d9599" }}>@gmail.com</span>
               </a>
             </div>
             <Social />

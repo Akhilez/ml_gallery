@@ -52,7 +52,7 @@ export default class ProfilePage extends React.Component {
 
   metaTags() {
     let desc =
-      "Deep Learning Researcher. Master's in AI 🎓. Neural Nets 🧠, Web 🖥, Mobile 📱, Cloud ☁️, UI.";
+      "Deep Learning Engineer. Master's in AI 🎓. Neural Nets 🧠, Web 🖥, Mobile 📱, Cloud ☁️, UI.";
     let title = "Akhil D. (Akhilez)";
     return (
       <Helmet>
@@ -85,7 +85,7 @@ export default class ProfilePage extends React.Component {
         <p className="para no_href_p">
           I am obsessed with
           <b>
-            <i>Deep Learning</i>
+            <i> Deep Learning </i>
           </b>
           <Emoji>🧠</Emoji>, <i>Productivity</i> <Emoji>👨🏻‍💻</Emoji> and
           <i>Space Exploration</i> <Emoji>🪐</Emoji>
@@ -166,7 +166,7 @@ export default class ProfilePage extends React.Component {
                   <i>PyTorch, TensorFlow, Django, React</i>
                   <br />
                   Designed an automated training pipeline for
-                  <strong>active learning</strong>
+                  <strong> active learning</strong>
                 </p>
               }
             />
@@ -179,7 +179,7 @@ export default class ProfilePage extends React.Component {
               linkRole="https://webapps2.uc.edu/ecurriculum/degreeprograms/program/detail/20MAS-AI-MENG"
               description={
                 <p>
-                  Specializations:
+                  Specializations:{" "}
                   <i>
                     Computer Vision, NLP, Reinforcement Learning and Complex
                     Intelligent Systems.
@@ -197,11 +197,11 @@ export default class ProfilePage extends React.Component {
                 <p>
                   Reduced the ML cloud cost by
                   <b>
-                    <i>60%</i>
+                    <i> 60%</i>
                   </b>
                   <br />
                   Technologies used:
-                  <i>Django, Kubernetes, AWS, Linux, Puppet, Vue.js</i>
+                  <i> Django, Kubernetes, AWS, Linux, Puppet, Vue.js</i>
                 </p>
               }
             />
@@ -213,11 +213,11 @@ export default class ProfilePage extends React.Component {
               linkBrand="https://kmit.in/home"
               description={
                 <p>
-                  Developed apps for the college’s operations like
+                  Developed apps for the college’s operations like{" "}
                   <a href="http://akhilez.com/home/all_projects//#student_feedback">
-                    Student Feedback
+                    Student Feedback{" "}
                   </a>
-                  and
+                  and{" "}
                   <a href="http://akhilez.com/home/all_projects//#gatepass">
                     Gate-Pass System
                   </a>
