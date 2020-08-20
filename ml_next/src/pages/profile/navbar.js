@@ -3,6 +3,7 @@ import ak_logo from "./media/ak_logo.svg";
 import urls from "../../data/urls.json";
 import { Box, Link, Flex } from "@chakra-ui/core";
 import NextLink from "next/link";
+import { FiMenu } from "react-icons/fi/index";
 
 function NavItem({ href, text }) {
   return (
@@ -41,7 +42,7 @@ export default function ProfileNavBar() {
           display={{ base: "block", sm: "none" }}
           onClick={() => setShow(!show)}
         >
-          menu
+          <FiMenu />
         </Box>
 
         <Box

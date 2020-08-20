@@ -56,6 +56,8 @@ export default class ProfilePage extends React.Component {
     let title = "Akhil D. (Akhilez)";
     return (
       <Helmet>
+        <title>Akhilez</title>
+
         <meta name="description" content={desc} />
 
         <meta name="twitter:image:src" content={profilePhoto} />
