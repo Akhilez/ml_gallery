@@ -135,7 +135,7 @@ export function ProjectBox(props) {
           </div>
           <p className="project_description">{project.desc}</p>
 
-          <div className="row">
+          <div className="row" style={{ marginTop: 10 }}>
             {project.tags.map((tag) => (
               <div className="col-auto chip_tag" key={tag}>
                 {tag}

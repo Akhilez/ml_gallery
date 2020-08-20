@@ -394,13 +394,12 @@ export default class ProfilePage extends React.Component {
           </div>
           <div className="col-md-5">
             <h4 className="project_title no_href">
-              Won
               <a
                 target="_blank"
                 rel="noopener noreferrer"
                 href="https://revolutionuc.com/"
               >
-                RevolutionUC
+                Won RevolutionUC
               </a>
             </h4>
             <p className="project_description no_href_p">
@@ -410,7 +409,10 @@ export default class ProfilePage extends React.Component {
             </p>
             <p className="project_description no_href_p">
               I built an Augmented Reality game called
-              <a href="http://akhilez.com/home/all_projects//#alster">Alster</a>
+              <a href="http://akhilez.com/home/all_projects//#alster">
+                {" "}
+                Alster{" "}
+              </a>
               in 24 hours and won top 5.
             </p>
 
@@ -444,7 +446,7 @@ export default class ProfilePage extends React.Component {
               />
             </a>
           </div>
-          <div className="col-md-9">
+          <div className="col-md-9" style={{ marginTop: 30 }}>
             <h4 className="project_title no_href">
               <a
                 target="_blank"
@@ -456,7 +458,7 @@ export default class ProfilePage extends React.Component {
             </h4>
             <p className="project_description no_href_p">
               In my undergrad, I was a monthly writer at the college e-magazine
-              called
+              called{" "}
               <a
                 target="_blank"
                 rel="noopener noreferrer"
@@ -465,7 +467,7 @@ export default class ProfilePage extends React.Component {
                 kMITRA
               </a>
               . One of the articles I wrote is an interesting short story on AI
-              called
+              called{" "}
               <a
                 target="_blank"
                 rel="noopener noreferrer"
@@ -488,7 +490,7 @@ export default class ProfilePage extends React.Component {
               height="200px"
             />
           </div>
-          <div className="col-md-9">
+          <div className="col-md-9" style={{ marginTop: 30 }}>
             <h4 className="project_title no_href">
               Atheism &amp; Rational Thought
             </h4>
@@ -512,7 +514,7 @@ export default class ProfilePage extends React.Component {
               height="200px"
             />
           </div>
-          <div className="col-md-9">
+          <div className="col-md-9" style={{ marginTop: 20 }}>
             <h4 className="project_title no_href">Being Vegan</h4>
             <p className="project_description no_href_p">
               I love animals. I became a vegetarian when I was 10 after
@@ -535,7 +537,7 @@ export default class ProfilePage extends React.Component {
               height="200px"
             />
           </div>
-          <div className="col-md-9">
+          <div className="col-md-9" style={{ marginTop: 30 }}>
             <h4 className="project_title no_href">My Sketches</h4>
             <p className="project_description no_href_p">
               I am very good at sketching. But I don’t find enough time and
@@ -611,15 +613,15 @@ export default class ProfilePage extends React.Component {
             </a>
           </div>
           <div className="inspiration_person_description no_href_p">
-            Andrej is very special to me. He was just a normal
+            Andrej is very special to me. He was just a normal{" "}
             <a
               target="_blank"
               rel="noopener noreferrer"
               href="https://www.youtube.com/user/badmephisto"
             >
-              youtuber
+              youtuber{" "}
             </a>
-            who taught me rubik’s cube with his
+            who taught me rubik’s cube with his{" "}
             <a
               target="_blank"
               rel="noopener noreferrer"
@@ -629,7 +631,7 @@ export default class ProfilePage extends React.Component {
             </a>
             . But he became very successful as I saw him grow older. Today he is
             the director of AI at Tesla. My career path is a huge inspiration
-            from his career path. Even this website is lightly inspired from his
+            from his career path. Even this website is lightly inspired from his{" "}
             <a
               target="_blank"
               rel="noopener noreferrer"
