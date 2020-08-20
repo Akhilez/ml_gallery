@@ -1,10 +1,9 @@
 import React from "react";
-import routes from "../../../../ml_next/src/pages/routes.json";
-import projecsData from "../../landing/data/projects";
+import routes from "../pages/routes.json";
+import { projects } from "../pages/gallery/project";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
-import Icon from "@material-ui/core/Icon";
-import "./components.css";
+import { MdNavigateNext } from "react-icons/md/index";
 
 export default class BreadCrumb extends React.Component {
   render() {
@@ -27,9 +26,7 @@ export default class BreadCrumb extends React.Component {
                   </Col>
                   <Col xs="auto" style={{ padding: 0 }}>
                     {index !== links.length - 1 && (
-                      <Icon fontSize={"small"} className={"breadcrumbIcon"}>
-                        navigate_next
-                      </Icon>
+                      <MdNavigateNext className={"breadcrumbIcon"} />
                     )}
                   </Col>
                 </Row>
@@ -48,7 +45,7 @@ export default class BreadCrumb extends React.Component {
          */
 
     let links = [];
-    projecsData.categories.forEach((category) => {
+    projects.categories.forEach((category) => {
       category.projects.forEach((project) => {
         if (project.links.app === path) {
           links = [

@@ -100,7 +100,7 @@ export const projects = {
           image: learn_line_image,
           status: "in_progress",
           links: {
-            app: "/learn_line",
+            app: "/feed_forward/learn_line",
             source: "https://github.com/Akhilez/ml_gallery",
           },
         },
