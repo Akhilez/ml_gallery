@@ -1,5 +1,6 @@
 import React from "react"
+import GlobalWrapper from "src/lib/globals/GlobalWrapper"
 
 export default function Home() {
-  return <div>Hello world!</div>
+  return <GlobalWrapper>hi</GlobalWrapper>
 }
