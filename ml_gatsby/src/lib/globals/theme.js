@@ -1,4 +1,4 @@
-import { theme } from "@chakra-ui/core";
+import { theme } from "@chakra-ui/core"
 
 export default {
   ...theme,
@@ -13,6 +13,10 @@ export default {
       800: "#153e75",
       700: "#2a69ac",
     },
-    backgroundColor: "gray.100",
+    text: {
+      default: "#c62828",
+      light: "#f44336",
+    },
+    backgroundColor: "#f2f3f4",
   },
-};
+}

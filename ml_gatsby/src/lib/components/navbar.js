@@ -55,15 +55,9 @@ export default function Navbar() {
   return (
     <>
       <MetaTags />
-      <Flex
-        as="nav"
-        alignItems="center"
-        justify="space-between"
-        wrap="wrap"
-        padding="4"
-      >
+      <Flex as="nav" alignItems="center" justify="space-between" wrap="wrap">
         <GLink to={urls.profile.url} className="navbar-brand logo">
-          <img src={ak_logo} width={"30px"} alt={"ak_logo"} />
+          <img src={ak_logo} height="40px" alt="ak_logo" />
         </GLink>
 
         <Box

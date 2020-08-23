@@ -1,10 +1,16 @@
-/**
- * Configure your Gatsby site with this file.
- *
- * See: https://www.gatsbyjs.org/docs/gatsby-config/
- */
-
 module.exports = {
-  /* Your site config here */
-  plugins: ["gatsby-plugin-root-import"],
+  plugins: [
+    "gatsby-plugin-root-import",
+    {
+      resolve: `gatsby-plugin-prefetch-google-fonts`,
+      options: {
+        fonts: [
+          {
+            family: `Roboto Condensed`,
+            //variants: [`400`, `700`],
+          },
+        ],
+      },
+    },
+  ],
 }
