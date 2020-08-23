@@ -13,7 +13,11 @@ export default class GlobalWrapper extends React.Component {
     return (
       <React.StrictMode>
         <ThemeProvider theme={theme}>
-          <Box fontFamily="body" color={theme.colors.text.default}>
+          <Box
+            fontFamily="body"
+            color={theme.colors.text.default}
+            fontSize="xl"
+          >
             {this.props.children}
           </Box>
         </ThemeProvider>
