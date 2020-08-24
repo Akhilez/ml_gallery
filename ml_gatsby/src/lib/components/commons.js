@@ -9,7 +9,7 @@ export const Container = ({ children, ...props }) => {
     <Box
       {...props}
       mx="auto"
-      w={["full", "full", ...theme.breakpoints.slice(1)]}
+      maxW={["full", "full", ...theme.breakpoints.slice(1)]}
     >
       {children}
     </Box>

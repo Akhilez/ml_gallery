@@ -5,7 +5,16 @@ import { projectCategories } from "src/lib/globals/data"
 import { urls } from "../globals/data"
 import colabImage from "src/lib/landing/images/colab.png"
 import { Container, Footer } from "../components/commons"
-import { Stack, Button, Text, Image, Heading } from "@chakra-ui/core"
+import {
+  Stack,
+  Button,
+  Text,
+  Image,
+  Heading,
+  Divider,
+  Link,
+  IconButton,
+} from "@chakra-ui/core"
 import { Link as GLink } from "gatsby"
 import { MdCode } from "react-icons/md"
 import ScrollMenu from "react-horizontal-scrolling-menu"
@@ -15,10 +24,10 @@ class Project extends React.Component {
     return (
       <Stack width="sm" bg="white" p={4} borderRadius="15px" mx={2}>
         <this.ProjectImage project={this.props.project} />
-        <Heading as="h2">
-          <GLink to={this.props.project.links.app}>
+        <Heading as="h2" fontSize="lg" mb={2}>
+          <Link as={GLink} to={this.props.project.links.app} fontSize="28px">
             {this.props.project.title}
-          </GLink>
+          </Link>
         </Heading>
         <Text>{this.props.project.desc}</Text>
         {this.getIconLinks(this.props.project)}
@@ -125,17 +134,34 @@ export default class LandingPage extends React.Component {
   Category(props) {
     let category = props.category
     return (
-      <div>
-        <hr />
+      <>
+        <Divider borderColor="gray.300" />
         <br />
-        <h3>{category.title}</h3>
+        <Heading as="h2" textAlign="center" fontSize="40px" fontWeight="light">
+          {category.title}
+        </Heading>
         <ScrollMenu
           data={category.projects.map((project, index) => (
             <Project project={project} key={index} />
           ))}
+          arrowLeft={
+            <IconButton
+              aria-label="icon"
+              icon="chevron-left"
+              isRound
+              variantColor="brand.500"
+            />
+          }
+          arrowRight={
+            <IconButton aria-label="icon" icon="chevron-right" isRound />
+          }
+          hideSingleArrow={true}
+          hideArrows={true}
+          inertiaScrolling={true}
+          useButtonRole={false}
         />
         <br />
-      </div>
+      </>
     )
   }
 }

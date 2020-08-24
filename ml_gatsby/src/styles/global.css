@@ -1,3 +1,11 @@
 html {
     background-color: #f2f3f4
 }
+
+/* Horizontal scroll menu */
+.menu-item {}
+.menu-item-wrapper.active {}
+.menu-item.active {}
+.menu-item :focus {}
+.scroll-menu-arrow {}
+/* Ends Horizontal scroll menu */
