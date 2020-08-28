@@ -8,6 +8,7 @@ import { Container, Footer } from "../components/commons"
 import {
   Stack,
   Button,
+  Box,
   Text,
   Image,
   Heading,
@@ -22,15 +23,24 @@ import ScrollMenu from "react-horizontal-scrolling-menu"
 class Project extends React.Component {
   render() {
     return (
-      <Stack width="sm" bg="white" p={4} borderRadius="15px" mx={2}>
+      <Stack
+        width="sm"
+        bg="white"
+        p={4}
+        borderRadius="15px"
+        mx={2}
+        className="ProjectContainer"
+      >
         <this.ProjectImage project={this.props.project} />
-        <Heading as="h2" fontSize="lg" mb={2}>
-          <Link as={GLink} to={this.props.project.links.app} fontSize="28px">
-            {this.props.project.title}
-          </Link>
-        </Heading>
-        <Text>{this.props.project.desc}</Text>
-        {this.getIconLinks(this.props.project)}
+        <Box className="project-text-block">
+          <Heading as="h2" fontSize="lg" mb={2}>
+            <Link as={GLink} to={this.props.project.links.app} fontSize="28px">
+              {this.props.project.title}
+            </Link>
+          </Heading>
+          <Text>{this.props.project.desc}</Text>
+          {this.getIconLinks(this.props.project)}
+        </Box>
 
         {this?.props?.children}
       </Stack>
@@ -80,6 +90,7 @@ class Project extends React.Component {
             src={require("./images/" + props.project.image)}
             alt={props.project.title + "Image"}
             width="sm"
+            className={"project-image"}
           />
         </GLink>
       </Stack>

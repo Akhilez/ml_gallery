@@ -2,7 +2,7 @@ import React from "react"
 import ThemeProvider from "@chakra-ui/core/dist/ThemeProvider"
 import theme from "./theme"
 import { Box } from "@chakra-ui/core"
-import "src/styles/global.css"
+import "src/styles/global.sass"
 
 export default class GlobalWrapper extends React.Component {
   constructor(props) {
