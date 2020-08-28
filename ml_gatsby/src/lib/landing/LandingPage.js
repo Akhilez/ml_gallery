@@ -149,11 +149,22 @@ export default class LandingPage extends React.Component {
               aria-label="icon"
               icon="chevron-left"
               isRound
-              variantColor="brand.500"
+              size="sm"
+              variantColor="red"
+              variant="ghost"
+              m={5}
             />
           }
           arrowRight={
-            <IconButton aria-label="icon" icon="chevron-right" isRound />
+            <IconButton
+              aria-label="icon"
+              icon="chevron-right"
+              isRound
+              size="sm"
+              variantColor="red"
+              variant="ghost"
+              m={5}
+            />
           }
           hideSingleArrow={true}
           hideArrows={true}

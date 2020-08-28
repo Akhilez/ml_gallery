@@ -17,6 +17,7 @@ export default class GlobalWrapper extends React.Component {
             fontFamily="body"
             color={theme.colors.text.default}
             fontSize="xl"
+            className="root"
           >
             {this.props.children}
           </Box>
