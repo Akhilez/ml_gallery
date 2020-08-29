@@ -1,5 +1,5 @@
 import React from "react"
-import { Text, useTheme } from "@chakra-ui/core"
+import { Divider, Text, useTheme } from "@chakra-ui/core"
 import Box from "@chakra-ui/core/dist/Box"
 
 export const Container = ({ children, ...props }) => {
@@ -18,9 +18,9 @@ export const Container = ({ children, ...props }) => {
 
 export function Footer() {
   return (
-    <Box>
-      <hr />
+    <Container>
+      <Divider />
       <Text>ML Gallery</Text>
-    </Box>
+    </Container>
   )
 }

@@ -12,7 +12,7 @@ export const projects = {
     image: "learn_line.jpg",
     status: "in_progress",
     links: {
-      app: "/learn_line",
+      app: "/gallery/linear/learn_line",
       source: "https://github.com/Akhilez/ml_gallery",
     },
   },
@@ -23,7 +23,7 @@ export const projects = {
     image: "linear_classifier.png",
     status: "in_progress",
     links: {
-      app: "/linear_classifier",
+      app: "/gallery/linear/linear_classifier",
       source: "https://github.com/Akhilez/ml_gallery",
     },
   },
@@ -34,7 +34,7 @@ export const projects = {
     image: "learn_curve.png",
     status: "in_progress",
     links: {
-      app: "/learn_curve",
+      app: "/gallery/linear/learn_curve",
       source: "https://github.com/Akhilez/ml_gallery",
       colab: "https://github.com/Akhilez/ml_gallery",
     },
@@ -46,7 +46,7 @@ export const projects = {
     image: "deep_iris.png",
     status: "to_do",
     links: {
-      app: "/deep_iris",
+      app: "/gallery/linear/deep_iris",
       source: "https://github.com/Akhilez/ml_gallery",
     },
   },
@@ -58,7 +58,7 @@ export const projects = {
     image: "which_char.png",
     status: "to_do",
     links: {
-      app: "/which_letter",
+      app: "/gallery/vision/which_letter",
       source: "https://github.com/Akhilez/ml_gallery",
     },
   },
@@ -69,7 +69,7 @@ export const projects = {
     image: "mnist_gan.png",
     status: "to_do",
     links: {
-      app: "/mnist_gan",
+      app: "/gallery/vision/mnist_gan",
       source: "/mnist_gan",
       colab:
         "https://colab.research.google.com/github/Akhilez/ml_gallery/blob/master/ml_py/MLGallery/vision/selective_generator/colab.ipynb",
@@ -93,7 +93,7 @@ export const projects = {
     image: "find_number.png",
     status: "to_do",
     links: {
-      app: "/number_detector",
+      app: "/gallery/vision/number_detector",
       source:
         "https://colab.research.google.com/github/Akhilez/ml_gallery/blob/master/ml_py/MLGallery/vision/detector_v1/colab_localization.ipynb",
       colab:
@@ -106,7 +106,7 @@ export const projects = {
     image: "faster_rcnn.png",
     status: "to_do",
     links: {
-      app: "/coming_soon",
+      app: "/gallery/coming_soon",
       source:
         "https://colab.research.google.com/github/Akhilez/ml_gallery/blob/master/ml_py/MLGallery/vision/detector_v1/colab_detection.ipynb",
       colab:
@@ -119,7 +119,7 @@ export const projects = {
     image: "faster_rcnn.png",
     status: "to_do",
     links: {
-      app: "/coming_soon",
+      app: "/gallery/coming_soon",
       source: "",
     },
   },
@@ -129,7 +129,7 @@ export const projects = {
     image: "under_construction2.png",
     status: "to_do",
     links: {
-      app: "/coming_soon",
+      app: "/gallery/coming_soon",
       source: "",
     },
   },
@@ -139,7 +139,7 @@ export const projects = {
     image: "under_construction2.png",
     status: "to_do",
     links: {
-      app: "/coming_soon",
+      app: "/gallery/coming_soon",
       source: "",
     },
   },
@@ -149,7 +149,7 @@ export const projects = {
     image: "under_construction2.png",
     status: "to_do",
     links: {
-      app: "/coming_soon",
+      app: "/gallery/coming_soon",
       source: "",
     },
   },
@@ -162,7 +162,7 @@ export const projects = {
     image: "under_construction2.png",
     status: "to_do",
     links: {
-      app: "/next_char",
+      app: "/gallery/nlp/next_char",
       source: "/next_char",
     },
   },
@@ -172,7 +172,7 @@ export const projects = {
     image: "under_construction2.png",
     status: "to_do",
     links: {
-      app: "/coming_soon",
+      app: "/gallery/coming_soon",
       source: "",
     },
   },
@@ -182,7 +182,7 @@ export const projects = {
     image: "under_construction2.png",
     status: "to_do",
     links: {
-      app: "/coming_soon",
+      app: "/gallery/coming_soon",
       source: "",
     },
   },
@@ -192,17 +192,17 @@ export const projects = {
     image: "under_construction2.png",
     status: "to_do",
     links: {
-      app: "/coming_soon",
+      app: "/gallery/coming_soon",
       source: "",
     },
   },
   word2vec_v2: {
-    title: "Word To Vector",
+    title: "Word To Vector V2",
     desc: "Using bert",
     image: "under_construction2.png",
     status: "to_do",
     links: {
-      app: "/coming_soon",
+      app: "/gallery/coming_soon",
       source: "",
     },
   },
@@ -212,7 +212,7 @@ export const projects = {
     image: "under_construction2.png",
     status: "to_do",
     links: {
-      app: "/coming_soon",
+      app: "/gallery/coming_soon",
       source: "",
     },
   },
@@ -224,7 +224,7 @@ export const projects = {
     image: "tictactoe.jpg",
     status: "to_do",
     links: {
-      app: "/coming_soon",
+      app: "/gallery/coming_soon",
       source: "",
     },
   },
@@ -234,7 +234,7 @@ export const projects = {
     image: "pong.jpg",
     status: "to_do",
     links: {
-      app: "/coming_soon",
+      app: "/gallery/coming_soon",
       source: "",
     },
   },
@@ -244,7 +244,7 @@ export const projects = {
     image: "under_construction2.png",
     status: "to_do",
     links: {
-      app: "/coming_soon",
+      app: "/gallery/coming_soon",
       source: "",
     },
   },
@@ -254,7 +254,7 @@ export const projects = {
     image: "under_construction2.png",
     status: "to_do",
     links: {
-      app: "/coming_soon",
+      app: "/gallery/coming_soon",
       source: "",
     },
   },
@@ -266,7 +266,7 @@ export const projects = {
     image: "under_construction2.png",
     status: "to_do",
     links: {
-      app: "/coming_soon",
+      app: "/gallery/coming_soon",
       source: "",
     },
   },
@@ -276,7 +276,7 @@ export const projects = {
     image: "under_construction2.png",
     status: "to_do",
     links: {
-      app: "/coming_soon",
+      app: "/gallery/coming_soon",
       source: "",
     },
   },
@@ -286,7 +286,7 @@ export const projects = {
     image: "under_construction2.png",
     status: "to_do",
     links: {
-      app: "/coming_soon",
+      app: "/gallery/coming_soon",
       source: "",
     },
   },
@@ -298,7 +298,7 @@ export const projects = {
     image: "under_construction2.png",
     status: "to_do",
     links: {
-      app: "/coming_soon",
+      app: "/gallery/coming_soon",
       source: "",
     },
   },
@@ -308,7 +308,7 @@ export const projects = {
     image: "under_construction2.png",
     status: "in_progress",
     links: {
-      app: "/coming_soon",
+      app: "/gallery/coming_soon",
       source: "",
     },
   },

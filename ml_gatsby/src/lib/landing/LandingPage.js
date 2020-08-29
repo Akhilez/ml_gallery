@@ -10,6 +10,7 @@ import {
   Button,
   Box,
   Text,
+  Flex,
   Image,
   Heading,
   Divider,
@@ -49,36 +50,30 @@ class Project extends React.Component {
 
   getIconLinks(project) {
     return (
-      <div className={"row"}>
+      <Flex alignItems="center">
         {project.links.source && (
-          <div className={"col-auto"}>
-            <a className={"link"} href={project.links.app}>
-              <MdCode />
-            </a>
-          </div>
+          <a className={"link"} href={project.links.app}>
+            <Box as={MdCode} fontSize="2xl" mt={1} />
+          </a>
         )}
 
         {project.links.colab && (
-          <div
-            className={"col-auto"}
-            style={{
-              backgroundImage: `url(${colabImage})`,
-              backgroundPosition: "center",
-              backgroundSize: "contain",
-              backgroundRepeat: "no-repeat",
-            }}
+          <Link
+            href={project.links.colab}
+            target="_blank"
+            rel="noopener noreferrer"
           >
-            <a
-              className={"link"}
-              href={project.links.colab}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <div style={{ height: "28px", width: "40px" }} />
-            </a>
-          </div>
+            <Box
+              backgroundImage={`url(${colabImage})`}
+              backgroundPosition="center"
+              backgroundSize="contain"
+              backgroundRepeat="no-repeat"
+              h="28px"
+              w="40px"
+            />
+          </Link>
         )}
-      </div>
+      </Flex>
     )
   }
 
@@ -102,13 +97,11 @@ export default class LandingPage extends React.Component {
   render() {
     return (
       <Container>
-        <Navbar />
         <MLLogo />
         <this.Desc />
         {projectCategories.map(category => (
           <this.Category category={category} key={category.title} />
         ))}
-        <Footer />
       </Container>
     )
   }
@@ -118,7 +111,7 @@ export default class LandingPage extends React.Component {
       <Stack alignItems="center" textAlign="center" mb="70px">
         <Text>
           Developed by{" "}
-          <a href={urls.profile.url}>
+          <a href={urls.profile}>
             <b>
               <i>Akhilez</i>
             </b>
@@ -135,7 +128,12 @@ export default class LandingPage extends React.Component {
           Begin with a tour starting from the most basic Neural Network and
           build your way up.
         </Text>
-        <Button variant="outline" as={GLink} to={"/learn_line"}>
+        <Button
+          variant="outline"
+          variantColor="brand"
+          as={GLink}
+          to={"/learn_line"}
+        >
           Take a tour
         </Button>
       </Stack>

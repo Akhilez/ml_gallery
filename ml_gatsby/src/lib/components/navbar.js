@@ -5,7 +5,8 @@ import { Helmet } from "react-helmet"
 import ml_logo from "src/lib/media/ml_logo/ml_logo.png"
 import { Box, Link, Flex } from "@chakra-ui/core"
 import { Link as GLink } from "gatsby"
-import { FiMenu } from "react-icons/fi/index"
+import { FiMenu } from "react-icons/all"
+import { Container } from "./commons"
 
 function NavItem({ href, text }) {
   return (
@@ -53,7 +54,7 @@ export default function Navbar() {
   const [show, setShow] = React.useState(false)
 
   return (
-    <>
+    <Container>
       <MetaTags />
       <Flex as="nav" alignItems="center" justify="space-between" wrap="wrap">
         <GLink to={urls.profile} className="navbar-brand logo">
@@ -81,6 +82,6 @@ export default function Navbar() {
           <NavItem href={urls.repo} text="RESUME" />
         </Box>
       </Flex>
-    </>
+    </Container>
   )
 }
