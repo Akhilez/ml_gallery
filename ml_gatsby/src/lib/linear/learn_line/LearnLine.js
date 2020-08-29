@@ -11,7 +11,7 @@ export default class LearnLine extends React.Component {
   render() {
     return (
       <ProjectWrapper project={this.project}>
-        <Text>{this.project.title}</Text>
+        <Text>hello</Text>
       </ProjectWrapper>
     )
   }
