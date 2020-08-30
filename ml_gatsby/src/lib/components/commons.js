@@ -10,7 +10,7 @@ export const Container = ({ children, ...props }) => {
   console.log(theme.breakpoints.slice(1))
 
   return (
-    <Box {...props} mx="auto" maxW={{ base: "full", xl: "60em" }} w="100%">
+    <Box {...props} mx="auto" maxW={['full', 'full', ...theme.breakpoints.slice(1)]} w="100%">
       {children}
     </Box>
   )

@@ -20,7 +20,7 @@ export class SideNav extends React.Component {
 
   render() {
     return (
-      <Box display={{ base: "none", xl: "block" }} color="gray.400">
+      <Box w="250px" display={{ base: "none", xl: "block" }} color="gray.400" mr={4}>
         <Text>Projects</Text>
         <Accordion allowMultiple>
           {projectCategories.map(category => (
