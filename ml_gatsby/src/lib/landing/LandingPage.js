@@ -1,10 +1,9 @@
 import React from "react"
-import Navbar from "src/lib/components/navbar"
 import MLLogo from "src/lib/media/ml_logo/ml_logo"
 import { projectCategories } from "src/lib/globals/data"
 import { urls } from "../globals/data"
 import colabImage from "src/lib/landing/images/colab.png"
-import { Container, Footer } from "../components/commons"
+import { Container } from "../components/commons"
 import {
   Stack,
   Button,

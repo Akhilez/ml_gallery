@@ -6,10 +6,6 @@ import { Link as GLink } from "gatsby"
 export const Container = ({ children, ...props }) => {
   const theme = useTheme()
 
-  console.log(theme.breakpoints)
-  console.log("slice")
-  console.log(theme.breakpoints.slice(1))
-
   return (
     <Box
       {...props}

@@ -1,5 +1,5 @@
 export const urls = {
-  profile: "https://akhil.ai",
+  profile: "/",
   gallery: "/gallery",
   repo: "https://github.com/Akhilez/ml_gallery",
 }

@@ -3,7 +3,7 @@ import ak_logo from "src/lib/media/ak_logo.png"
 import { urls } from "src/lib/globals/data"
 import { Helmet } from "react-helmet"
 import ml_logo from "src/lib/media/ml_logo/ml_logo.png"
-import { Box, Link, Flex, Icon, Text, useTheme } from "@chakra-ui/core"
+import { Box, Flex, Image } from "@chakra-ui/core"
 import { Link as GLink } from "gatsby"
 import { FaGithub, FiMenu, MdHome, MdPerson } from "react-icons/all"
 import { Container, SolidLink } from "./commons"
@@ -52,7 +52,7 @@ export default function Navbar() {
       <MetaTags />
       <Flex as="nav" alignItems="center" justify="space-between" wrap="wrap">
         <GLink to={urls.profile} className="navbar-brand logo">
-          <img src={ak_logo} height="40px" alt="ak_logo" />
+          <Image src={ak_logo} height="40px" alt="ak_logo" />
         </GLink>
 
         <Box
