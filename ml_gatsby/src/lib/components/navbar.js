@@ -3,7 +3,7 @@ import ak_logo from "src/lib/media/ak_logo.png"
 import { urls } from "src/lib/globals/data"
 import { Helmet } from "react-helmet"
 import ml_logo from "src/lib/media/ml_logo/ml_logo.png"
-import { Box, Link, Flex } from "@chakra-ui/core"
+import { Box, Link, Flex, Icon, Text } from "@chakra-ui/core"
 import { Link as GLink } from "gatsby"
 import { FaGithub, FiMenu, MdHome, MdPerson } from "react-icons/all"
 import { Container } from "./commons"
@@ -20,8 +20,10 @@ function NavItem({ href, text, icon }) {
       display="block"
       _hover={{ color: "white", textDecoration: "none" }}
     >
-      <Box as={icon} />
-      {text}
+      <Flex alignItems="center">
+        <Box as={icon} fontSize="lg" mr={2} />
+        {text}
+      </Flex>
     </Link>
   )
 }
@@ -80,7 +82,7 @@ export default function Navbar() {
         >
           <NavItem href={urls.gallery} text="ML GALLERY" icon={MdHome} />
           <NavItem href={urls.profile} text="PROFILE" icon={MdPerson} />
-          <NavItem href={urls.repo} text="RESUME" icon={FaGithub} />
+          <NavItem href={urls.repo} text="REPO" icon={FaGithub} />
         </Box>
       </Flex>
     </Container>

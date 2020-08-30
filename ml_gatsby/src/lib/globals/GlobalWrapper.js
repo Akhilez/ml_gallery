@@ -1,7 +1,7 @@
 import React from "react"
 import ThemeProvider from "@chakra-ui/core/dist/ThemeProvider"
 import theme from "./theme"
-import {Box, Button, Flex, IconButton, Image, Text} from "@chakra-ui/core"
+import {Box, Button, Flex, Heading, IconButton, Image, Text} from "@chakra-ui/core"
 import "src/styles/global.sass"
 import Navbar from "../components/navbar"
 import {Container, Footer} from "../components/commons"
@@ -46,6 +46,7 @@ function ActionButtons({project}) {
         as={Link}
         to={project.links.colab}
         size="sm"
+        display={project.links.colab ? 'block' : 'none'}
         variant="outline"
         variantColor="gray"
       >
@@ -61,13 +62,13 @@ export function ProjectWrapper({project, children, ...props}) {
       <Container>
         <Flex>
           <SideNav project={project}/>
-          <Box w="100%">
-            <Flex justifyContent="space-between" alignItems="center">
+          <Box w="100%" textAlign="center">
+            <Flex justifyContent="space-between" alignItems="center" direction={{base: 'column', md: 'row'}} >
               <BreadCrumb project={project}/>
-              <Text>{project.title}</Text>
+              <Heading fontWeight="100">{project.title}</Heading>
               <ActionButtons project={project}/>
             </Flex>
-            <Text>{project.description}</Text>
+            <Text m={0}>{project.desc}</Text>
             {children}
           </Box>
         </Flex>
