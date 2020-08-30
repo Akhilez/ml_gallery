@@ -3,28 +3,19 @@ import ak_logo from "src/lib/media/ak_logo.png"
 import { urls } from "src/lib/globals/data"
 import { Helmet } from "react-helmet"
 import ml_logo from "src/lib/media/ml_logo/ml_logo.png"
-import { Box, Link, Flex, Icon, Text } from "@chakra-ui/core"
+import { Box, Link, Flex, Icon, Text, useTheme } from "@chakra-ui/core"
 import { Link as GLink } from "gatsby"
 import { FaGithub, FiMenu, MdHome, MdPerson } from "react-icons/all"
-import { Container } from "./commons"
+import { Container, SolidLink } from "./commons"
 
 function NavItem({ href, text, icon }) {
   return (
-    <Link
-      as={GLink}
-      to={href}
-      py={2}
-      px={3}
-      href={href}
-      fontSize="sm"
-      display="block"
-      _hover={{ color: "white", textDecoration: "none" }}
-    >
+    <SolidLink href={href}>
       <Flex alignItems="center">
         <Box as={icon} fontSize="lg" mr={2} />
         {text}
       </Flex>
-    </Link>
+    </SolidLink>
   )
 }
 
