@@ -8,9 +8,9 @@ import { Link as GLink } from "gatsby"
 import { FaGithub, FiMenu, MdHome, MdPerson } from "react-icons/all"
 import { Container, SolidLink } from "./commons"
 
-function NavItem({ href, text, icon }) {
+function NavItem({ href, text, icon, ...props }) {
   return (
-    <SolidLink href={href}>
+    <SolidLink href={href} fontSize="sm" {...props}>
       <Flex alignItems="center">
         <Box as={icon} fontSize="lg" mr={2} />
         {text}
@@ -73,7 +73,7 @@ export default function Navbar() {
         >
           <NavItem href={urls.gallery} text="ML GALLERY" icon={MdHome} />
           <NavItem href={urls.profile} text="PROFILE" icon={MdPerson} />
-          <NavItem href={urls.repo} text="REPO" icon={FaGithub} />
+          <NavItem href={urls.repo} text="REPO" icon={FaGithub} isExternal />
         </Box>
       </Flex>
     </Container>

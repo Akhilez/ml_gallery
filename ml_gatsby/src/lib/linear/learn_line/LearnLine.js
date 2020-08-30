@@ -2,7 +2,7 @@ import React from "react"
 import { projects } from "src/lib/globals/data"
 import { ProjectWrapper } from "src/lib/globals/GlobalWrapper"
 import MLHelper from "src/lib/linear/learn_line/neural_net"
-import { NumberInput, Flex, Text, Button } from "@chakra-ui/core"
+import { NumberInput, Flex, Button } from "@chakra-ui/core"
 import {
   CartesianGrid,
   Legend,
@@ -13,6 +13,7 @@ import {
   YAxis,
 } from "recharts"
 import Neuron from "./neuron"
+import { Centered } from "src/lib/components/commons"
 
 export class LearnLine extends React.Component {
   constructor(props) {
@@ -39,29 +40,34 @@ export class LearnLine extends React.Component {
   render() {
     return (
       <ProjectWrapper project={this.project}>
-        <Neuron ref={this.neuronRef} />
-        {this.getEquationInput()}
-        <Button
-          variantColor="brand"
-          onClick={() => this.startTrainingPipeline()}
-        >
-          TRAIN
-        </Button>
-        {this.state.didTrainingStart && this.showStopTrainingButton()}
-        {this.state.didTrainingStart && this.getGraph()}
-        <Flex>
-          {this.state.didTrainingStart && this.getParametersGraph()}
-          {this.state.didTrainingStart && this.getLossGraph()}
-        </Flex>
+        <Centered>
+          <Neuron ref={this.neuronRef} />
+          {this.getEquationInput()}
+          {!this.state.didTrainingStart && (
+            <Button
+              variantColor="brand"
+              borderRadius="lg"
+              onClick={() => this.startTrainingPipeline()}
+            >
+              TRAIN
+            </Button>
+          )}
+          {this.state.didTrainingStart && this.showStopTrainingButton()}
+          {this.state.didTrainingStart && this.getGraph()}
+          <Flex justifyContent="center" mt={4}>
+            {this.state.didTrainingStart && this.getParametersGraph()}
+            {this.state.didTrainingStart && this.getLossGraph()}
+          </Flex>
+        </Centered>
       </ProjectWrapper>
     )
   }
 
   getEquationInput() {
     return (
-      <Flex alignItems="center" justifyContent="center">
+      <Flex alignItems="center" justifyContent="center" mb={4}>
         y = m:
-        {this.getParamsPicker("M")}x + c:
+        {this.getParamsPicker("M")} x + c:
         {this.getParamsPicker("C")}
       </Flex>
     )
@@ -69,64 +75,61 @@ export class LearnLine extends React.Component {
 
   showStopTrainingButton() {
     return (
-      <button
-        className={"ActionButton"}
+      <Button
+        variant="outline"
+        variantColor="brand"
         onClick={() => this.setState({ isTraining: false })}
       >
         Stop
-      </button>
+      </Button>
     )
   }
 
   getGraph() {
     return (
-      <Flex my="100px">
-        <LineChart
-          width={800}
-          height={500}
-          data={this.state.data}
-          margin={{
-            top: 5,
-            right: 30,
-            left: 20,
-            bottom: 5,
-          }}
-        >
-          <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="realX" type="number" scale="auto" />
-          <YAxis />
-          <Tooltip />
-          <Legend />
-          <Line type="monotone" dataKey="realY" stroke="#8884d8" />
-          <Line type="monotone" dataKey="predY" stroke="#82ca9d" />
-        </LineChart>
-      </Flex>
+      <LineChart
+        width={800}
+        height={500}
+        data={this.state.data}
+        margin={{
+          top: 100,
+          right: 30,
+          left: 20,
+          bottom: 5,
+        }}
+      >
+        <CartesianGrid strokeDasharray="3 3" />
+        <XAxis dataKey="realX" type="number" scale="auto" />
+        <YAxis />
+        <Tooltip />
+        <Legend />
+        <Line type="monotone" dataKey="realY" stroke="#8884d8" />
+        <Line type="monotone" dataKey="predY" stroke="#82ca9d" />
+      </LineChart>
     )
   }
 
   getParametersGraph() {
     return (
-      <div>
-        <table className={"table"} style={{ width: 300 }}>
-          <tbody>
-            <tr>
-              <th />
-              <th>Real</th>
-              <th>Predicted</th>
-            </tr>
-            <tr>
-              <td>m</td>
-              <td>{this.state.m}</td>
-              <td>{this.state.predM}</td>
-            </tr>
-            <tr>
-              <td>c</td>
-              <td>{this.state.c}</td>
-              <td>{this.state.predC}</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+      <table className={"table"} style={{ width: 300 }}>
+        <tbody>
+          <tr>
+            <th />
+            <th>Real</th>
+            <th>Predicted</th>
+          </tr>
+          <tr>
+            <td>m</td>
+            <td>{this.state.m}</td>
+            <td>{this.state.predM}</td>
+          </tr>
+          <tr>
+            <td>c</td>
+            <td>{this.state.c}</td>
+            <td>{this.state.predC}</td>
+          </tr>
+        </tbody>
+      </table>
     )
   }
 
@@ -153,6 +156,28 @@ export class LearnLine extends React.Component {
     )
   }
 
+  getParamsPicker(params) {
+    if (params === "M")
+      return (
+        <NumberInput
+          maxW="70px"
+          placeholder="m"
+          mx={2}
+          onChange={value => this.setState({ m: value })}
+        />
+      )
+    else if (params === "C") {
+      return (
+        <NumberInput
+          maxW="70px"
+          placeholder="c"
+          mx={2}
+          onChange={value => this.setState({ c: value })}
+        />
+      )
+    }
+  }
+
   // --------- OTHERS ---------------------
 
   startTrainingPipeline() {
@@ -168,11 +193,7 @@ export class LearnLine extends React.Component {
     let m = this.state.m
     let c = this.state.c
 
-    console.log("m, c", m, c)
-
     let randomData = this.nn.generateRandomLineData(m, c, 10)
-
-    console.log(randomData)
 
     this.setState(
       {
@@ -186,7 +207,6 @@ export class LearnLine extends React.Component {
         data: this.createRealData(randomData.x, randomData.y),
       },
       () => {
-        console.log("Gonna train")
         this.train(randomData.x, randomData.y)
       }
     )
@@ -254,25 +274,5 @@ export class LearnLine extends React.Component {
 
   showError(message) {
     alert(message)
-  }
-
-  getParamsPicker(params) {
-    if (params === "M")
-      return (
-        <NumberInput
-          maxW="100px"
-          placeholder="m"
-          onChange={value => this.setState({ m: value })}
-        />
-      )
-    else if (params === "C") {
-      return (
-        <NumberInput
-          maxW="100px"
-          placeholder="c"
-          onChange={value => this.setState({ c: value })}
-        />
-      )
-    }
   }
 }

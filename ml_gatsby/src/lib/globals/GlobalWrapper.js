@@ -7,7 +7,6 @@ import {
   Flex,
   Heading,
   Image,
-  PseudoBox,
   Text,
   CSSReset,
 } from "@chakra-ui/core"
@@ -33,6 +32,7 @@ export default class GlobalWrapper extends React.Component {
           fontFamily="body"
           color={theme.colors.text.default}
           fontSize="xl"
+          m={2}
           className="root"
         >
           <Navbar />
@@ -66,28 +66,23 @@ function ActionButtons({ project }) {
 
 export function ProjectWrapper({ project, children, ...props }) {
   return (
-    <Container>
-      <Flex>
-        <SideNav project={project} />
-        <PseudoBox
-          w="100%"
-          textAlign="center"
-          justifyContent="center"
-          {...props}
+    <Container as={Flex}>
+      <SideNav project={project} />
+      <Box w="100%" {...props}>
+        <Flex
+          justifyContent="space-between"
+          alignItems="center"
+          direction={{ base: "column", md: "row" }}
         >
-          <Flex
-            justifyContent="space-between"
-            alignItems="center"
-            direction={{ base: "column", md: "row" }}
-          >
-            <BreadCrumb project={project} />
-            <Heading fontWeight="100">{project.title}</Heading>
-            <ActionButtons project={project} />
-          </Flex>
-          <Text m={0}>{project.desc}</Text>
-          {children}
-        </PseudoBox>
-      </Flex>
+          <BreadCrumb project={project} />
+          <Heading fontWeight="100">{project.title}</Heading>
+          <ActionButtons project={project} />
+        </Flex>
+        <Text m={0} textAlign="center">
+          {project.desc}
+        </Text>
+        {children}
+      </Box>
     </Container>
   )
 }

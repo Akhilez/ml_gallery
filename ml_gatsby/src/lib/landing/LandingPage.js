@@ -145,7 +145,13 @@ export default class LandingPage extends React.Component {
       <>
         <Divider borderColor="gray.300" />
         <br />
-        <Heading as="h2" textAlign="center" fontSize="40px" fontWeight="light">
+        <Heading
+          as="h2"
+          textAlign="center"
+          fontSize="40px"
+          fontWeight="light"
+          mb={4}
+        >
           {category.title}
         </Heading>
         <ScrollMenu

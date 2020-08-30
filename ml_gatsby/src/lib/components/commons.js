@@ -2,27 +2,41 @@ import React from "react"
 import { Divider, Link, Text, useTheme } from "@chakra-ui/core"
 import Box from "@chakra-ui/core/dist/Box"
 import { Link as GLink } from "gatsby"
+import { urls } from "../globals/data"
 
 export const Container = ({ children, ...props }) => {
   const theme = useTheme()
 
   return (
     <Box
-      {...props}
       mx="auto"
       maxW={["full", "full", ...theme.breakpoints.slice(1)]}
       w="100%"
+      {...props}
     >
       {children}
     </Box>
   )
 }
 
+export function Centered(props) {
+  return <div align={"center"}>{props.children}</div>
+}
+
 export function Footer() {
   return (
-    <Container>
-      <Divider />
-      <Text>ML Gallery</Text>
+    <Container textAlign="center" mt="50px">
+      <Centered>
+        <Divider borderColor="red.500" />
+        <Box my="25px">
+          <Text>
+            ML Gallery by{" "}
+            <Link href={urls.profile} fontStyle="italic" fontWeight="bold">
+              Akhilez
+            </Link>
+          </Text>
+        </Box>
+      </Centered>
     </Container>
   )
 }
@@ -36,7 +50,6 @@ export function SolidLink({ href, ...props }) {
       py={2}
       px={3}
       href={href}
-      fontSize="sm"
       display="block"
       borderRadius="lg"
       _hover={{
@@ -44,7 +57,6 @@ export function SolidLink({ href, ...props }) {
         textDecoration: "none",
         backgroundColor: theme.colors.brand["500"],
         transitionDuration: "0.4s",
-        marginLeft: "4px",
       }}
       {...props}
     >
