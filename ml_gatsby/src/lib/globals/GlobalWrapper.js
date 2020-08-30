@@ -35,6 +35,25 @@ export default class GlobalWrapper extends React.Component {
   }
 }
 
+function ActionButtons({ project }) {
+  return (
+    <Flex>
+      <Button variantColor="brand" variant="outline" size="sm" mr={2}>
+        How it works
+      </Button>
+      <Button
+        as={Link}
+        to={project.links.colab}
+        size="sm"
+        variant="outline"
+        variantColor="gray"
+      >
+        <Image src={colabImage} objectFit="cover" size="22px" />
+      </Button>
+    </Flex>
+  )
+}
+
 export function ProjectWrapper({ project, children, ...props }) {
   return (
     <Flex justifyContent="center" {...props}>
@@ -43,20 +62,7 @@ export function ProjectWrapper({ project, children, ...props }) {
         <Flex justifyContent="space-between" alignItems="center">
           <BreadCrumb project={project} />
           <Text>{project.title}</Text>
-          <Flex>
-            <Button variantColor="brand" variant="outline" size="sm" mr={2}>
-              How it works
-            </Button>
-            <Button
-              as={Link}
-              to={project.links.colab}
-              size="sm"
-              variant="outline"
-              variantColor="brand"
-            >
-              <Image src={colabImage} objectFit="cover" size="22px" />
-            </Button>
-          </Flex>
+          <ActionButtons project={project} />
         </Flex>
         <Text>{project.description}</Text>
         {children}

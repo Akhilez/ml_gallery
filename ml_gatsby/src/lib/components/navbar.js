@@ -5,10 +5,10 @@ import { Helmet } from "react-helmet"
 import ml_logo from "src/lib/media/ml_logo/ml_logo.png"
 import { Box, Link, Flex } from "@chakra-ui/core"
 import { Link as GLink } from "gatsby"
-import { FiMenu } from "react-icons/all"
+import { FaGithub, FiMenu, MdHome, MdPerson } from "react-icons/all"
 import { Container } from "./commons"
 
-function NavItem({ href, text }) {
+function NavItem({ href, text, icon }) {
   return (
     <Link
       as={GLink}
@@ -20,6 +20,7 @@ function NavItem({ href, text }) {
       display="block"
       _hover={{ color: "white", textDecoration: "none" }}
     >
+      <Box as={icon} />
       {text}
     </Link>
   )
@@ -77,9 +78,9 @@ export default function Navbar() {
           display={{ base: show ? "block" : "none", sm: "flex" }}
           mt={{ base: 4, sm: 0 }}
         >
-          <NavItem href={urls.gallery} text="ML GALLERY" />
-          <NavItem href={urls.profile} text="PROFILE" />
-          <NavItem href={urls.repo} text="RESUME" />
+          <NavItem href={urls.gallery} text="ML GALLERY" icon={MdHome} />
+          <NavItem href={urls.profile} text="PROFILE" icon={MdPerson} />
+          <NavItem href={urls.repo} text="RESUME" icon={FaGithub} />
         </Box>
       </Flex>
     </Container>

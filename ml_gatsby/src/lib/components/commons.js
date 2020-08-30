@@ -5,13 +5,12 @@ import Box from "@chakra-ui/core/dist/Box"
 export const Container = ({ children, ...props }) => {
   const theme = useTheme()
 
+  console.log(theme.breakpoints)
+  console.log("slice")
+  console.log(theme.breakpoints.slice(1))
+
   return (
-    <Box
-      {...props}
-      mx="auto"
-      maxW={["full", "full", ...theme.breakpoints.slice(1)]}
-      w="100%"
-    >
+    <Box {...props} mx="auto" maxW={{ base: "full", xl: "60em" }} w="100%">
       {children}
     </Box>
   )
