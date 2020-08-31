@@ -66,6 +66,33 @@ function ActionButtons({ project }) {
 
 export function ProjectWrapper({ project, children, ...props }) {
   return (
+    <Container>
+      <Flex
+        justifyContent="space-between"
+        alignItems="center"
+        direction={{ base: "column", md: "row" }}
+      >
+        <BreadCrumb project={project} />
+        <Heading fontWeight="100" ml={{ base: 0, xl: "150px" }}>
+          {project.title}
+        </Heading>
+        <ActionButtons project={project} />
+      </Flex>
+      <Flex>
+        <SideNav project={project} />
+        <Box w="100%" {...props}>
+          <Text m={0} textAlign="center">
+            {project.desc}
+          </Text>
+          {children}
+        </Box>
+      </Flex>
+    </Container>
+  )
+}
+
+export function ProjectWrapper2({ project, children, ...props }) {
+  return (
     <Container as={Flex}>
       <SideNav project={project} />
       <Box w="100%" {...props}>

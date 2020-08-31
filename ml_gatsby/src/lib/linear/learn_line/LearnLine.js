@@ -43,7 +43,7 @@ export class LearnLine extends React.Component {
         <Centered>
           <Neuron ref={this.neuronRef} />
           {this.getEquationInput()}
-          {!this.state.didTrainingStart && (
+          {!this.state.isTraining && (
             <Button
               variantColor="brand"
               borderRadius="lg"
@@ -52,7 +52,7 @@ export class LearnLine extends React.Component {
               TRAIN
             </Button>
           )}
-          {this.state.didTrainingStart && this.showStopTrainingButton()}
+          {this.state.isTraining && this.showStopTrainingButton()}
           {this.state.didTrainingStart && this.getGraph()}
           <Flex justifyContent="center" mt={4}>
             {this.state.didTrainingStart && this.getParametersGraph()}
