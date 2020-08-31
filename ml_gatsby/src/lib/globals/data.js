@@ -4,7 +4,7 @@ export const urls = {
   repo: "https://github.com/Akhilez/ml_gallery",
 }
 
-export const projects = {
+const projectsRaw = {
   learn_line: {
     title: "Learn a Line",
     desc:
@@ -314,6 +314,12 @@ export const projects = {
   },
 }
 
+Object.keys(projectsRaw).map(key => {
+  projectsRaw[key]["id"] = key
+})
+
+export const projects = projectsRaw
+
 export const categoriesMap = {
   linear: {
     title: "Linear Neural Networks",
@@ -380,3 +386,7 @@ export const projectCategories = [
   categoriesMap.unsupervised,
   categoriesMap.misc,
 ]
+
+export const orderedProjects = projectCategories
+  .map(category => category.projects)
+  .flat()

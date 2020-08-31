@@ -17,6 +17,7 @@ import { SideNav } from "../components/SideNav"
 import { BreadCrumb } from "../components/BreadCrumb"
 import colabImage from "src/lib/landing/images/colab.png"
 import { Link } from "gatsby"
+import { ProjectPaginator } from "../components/ProjectPaginator"
 
 export default class GlobalWrapper extends React.Component {
   constructor(props) {
@@ -85,6 +86,7 @@ export function ProjectWrapper({ project, children, ...props }) {
             {project.desc}
           </Text>
           {children}
+          <ProjectPaginator project={project} />
         </Box>
       </Flex>
     </Container>
