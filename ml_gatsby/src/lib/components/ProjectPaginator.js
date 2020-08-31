@@ -20,15 +20,15 @@ export class ProjectPaginator extends React.Component {
     return (
       <Flex justifyContent="center" alignItems="center">
         {this.prevProject && (
-          <SolidLink href={this.prevProject?.links?.app} m={2} p={5}>
-            <Box>
+          <SolidLink href={this.prevProject?.links?.app} m={2} p={5} w="50%">
+            <Box textAlign="right">
               <Text fontSize="sm">Previous</Text>
               <Text>{this.prevProject?.title}</Text>
             </Box>
           </SolidLink>
         )}
         {this.nextProject && (
-          <SolidLink href={this.nextProject?.links?.app} m={2} p={5}>
+          <SolidLink href={this.nextProject?.links?.app} m={2} p={5} w="50%">
             <Box fontSize="sm">Next</Box>
             <Text>{this.nextProject?.title}</Text>
           </SolidLink>
