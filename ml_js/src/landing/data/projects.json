@@ -95,7 +95,8 @@
           "status": "to_do",
           "links": {
             "app": "/number_detector",
-            "source": "/number_detector"
+            "source": "https://colab.research.google.com/github/Akhilez/ml_gallery/blob/master/ml_py/MLGallery/vision/detector_v1/colab_localization.ipynb",
+            "colab": "https://colab.research.google.com/github/Akhilez/ml_gallery/blob/master/ml_py/MLGallery/vision/detector_v1/colab_localization.ipynb"
           }
         },
         {
@@ -106,7 +107,8 @@
           "status": "to_do",
           "links": {
             "app": "/coming_soon",
-            "source": ""
+            "source": "https://colab.research.google.com/github/Akhilez/ml_gallery/blob/master/ml_py/MLGallery/vision/detector_v1/colab_detection.ipynb",
+            "colab": "https://colab.research.google.com/github/Akhilez/ml_gallery/blob/master/ml_py/MLGallery/vision/detector_v1/colab_detection.ipynb"
           }
         },
         {

@@ -101,6 +101,12 @@
     font-size: 20px;
 }
 
+.emoji_text{
+    font-size: 25px;
+    margin-left: 4px;
+    margin-right: 2px;
+}
+
 .project_title {
     font-family: 'Roboto Condensed', sans-serif;
     font-weight: 300;
