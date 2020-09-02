@@ -1,5 +1,6 @@
 import React from "react"
 import Sketch from "react-p5"
+import { isCursorInScope } from "../../utils/utils"
 
 export default class Graph extends React.Component {
   constructor(props) {
@@ -52,13 +53,7 @@ export default class Graph extends React.Component {
   }
 
   handleInput(p5) {
-    if (
-      p5.mouseX < 0 ||
-      p5.mouseX > this.width ||
-      p5.mouseY < 0 ||
-      p5.mouseY > this.height
-    )
-      return
+    if (!isCursorInScope(p5, this.height, this.width)) return
 
     this.x.push(p5.mouseX)
     this.y.push(p5.mouseY)

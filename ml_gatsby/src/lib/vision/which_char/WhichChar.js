@@ -30,9 +30,6 @@ export class WhichChar extends React.Component {
     return (
       <ProjectWrapper project={this.project}>
         <Centered>
-          <h1>Which Character?</h1>
-          <p>Predict which number is being drawn.</p>
-          <br />
           {!this.state.modelLoaded && (
             <>
               Loading model...

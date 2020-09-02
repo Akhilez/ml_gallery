@@ -1,5 +1,6 @@
 import React from "react"
 import Sketch from "react-p5"
+import { isCursorInScope } from "../../utils/utils"
 
 export default class NumberPaintCanvas extends React.Component {
   constructor(props) {
@@ -51,6 +52,9 @@ export default class NumberPaintCanvas extends React.Component {
   }
 
   mouseReleased(p5) {
+    console.log("Hey. The position is", p5.mouseX, p5.mouseY)
+    if (!isCursorInScope(p5, this.side, this.side)) return
+
     p5.loadPixels()
     this.props.parent.convNet.captureP5Image(p5.pixels)
   }

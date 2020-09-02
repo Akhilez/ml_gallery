@@ -3,6 +3,7 @@ import TrainingTracker from "../../utils/training_tracker"
 import Sketch from "react-p5"
 import React from "react"
 import Chartist from "../../utils/chartist"
+import { isCursorInScope } from "src/lib/utils/utils"
 
 export class Graph extends React.Component {
   constructor(props) {
@@ -57,13 +58,7 @@ export class Graph extends React.Component {
   }
 
   handleInput(p5) {
-    if (
-      p5.mouseX < 0 ||
-      p5.mouseX > this.width ||
-      p5.mouseY < 0 ||
-      p5.mouseY > this.height
-    )
-      return
+    if (!isCursorInScope(p5, this.height, this.width)) return
 
     console.log(p5.mouseX, p5.mouseY)
 
