@@ -63,7 +63,7 @@ const projectsRaw = {
     image: "which_char.png",
     status: "to_do",
     links: {
-      app: "/gallery/vision/which_letter",
+      app: "/gallery/vision/which_char",
       source: "https://github.com/Akhilez/ml_gallery",
     },
   },
