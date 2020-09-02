@@ -1,9 +1,10 @@
 import React from "react"
-import { ProjectWrapper } from "src/lib/globals/GlobalWrapper"
+import { ProjectWrapper } from "src/lib/components/ProjectWrapper"
 import { projects } from "../../globals/data"
 import { Centered } from "../../components/commons"
 import Neuron from "../learn_line/neuron"
 import { Graph } from "./Graph"
+import { Button } from "@chakra-ui/core"
 
 export class LinearClassifier extends React.Component {
   constructor(props) {
@@ -19,32 +20,40 @@ export class LinearClassifier extends React.Component {
       <ProjectWrapper project={this.project}>
         <Centered>
           <Neuron ref={this.neuronRef} />
-          <button
-            className={"ActionButton"}
+          <Button
+            variantColor="brand"
+            borderRadius="lg"
+            m={1}
             onClick={() => {
               this.graphRef.current.startTraining()
               this.setState({ isTraining: true })
             }}
           >
             TRAIN
-          </button>
+          </Button>
           {this.state.isTraining && (
-            <button
-              className={"ActionButton"}
+            <Button
+              m={1}
+              variant="outline"
+              borderRadius="lg"
+              variantColor="brand"
               onClick={() => {
                 this.graphRef.current.stopTraining()
                 this.setState({ isTraining: false })
               }}
             >
               STOP
-            </button>
+            </Button>
           )}
-          <button
-            className={"ActionButton"}
+          <Button
+            m={1}
+            variant="outline"
+            variantColor="brand"
+            borderRadius="lg"
             onClick={() => this.graphRef.current.removeData()}
           >
             CLEAR DATA
-          </button>
+          </Button>
           <Graph ref={this.graphRef} neuronRef={this.neuronRef} />
         </Centered>
       </ProjectWrapper>

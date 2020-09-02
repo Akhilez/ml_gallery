@@ -52,7 +52,7 @@ export default function Navbar() {
       <MetaTags />
       <Flex as="nav" alignItems="center" justify="space-between" wrap="wrap">
         <GLink to={urls.profile} className="navbar-brand logo">
-          <Image src={ak_logo} height="40px" alt="ak_logo" />
+          <Image src={ak_logo} height="40px" alt="ak_logo" ml={2} />
         </GLink>
 
         <Box

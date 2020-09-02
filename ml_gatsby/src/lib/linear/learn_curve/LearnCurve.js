@@ -1,5 +1,5 @@
 import React from "react"
-import { ProjectWrapper } from "../../globals/GlobalWrapper"
+import { ProjectWrapper } from "src/lib/components/ProjectWrapper"
 import { Centered } from "../../components/commons"
 import AjaxTransporter from "../../utils/transporter/ajax_transporter"
 import NeuronGraphLearnCurve from "./neuron_graph_learn_curve"
@@ -14,6 +14,7 @@ import {
   Tooltip,
 } from "recharts"
 import { projects } from "../../globals/data"
+import { Button, Flex } from "@chakra-ui/core"
 
 export class LearnCurve extends React.Component {
   constructor(props) {
@@ -53,28 +54,36 @@ export class LearnCurve extends React.Component {
           <NeuronGraphLearnCurve ref={this.neuronRef} />
 
           {this.state.isTrainerInitialized && (
-            <button
-              className={"ActionButton"}
+            <Button
+              variantColor="brand"
+              borderRadius="lg"
+              m={1}
               onClick={() => this.startTraining()}
             >
               TRAIN
-            </button>
+            </Button>
           )}
           {this.state.isTrainerInitialized && (
-            <button
-              className={"PassiveButton"}
+            <Button
+              m={1}
+              variant="outline"
+              variantColor="brand"
+              borderRadius="lg"
               onClick={() => this.stopTraining()}
             >
               STOP
-            </button>
+            </Button>
           )}
           {this.state.isTrainerInitialized && (
-            <button
-              className={"PassiveButton"}
+            <Button
+              m={1}
+              variant="outline"
+              variantColor="brand"
+              borderRadius="lg"
               onClick={() => this.clearData()}
             >
               CLEAR
-            </button>
+            </Button>
           )}
 
           {this.state.isTrainerInitialized && this.getComplexityModifier()}
@@ -91,32 +100,41 @@ export class LearnCurve extends React.Component {
   }
 
   getComplexityModifier() {
-    let terms = ["y = "]
+    let terms = [<>y = </>]
 
     for (let i = 1; i <= this.state.order; i++) {
       terms.push(
-        <div className="inline" key={`eqn-${i}`}>
+        <div key={`eqn-${i}`}>
           w<sub>{i}</sub>x<sup>{this.state.order - i + 1}</sup> + &nbsp;
         </div>
       )
     }
-    terms.push("b")
+    terms.push(<>b</>)
 
     return (
       <div style={{ fontSize: 20, marginTop: 50 }}>
-        <div style={{ fontSize: 28, marginBottom: 20 }}>
+        <Flex fontSize={28} mb={5} justifyContent="center">
           {terms.map(item => item)} <br />
-        </div>
+        </Flex>
         Change Complexity:
-        <button className={"PassiveButton"} onClick={() => this.changeOrder(1)}>
+        <Button
+          variant="outline"
+          variantColor="brand"
+          ml={2}
+          size="sm"
+          onClick={() => this.changeOrder(1)}
+        >
           +
-        </button>
-        <button
-          className={"PassiveButton"}
+        </Button>
+        <Button
+          variant="outline"
+          variantColor="brand"
+          ml={2}
+          size="sm"
           onClick={() => this.changeOrder(-1)}
         >
           -
-        </button>
+        </Button>
       </div>
     )
   }

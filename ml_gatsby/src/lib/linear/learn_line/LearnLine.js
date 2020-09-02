@@ -1,6 +1,6 @@
 import React from "react"
 import { projects } from "src/lib/globals/data"
-import { ProjectWrapper } from "src/lib/globals/GlobalWrapper"
+import { ProjectWrapper } from "src/lib/components/ProjectWrapper"
 import MLHelper from "src/lib/linear/learn_line/neural_net"
 import { NumberInput, Flex, Button } from "@chakra-ui/core"
 import {
