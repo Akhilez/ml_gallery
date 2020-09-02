@@ -43,16 +43,8 @@ Deployed at: https://akhil.ai
    - Racer
  - Unsupervised Learning
    - AutoEncoder: V1
-   - AutoEncoder: V2 (VAE?)
-   - MNIST Feature Maps
+   - Self-Organizing Feature Maps
    - Memorize Please (Associative)
  - Miscellaneous
    - Spiking Neurons
    - MNIST Detection Dataset
-
-
-
----
-TODO:
- - Work on detection using mnist aug
-
