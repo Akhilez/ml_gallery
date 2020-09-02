@@ -13,7 +13,6 @@ import { BreadCrumb } from "./BreadCrumb"
 import { SideNav } from "./SideNav"
 import { ProjectPaginator } from "./ProjectPaginator"
 import React from "react"
-import { Link } from "gatsby"
 
 function ActionButtons({ project }) {
   return (
