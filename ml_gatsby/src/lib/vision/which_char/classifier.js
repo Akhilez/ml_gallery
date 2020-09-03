@@ -15,12 +15,14 @@ export default class MnistClassifier {
   }
 
   captureP5Image(pixels) {
-    let image = tf.scalar(255)
-    image = image.sub(tf.tensor(Array.from(pixels)))
-    image = image.div(255)
-    image = image.reshape([280, 280, 1])
-    //image = image.split(4, 2)[0]
-    image = image.resizeBilinear([28, 28]).reshape([1, 28, 28, 1])
+    let image = tf
+      .scalar(255)
+      .sub(tf.tensor(Array.from(pixels)))
+      .div(255)
+      .reshape([280, 280, 4])
+      .split(4, 2)[0]
+      .resizeBilinear([28, 28])
+      .reshape([1, 28, 28, 1])
 
     let output = this.model.predict(image)
     let predicted = output.argMax(1).dataSync()

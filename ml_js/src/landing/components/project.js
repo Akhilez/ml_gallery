@@ -1,7 +1,7 @@
 import React from "react";
 import Row from "react-bootstrap/Row";
 import CodeIcon from "@material-ui/icons/Code";
-import colabImage from "src/lib/landing/images/colab.png";
+import colabImage from "../images/colab.png";
 import "../landing.css";
 import { Centered } from "../../commons/components/components";
 
