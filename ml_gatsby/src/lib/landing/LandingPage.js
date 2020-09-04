@@ -1,7 +1,7 @@
 import React from "react"
 import MLLogo from "src/lib/media/ml_logo/ml_logo"
 import { projectCategories } from "src/lib/globals/data"
-import { urls } from "../globals/data"
+import { projects, urls } from "../globals/data"
 import colabImage from "src/lib/landing/images/colab.png"
 import { Container } from "../components/commons"
 import {
@@ -130,8 +130,9 @@ export default class LandingPage extends React.Component {
         <Button
           variant="outline"
           variantColor="brand"
+          borderRadius="lg"
           as={GLink}
-          to={"/learn_line"}
+          to={projects.learn_line.links.app}
         >
           Take a tour
         </Button>
