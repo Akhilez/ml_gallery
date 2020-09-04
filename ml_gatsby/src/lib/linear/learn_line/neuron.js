@@ -1,5 +1,7 @@
 import React from "react"
-import Sketch from "react-p5"
+import loadable from "@loadable/component"
+
+const Sketch = loadable(() => import("react-p5"))
 
 export default class Neuron extends React.Component {
   constructor(props) {

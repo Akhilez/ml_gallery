@@ -17,6 +17,7 @@
     "@chakra-ui/core": "^0.8.0",
     "@emotion/core": "^10.0.35",
     "@emotion/styled": "^10.0.27",
+    "@loadable/component": "^5.13.1",
     "@tensorflow/tfjs": "^1.7.4",
     "@tensorflow/tfjs-vis": "^1.4.3",
     "emotion-theming": "^10.0.27",

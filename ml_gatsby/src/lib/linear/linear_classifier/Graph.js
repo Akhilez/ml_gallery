@@ -1,9 +1,11 @@
 import LinearClassifierNeuron from "./Neuron"
 import TrainingTracker from "../../utils/training_tracker"
-import Sketch from "react-p5"
+import loadable from "@loadable/component"
 import React from "react"
 import Chartist from "../../utils/chartist"
 import { isCursorInScope } from "src/lib/utils/utils"
+
+const Sketch = loadable(() => import("react-p5"))
 
 export class Graph extends React.Component {
   constructor(props) {

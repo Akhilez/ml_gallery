@@ -1,6 +1,7 @@
 import React from "react"
-import Sketch from "react-p5"
 import { isCursorInScope } from "../../utils/utils"
+import loadable from "@loadable/component"
+const Sketch = loadable(() => import("react-p5"))
 
 export default class Graph extends React.Component {
   constructor(props) {

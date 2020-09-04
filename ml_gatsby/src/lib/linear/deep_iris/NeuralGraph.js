@@ -1,7 +1,9 @@
 import React from "react"
-import Sketch from "react-p5"
+import loadable from "@loadable/component"
 import petal_png from "./images/petal.png"
 import sepal_png from "./images/sepal.png"
+
+const Sketch = loadable(() => import("react-p5"))
 
 export default class NeuralGraphIris extends React.Component {
   constructor(props) {

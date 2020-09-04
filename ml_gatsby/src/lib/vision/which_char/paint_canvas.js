@@ -1,6 +1,7 @@
 import React from "react"
-import Sketch from "react-p5"
+import loadable from "@loadable/component"
 import { isCursorInScope } from "../../utils/utils"
+const Sketch = loadable(() => import("react-p5"))
 
 export default class NumberPaintCanvas extends React.Component {
   constructor(props) {
