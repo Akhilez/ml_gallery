@@ -6,7 +6,7 @@ export const MLPyHost = DEBUG
 export const HOST = DEBUG ? "http://localhost:8000" : "https://akhil.ai"
 
 export const urls = {
-  profile: "/",
+  profile: "https://akhil.ai",
   gallery: "/gallery",
   repo: "https://github.com/Akhilez/ml_gallery",
 }

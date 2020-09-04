@@ -5,11 +5,11 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )/.."
 cd $DIR
 echo "PWD: `pwd`"
 
-# Build the project
+# # Build the project
 npm run clean
 npm run build
 
-# Setup docker
+# # Setup docker
 cp deploy/Dockerfile public/
 cp deploy/nginx.conf public/
 cd public
