@@ -79,7 +79,7 @@ const projectsRaw = {
       app: "/gallery/vision/mnist_gan",
       source: "/mnist_gan",
       colab:
-        "https://colab.research.google.com/github/Akhilez/ml_gallery/blob/master/ml_py/MLGallery/vision/selective_generator/colab.ipynb",
+        "https://colab.research.google.com/github/Akhilez/ml_gallery/blob/master/ml_py/app/vision/selective_generator/colab.ipynb",
     },
   },
   colorizer: {
@@ -102,9 +102,9 @@ const projectsRaw = {
     links: {
       app: "/gallery/vision/number_detector",
       source:
-        "https://colab.research.google.com/github/Akhilez/ml_gallery/blob/master/ml_py/MLGallery/vision/detector_v1/colab_localization.ipynb",
+        "https://colab.research.google.com/github/Akhilez/ml_gallery/blob/master/ml_py/app/vision/detector_v1/colab_localization.ipynb",
       colab:
-        "https://colab.research.google.com/github/Akhilez/ml_gallery/blob/master/ml_py/MLGallery/vision/detector_v1/colab_localization.ipynb",
+        "https://colab.research.google.com/github/Akhilez/ml_gallery/blob/master/ml_py/app/vision/detector_v1/colab_localization.ipynb",
     },
   },
   find_all_chars: {
@@ -115,9 +115,9 @@ const projectsRaw = {
     links: {
       app: "/gallery/coming_soon",
       source:
-        "https://colab.research.google.com/github/Akhilez/ml_gallery/blob/master/ml_py/MLGallery/vision/detector_v1/colab_detection.ipynb",
+        "https://colab.research.google.com/github/Akhilez/ml_gallery/blob/master/ml_py/app/vision/detector_v1/colab_detection.ipynb",
       colab:
-        "https://colab.research.google.com/github/Akhilez/ml_gallery/blob/master/ml_py/MLGallery/vision/detector_v1/colab_detection.ipynb",
+        "https://colab.research.google.com/github/Akhilez/ml_gallery/blob/master/ml_py/app/vision/detector_v1/colab_detection.ipynb",
     },
   },
   find_all_chars_v2: {
