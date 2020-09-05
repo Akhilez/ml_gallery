@@ -1,6 +1,0 @@
-.idea/
-venv/
-dumps/
-node_modules/
-.git/
-package-lock.json
