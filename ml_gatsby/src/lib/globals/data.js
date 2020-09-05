@@ -100,7 +100,7 @@ const projectsRaw = {
     image: "find_number.png",
     status: "to_do",
     links: {
-      app: "/gallery/vision/number_detector",
+      app: "/gallery/vision/find_char",
       source:
         "https://colab.research.google.com/github/Akhilez/ml_gallery/blob/master/ml_py/app/vision/detector_v1/colab_localization.ipynb",
       colab:
@@ -341,10 +341,10 @@ export const categoriesMap = {
     title: "Computer Vision",
     projects: [
       projects.which_char,
-      projects.mnist_gan,
-      projects.colorizer,
       projects.find_char,
       projects.find_all_chars,
+      projects.mnist_gan,
+      projects.colorizer,
       projects.find_all_chars_v2,
       projects.image_attention,
       projects.style_transfer,

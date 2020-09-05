@@ -48,3 +48,39 @@ Deployed at: https://akhil.ai
  - Miscellaneous
    - Spiking Neurons
    - MNIST Detection Dataset
+
+---
+
+##### API Docs:
+
+A generic flow of control from ui to django:
+
+- api entrypoint => `/api/<project_id>/`
+- All actions are post requests with json body
+
+- Page loaded:
+  - Request:
+    ```json5
+    {
+      action: 'pre-init',
+      data: { /* ... */ }
+    }
+    ```
+- Action button clicked:
+    - Request
+      ```json5
+      {
+        job_id: 'uuid',  // Will not exist if initializing job
+        action: 'action_key',
+        new_job: true,  // If this is the first time calling. (No job_id at client.)
+        data: { /* ... */ }
+      }
+      ```
+    - Response
+      ```json5
+      {
+        job_id:  'uuid',  // Store this in client if it doesn't have job_id
+        action: 'action_key',
+        data: { /* ... */ }
+      }
+      ```

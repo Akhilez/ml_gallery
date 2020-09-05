@@ -18,6 +18,8 @@ function ActionButtons({ project }) {
   return (
     <Flex>
       <Button
+        as={CLink}
+        href="#how_it_works"
         variantColor="brand"
         variant="outline"
         size="sm"
