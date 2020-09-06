@@ -14,7 +14,6 @@ import {
 } from "recharts"
 import Neuron from "./neuron"
 import { Centered } from "src/lib/components/commons"
-import { HowItWorks } from "./HowItWorks"
 
 export class LearnLine extends React.Component {
   constructor(props) {
@@ -60,7 +59,6 @@ export class LearnLine extends React.Component {
             {this.state.didTrainingStart && this.getLossGraph()}
           </Flex>
         </Centered>
-        <HowItWorks />
       </ProjectWrapper>
     )
   }

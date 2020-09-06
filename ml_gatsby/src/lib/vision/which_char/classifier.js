@@ -11,6 +11,13 @@ export default class MnistClassifier {
     this.model = await tf.loadLayersModel(
       "https://storage.googleapis.com/akhilez/models/mnist_classifier/model.json"
     )
+    const lastLayer = this.model.layers[this.model.layers.length - 1]
+    console.log(lastLayer.getWeights())
+    lastLayer.setWeights([
+      tf.randomUniform([100, 10], 0.5, -0.5),
+      tf.zeros([10]),
+    ])
+    console.log(lastLayer)
     this.component.setState({ modelLoaded: true })
   }
 

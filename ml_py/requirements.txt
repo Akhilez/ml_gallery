@@ -11,3 +11,4 @@ django-cors-headers==3.4.0
 python-decouple==3.3
 django-webpack-loader==0.7.0
 pandas==1.0.5
+tensorflowjs==2.3.0
