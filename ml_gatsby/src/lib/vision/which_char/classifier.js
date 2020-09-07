@@ -22,7 +22,7 @@ export default class MnistClassifier {
   }
 
   captureP5Image(pixels) {
-    let image = tf
+    let image = tf // TODO: Figure out why RGBA is not working in linux.
       .scalar(255)
       .sub(tf.tensor(Array.from(pixels)))
       .div(255)
