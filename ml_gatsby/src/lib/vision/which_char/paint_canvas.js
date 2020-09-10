@@ -7,14 +7,7 @@ const Sketch = loadable(() => import("react-p5"))
 export default class NumberPaintCanvas extends React.Component {
   constructor(props) {
     super(props)
-
-    this.matrixSide = 28
-    this.scale = 5
-    this.side = this.matrixSide * this.scale
-    this.radius = 2
-
-    this.paintMatrix = this.getEmptyMatrix(this.matrixSide, this.matrixSide)
-
+    this.side = 140
     this.clearPaint = false
   }
 
@@ -35,7 +28,7 @@ export default class NumberPaintCanvas extends React.Component {
     p5.createCanvas(this.side, this.side).parent(parent)
     p5.frameRate(60)
     p5.colorMode(p5.RGB, 255)
-    p5.pixelDensity(2)
+    p5.pixelDensity(1)
     p5.background(255, 255, 255)
     // p5.filter(p5.BLUR, 2)
   }
@@ -56,6 +49,8 @@ export default class NumberPaintCanvas extends React.Component {
 
   mouseReleased(p5) {
     if (!isCursorInScope(p5, this.side, this.side)) return
+
+    p5.filter(p5.BLUR, 4)
 
     p5.loadPixels()
     this.props.parent.convNet.captureP5Image(p5.pixels)

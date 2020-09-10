@@ -26,7 +26,7 @@ export default class MnistClassifier {
       .scalar(255)
       .sub(tf.tensor(Array.from(pixels)))
       .div(255)
-      .reshape([280, 280, 4])
+      .reshape([140, 140, 4])
       .split(4, 2)[0]
       .resizeBilinear([28, 28])
       .reshape([1, 28, 28, 1])
