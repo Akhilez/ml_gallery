@@ -1,7 +1,8 @@
 import React from "react"
 import loadable from "@loadable/component"
-import { isCursorInScope } from "../../utils/utils"
+import { isCursorInScope } from "src/lib/utils/utils"
 const Sketch = loadable(() => import("react-p5"))
+// import Sketch from "react-p5";
 
 export default class NumberPaintCanvas extends React.Component {
   constructor(props) {
@@ -31,11 +32,12 @@ export default class NumberPaintCanvas extends React.Component {
 
   setup(p5, parent) {
     this.p5 = p5
-
     p5.createCanvas(this.side, this.side).parent(parent)
     p5.frameRate(60)
-
-    p5.background(255)
+    p5.colorMode(p5.RGB, 255)
+    p5.pixelDensity(2)
+    p5.background(255, 255, 255)
+    // p5.filter(p5.BLUR, 2)
   }
 
   draw(p5) {
@@ -43,21 +45,19 @@ export default class NumberPaintCanvas extends React.Component {
       if (p5.mouseButton === p5.LEFT) {
         p5.strokeWeight(15)
         p5.stroke(0)
-        p5.filter(p5.BLUR, 2)
         p5.line(p5.mouseX, p5.mouseY, p5.pmouseX, p5.pmouseY)
       }
     }
   }
 
   clearCanvas() {
-    this.p5.background(255)
+    this.p5.background(255, 255, 255)
   }
 
   mouseReleased(p5) {
     if (!isCursorInScope(p5, this.side, this.side)) return
 
     p5.loadPixels()
-    console.log(p5.pixels)
     this.props.parent.convNet.captureP5Image(p5.pixels)
   }
 
