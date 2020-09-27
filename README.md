@@ -35,6 +35,7 @@ Deployed at: https://akhil.ai
    - Next Char
    - Word To Vector: V1 (word2vec)
    - Next Word
+   - What Genre?
    - Word To Vector: V2 (BERT)
    - Next Sentence
  - Reinforcement Learning
