@@ -1,6 +1,7 @@
 import React from "react"
 import { ProjectWrapper } from "src/lib/components/ProjectWrapper"
 import { Centered } from "../../components/commons"
+import AjaxTransporter from "../../utils/transporter/ajax_transporter"
 import NeuronGraphLearnCurve from "./neuron_graph_learn_curve"
 import Graph from "./sketch_learn_curve"
 import {
@@ -14,7 +15,6 @@ import {
 } from "recharts"
 import { projects } from "../../globals/data"
 import { Button, Flex } from "@chakra-ui/core"
-import { LearnCurveTF } from "./tf_code"
 
 export class LearnCurve extends React.Component {
   constructor(props) {
@@ -29,7 +29,9 @@ export class LearnCurve extends React.Component {
     }
     this.project = projects.learn_curve
 
-    this.tf = new LearnCurveTF(this)
+    this.transporter = new AjaxTransporter("learn_curve", data =>
+      this.receive_data(data)
+    )
 
     this.x = null
     this.y = null
@@ -38,6 +40,9 @@ export class LearnCurve extends React.Component {
     this.neuronRef = React.createRef()
   }
 
+  componentDidMount() {
+    this.transporter.init()
+  }
   render() {
     return (
       <ProjectWrapper project={this.project}>
@@ -135,26 +140,90 @@ export class LearnCurve extends React.Component {
   }
 
   startTraining() {
-    // TODO: start training
+    let payload = {
+      action: "start_training",
+    }
+    this.transporter.send(payload)
+    this.setState({ isTraining: true })
+
+    let count = 0
+    let listener = setInterval(() => {
+      if (count > 100) {
+        this.transporter.send({ action: "stop_training" })
+        this.setState({ isTraining: false })
+        clearInterval(listener)
+      } else if (this.state.isTraining) {
+        this.transporter.send({ action: "listen" })
+      }
+      count++
+    }, 1000)
   }
 
   stopTraining() {
-    // TODO: Stop training
+    let payload = {
+      action: "stop_training",
+    }
+    this.transporter.send(payload)
+    this.setState({ isTraining: false })
+  }
+
+  receive_data(data) {
+    if (data.action === "status_update") {
+      this.updateTrainingStatus(data.data)
+    } else if (data.action === "init") {
+      this.transporter.job_id = data.job_id
+      this.x = data.data[0]
+      this.y = data.data[1]
+      this.setState({ isTrainerInitialized: true })
+      this.drawDataToCanvas(this.x, this.y)
+    }
+  }
+
+  updateTrainingStatus(data) {
+    this.setState({
+      loss: data.train_error,
+      lossData: this.state.lossData.concat([
+        { index: this.state.lossData.length, loss: data.train_error },
+      ]),
+    })
+    this.graphRef.current.weights = data.weights
+    this.neuronRef.current.weights = data.weights
+
+    if (data.is_training === false) this.setState({ isTraining: false })
   }
 
   changeOrder(change) {
-    // TODO: Change order
+    if (this.state.order <= 1 && change < 0) return
+
+    let newOrder = this.state.order + change
+
+    this.setState({ order: newOrder })
+
+    this.neuronRef.current.initializeWeights(newOrder)
+
+    this.transporter.send({
+      action: "change_order",
+      data: newOrder,
+    })
   }
 
   clearData() {
     this.graphRef.current.x = []
     this.graphRef.current.y = []
 
-    // TODO: Clear data
+    this.transporter.send({
+      action: "clear_data",
+    })
   }
 
   add_new_point(x, y) {
-    // TODO: Add new point
+    this.transporter.send({
+      action: "new_point",
+      data: {
+        x: x,
+        y: y,
+      },
+    })
   }
 
   getLossGraph() {
