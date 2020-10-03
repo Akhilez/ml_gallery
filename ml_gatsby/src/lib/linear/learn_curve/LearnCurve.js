@@ -14,22 +14,25 @@ import {
 } from "recharts"
 import { projects } from "../../globals/data"
 import { Button, Flex } from "@chakra-ui/core"
-import { LearnCurveTF } from "./tf_code"
+import { LearnCurveTF } from "./LearnCurveTF"
 
 export class LearnCurve extends React.Component {
   constructor(props) {
     super(props)
 
     this.state = {
+      setState: state => this.setState(state),
       order: 5,
       isTraining: false,
       loss: null,
       lossData: [],
-      isTrainerInitialized: false,
     }
+
+    this.stateOps = this.getStateOps()
+
     this.project = projects.learn_curve
 
-    this.tf = new LearnCurveTF(this)
+    this.tf = new LearnCurveTF(this.state)
 
     this.x = null
     this.y = null
@@ -42,13 +45,9 @@ export class LearnCurve extends React.Component {
     return (
       <ProjectWrapper project={this.project}>
         <Centered>
-          {!this.state.isTrainerInitialized && (
-            <p>Connecting to webserver ...</p>
-          )}
+          <NeuronGraphLearnCurve ref={this.neuronRef} tf={this.tf} />
 
-          <NeuronGraphLearnCurve ref={this.neuronRef} />
-
-          {this.state.isTrainerInitialized && (
+          {!this.state.isTraining && (
             <Button
               variantColor="brand"
               borderRadius="lg"
@@ -58,7 +57,7 @@ export class LearnCurve extends React.Component {
               TRAIN
             </Button>
           )}
-          {this.state.isTrainerInitialized && (
+          {this.state.isTraining && (
             <Button
               m={1}
               variant="outline"
@@ -69,29 +68,33 @@ export class LearnCurve extends React.Component {
               STOP
             </Button>
           )}
-          {this.state.isTrainerInitialized && (
-            <Button
-              m={1}
-              variant="outline"
-              variantColor="brand"
-              borderRadius="lg"
-              onClick={() => this.clearData()}
-            >
-              CLEAR
-            </Button>
-          )}
+          <Button
+            m={1}
+            variant="outline"
+            variantColor="brand"
+            borderRadius="lg"
+            onClick={() => this.clearData()}
+          >
+            CLEAR
+          </Button>
 
-          {this.state.isTrainerInitialized && this.getComplexityModifier()}
+          {this.getComplexityModifier()}
 
           <br />
           <Graph
             ref={this.graphRef}
             new_point_classback={(x, y) => this.add_new_point(x, y)}
           />
-          {this.state.isTrainerInitialized && this.getLossGraph()}
+          {this.getLossGraph()}
         </Centered>
       </ProjectWrapper>
     )
+  }
+
+  getStateOps() {
+    return {
+      setIsTraining: isTraining => this.setState({ isTraining: isTraining }),
+    }
   }
 
   getComplexityModifier() {
@@ -135,10 +138,12 @@ export class LearnCurve extends React.Component {
   }
 
   startTraining() {
+    this.stateOps.setIsTraining(true)
     // TODO: start training
   }
 
   stopTraining() {
+    this.stateOps.setIsTraining(false)
     // TODO: Stop training
   }
 

@@ -1,9 +1,20 @@
 import React from "react"
-import { LearnCurveTF } from "./tf_code"
+import { configure, shallow } from "enzyme"
+import Adapter from "enzyme-adapter-react-16"
 import { LearnCurve } from "./LearnCurve"
 
-test("order matches neural net size", () => {
-  const component = <LearnCurve />
-  const learnCurve = new LearnCurveTF(component)
-  console.log(learnCurve.getWeights())
+configure({ adapter: new Adapter() })
+
+describe("Learn Curve", () => {
+  test("order matches neural net size", () => {
+    const wrapper = shallow(<LearnCurve />)
+    const instance = wrapper.instance()
+
+    const passedOrder = instance.state.order
+    const weights = instance.tf.getWeights()
+
+    console.log(weights)
+
+    expect(passedOrder).toBe(weights.length)
+  })
 })

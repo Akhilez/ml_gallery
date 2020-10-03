@@ -6,7 +6,8 @@ const Sketch = loadable(() => import("react-p5"))
 export default class NeuronGraphLearnCurve extends React.Component {
   constructor(props) {
     super(props)
-    this.weights = [0, 0, 0, 0, 0, 0]
+
+    this.tf = props.tf
 
     this.width = 600
     this.height = 400
@@ -45,7 +46,8 @@ export default class NeuronGraphLearnCurve extends React.Component {
   }
 
   drawInputs() {
-    let n = this.weights.length
+    const weights = this.tf.getWeights()
+    let n = weights.length
 
     let leftX = this.cx - this.inputSpacing
     let rightX = this.cx + this.inputSpacing
@@ -67,13 +69,12 @@ export default class NeuronGraphLearnCurve extends React.Component {
     positions.sort()
 
     for (let i = 0; i < positions.length; i++) {
-      this.drawInputLine(positions[i], i)
+      this.drawInputLine(positions[i], i, weights[i], n)
     }
   }
 
-  drawInputLine(x, i) {
+  drawInputLine(x, i, weight, len) {
     let y = this.cy + this.weightLength
-    let weight = this.weights[i]
 
     if (weight < 0) this.p5.stroke(247, 120, 35)
     else this.p5.stroke(235, 16, 93)
@@ -90,8 +91,8 @@ export default class NeuronGraphLearnCurve extends React.Component {
     this.p5.pop()
 
     this.p5.textSize(18)
-    if (i === this.weights.length - 1) this.p5.text("1", x, y + 20)
-    else this.p5.text(`x^${this.weights.length - i - 1}`, x - 10, y + 20)
+    if (i === len - 1) this.p5.text("1", x, y + 20)
+    else this.p5.text(`x^${len - i - 1}`, x - 10, y + 20)
   }
 
   drawNeuron() {
@@ -110,11 +111,5 @@ export default class NeuronGraphLearnCurve extends React.Component {
 
   rescale(t) {
     return 5 * Math.tanh(t) ** 2 + 0.1
-  }
-
-  initializeWeights(order) {
-    let weights = []
-    for (let i = 0; i < order; i++) weights.push(0)
-    this.weights = weights
   }
 }
