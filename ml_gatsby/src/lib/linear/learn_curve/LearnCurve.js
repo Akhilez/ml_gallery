@@ -24,15 +24,13 @@ export class LearnCurve extends React.Component {
       setState: state => this.setState(state),
       order: 5,
       isTraining: false,
-      loss: null,
       lossData: [],
     }
 
-    this.stateOps = this.getStateOps()
-
     this.project = projects.learn_curve
 
-    this.tf = new LearnCurveTF(this.state)
+    this.tf = new LearnCurveTF()
+    this.tf.setOrder(this.state.order)
 
     this.x = null
     this.y = null
@@ -83,18 +81,13 @@ export class LearnCurve extends React.Component {
           <br />
           <Graph
             ref={this.graphRef}
+            tf={this.tf}
             new_point_classback={(x, y) => this.add_new_point(x, y)}
           />
           {this.getLossGraph()}
         </Centered>
       </ProjectWrapper>
     )
-  }
-
-  getStateOps() {
-    return {
-      setIsTraining: isTraining => this.setState({ isTraining: isTraining }),
-    }
   }
 
   getComplexityModifier() {
@@ -120,35 +113,42 @@ export class LearnCurve extends React.Component {
           variantColor="brand"
           ml={2}
           size="sm"
+          disabled={this.state.isTraining}
           onClick={() => this.changeOrder(1)}
         >
           +
         </Button>
-        <Button
-          variant="outline"
-          variantColor="brand"
-          ml={2}
-          size="sm"
-          onClick={() => this.changeOrder(-1)}
-        >
-          -
-        </Button>
+        {this.state.order > 1 && (
+          <Button
+            variant="outline"
+            variantColor="brand"
+            ml={2}
+            size="sm"
+            disabled={this.state.isTraining}
+            onClick={() => this.changeOrder(-1)}
+          >
+            -
+          </Button>
+        )}
       </div>
     )
   }
 
   startTraining() {
-    this.stateOps.setIsTraining(true)
-    // TODO: start training
+    this.setState({ isTraining: true })
+    this.tf.train(10000)
   }
 
   stopTraining() {
-    this.stateOps.setIsTraining(false)
-    // TODO: Stop training
+    this.setState({ isTraining: false })
+    this.tf.stopTraining()
   }
 
   changeOrder(change) {
-    // TODO: Change order
+    // change => integer that is the diff of current and the new
+    this.setState({ order: this.state.order + change }, () => {
+      this.tf.setOrder(this.state.order)
+    })
   }
 
   clearData() {

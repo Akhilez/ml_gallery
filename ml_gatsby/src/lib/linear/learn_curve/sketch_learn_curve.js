@@ -6,19 +6,24 @@ const Sketch = loadable(() => import("react-p5"))
 export default class Graph extends React.Component {
   constructor(props) {
     super(props)
+    this.tf = props.tf
 
     this.height = 800
     this.width = 800
 
     this.pointDiameter = 10
 
-    this.x = []
-    this.y = []
-
-    this.weights = [0, 0]
-
     this.cx = this.height / 2
     this.cy = this.width / 2
+
+    this.x = props.tf.data[2].arraySync()
+    this.y = props.tf.data[1].arraySync()
+
+    for (let i = 0; i < this.x.length; i++) {
+      const [x, y] = this.coordinatesToLengths(this.x[i], this.y[i])
+      this.x[i] = x
+      this.y[i] = y
+    }
 
     this.p5 = null
   }
@@ -66,7 +71,7 @@ export default class Graph extends React.Component {
     let x = []
     let increment = 0.01
     for (let i = -1; i <= 1; i += increment) x.push(i)
-    let y = this.getFunctionOutput(x)
+    let y = this.tf.predict(x)
 
     this.p5.stroke("red")
     this.p5.noFill()
@@ -88,19 +93,6 @@ export default class Graph extends React.Component {
     this.p5.strokeWeight(1)
     this.p5.line(0, this.cy, this.width, this.cy)
     this.p5.line(this.cx, 0, this.cx, this.height)
-  }
-
-  getFunctionOutput(x) {
-    let y = []
-    let n = this.weights.length - 1
-    for (let xi of x) {
-      let yi = this.weights[n]
-      for (let i = 0; i < n; i++) {
-        yi += Math.pow(xi, n - i) * this.weights[i]
-      }
-      y.push(yi)
-    }
-    return y
   }
 
   drawPoint(x, y) {
