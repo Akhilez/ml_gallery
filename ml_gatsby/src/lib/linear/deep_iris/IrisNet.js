@@ -5,20 +5,9 @@ export default class IrisNet {
   constructor(component) {
     this.component = component
 
-    let iris_x = iris.map(item => [
-      item.sepal_length,
-      item.sepal_width,
-      item.petal_length,
-      item.petal_width,
-    ])
-    this.trainingData = tf.tensor(iris_x)
-
-    let iris_y = iris.map(item => [
-      item.species === "setosa" ? 1 : 0,
-      item.species === "virginica" ? 1 : 0,
-      item.species === "versicolor" ? 1 : 0,
-    ])
-    this.outputData = tf.tensor(iris_y)
+    const [x, y] = this.getTrainingData()
+    this.x = x
+    this.y = y
 
     this.initialize_net()
 
@@ -53,35 +42,44 @@ export default class IrisNet {
     })
   }
 
-  async train() {
-    let self = this
-
-    function onEpochEnd(epoch, logs) {
-      self.component.setState({
-        lossData: self.component.state.lossData.concat([
+  train() {
+    const onEpochEnd = (epoch, logs) => {
+      this.component.setState({
+        lossData: this.component.state.lossData.concat([
           {
-            index: self.component.state.lossData.length,
+            index: this.component.state.lossData.length,
             loss: logs.loss,
           },
         ]),
       })
-      if (!self.component.state.isTraining) {
-        self.net.stopTraining = true
-      }
+      if (!this.component.state.isTraining) this.net.stopTraining = true
     }
 
-    let history = await this.net.fit(this.trainingData, this.outputData, {
-      epochs: 500,
+    this.net.fit(this.x, this.y, {
+      epochs: 10000,
       batchSize: 4,
-      callbacks: {
-        onEpochEnd,
-      },
+      callbacks: { onEpochEnd },
     })
-
-    if (this.component.state.isTraining) this.train()
   }
 
   predict(x) {
     return this.net.predict(x)
+  }
+
+  getTrainingData() {
+    let iris_x = iris.map(item => [
+      item.sepal_length,
+      item.sepal_width,
+      item.petal_length,
+      item.petal_width,
+    ])
+
+    let iris_y = iris.map(item => [
+      item.species === "setosa" ? 1 : 0,
+      item.species === "virginica" ? 1 : 0,
+      item.species === "versicolor" ? 1 : 0,
+    ])
+
+    return [tf.tensor(iris_x), tf.tensor(iris_y)]
   }
 }

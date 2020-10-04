@@ -13,6 +13,7 @@ import {
   YAxis,
 } from "recharts"
 import { Centered } from "../../components/commons"
+import { Box, Button } from "@chakra-ui/core"
 
 export class DeepIris extends React.Component {
   constructor(props) {
@@ -43,20 +44,25 @@ export class DeepIris extends React.Component {
           {this.UpdateLayersButtons()}
 
           {!this.state.isTraining && (
-            <button
-              className={"ActionButton"}
+            <Button
+              variantColor="brand"
+              borderRadius="lg"
+              m={1}
               onClick={() => this.startTraining()}
             >
               TRAIN
-            </button>
+            </Button>
           )}
           {this.state.isTraining && (
-            <button
-              className={"PassiveButton"}
+            <Button
+              m={1}
+              variant="outline"
+              variantColor="brand"
+              borderRadius="lg"
               onClick={() => this.stopTraining()}
             >
               STOP
-            </button>
+            </Button>
           )}
 
           <br />
@@ -118,21 +124,29 @@ export class DeepIris extends React.Component {
 
   UpdateLayersButtons() {
     return (
-      <div>
+      <Box mb={4}>
         Change Depth:
-        <button
-          className={"PassiveButton"}
+        <Button
+          variant="outline"
+          variantColor="brand"
+          ml={2}
+          size="sm"
+          disabled={() => this.state.isTraining}
           onClick={() => this.updateLayers(1)}
         >
           +
-        </button>
-        <button
-          className={"PassiveButton"}
+        </Button>
+        <Button
+          variant="outline"
+          variantColor="brand"
+          ml={2}
+          size="sm"
+          disabled={() => this.state.isTraining}
           onClick={() => this.updateLayers(-1)}
         >
           -
-        </button>
-      </div>
+        </Button>
+      </Box>
     )
   }
 }
