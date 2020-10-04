@@ -85,3 +85,12 @@ A generic flow of control from ui to django:
         data: { /* ... */ }
       }
       ```
+
+---
+
+TODO:
+
+- randomize data in learn_curve
+- Fix upside-down line in linear classifier
+- loss graph in linear classifier
+- Deep Iris

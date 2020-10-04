@@ -26,15 +26,16 @@ export class LearnCurveTF {
     return model
   }
 
-  train(epochs = 300) {
+  train(epochs = 300, onEpochEnd) {
     this.interrupt = null
     this.model
       .fit(this.data[0], this.data[1], {
         batchSize: 4,
         epochs: epochs,
         callbacks: {
-          onEpochEnd: epoch => {
+          onEpochEnd: (epoch, logs) => {
             if (this.interrupt) this.model.stopTraining = true
+            onEpochEnd(logs)
           },
         },
       })

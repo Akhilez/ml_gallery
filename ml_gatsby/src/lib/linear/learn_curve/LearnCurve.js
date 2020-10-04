@@ -80,14 +80,14 @@ export class LearnCurve extends React.Component {
           )}
 
           {this.state.warningMessage && (
-            <Alert status="warning">
+            <Alert status="warning" mt={4} w="md">
               <AlertIcon />
               {this.state.warningMessage}
               <CloseButton
                 position="absolute"
                 right="8px"
                 top="8px"
-                onClick={this.setState({ warningMessage: null })}
+                onClick={() => this.setState({ warningMessage: null })}
               />
             </Alert>
           )}
@@ -156,7 +156,13 @@ export class LearnCurve extends React.Component {
         warningMessage: "Click the box below to add training data",
       })
     this.setState({ isTraining: true })
-    this.tf.train(10000)
+    this.tf.train(10000, logs =>
+      this.setState({
+        lossData: this.state.lossData.concat([
+          { index: this.state.lossData.length, loss: logs.loss },
+        ]),
+      })
+    )
   }
 
   stopTraining() {
