@@ -13,7 +13,7 @@ import {
   Tooltip,
 } from "recharts"
 import { projects } from "../../globals/data"
-import { Button, Flex } from "@chakra-ui/core"
+import { Button, Flex, Alert, AlertIcon, CloseButton } from "@chakra-ui/core"
 import { LearnCurveTF } from "./LearnCurveTF"
 
 export class LearnCurve extends React.Component {
@@ -24,6 +24,7 @@ export class LearnCurve extends React.Component {
       setState: state => this.setState(state),
       order: 5,
       isTraining: false,
+      warningMessage: null,
       lossData: [],
     }
 
@@ -66,15 +67,30 @@ export class LearnCurve extends React.Component {
               STOP
             </Button>
           )}
-          <Button
-            m={1}
-            variant="outline"
-            variantColor="brand"
-            borderRadius="lg"
-            onClick={() => this.clearData()}
-          >
-            CLEAR
-          </Button>
+          {!this.state.isTraining && (
+            <Button
+              m={1}
+              variant="outline"
+              variantColor="brand"
+              borderRadius="lg"
+              onClick={() => this.clearData()}
+            >
+              CLEAR
+            </Button>
+          )}
+
+          {this.state.warningMessage && (
+            <Alert status="warning">
+              <AlertIcon />
+              {this.state.warningMessage}
+              <CloseButton
+                position="absolute"
+                right="8px"
+                top="8px"
+                onClick={this.setState({ warningMessage: null })}
+              />
+            </Alert>
+          )}
 
           {this.getComplexityModifier()}
 
@@ -82,7 +98,7 @@ export class LearnCurve extends React.Component {
           <Graph
             ref={this.graphRef}
             tf={this.tf}
-            new_point_classback={(x, y) => this.add_new_point(x, y)}
+            new_point_classback={(x, y) => this.tf.addNewPoint(x, y)}
           />
           {this.getLossGraph()}
         </Centered>
@@ -135,6 +151,10 @@ export class LearnCurve extends React.Component {
   }
 
   startTraining() {
+    if (this.tf.data == null)
+      return this.setState({
+        warningMessage: "Click the box below to add training data",
+      })
     this.setState({ isTraining: true })
     this.tf.train(10000)
   }
@@ -155,11 +175,7 @@ export class LearnCurve extends React.Component {
     this.graphRef.current.x = []
     this.graphRef.current.y = []
 
-    // TODO: Clear data
-  }
-
-  add_new_point(x, y) {
-    // TODO: Add new point
+    this.tf.data = null
   }
 
   getLossGraph() {

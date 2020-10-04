@@ -28,18 +28,20 @@ export class LearnCurveTF {
 
   train(epochs = 300) {
     this.interrupt = null
-    this.model.fit(this.data[0], this.data[1], {
-      batchSize: 4,
-      epochs: epochs,
-      callbacks: {
-        onEpochEnd: epoch => {
-          if (this.interrupt) {
-            this.model.stopTraining = true
-            this.interrupt = null
-          }
+    this.model
+      .fit(this.data[0], this.data[1], {
+        batchSize: 4,
+        epochs: epochs,
+        callbacks: {
+          onEpochEnd: epoch => {
+            if (this.interrupt) this.model.stopTraining = true
+          },
         },
-      },
-    })
+      })
+      .then(() => {
+        if (this.interrupt === "datasetUpdated") this.train(epochs)
+        this.interrupt = null
+      })
   }
 
   stopTraining() {
@@ -62,6 +64,19 @@ export class LearnCurveTF {
 
   getWeights() {
     return this.model.getWeights()[0].squeeze().dataSync()
+  }
+
+  addNewPoint(x, y) {
+    const higher_x = this.getHigherOrderInputs([x], this.order)
+
+    if (this.data == null) {
+      this.data = [tf.tensor(higher_x), tf.tensor([y]), tf.tensor([x])]
+    } else {
+      this.data[0] = this.data[0].concat(tf.tensor(higher_x))
+      this.data[1] = this.data[1].concat(tf.tensor([y]))
+      this.data[2] = this.data[2].concat(tf.tensor([x]))
+    }
+    this.interrupt = "datasetUpdated"
   }
 
   getData() {
