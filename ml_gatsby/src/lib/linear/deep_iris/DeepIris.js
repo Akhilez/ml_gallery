@@ -4,6 +4,8 @@ import { projects } from "../../globals/data"
 import IrisNet from "./IrisNet"
 import NeuralGraph from "./NeuralGraph"
 import {
+  Bar,
+  BarChart,
   CartesianGrid,
   Legend,
   Line,
@@ -36,6 +38,7 @@ export class DeepIris extends React.Component {
       petalHeight: (Math.random() + 0.5) * 50,
       sepalWidth: (Math.random() + 0.5) * 50,
       sepalHeight: (Math.random() + 0.5) * 50,
+      confidences: [0, 0, 0],
     }
 
     this.graphRef = React.createRef()
@@ -49,7 +52,7 @@ export class DeepIris extends React.Component {
             <this.Sliders />
             <NeuralGraph
               ref={this.graphRef}
-              appState={this.state}
+              state={this.state}
               actions={{
                 updateNeurons: (layerNumber, change) =>
                   this.updateNeurons(layerNumber, change),
@@ -81,8 +84,6 @@ export class DeepIris extends React.Component {
               STOP
             </Button>
           )}
-
-          <br />
 
           {this.getLossGraph()}
         </Centered>
@@ -148,7 +149,7 @@ export class DeepIris extends React.Component {
           variantColor="brand"
           ml={2}
           size="sm"
-          disabled={() => this.state.isTraining}
+          isDisabled={this.state.isTraining}
           onClick={() => this.updateLayers(1)}
         >
           +
@@ -158,7 +159,7 @@ export class DeepIris extends React.Component {
           variantColor="brand"
           ml={2}
           size="sm"
-          disabled={() => this.state.isTraining}
+          isDisabled={this.state.isTraining}
           onClick={() => this.updateLayers(-1)}
         >
           -
@@ -168,7 +169,29 @@ export class DeepIris extends React.Component {
   }
 
   PredictionChart = () => {
-    return <Box>chart</Box>
+    let confidences = this.irisNet.predict([
+      [
+        this.state.sepalHeight,
+        this.state.sepalWidth,
+        this.state.petalHeight,
+        this.state.petalWidth,
+      ],
+    ])
+
+    confidences = confidences.map(confidence => {
+      return { confidence }
+    })
+
+    return (
+      <Box>
+        <BarChart width={200} height={100} data={confidences} layout="vertical">
+          <XAxis type="number" hide />
+          <YAxis type="category" hide />
+          <Tooltip />
+          <Bar dataKey="confidence" fill="#f62252" />
+        </BarChart>
+      </Box>
+    )
   }
 
   Sliders = () => {

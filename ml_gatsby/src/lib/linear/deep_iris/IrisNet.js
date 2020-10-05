@@ -63,23 +63,26 @@ export default class IrisNet {
   }
 
   predict(x) {
-    return this.net.predict(x)
+    x = tf.tensor(x).div(100)
+    return this.net.predict(x).squeeze().arraySync()
   }
 
   getTrainingData() {
-    let iris_x = iris.map(item => [
+    const iris_x = iris.map(item => [
       item.sepal_length,
       item.sepal_width,
       item.petal_length,
       item.petal_width,
     ])
 
-    let iris_y = iris.map(item => [
+    const iris_y = iris.map(item => [
       item.species === "setosa" ? 1 : 0,
       item.species === "virginica" ? 1 : 0,
       item.species === "versicolor" ? 1 : 0,
     ])
 
-    return [tf.tensor(iris_x), tf.tensor(iris_y)]
+    const x = tf.tensor(iris_x).div(8)
+
+    return [x, tf.tensor(iris_y)]
   }
 }

@@ -9,7 +9,7 @@ export default class NeuralGraphIris extends React.Component {
   constructor(props) {
     super(props)
 
-    this.appState = props.appState
+    this.state = props.state
 
     this.width = 800
     this.height = 500
@@ -60,14 +60,14 @@ export default class NeuralGraphIris extends React.Component {
     let x_start = this.flowerSide
 
     this.draw_layer(4, x_start, -1, true)
-    for (let i = 0; i < this.appState.nNeurons.length; i++) {
+    for (let i = 0; i < this.state.nNeurons.length; i++) {
       this.draw_layer(
-        this.appState.nNeurons[i],
+        this.state.nNeurons[i],
         x_start + this.layerSpacing * (i + 1),
         i
       )
     }
-    x_start = x_start + this.layerSpacing * (this.appState.nNeurons.length + 1)
+    x_start = x_start + this.layerSpacing * (this.state.nNeurons.length + 1)
     this.draw_layer(3, x_start, -1, true)
 
     if (x_start + this.classificationWidth !== this.width) {
@@ -112,10 +112,7 @@ export default class NeuralGraphIris extends React.Component {
     this.p5.text("-", x + 7, y + 16 + side)
     this.p5.pop()
 
-    if (
-      this.neuronUpdateClickActions.length <
-      2 * this.appState.nNeurons.length
-    ) {
+    if (this.neuronUpdateClickActions.length < 2 * this.state.nNeurons.length) {
       this.neuronUpdateClickActions.push({
         x: x,
         y: y,
@@ -129,7 +126,7 @@ export default class NeuralGraphIris extends React.Component {
         h: side,
         w: side,
         action: () => {
-          if (this.appState.nNeurons[index] > 1)
+          if (this.state.nNeurons[index] > 1)
             this.props.actions.updateNeurons(index, -1)
         },
       })
@@ -209,18 +206,18 @@ export default class NeuralGraphIris extends React.Component {
 
     this.p5.image(
       this.petalImg,
-      cx - this.appState.petalWidth / 2,
-      this.cy - this.appState.petalHeight,
-      this.appState.petalWidth,
-      this.appState.petalHeight
+      cx - this.state.petalWidth / 2,
+      this.cy - this.state.petalHeight,
+      this.state.petalWidth,
+      this.state.petalHeight
     )
 
     this.p5.image(
       this.sepalImg,
-      cx - this.appState.sepalWidth / 2,
+      cx - this.state.sepalWidth / 2,
       this.cy,
-      this.appState.sepalWidth,
-      this.appState.sepalHeight
+      this.state.sepalWidth,
+      this.state.sepalHeight
     )
   }
 
