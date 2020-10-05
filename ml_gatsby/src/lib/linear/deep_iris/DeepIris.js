@@ -13,7 +13,16 @@ import {
   YAxis,
 } from "recharts"
 import { Centered } from "../../components/commons"
-import { Box, Button } from "@chakra-ui/core"
+import {
+  Box,
+  Button,
+  Flex,
+  Slider,
+  SliderTrack,
+  SliderFilledTrack,
+  SliderThumb,
+  Text,
+} from "@chakra-ui/core"
 
 export class DeepIris extends React.Component {
   constructor(props) {
@@ -23,6 +32,10 @@ export class DeepIris extends React.Component {
       nNeurons: [6, 4],
       isTraining: false,
       lossData: [],
+      petalWidth: (Math.random() + 0.5) * 50,
+      petalHeight: (Math.random() + 0.5) * 50,
+      sepalWidth: (Math.random() + 0.5) * 50,
+      sepalHeight: (Math.random() + 0.5) * 50,
     }
 
     this.graphRef = React.createRef()
@@ -32,14 +45,18 @@ export class DeepIris extends React.Component {
     return (
       <ProjectWrapper project={this.project}>
         <Centered>
-          <NeuralGraph
-            ref={this.graphRef}
-            appState={this.state}
-            actions={{
-              updateNeurons: (layerNumber, change) =>
-                this.updateNeurons(layerNumber, change),
-            }}
-          />
+          <Flex justifyContent="center" alignItems="center">
+            <this.Sliders />
+            <NeuralGraph
+              ref={this.graphRef}
+              appState={this.state}
+              actions={{
+                updateNeurons: (layerNumber, change) =>
+                  this.updateNeurons(layerNumber, change),
+              }}
+            />
+            <this.PredictionChart />
+          </Flex>
 
           {this.UpdateLayersButtons()}
 
@@ -146,6 +163,76 @@ export class DeepIris extends React.Component {
         >
           -
         </Button>
+      </Box>
+    )
+  }
+
+  PredictionChart = () => {
+    return <Box>chart</Box>
+  }
+
+  Sliders = () => {
+    return (
+      <Box w="100px" mr={4}>
+        <Text textAlign="left" fontSize="sm">
+          Sepal Height
+        </Text>
+
+        <Slider
+          mb={4}
+          value={this.state.sepalHeight}
+          color="brand"
+          onChange={value => this.setState({ sepalHeight: value })}
+        >
+          <SliderTrack />
+          <SliderFilledTrack />
+          <SliderThumb />
+        </Slider>
+
+        <Text textAlign="left" fontSize="sm">
+          Sepal Width
+        </Text>
+
+        <Slider
+          mb={4}
+          value={this.state.sepalWidth}
+          color="brand"
+          onChange={value => this.setState({ sepalWidth: value })}
+        >
+          <SliderTrack />
+          <SliderFilledTrack />
+          <SliderThumb />
+        </Slider>
+
+        <Text textAlign="left" fontSize="sm">
+          Petal Height
+        </Text>
+
+        <Slider
+          mb={4}
+          value={this.state.petalHeight}
+          color="brand"
+          onChange={value => this.setState({ petalHeight: value })}
+        >
+          <SliderTrack />
+          <SliderFilledTrack />
+          <SliderThumb />
+        </Slider>
+
+        <Text textAlign="left" fontSize="sm">
+          Petal Width
+        </Text>
+
+        <Slider
+          mb={4}
+          value={this.state.petalWidth}
+          color="brand"
+          onChange={value => this.setState({ petalWidth: value })}
+        >
+          <SliderTrack />
+          <SliderFilledTrack />
+          <SliderThumb />
+        </Slider>
       </Box>
     )
   }

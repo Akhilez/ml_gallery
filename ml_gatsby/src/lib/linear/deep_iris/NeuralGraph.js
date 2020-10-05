@@ -11,13 +11,6 @@ export default class NeuralGraphIris extends React.Component {
 
     this.appState = props.appState
 
-    this.state = {
-      petalWidth: (Math.random() + 0.5) * 50,
-      petalHeight: (Math.random() + 0.5) * 50,
-      sepalWidth: (Math.random() + 0.5) * 50,
-      sepalHeight: (Math.random() + 0.5) * 50,
-    }
-
     this.width = 800
     this.height = 500
 
@@ -30,7 +23,6 @@ export default class NeuralGraphIris extends React.Component {
     this.windowPadding = 10
 
     this.flowerSide = 100
-    this.sliderWidth = 100
     this.classificationWidth = 100
 
     this.petalImg = null
@@ -58,15 +50,14 @@ export default class NeuralGraphIris extends React.Component {
     p5.frameRate(10)
 
     p5.angleMode(p5.DEGREES)
+    p5.noStroke()
+    p5.fill("red")
   }
 
   draw(p5) {
     p5.background(243)
 
-    this.drawFlower()
-    this.drawSliders()
-
-    let x_start = this.flowerSide + this.sliderWidth
+    let x_start = this.flowerSide
 
     this.draw_layer(4, x_start, -1, true)
     for (let i = 0; i < this.appState.nNeurons.length; i++) {
@@ -78,8 +69,6 @@ export default class NeuralGraphIris extends React.Component {
     }
     x_start = x_start + this.layerSpacing * (this.appState.nNeurons.length + 1)
     this.draw_layer(3, x_start, -1, true)
-
-    this.drawClassificationBox(x_start)
 
     if (x_start + this.classificationWidth !== this.width) {
       this.width = x_start + this.classificationWidth
@@ -110,8 +99,19 @@ export default class NeuralGraphIris extends React.Component {
   }
 
   drawUpdateNeuronsButtons(index, x, y) {
-    this.p5.rect(x, y, 10, 10)
-    this.p5.rect(x, y + 10, 10, 10)
+    const side = 20
+    x -= side / 2
+    y -= side
+    this.p5.rect(x, y, side, side)
+    this.p5.rect(x, y + side, side, side)
+
+    this.p5.push()
+    this.p5.textSize(20)
+    this.p5.fill("white")
+    this.p5.text("+", x + 4, y + 16)
+    this.p5.text("-", x + 7, y + 16 + side)
+    this.p5.pop()
+
     if (
       this.neuronUpdateClickActions.length <
       2 * this.appState.nNeurons.length
@@ -119,21 +119,82 @@ export default class NeuralGraphIris extends React.Component {
       this.neuronUpdateClickActions.push({
         x: x,
         y: y,
-        h: 10,
-        w: 10,
+        h: side,
+        w: side,
         action: () => this.props.actions.updateNeurons(index, 1),
       })
       this.neuronUpdateClickActions.push({
         x: x,
-        y: y + 10,
-        h: 10,
-        w: 10,
+        y: y + side,
+        h: side,
+        w: side,
         action: () => {
           if (this.appState.nNeurons[index] > 1)
             this.props.actions.updateNeurons(index, -1)
         },
       })
     }
+  }
+
+  drawFlower2({ petalWidth, petalHeight, sepalWidth, sepalHeight }) {
+    this.p5.rect(
+      0,
+      this.cy - this.flowerSide / 2,
+      this.flowerSide,
+      this.flowerSide
+    )
+    this.drawSepal(0, this.cy - this.flowerSide / 2, sepalHeight, sepalWidth)
+    this.drawPetal(
+      this.flowerSide / 2,
+      this.cy - this.flowerSide / 2,
+      petalHeight,
+      petalWidth
+    )
+    this.drawSepal(
+      this.flowerSide,
+      this.cy - this.flowerSide / 2,
+      sepalHeight,
+      sepalWidth
+    )
+
+    this.drawPetal(0, this.cy, petalHeight, petalWidth)
+    this.drawFlowerCenter(this.flowerSide / 2, this.cy, sepalHeight, sepalWidth)
+    this.drawPetal(this.flowerSide, this.cy, petalHeight, petalWidth)
+
+    this.drawSepal(0, this.cy + this.flowerSide / 2, sepalHeight, sepalWidth)
+    this.drawPetal(
+      this.flowerSide / 2,
+      this.cy + this.flowerSide / 2,
+      petalHeight,
+      petalWidth
+    )
+    this.drawSepal(
+      this.flowerSide,
+      this.cy + this.flowerSide / 2,
+      sepalHeight,
+      sepalWidth
+    )
+  }
+
+  drawSepal(x, y, height, width) {
+    const color = this.p5.color("green")
+    color.setAlpha(100)
+    this.p5.fill(color)
+    this.p5.circle(x, y, height)
+  }
+
+  drawPetal(x, y, height, width) {
+    const color = this.p5.color("red")
+    color.setAlpha(100)
+    this.p5.fill(color)
+    this.p5.circle(x, y, height)
+  }
+
+  drawFlowerCenter(x, y, height, width) {
+    const color = this.p5.color("black")
+    color.setAlpha(100)
+    this.p5.fill(color)
+    this.p5.circle(x, y, height)
   }
 
   drawFlower() {
@@ -148,27 +209,18 @@ export default class NeuralGraphIris extends React.Component {
 
     this.p5.image(
       this.petalImg,
-      cx - this.state.petalWidth / 2,
-      this.cy - this.state.petalHeight,
-      this.state.petalWidth,
-      this.state.petalHeight
+      cx - this.appState.petalWidth / 2,
+      this.cy - this.appState.petalHeight,
+      this.appState.petalWidth,
+      this.appState.petalHeight
     )
 
     this.p5.image(
       this.sepalImg,
-      cx - this.state.petalWidth / 2,
+      cx - this.appState.sepalWidth / 2,
       this.cy,
-      this.state.petalWidth,
-      this.state.petalHeight
-    )
-  }
-
-  drawSliders() {
-    this.p5.rect(
-      this.flowerSide,
-      this.cy - this.sliderWidth / 2,
-      this.sliderWidth,
-      this.sliderWidth
+      this.appState.sepalWidth,
+      this.appState.sepalHeight
     )
   }
 
