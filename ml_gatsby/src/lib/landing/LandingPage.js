@@ -29,6 +29,7 @@ class Project extends React.Component {
         p={4}
         borderRadius="15px"
         mx={2}
+        minH="550px"
         className="ProjectContainer"
       >
         <this.ProjectImage project={this.props.project} />

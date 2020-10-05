@@ -72,7 +72,7 @@ export default class NeuralGraphIris extends React.Component {
 
     if (x_start + this.classificationWidth !== this.width) {
       this.width = x_start + this.classificationWidth
-      this.p5.resizeCanvas(x_start + this.classificationWidth, this.height)
+      this.p5.resizeCanvas(this.width, this.height)
     }
   }
 

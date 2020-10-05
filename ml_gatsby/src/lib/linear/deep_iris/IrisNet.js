@@ -26,7 +26,7 @@ export default class IrisNet {
         tf.layers.dense({
           units: this.component.state.nNeurons[0],
           inputShape: [4],
-          activation: "sigmoid",
+          activation: "relu",
         })
       )
       this.component.state.nNeurons.forEach((nNeurons, index) => {
@@ -37,8 +37,9 @@ export default class IrisNet {
       this.net.add(tf.layers.dense({ units: 3, activation: "softmax" }))
     }
     this.net.compile({
-      loss: "meanSquaredError",
-      optimizer: tf.train.adam(0.001),
+      loss: "categoricalCrossentropy",
+      optimizer: "adam",
+      metrics: ["accuracy"],
     })
   }
 
@@ -68,21 +69,31 @@ export default class IrisNet {
   }
 
   getTrainingData() {
-    const iris_x = iris.map(item => [
-      item.sepal_length,
-      item.sepal_width,
-      item.petal_length,
-      item.petal_width,
-    ])
+    const x = this.normalize(
+      iris.map(item => [
+        item.sepal_length,
+        item.sepal_width,
+        item.petal_length,
+        item.petal_width,
+      ])
+    )
 
-    const iris_y = iris.map(item => [
-      item.species === "setosa" ? 1 : 0,
-      item.species === "virginica" ? 1 : 0,
-      item.species === "versicolor" ? 1 : 0,
-    ])
+    const y = tf.tensor(
+      iris.map(item => [
+        item.species === "setosa" ? 1 : 0,
+        item.species === "versicolor" ? 1 : 0,
+        item.species === "virginica" ? 1 : 0,
+      ])
+    )
 
-    const x = tf.tensor(iris_x).div(8)
+    return [x, y]
+  }
 
-    return [x, tf.tensor(iris_y)]
+  normalize(x) {
+    // x is list of lists of size 4
+    x = tf.tensor(x)
+    const mins = tf.tensor([4.5, 2.5, 1, 0])
+    const maxes = tf.tensor([2.1, 1, 4.6, 2.1])
+    return x.sub(mins).div(maxes)
   }
 }

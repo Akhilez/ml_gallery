@@ -1,4 +1,4 @@
-import React from "react"
+import React, { Fragment } from "react"
 import { ProjectWrapper } from "../../components/ProjectWrapper"
 import { projects } from "../../globals/data"
 import IrisNet from "./IrisNet"
@@ -24,6 +24,8 @@ import {
   SliderFilledTrack,
   SliderThumb,
   Text,
+  Stack,
+  Heading,
 } from "@chakra-ui/core"
 
 export class DeepIris extends React.Component {
@@ -85,9 +87,70 @@ export class DeepIris extends React.Component {
             </Button>
           )}
 
+          <this.Samples />
+
           {this.getLossGraph()}
         </Centered>
       </ProjectWrapper>
+    )
+  }
+
+  Samples = () => {
+    return (
+      <Box>
+        <Text mt={6} mb={4}>
+          Click a sample class below to copy
+        </Text>
+        <Flex justifyContent="center">
+          <this.SampleBox values={[20.24, 92.8, 9.24, 9.84]} cls="Satosa" />
+          <this.SampleBox values={[57.44, 27, 65.2, 53.04]} cls="Versicolor" />
+          <this.SampleBox
+            values={[83.52, 47.4, 91.04, 81.04]}
+            cls="Virginica"
+          />
+        </Flex>
+      </Box>
+    )
+  }
+
+  SampleBox = ({ values, cls }) => {
+    const texts = ["Sepal Height", "Sepal Width", "Petal Height", "Petal Width"]
+    return (
+      <Stack
+        width="200px"
+        bg="white"
+        p={4}
+        borderRadius="15px"
+        mx={2}
+        className="ProjectContainer"
+        onClick={() =>
+          this.setState({
+            sepalHeight: values[0],
+            sepalWidth: values[1],
+            petalHeight: values[2],
+            petalWidth: values[3],
+          })
+        }
+      >
+        <Box className="project-text-block">
+          <Heading as="h2" fontSize="xl" mb={4}>
+            {cls}
+          </Heading>
+          {values.map((value, index) => (
+            <Fragment key={index}>
+              <Text textAlign="left" fontSize="md" mt={4}>
+                {texts[index]}
+              </Text>
+              <Slider value={value} color="brand" isDisabled max={100} min={0}>
+                <SliderTrack />
+                <SliderFilledTrack />
+                <SliderThumb />
+              </Slider>
+            </Fragment>
+          ))}
+        </Box>
+        {this?.props?.children}
+      </Stack>
     )
   }
 
@@ -138,6 +201,7 @@ export class DeepIris extends React.Component {
       this.setState({ nNeurons: this.state.nNeurons })
     }
     this.irisNet.initialize_net()
+    this.graphRef.current.neuronUpdateClickActions = []
   }
 
   UpdateLayersButtons() {
@@ -177,9 +241,9 @@ export class DeepIris extends React.Component {
         this.state.petalWidth,
       ],
     ])
-
-    confidences = confidences.map(confidence => {
-      return { confidence }
+    const classes = ["Setosa", "Versicolor", "Virginica"]
+    confidences = confidences.map((confidence, index) => {
+      return { confidence, label: classes[index] }
     })
 
     return (
@@ -188,7 +252,7 @@ export class DeepIris extends React.Component {
           <XAxis type="number" hide />
           <YAxis type="category" hide />
           <Tooltip />
-          <Bar dataKey="confidence" fill="#f62252" />
+          <Bar dataKey="confidence" nameKey="label" fill="#f62252" />
         </BarChart>
       </Box>
     )
