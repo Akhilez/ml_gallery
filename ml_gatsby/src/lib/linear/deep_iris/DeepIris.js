@@ -133,7 +133,7 @@ export class DeepIris extends React.Component {
         }
       >
         <Box className="project-text-block">
-          <Heading as="h2" fontSize="xl" mb={4}>
+          <Heading as="h2" fontSize="xl" mb={6}>
             {cls}
           </Heading>
           {values.map((value, index) => (

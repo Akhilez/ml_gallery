@@ -1,5 +1,9 @@
 import * as tf from "@tensorflow/tfjs"
 import * as tfvis from "@tensorflow/tfjs-vis"
+import { pagesReducer } from "gatsby/dist/redux/reducers/pages"
+
+const modelUrl =
+  "https://storage.googleapis.com/akhilez/models/mnist_classifier/model.json"
 
 export default class MnistClassifier {
   constructor(component) {
@@ -8,21 +12,42 @@ export default class MnistClassifier {
   }
 
   async initialize_model() {
-    this.model = await tf.loadLayersModel(
-      "https://storage.googleapis.com/akhilez/models/mnist_classifier/model.json"
-    )
+    this.model = await tf.loadLayersModel(modelUrl)
+
     const lastLayer = this.model.layers[this.model.layers.length - 1]
-    console.log(lastLayer.getWeights())
     lastLayer.setWeights([
       tf.randomUniform([100, 10], 0.5, -0.5),
       tf.zeros([10]),
     ])
-    console.log(lastLayer)
+    for (let i = 0; i < this.model.layers.length - 1; i++)
+      this.model.layers[i].trainable = false
+    console.log(this.model.layers[0])
+    console.log(this.model.layers[0].setTrainable)
     this.component.setState({ modelLoaded: true })
   }
 
-  captureP5Image(pixels) {
-    let image = tf // TODO: Figure out why RGBA is not working in linux.
+  async train() {
+    const batch = require(`src/data/mnist/batch_0.json`)
+    const x = tf
+      .tensor(batch.map(sample => sample.image))
+      .reshape([-1, 28, 28, 1])
+    const y = tf.tensor(batch.map(sample => sample.class))
+    console.log(x.shape, y.shape)
+
+    this.model.fit(x, y, {
+      epochs: 1000,
+      batchSize: 4,
+      callbacks: {
+        onEpochEnd: (epoch, logs) => {
+          this.model.stopTraining = !this.component.state.isTraining
+          this.model.layers[0].getWeights()[1].print()
+        },
+      },
+    })
+  }
+
+  pixToTensor(pixels) {
+    return tf
       .scalar(255)
       .sub(tf.tensor(Array.from(pixels)))
       .div(255)
@@ -30,11 +55,16 @@ export default class MnistClassifier {
       .split(4, 2)[0]
       .resizeBilinear([28, 28])
       .reshape([1, 28, 28, 1])
+  }
 
-    let output = this.model.predict(image)
-    let predicted = output.argMax(1).dataSync()
-    output.print()
-    this.component.setState({ predicted: predicted })
+  predict(pixels) {
+    let image = this.pixToTensor(pixels)
+
+    const output = this.model.predict(image)
+    const confidences = output.mul(100).arraySync()
+    const predicted = output.argMax(1).dataSync()
+
+    this.component.setState({ predicted: predicted, confidences: confidences })
   }
 
   async plotImage(image) {

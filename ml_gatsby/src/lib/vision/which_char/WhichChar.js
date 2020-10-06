@@ -5,6 +5,8 @@ import MnistClassifier from "./classifier"
 import { Centered } from "../../components/commons"
 import { MdRefresh } from "react-icons/all"
 import NumberPaintCanvas from "./paint_canvas"
+import { Box } from "@chakra-ui/core"
+import { Bar, BarChart, Tooltip, XAxis, YAxis } from "recharts"
 
 export class WhichChar extends React.Component {
   constructor(props) {
@@ -15,6 +17,7 @@ export class WhichChar extends React.Component {
       lossData: [],
       modelLoaded: false,
       predicted: null,
+      confidences: [],
     }
 
     this.project = projects.which_char
@@ -30,23 +33,16 @@ export class WhichChar extends React.Component {
     return (
       <ProjectWrapper project={this.project}>
         <Centered>
-          {!this.state.modelLoaded && (
-            <>
-              Loading model...
-              <br />
-            </>
-          )}
+          {!this.state.modelLoaded && "Loading model..."}
 
           {this.state.modelLoaded && (
             <>
               <NumberPaintCanvas ref={this.paintCanvasRef} parent={this} />
-              <div>
-                <MdRefresh
-                  onClick={() => this.paintCanvasRef.current.clearCanvas()}
-                />
-                <br />
-                Predicted: {this.state.predicted}
-              </div>
+              <MdRefresh
+                onClick={() => this.paintCanvasRef.current.clearCanvas()}
+              />
+              Predicted: {this.state.predicted}
+              <this.PredictionChart />
             </>
           )}
         </Centered>
@@ -57,4 +53,21 @@ export class WhichChar extends React.Component {
   startTraining() {}
 
   stopTraining() {}
+
+  PredictionChart = () => {
+    const confidences = this.state.confidences?.map((confidence, index) => {
+      return { confidence, label: index }
+    })
+
+    return (
+      <Box>
+        <BarChart width={200} height={100} data={confidences}>
+          <XAxis type="category" hide />
+          <YAxis type="number" hide />
+          <Tooltip />
+          <Bar label dataKey="confidence" nameKey="label" fill="#f62252" />
+        </BarChart>
+      </Box>
+    )
+  }
 }

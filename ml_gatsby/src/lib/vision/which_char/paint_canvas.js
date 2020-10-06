@@ -53,7 +53,7 @@ export default class NumberPaintCanvas extends React.Component {
     p5.filter(p5.BLUR, 4)
 
     p5.loadPixels()
-    this.props.parent.convNet.captureP5Image(p5.pixels)
+    this.props.parent.convNet.predict(p5.pixels)
   }
 
   getEmptyMatrix(r, c) {
