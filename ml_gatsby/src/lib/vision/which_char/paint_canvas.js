@@ -1,25 +1,52 @@
 import React from "react"
 import loadable from "@loadable/component"
 import { isCursorInScope } from "src/lib/utils/utils"
+import {
+  Box,
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+  PopoverArrow,
+  PopoverBody,
+  PopoverCloseButton,
+} from "@chakra-ui/core"
+
 const Sketch = loadable(() => import("react-p5"))
 // import Sketch from "react-p5";
 
 export default class NumberPaintCanvas extends React.Component {
   constructor(props) {
     super(props)
+    this.state = {
+      isPopupOpen: true,
+    }
     this.side = 140
     this.clearPaint = false
   }
 
   render() {
     return (
-      <div>
-        <Sketch
-          setup={(p5, parent) => this.setup(p5, parent)}
-          draw={p5 => this.draw(p5)}
-          mouseReleased={p5 => this.mouseReleased(p5)}
-        />
-      </div>
+      <Popover
+        isOpen={this.state.isPopupOpen}
+        onClose={() => this.setState({ isPopupOpen: false })}
+        placement="top"
+        initialFocusRef={this}
+      >
+        <PopoverTrigger>
+          <Box {...this.props} w="144px" border="2px solid red">
+            <Sketch
+              setup={(p5, parent) => this.setup(p5, parent)}
+              draw={p5 => this.draw(p5)}
+              mouseReleased={p5 => this.mouseReleased(p5)}
+            />
+          </Box>
+        </PopoverTrigger>
+        <PopoverContent zIndex={40}>
+          <PopoverArrow />
+          <PopoverCloseButton />
+          <PopoverBody>Draw a number in this box</PopoverBody>
+        </PopoverContent>
+      </Popover>
     )
   }
 

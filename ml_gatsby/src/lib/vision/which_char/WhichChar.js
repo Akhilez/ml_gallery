@@ -36,7 +36,11 @@ export class WhichChar extends React.Component {
 
           {this.state.modelLoaded && (
             <>
-              <NumberPaintCanvas ref={this.paintCanvasRef} parent={this} />
+              <NumberPaintCanvas
+                ref={this.paintCanvasRef}
+                parent={this}
+                mt={6}
+              />
               <IconButton
                 aria-label="icon"
                 icon={MdRefresh}
@@ -44,13 +48,14 @@ export class WhichChar extends React.Component {
                 variant="outline"
                 variantColor="red"
                 size="sm"
+                mt={4}
                 onClick={() => this.paintCanvasRef.current.clearCanvas()}
               />
               {this.state.predicted && (
-                <Text>Predicted: {this.state.predicted}</Text>
+                <Text my={2}>Predicted: {this.state.predicted}</Text>
               )}
               {this.state.confidences && <this.PredictionChart />}
-              <Flex justifyContent="center">
+              <Flex justifyContent="center" mt={4}>
                 <Button
                   variantColor="brand"
                   borderRadius="lg"
@@ -99,7 +104,7 @@ export class WhichChar extends React.Component {
     return (
       <Box>
         <BarChart width={200} height={100} data={confidences}>
-          <XAxis dataKey="label" tick={{ fontSize: 5 }} />
+          <XAxis dataKey="label" tick={{ fontSize: 15 }} />
           <Tooltip />
           <Bar dataKey="confidence" nameKey="label" fill="#f62252" />
         </BarChart>
