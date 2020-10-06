@@ -5,8 +5,8 @@ import MnistClassifier from "./classifier"
 import { Centered } from "../../components/commons"
 import { MdRefresh } from "react-icons/all"
 import NumberPaintCanvas from "./paint_canvas"
-import { Box } from "@chakra-ui/core"
-import { Bar, BarChart, Tooltip, XAxis, YAxis } from "recharts"
+import { Box, Button, Flex, IconButton, Text } from "@chakra-ui/core"
+import { Bar, BarChart, Tooltip, XAxis } from "recharts"
 
 export class WhichChar extends React.Component {
   constructor(props) {
@@ -17,16 +17,15 @@ export class WhichChar extends React.Component {
       lossData: [],
       modelLoaded: false,
       predicted: null,
-      confidences: [],
+      confidences: null,
+      dataLoaded: false,
     }
 
     this.project = projects.which_char
     this.paintCanvasRef = React.createRef()
     this.convNet = new MnistClassifier(this)
-  }
-
-  componentDidMount() {
     this.convNet.initialize_model()
+    this.convNet.initialize_data()
   }
 
   render() {
@@ -38,11 +37,44 @@ export class WhichChar extends React.Component {
           {this.state.modelLoaded && (
             <>
               <NumberPaintCanvas ref={this.paintCanvasRef} parent={this} />
-              <MdRefresh
+              <IconButton
+                aria-label="icon"
+                icon={MdRefresh}
+                isRound
+                variant="outline"
+                variantColor="red"
+                size="sm"
                 onClick={() => this.paintCanvasRef.current.clearCanvas()}
               />
-              Predicted: {this.state.predicted}
-              <this.PredictionChart />
+              {this.state.predicted && (
+                <Text>Predicted: {this.state.predicted}</Text>
+              )}
+              {this.state.confidences && <this.PredictionChart />}
+              <Flex justifyContent="center">
+                <Button
+                  variantColor="brand"
+                  borderRadius="lg"
+                  m={1}
+                  isLoading={this.state.isTraining || !this.state.dataLoaded}
+                  loadingText={
+                    this.state.isTraining ? "Training" : "Loading Data"
+                  }
+                  onClick={() => this.startTraining()}
+                >
+                  TRAIN
+                </Button>
+                {this.state.isTraining && (
+                  <Button
+                    m={1}
+                    variant="outline"
+                    variantColor="brand"
+                    borderRadius="lg"
+                    onClick={() => this.stopTraining()}
+                  >
+                    STOP
+                  </Button>
+                )}
+              </Flex>
             </>
           )}
         </Centered>
@@ -50,9 +82,14 @@ export class WhichChar extends React.Component {
     )
   }
 
-  startTraining() {}
+  startTraining() {
+    this.setState({ isTraining: true })
+    this.convNet.train()
+  }
 
-  stopTraining() {}
+  stopTraining() {
+    this.setState({ isTraining: false })
+  }
 
   PredictionChart = () => {
     const confidences = this.state.confidences?.map((confidence, index) => {
@@ -62,10 +99,9 @@ export class WhichChar extends React.Component {
     return (
       <Box>
         <BarChart width={200} height={100} data={confidences}>
-          <XAxis type="category" hide />
-          <YAxis type="number" hide />
+          <XAxis dataKey="label" tick={{ fontSize: 5 }} />
           <Tooltip />
-          <Bar label dataKey="confidence" nameKey="label" fill="#f62252" />
+          <Bar dataKey="confidence" nameKey="label" fill="#f62252" />
         </BarChart>
       </Box>
     )

@@ -51,6 +51,8 @@ export class LearnCurve extends React.Component {
               variantColor="brand"
               borderRadius="lg"
               m={1}
+              isLoading={this.state.isTraining}
+              loadingText="Training"
               onClick={() => this.startTraining()}
             >
               TRAIN

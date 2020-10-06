@@ -65,16 +65,16 @@ export class DeepIris extends React.Component {
 
           {this.UpdateLayersButtons()}
 
-          {!this.state.isTraining && (
-            <Button
-              variantColor="brand"
-              borderRadius="lg"
-              m={1}
-              onClick={() => this.startTraining()}
-            >
-              TRAIN
-            </Button>
-          )}
+          <Button
+            variantColor="brand"
+            borderRadius="lg"
+            m={1}
+            isLoading={this.state.isTraining}
+            loadingText="Training"
+            onClick={() => this.startTraining()}
+          >
+            TRAIN
+          </Button>
           {this.state.isTraining && (
             <Button
               m={1}
@@ -243,16 +243,16 @@ export class DeepIris extends React.Component {
     ])
     const classes = ["Setosa", "Versicolor", "Virginica"]
     confidences = confidences.map((confidence, index) => {
-      return { confidence, label: classes[index] }
+      return { confidence, cls: classes[index] }
     })
 
     return (
       <Box>
         <BarChart width={200} height={100} data={confidences} layout="vertical">
           <XAxis type="number" hide />
-          <YAxis type="category" hide />
+          <YAxis type="category" dataKey="cls" tick={{ fontSize: 12 }} />
           <Tooltip />
-          <Bar dataKey="confidence" nameKey="label" fill="#f62252" />
+          <Bar dataKey="confidence" nameKey="cls" fill="#f62252" />
         </BarChart>
       </Box>
     )

@@ -1,6 +1,5 @@
 import * as tf from "@tensorflow/tfjs"
 import * as tfvis from "@tensorflow/tfjs-vis"
-import { pagesReducer } from "gatsby/dist/redux/reducers/pages"
 
 const modelUrl =
   "https://storage.googleapis.com/akhilez/models/mnist_classifier/model.json"
@@ -9,6 +8,7 @@ export default class MnistClassifier {
   constructor(component) {
     this.component = component
     this.model = null
+    this.data = null
   }
 
   async initialize_model() {
@@ -21,17 +21,23 @@ export default class MnistClassifier {
     ])
     for (let i = 0; i < this.model.layers.length - 1; i++)
       this.model.layers[i].trainable = false
-    console.log(this.model.layers[0])
-    console.log(this.model.layers[0].setTrainable)
+
     this.component.setState({ modelLoaded: true })
   }
 
+  async initialize_data() {
+    const response = await fetch(
+      "https://storage.googleapis.com/akhilez/datasets/mnist/batch_0.json"
+    )
+    console.log(response)
+    this.component.setState({ dataLoaded: true })
+  }
+
   async train() {
-    const batch = require(`src/data/mnist/batch_0.json`)
     const x = tf
-      .tensor(batch.map(sample => sample.image))
+      .tensor(this.data?.map(sample => sample.image))
       .reshape([-1, 28, 28, 1])
-    const y = tf.tensor(batch.map(sample => sample.class))
+    const y = tf.tensor(this.data?.map(sample => sample.class))
     console.log(x.shape, y.shape)
 
     this.model.fit(x, y, {
@@ -61,7 +67,7 @@ export default class MnistClassifier {
     let image = this.pixToTensor(pixels)
 
     const output = this.model.predict(image)
-    const confidences = output.mul(100).arraySync()
+    const confidences = output.mul(100).squeeze().arraySync()
     const predicted = output.argMax(1).dataSync()
 
     this.component.setState({ predicted: predicted, confidences: confidences })

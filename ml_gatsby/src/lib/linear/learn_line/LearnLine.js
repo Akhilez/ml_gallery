@@ -47,6 +47,8 @@ export class LearnLine extends React.Component {
             <Button
               variantColor="brand"
               borderRadius="lg"
+              isLoading={this.state.isTraining}
+              loadingText="Training"
               onClick={() => this.startTrainingPipeline()}
             >
               TRAIN

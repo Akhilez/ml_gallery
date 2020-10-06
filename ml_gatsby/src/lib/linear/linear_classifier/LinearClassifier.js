@@ -24,6 +24,8 @@ export class LinearClassifier extends React.Component {
             variantColor="brand"
             borderRadius="lg"
             m={1}
+            isLoading={this.state.isTraining}
+            loadingText="Training"
             onClick={() => {
               this.graphRef.current.startTraining()
               this.setState({ isTraining: true })
