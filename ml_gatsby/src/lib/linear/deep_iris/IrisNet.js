@@ -39,7 +39,6 @@ export default class IrisNet {
     this.net.compile({
       loss: "categoricalCrossentropy",
       optimizer: "adam",
-      metrics: ["accuracy"],
     })
   }
 

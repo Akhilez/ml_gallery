@@ -3,6 +3,8 @@ import * as tfvis from "@tensorflow/tfjs-vis"
 
 const modelUrl =
   "https://storage.googleapis.com/akhilez/models/mnist_classifier/model.json"
+const dataUrl =
+  "https://storage.googleapis.com/akhilez/datasets/mnist/data_1000.json"
 
 export default class MnistClassifier {
   constructor(component) {
@@ -22,25 +24,28 @@ export default class MnistClassifier {
     for (let i = 0; i < this.model.layers.length - 1; i++)
       this.model.layers[i].trainable = false
 
+    this.model.compile({
+      loss: "categoricalCrossentropy",
+      optimizer: "adam",
+      metrics: ["accuracy"],
+    })
+
     this.component.setState({ modelLoaded: true })
   }
 
   async initialize_data() {
-    const response = await fetch(
-      "https://storage.googleapis.com/akhilez/datasets/mnist/batch_0.json"
-    )
-    console.log(response)
+    const response = await fetch(dataUrl)
+    const jsonData = await response.json()
+
+    const images = tf.tensor(jsonData.images).reshape([-1, 28, 28, 1])
+    const classes = tf.tensor(jsonData.classes)
+
+    this.data = [images, classes]
     this.component.setState({ dataLoaded: true })
   }
 
   async train() {
-    const x = tf
-      .tensor(this.data?.map(sample => sample.image))
-      .reshape([-1, 28, 28, 1])
-    const y = tf.tensor(this.data?.map(sample => sample.class))
-    console.log(x.shape, y.shape)
-
-    this.model.fit(x, y, {
+    this.model.fit(this.data[0], this.data[1], {
       epochs: 1000,
       batchSize: 4,
       callbacks: {
