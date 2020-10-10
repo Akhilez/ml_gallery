@@ -26,6 +26,29 @@ export class WhichChar extends React.Component {
     this.convNet = new MnistClassifier(this)
     this.convNet.initialize_model()
     this.convNet.initialize_data()
+
+    this.canvasRef = React.createRef()
+    this.dummyRef = React.createRef()
+  }
+
+  componentDidMount() {
+    const canvas = this.canvasRef.current
+    const ctx = canvas.getContext("2d")
+    const arr = new Uint8ClampedArray(40000)
+
+    // Iterate through every pixel
+    for (let i = 0; i < arr.length; i += 4) {
+      arr[i] = 190 // R value
+      arr[i + 1] = 0 // G value
+      arr[i + 2] = 0 // B value
+      arr[i + 3] = 255 // A value
+    }
+
+    // Initialize a new ImageData object
+    let imageData = new ImageData(arr, 200)
+
+    // Draw image data to the canvas
+    ctx.putImageData(imageData, 20, 20)
   }
 
   render() {
@@ -82,6 +105,7 @@ export class WhichChar extends React.Component {
               </Flex>
             </>
           )}
+          <canvas ref={this.canvasRef} height="100px" width="100px" />
         </Centered>
       </ProjectWrapper>
     )

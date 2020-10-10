@@ -77,7 +77,7 @@ export default class NumberPaintCanvas extends React.Component {
   mouseReleased(p5) {
     if (!isCursorInScope(p5, this.side, this.side)) return
 
-    p5.filter(p5.BLUR, 4)
+    // p5.filter(p5.BLUR, 4)
 
     p5.loadPixels()
     this.props.parent.convNet.predict(p5.pixels)
