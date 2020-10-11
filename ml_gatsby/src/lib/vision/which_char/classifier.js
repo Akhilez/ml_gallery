@@ -47,11 +47,19 @@ export default class MnistClassifier {
   async train() {
     this.model.fit(this.data[0], this.data[1], {
       epochs: 1000,
-      batchSize: 4,
+      batchSize: 64,
       callbacks: {
         onEpochEnd: (epoch, logs) => {
           this.model.stopTraining = !this.component.state.isTraining
           this.component.predict()
+          this.component.setState({
+            lossData: this.component.state.lossData.concat([
+              {
+                index: this.component.state.lossData.length,
+                loss: logs.loss,
+              },
+            ]),
+          })
         },
       },
     })

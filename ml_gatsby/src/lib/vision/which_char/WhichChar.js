@@ -6,7 +6,17 @@ import { Centered } from "../../components/commons"
 import { MdRefresh } from "react-icons/all"
 import NumberPaintCanvas from "./paint_canvas"
 import { Box, Button, Flex, IconButton, PseudoBox, Text } from "@chakra-ui/core"
-import { Bar, BarChart, Tooltip, XAxis } from "recharts"
+import {
+  Bar,
+  BarChart,
+  CartesianGrid,
+  Legend,
+  Line,
+  LineChart,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from "recharts"
 
 export class WhichChar extends React.Component {
   constructor(props) {
@@ -90,6 +100,7 @@ export class WhichChar extends React.Component {
             </>
           )}
           <this.Samples />
+          <this.LossGraph />
         </Centered>
       </ProjectWrapper>
     )
@@ -113,6 +124,21 @@ export class WhichChar extends React.Component {
           />
         ))}
       </Flex>
+    )
+  }
+
+  LossGraph = () => {
+    return (
+      <Box m={10}>
+        <LineChart width={500} height={300} data={this.state.lossData}>
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis dataKey="index" type="number" scale="auto" />
+          <YAxis />
+          <Tooltip />
+          <Legend />
+          <Line type="monotone" dataKey="loss" stroke="#8884d8" />
+        </LineChart>
+      </Box>
     )
   }
 
