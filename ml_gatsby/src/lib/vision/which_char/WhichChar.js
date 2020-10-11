@@ -32,6 +32,7 @@ export class WhichChar extends React.Component {
     this.sampleRefs = []
     for (let i = 0; i < 10; i++) this.sampleRefs.push(React.createRef())
     this.sampleSide = 100
+    this.sampleData = {}
   }
 
   render() {
@@ -100,6 +101,7 @@ export class WhichChar extends React.Component {
         {this.sampleRefs.map((ref, index) => (
           <PseudoBox
             as="canvas"
+            onClick={() => this.setSampleImage(index)}
             key={index}
             ref={ref}
             height={`${this.sampleSide}px`}
@@ -118,6 +120,15 @@ export class WhichChar extends React.Component {
 
   stopTraining() {
     this.setState({ isTraining: false })
+  }
+
+  setSampleImage(index) {
+    const imageData = this.sampleData[index]
+    console.log("Safe", imageData)
+    for (let i = 0; i < imageData.length; i++)
+      for (let j = 0; j < imageData[i].length; j++)
+        this.paintCanvasRef.current.p5.set(i, j, imageData[i][j])
+    this.paintCanvasRef.current.p5.updatePixels()
   }
 
   PredictionChart = () => {

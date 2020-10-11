@@ -22,6 +22,7 @@ export default class NumberPaintCanvas extends React.Component {
     }
     this.side = 140
     this.clearPaint = false
+    this.p5 = null
   }
 
   render() {

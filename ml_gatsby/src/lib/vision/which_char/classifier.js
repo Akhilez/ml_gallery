@@ -95,7 +95,7 @@ export default class MnistClassifier {
     const images = tf
       .scalar(1.0)
       .sub(this.data[0])
-      .reshape([-1, 784])
+      .reshape([-1, 28, 28])
       .arraySync()
     const labels = this.data[1].arraySync()
     const data = {}
@@ -113,8 +113,16 @@ export default class MnistClassifier {
             this.component.sampleSide,
           ])
           tf.browser.toPixels(img, this.component.sampleRefs[j].current)
+          this.component.sampleData[j] = img
+            .mul(255)
+            .resizeBilinear([140, 140])
+            .reshape([140, 140])
+            //.reverse(0)
+            //.reverse(1)
+            .transpose()
+            .arraySync()
         }
-        return data
+        return
       }
     }
   }
