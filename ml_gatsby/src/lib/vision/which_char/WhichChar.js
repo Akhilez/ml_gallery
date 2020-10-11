@@ -25,30 +25,28 @@ export class WhichChar extends React.Component {
     this.paintCanvasRef = React.createRef()
     this.convNet = new MnistClassifier(this)
     this.convNet.initialize_model()
-    this.convNet.initialize_data()
+    this.convNet.initialize_data(this.drawSamples)
 
     this.canvasRef = React.createRef()
-    this.dummyRef = React.createRef()
+
+    this.sampleRefs = []
+    for (let i = 0; i < 10; i++) this.sampleRefs.push(React.createRef())
+    this.sampleSide = 100
   }
 
-  componentDidMount() {
-    const canvas = this.canvasRef.current
-    const ctx = canvas.getContext("2d")
-    const arr = new Uint8ClampedArray(40000) // TODO: Update this to 10 images
+  drawSamples = () => {
+    const sampleData = this.convNet.getSamples(this.sampleSide)
+    for (let i = 0; i < 10; i++) {
+      const canvas = this.sampleRefs[i].current
+      const ctx = canvas.getContext("2d")
+      const arr2 = new Uint8ClampedArray(40000) // TODO: Update this to 10 images
 
-    // Iterate through every pixel
-    for (let i = 0; i < arr.length; i += 4) {
-      arr[i] = 190 // R value
-      arr[i + 1] = 0 // G value
-      arr[i + 2] = 0 // B value
-      arr[i + 3] = 255 // A value
+      // Initialize a new ImageData object
+      let imageData = new ImageData(sampleData[i], this.sampleSide)
+
+      // Draw image data to the canvas
+      ctx.putImageData(imageData, 20, 20)
     }
-
-    // Initialize a new ImageData object
-    let imageData = new ImageData(arr, 200)
-
-    // Draw image data to the canvas
-    ctx.putImageData(imageData, 20, 20)
   }
 
   render() {
@@ -105,9 +103,24 @@ export class WhichChar extends React.Component {
               </Flex>
             </>
           )}
-          <canvas ref={this.canvasRef} height="100px" width="100px" />
+          <this.Samples />
         </Centered>
       </ProjectWrapper>
+    )
+  }
+
+  Samples = () => {
+    return (
+      <Flex display="inline-block">
+        {this.sampleRefs.map((ref, index) => (
+          <canvas
+            key={index}
+            ref={ref}
+            height={`${this.sampleSide}px`}
+            width={`${this.sampleSide}px`}
+          />
+        ))}
+      </Flex>
     )
   }
 

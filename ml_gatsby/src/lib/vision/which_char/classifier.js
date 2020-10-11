@@ -41,7 +41,7 @@ export default class MnistClassifier {
     const classes = tf.tensor(jsonData.classes)
 
     this.data = [images, classes]
-    this.component.setState({ dataLoaded: true })
+    this.component.setState({ dataLoaded: true }, () => this.drawSamples())
   }
 
   async train() {
@@ -89,5 +89,33 @@ export default class MnistClassifier {
     await tf.browser.toPixels(image, canvas)
     surface.drawArea.appendChild(canvas)
     image.dispose()
+  }
+
+  drawSamples() {
+    const images = tf
+      .scalar(1.0)
+      .sub(this.data[0])
+      .reshape([-1, 784])
+      .arraySync()
+    const labels = this.data[1].arraySync()
+    const data = {}
+    for (let i = 0; i < 1000; i++) {
+      const index = Math.floor(Math.random() * images.length)
+      const label = tf.tensor(labels[index]).argMax().dataSync()[0]
+      if (data[label] != null) continue
+      data[label] = images[index]
+      if (Object.keys(data).length === 10) {
+        for (let j = 0; j < 10; j++) {
+          let img = tf.tensor(data[j])
+          img = img.reshape([28, 28, 1])
+          img = img.resizeBilinear([
+            this.component.sampleSide,
+            this.component.sampleSide,
+          ])
+          tf.browser.toPixels(img, this.component.sampleRefs[j].current)
+        }
+        return data
+      }
+    }
   }
 }
