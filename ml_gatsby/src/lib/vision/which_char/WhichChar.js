@@ -5,7 +5,7 @@ import MnistClassifier from "./classifier"
 import { Centered } from "../../components/commons"
 import { MdRefresh } from "react-icons/all"
 import NumberPaintCanvas from "./paint_canvas"
-import { Box, Button, Flex, IconButton, Text } from "@chakra-ui/core"
+import { Box, Button, Flex, IconButton, PseudoBox, Text } from "@chakra-ui/core"
 import { Bar, BarChart, Tooltip, XAxis } from "recharts"
 
 export class WhichChar extends React.Component {
@@ -25,28 +25,13 @@ export class WhichChar extends React.Component {
     this.paintCanvasRef = React.createRef()
     this.convNet = new MnistClassifier(this)
     this.convNet.initialize_model()
-    this.convNet.initialize_data(this.drawSamples)
+    this.convNet.initialize_data()
 
     this.canvasRef = React.createRef()
 
     this.sampleRefs = []
     for (let i = 0; i < 10; i++) this.sampleRefs.push(React.createRef())
     this.sampleSide = 100
-  }
-
-  drawSamples = () => {
-    const sampleData = this.convNet.getSamples(this.sampleSide)
-    for (let i = 0; i < 10; i++) {
-      const canvas = this.sampleRefs[i].current
-      const ctx = canvas.getContext("2d")
-      const arr2 = new Uint8ClampedArray(40000) // TODO: Update this to 10 images
-
-      // Initialize a new ImageData object
-      let imageData = new ImageData(sampleData[i], this.sampleSide)
-
-      // Draw image data to the canvas
-      ctx.putImageData(imageData, 20, 20)
-    }
   }
 
   render() {
@@ -111,13 +96,15 @@ export class WhichChar extends React.Component {
 
   Samples = () => {
     return (
-      <Flex display="inline-block">
+      <Flex justifyContent={{ lg: "center" }} overflow="auto" mt={4}>
         {this.sampleRefs.map((ref, index) => (
-          <canvas
+          <PseudoBox
+            as="canvas"
             key={index}
             ref={ref}
             height={`${this.sampleSide}px`}
             width={`${this.sampleSide}px`}
+            _hover={{ border: "5px solid red", cursor: "pointer" }}
           />
         ))}
       </Flex>
