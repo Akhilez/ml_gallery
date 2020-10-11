@@ -97,7 +97,7 @@ export class WhichChar extends React.Component {
 
   Samples = () => {
     return (
-      <Flex justifyContent={{ lg: "center" }} overflow="auto" mt={4}>
+      <Flex justifyContent={{ lg: "center" }} overflow="auto" py={4}>
         {this.sampleRefs.map((ref, index) => (
           <PseudoBox
             as="canvas"
@@ -107,6 +107,9 @@ export class WhichChar extends React.Component {
             height={`${this.sampleSide}px`}
             width={`${this.sampleSide}px`}
             _hover={{ border: "5px solid red", cursor: "pointer" }}
+            shadow="lg"
+            mx={1}
+            borderRadius={8}
           />
         ))}
       </Flex>
@@ -124,7 +127,6 @@ export class WhichChar extends React.Component {
 
   setSampleImage(index) {
     const imageData = this.sampleData[index]
-    console.log("Safe", imageData)
     for (let i = 0; i < imageData.length; i++)
       for (let j = 0; j < imageData[i].length; j++)
         this.paintCanvasRef.current.p5.set(i, j, imageData[i][j])

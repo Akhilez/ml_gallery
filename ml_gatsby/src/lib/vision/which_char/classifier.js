@@ -117,8 +117,6 @@ export default class MnistClassifier {
             .mul(255)
             .resizeBilinear([140, 140])
             .reshape([140, 140])
-            //.reverse(0)
-            //.reverse(1)
             .transpose()
             .arraySync()
         }
