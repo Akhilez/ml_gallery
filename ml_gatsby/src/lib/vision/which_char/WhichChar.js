@@ -125,12 +125,19 @@ export class WhichChar extends React.Component {
     this.setState({ isTraining: false })
   }
 
+  predict() {
+    const p5 = this.paintCanvasRef.current.p5
+    p5.loadPixels()
+    this.convNet.predict(p5.pixels)
+  }
+
   setSampleImage(index) {
     const imageData = this.sampleData[index]
     for (let i = 0; i < imageData.length; i++)
       for (let j = 0; j < imageData[i].length; j++)
         this.paintCanvasRef.current.p5.set(i, j, imageData[i][j])
     this.paintCanvasRef.current.p5.updatePixels()
+    this.predict()
   }
 
   PredictionChart = () => {

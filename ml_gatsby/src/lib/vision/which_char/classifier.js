@@ -51,7 +51,7 @@ export default class MnistClassifier {
       callbacks: {
         onEpochEnd: (epoch, logs) => {
           this.model.stopTraining = !this.component.state.isTraining
-          this.model.layers[0].getWeights()[1].print()
+          this.component.predict()
         },
       },
     })
