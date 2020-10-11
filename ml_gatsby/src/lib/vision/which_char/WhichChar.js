@@ -34,7 +34,7 @@ export class WhichChar extends React.Component {
   componentDidMount() {
     const canvas = this.canvasRef.current
     const ctx = canvas.getContext("2d")
-    const arr = new Uint8ClampedArray(40000)
+    const arr = new Uint8ClampedArray(40000) // TODO: Update this to 10 images
 
     // Iterate through every pixel
     for (let i = 0; i < arr.length; i += 4) {
