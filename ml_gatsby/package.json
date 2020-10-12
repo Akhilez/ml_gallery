@@ -23,6 +23,7 @@
     "emotion-theming": "^10.0.27",
     "gatsby": "^2.24.47",
     "gatsby-plugin-prefetch-google-fonts": "^1.4.3",
+    "gatsby-plugin-react-helmet": "^3.3.14",
     "gatsby-plugin-sass": "^2.3.12",
     "google-fonts-plugin": "2.0.2",
     "node-sass": "^4.14.1",
