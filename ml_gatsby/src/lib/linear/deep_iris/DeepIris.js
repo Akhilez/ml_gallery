@@ -10,6 +10,7 @@ import {
   Legend,
   Line,
   LineChart,
+  ResponsiveContainer,
   Tooltip,
   XAxis,
   YAxis,
@@ -50,7 +51,11 @@ export class DeepIris extends React.Component {
     return (
       <ProjectWrapper project={this.project}>
         <Centered>
-          <Flex justifyContent="center" alignItems="center">
+          <Flex
+            justifyContent={{ md: "center" }}
+            alignItems="center"
+            overflow="auto"
+          >
             <this.Sliders />
             <NeuralGraph
               ref={this.graphRef}
@@ -101,7 +106,7 @@ export class DeepIris extends React.Component {
         <Text mt={6} mb={4}>
           Click a sample class below to copy
         </Text>
-        <Flex justifyContent="center">
+        <Flex justifyContent={{ md: "center" }} overflow="auto">
           <this.SampleBox values={[20.24, 92.8, 9.24, 9.84]} cls="Satosa" />
           <this.SampleBox values={[57.44, 27, 65.2, 53.04]} cls="Versicolor" />
           <this.SampleBox
@@ -118,6 +123,7 @@ export class DeepIris extends React.Component {
     return (
       <Stack
         width="200px"
+        minW="150px"
         bg="white"
         p={4}
         borderRadius="15px"
@@ -156,24 +162,26 @@ export class DeepIris extends React.Component {
 
   getLossGraph() {
     return (
-      <LineChart
-        width={500}
-        height={300}
-        data={this.state.lossData}
-        margin={{
-          top: 5,
-          right: 30,
-          left: 20,
-          bottom: 5,
-        }}
-      >
-        <CartesianGrid strokeDasharray="3 3" />
-        <XAxis dataKey="index" type="number" scale="auto" />
-        <YAxis />
-        <Tooltip />
-        <Legend />
-        <Line type="monotone" dataKey="loss" stroke="#8884d8" />
-      </LineChart>
+      <Box maxW="500px">
+        <ResponsiveContainer width="100%" height={300}>
+          <LineChart
+            data={this.state.lossData}
+            margin={{
+              top: 5,
+              right: 30,
+              left: 20,
+              bottom: 5,
+            }}
+          >
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="index" type="number" scale="auto" />
+            <YAxis />
+            <Tooltip />
+            <Legend />
+            <Line type="monotone" dataKey="loss" stroke="#8884d8" />
+          </LineChart>
+        </ResponsiveContainer>
+      </Box>
     )
   }
 
@@ -260,7 +268,7 @@ export class DeepIris extends React.Component {
 
   Sliders = () => {
     return (
-      <Box w="100px" mr={4}>
+      <Box minW="150px" mr={4}>
         <Text textAlign="left" fontSize="sm">
           Sepal Height
         </Text>

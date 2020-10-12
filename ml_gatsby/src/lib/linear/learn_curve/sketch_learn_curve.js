@@ -1,6 +1,7 @@
 import React from "react"
 import { isCursorInScope } from "../../utils/utils"
 import loadable from "@loadable/component"
+import { Box } from "@chakra-ui/core"
 const Sketch = loadable(() => import("react-p5"))
 
 export default class Graph extends React.Component {
@@ -30,13 +31,13 @@ export default class Graph extends React.Component {
 
   render() {
     return (
-      <div className={"rounded"} style={{ marginTop: 30 }}>
+      <Box mt={8} overflow="auto">
         <Sketch
           setup={(p5, parent) => this.setup(p5, parent)}
           draw={p5 => this.draw(p5)}
           mouseClicked={p5 => this.handleInput(p5)}
         />
-      </div>
+      </Box>
     )
   }
 

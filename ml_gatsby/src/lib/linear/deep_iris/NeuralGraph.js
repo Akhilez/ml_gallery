@@ -2,6 +2,7 @@ import React from "react"
 import loadable from "@loadable/component"
 import petal_png from "./images/petal.png"
 import sepal_png from "./images/sepal.png"
+import { Box } from "@chakra-ui/core"
 
 const Sketch = loadable(() => import("react-p5"))
 
@@ -32,14 +33,12 @@ export default class NeuralGraphIris extends React.Component {
 
   render() {
     return (
-      <div className={"rounded"} id={"GraphSketch"}>
-        <Sketch
-          setup={(p5, parent) => this.setup(p5, parent)}
-          draw={p5 => this.draw(p5)}
-          preload={p5 => this.preload(p5)}
-          mouseClicked={p5 => this.mouseClicked(p5)}
-        />
-      </div>
+      <Sketch
+        setup={(p5, parent) => this.setup(p5, parent)}
+        draw={p5 => this.draw(p5)}
+        preload={p5 => this.preload(p5)}
+        mouseClicked={p5 => this.mouseClicked(p5)}
+      />
     )
   }
 

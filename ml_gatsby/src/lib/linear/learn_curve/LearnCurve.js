@@ -11,9 +11,17 @@ import {
   Legend,
   Line,
   Tooltip,
+  ResponsiveContainer,
 } from "recharts"
 import { projects } from "../../globals/data"
-import { Button, Flex, Alert, AlertIcon, CloseButton } from "@chakra-ui/core"
+import {
+  Button,
+  Flex,
+  Alert,
+  AlertIcon,
+  CloseButton,
+  Box,
+} from "@chakra-ui/core"
 import { LearnCurveTF } from "./LearnCurveTF"
 
 export class LearnCurve extends React.Component {
@@ -109,22 +117,28 @@ export class LearnCurve extends React.Component {
   }
 
   getComplexityModifier() {
-    let terms = [<>y = </>]
+    let terms = [<Box whiteSpace="nowrap">y =&nbsp;</Box>]
 
     for (let i = 1; i <= this.state.order; i++) {
       terms.push(
-        <div key={`eqn-${i}`}>
+        <Box key={`eqn-${i}`} whiteSpace="nowrap">
           w<sub>{i}</sub>x<sup>{this.state.order - i + 1}</sup> + &nbsp;
-        </div>
+        </Box>
       )
     }
     terms.push(<>b</>)
 
     return (
-      <div style={{ fontSize: 20, marginTop: 50 }}>
-        <Flex fontSize={28} mb={5} justifyContent="center">
+      <Box fontSize="20" mt={10}>
+        <Box
+          display="flex"
+          fontSize={28}
+          mb={5}
+          overflow="auto"
+          justifyContent={{ md: "center" }}
+        >
           {terms.map(item => item)} <br />
-        </Flex>
+        </Box>
         Change Complexity:
         <Button
           variant="outline"
@@ -148,7 +162,7 @@ export class LearnCurve extends React.Component {
             -
           </Button>
         )}
-      </div>
+      </Box>
     )
   }
 
@@ -188,24 +202,26 @@ export class LearnCurve extends React.Component {
 
   getLossGraph() {
     return (
-      <LineChart
-        width={500}
-        height={300}
-        data={this.state.lossData}
-        margin={{
-          top: 5,
-          right: 30,
-          left: 20,
-          bottom: 5,
-        }}
-      >
-        <CartesianGrid strokeDasharray="3 3" />
-        <XAxis dataKey="index" type="number" scale="auto" />
-        <YAxis />
-        <Tooltip />
-        <Legend />
-        <Line type="monotone" dataKey="loss" stroke="#8884d8" />
-      </LineChart>
+      <Box maxW="500px">
+        <ResponsiveContainer width="100%" height={300}>
+          <LineChart
+            data={this.state.lossData}
+            margin={{
+              top: 5,
+              right: 30,
+              left: 20,
+              bottom: 5,
+            }}
+          >
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="index" type="number" scale="auto" />
+            <YAxis />
+            <Tooltip />
+            <Legend />
+            <Line type="monotone" dataKey="loss" stroke="#8884d8" />
+          </LineChart>
+        </ResponsiveContainer>
+      </Box>
     )
   }
 

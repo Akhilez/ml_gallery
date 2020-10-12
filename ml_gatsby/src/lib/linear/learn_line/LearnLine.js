@@ -2,12 +2,13 @@ import React from "react"
 import { projects } from "src/lib/globals/data"
 import { ProjectWrapper } from "src/lib/components/ProjectWrapper"
 import MLHelper from "src/lib/linear/learn_line/neural_net"
-import { NumberInput, Flex, Button } from "@chakra-ui/core"
+import { NumberInput, Flex, Button, Box } from "@chakra-ui/core"
 import {
   CartesianGrid,
   Legend,
   Line,
   LineChart,
+  ResponsiveContainer,
   Tooltip,
   XAxis,
   YAxis,
@@ -56,10 +57,8 @@ export class LearnLine extends React.Component {
           )}
           {this.state.isTraining && this.showStopTrainingButton()}
           {this.state.didTrainingStart && this.getGraph()}
-          <Flex justifyContent="center" mt={4}>
-            {this.state.didTrainingStart && this.getParametersGraph()}
-            {this.state.didTrainingStart && this.getLossGraph()}
-          </Flex>
+          {this.state.didTrainingStart && this.getParametersGraph()}
+          {this.state.didTrainingStart && this.getLossGraph()}
         </Centered>
       </ProjectWrapper>
     )
@@ -89,31 +88,33 @@ export class LearnLine extends React.Component {
 
   getGraph() {
     return (
-      <LineChart
-        width={800}
-        height={500}
-        data={this.state.data}
-        margin={{
-          top: 100,
-          right: 30,
-          left: 20,
-          bottom: 5,
-        }}
-      >
-        <CartesianGrid strokeDasharray="3 3" />
-        <XAxis dataKey="realX" type="number" scale="auto" />
-        <YAxis />
-        <Tooltip />
-        <Legend />
-        <Line type="monotone" dataKey="realY" stroke="#8884d8" />
-        <Line type="monotone" dataKey="predY" stroke="#82ca9d" />
-      </LineChart>
+      <Box maxW="800px">
+        <ResponsiveContainer width="100%" height={500}>
+          <LineChart
+            data={this.state.data}
+            margin={{
+              top: 100,
+              right: 30,
+              left: 20,
+              bottom: 5,
+            }}
+          >
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="realX" type="number" scale="auto" />
+            <YAxis />
+            <Tooltip />
+            <Legend />
+            <Line type="monotone" dataKey="realY" stroke="#8884d8" />
+            <Line type="monotone" dataKey="predY" stroke="#82ca9d" />
+          </LineChart>
+        </ResponsiveContainer>
+      </Box>
     )
   }
 
   getParametersGraph() {
     return (
-      <table className={"table"} style={{ width: 300 }}>
+      <table style={{ width: 300, marginTop: 30, textAlign: "left" }}>
         <tbody>
           <tr>
             <th />
@@ -123,12 +124,12 @@ export class LearnLine extends React.Component {
           <tr>
             <td>m</td>
             <td>{this.state.m}</td>
-            <td>{this.state.predM}</td>
+            <td>{this.state.predM?.toFixed(3)}</td>
           </tr>
           <tr>
             <td>c</td>
             <td>{this.state.c}</td>
-            <td>{this.state.predC}</td>
+            <td>{this.state.predC?.toFixed(3)}</td>
           </tr>
         </tbody>
       </table>
@@ -137,24 +138,26 @@ export class LearnLine extends React.Component {
 
   getLossGraph() {
     return (
-      <LineChart
-        width={500}
-        height={300}
-        data={this.state.lossData}
-        margin={{
-          top: 5,
-          right: 30,
-          left: 20,
-          bottom: 5,
-        }}
-      >
-        <CartesianGrid strokeDasharray="3 3" />
-        <XAxis dataKey="index" type="number" scale="auto" />
-        <YAxis />
-        <Tooltip />
-        <Legend />
-        <Line type="monotone" dataKey="loss" stroke="#8884d8" />
-      </LineChart>
+      <Box maxW="500px" mt={8}>
+        <ResponsiveContainer width="100%" height={300}>
+          <LineChart
+            data={this.state.lossData}
+            margin={{
+              top: 5,
+              right: 30,
+              left: 20,
+              bottom: 5,
+            }}
+          >
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="index" type="number" scale="auto" />
+            <YAxis />
+            <Tooltip />
+            <Legend />
+            <Line type="monotone" dataKey="loss" stroke="#8884d8" />
+          </LineChart>
+        </ResponsiveContainer>
+      </Box>
     )
   }
 
@@ -220,7 +223,6 @@ export class LearnLine extends React.Component {
     let self = this
 
     let trainingLoop = function (epoch) {
-      console.log(epoch)
       if (epoch <= epochs) {
         setTimeout(() => {
           let randomIndex = Math.floor(Math.random() * x.length)

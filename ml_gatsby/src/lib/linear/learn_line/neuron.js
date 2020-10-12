@@ -1,5 +1,6 @@
 import React from "react"
 import loadable from "@loadable/component"
+import { Box } from "@chakra-ui/core"
 
 const Sketch = loadable(() => import("react-p5"))
 
@@ -23,10 +24,12 @@ export default class Neuron extends React.Component {
 
   render() {
     return (
-      <Sketch
-        setup={(p5, parent) => this.setup(p5, parent)}
-        draw={p5 => this.draw(p5)}
-      />
+      <Box overflow="auto">
+        <Sketch
+          setup={(p5, parent) => this.setup(p5, parent)}
+          draw={p5 => this.draw(p5)}
+        />
+      </Box>
     )
   }
 
