@@ -19,6 +19,7 @@ import {
 import { Link as GLink } from "gatsby"
 import { MdCode } from "react-icons/md"
 import ScrollMenu from "react-horizontal-scrolling-menu"
+import { MetaTags } from "../components/MetaTags"
 
 class Project extends React.Component {
   render() {
@@ -97,6 +98,7 @@ export default class LandingPage extends React.Component {
   render() {
     return (
       <Container>
+        <MetaTags />
         <MLLogo />
         <this.Desc />
         {projectCategories.map(category => (

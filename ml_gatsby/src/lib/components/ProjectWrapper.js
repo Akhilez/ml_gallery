@@ -13,6 +13,7 @@ import { BreadCrumb } from "./BreadCrumb"
 import { SideNav } from "./SideNav"
 import { ProjectPaginator } from "./ProjectPaginator"
 import React from "react"
+import { MetaTags } from "./MetaTags"
 
 function ActionButtons({ project }) {
   return (
@@ -46,6 +47,7 @@ function ActionButtons({ project }) {
 export function ProjectWrapper({ project, children, ...props }) {
   return (
     <Container>
+      <MetaTags title={`${project.title} | ML Gallery`} />
       <Flex
         justifyContent="space-between"
         alignItems="center"
