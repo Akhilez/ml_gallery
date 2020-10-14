@@ -8,9 +8,15 @@ import {
   Box,
   Text,
   Link,
+  Flex,
+  Drawer,
+  DrawerOverlay,
+  DrawerContent,
+  DrawerCloseButton,
 } from "@chakra-ui/core"
 import { projectCategories } from "../globals/data"
 import { Link as GLink } from "gatsby"
+import { FiMenu } from "react-icons/all"
 
 export class SideNav extends React.Component {
   constructor(props) {
@@ -23,11 +29,11 @@ export class SideNav extends React.Component {
     return (
       <Box
         w="250px"
-        display={{ base: "none", xl: "block" }}
         color="gray.400"
         mr={4}
         mt="50px"
         fontSize="sm"
+        {...this.props}
       >
         <Text fontSize="lg" mb={4} ml={4}>
           Projects
@@ -53,6 +59,55 @@ export class SideNav extends React.Component {
             </AccordionItem>
           ))}
         </Accordion>
+      </Box>
+    )
+  }
+}
+
+export class ProjectsNavigatorFrame extends React.Component {
+  constructor(props) {
+    super(props)
+    this.props = props
+    this.project = props.project
+    this.state = {
+      isDrawerOpen: false,
+    }
+  }
+  render() {
+    return (
+      <Flex>
+        <this.OpenDrawerButton />
+        <SideNav
+          project={this.project}
+          display={{ base: "none", xl: "block" }}
+        />
+        <Box w="100%" {...this.props}>
+          {this.props.children}
+        </Box>
+      </Flex>
+    )
+  }
+  OpenDrawerButton = () => {
+    return (
+      <Box
+        position="absolute"
+        top="100px"
+        left={5}
+        display={{ base: "block", xl: "none" }}
+        onClick={() => this.setState({ isDrawerOpen: true })}
+      >
+        <FiMenu />
+        <Drawer
+          isOpen={this.state.isDrawerOpen}
+          placement="left"
+          onClose={() => this.setState({ isDrawerOpen: false })}
+        >
+          <DrawerOverlay />
+          <DrawerContent width="270px">
+            <DrawerCloseButton />
+            <SideNav project={this.project} />
+          </DrawerContent>
+        </Drawer>
       </Box>
     )
   }

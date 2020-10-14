@@ -1,5 +1,4 @@
 import {
-  Box,
   Button,
   Flex,
   Heading,
@@ -10,7 +9,7 @@ import {
 import colabImage from "../landing/images/colab.png"
 import { Container } from "./commons"
 import { BreadCrumb } from "./BreadCrumb"
-import { SideNav } from "./SideNav"
+import { ProjectsNavigatorFrame } from "./SideNav"
 import { ProjectPaginator } from "./ProjectPaginator"
 import React from "react"
 import { MetaTags } from "./MetaTags"
@@ -59,16 +58,13 @@ export function ProjectWrapper({ project, children, ...props }) {
         </Heading>
         <ActionButtons project={project} />
       </Flex>
-      <Flex>
-        <SideNav project={project} />
-        <Box w="100%" {...props}>
-          <Text m={0} textAlign="center">
-            {project.desc}
-          </Text>
-          {children}
-          <ProjectPaginator project={project} />
-        </Box>
-      </Flex>
+      <ProjectsNavigatorFrame {...props}>
+        <Text m={0} textAlign="center">
+          {project.desc}
+        </Text>
+        {children}
+        <ProjectPaginator project={project} />
+      </ProjectsNavigatorFrame>
     </Container>
   )
 }
