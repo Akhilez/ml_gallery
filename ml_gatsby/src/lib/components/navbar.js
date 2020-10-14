@@ -42,6 +42,8 @@ export default function Navbar() {
         <Box
           display={{ base: show ? "block" : "none", sm: "flex" }}
           mt={{ base: 4, sm: 0 }}
+          bg="backgroundColor"
+          zIndex={5}
         >
           <NavItem href={urls.gallery} text="ML GALLERY" icon={MdHome} />
           <NavItem href={urls.profile} text="PROFILE" icon={MdPerson} />
