@@ -1,7 +1,8 @@
-import numpy as np
-import random
-from skimage.transform import resize
 import os
+import random
+
+import numpy as np
+from skimage.transform import resize
 
 
 class MNISTAug:
@@ -31,7 +32,18 @@ class MNISTAug:
         Returns
         -------
         aug_x: np.ndarray: a tensor of shape [1000, 112, 112]
-        aug_y: list: a tensor of shape [n_out, numbers_out, 5] | 5 => [class, x1, y1, x2, y2]
+        aug_y: list of dict: [{
+                    'class': int(np.argmax(y[rand_i])),
+                    'class_one_hot': y[rand_i],
+                    'x1': rand_x,
+                    'y1': rand_y,
+                    'x2': rand_x + localized_dim_x,
+                    'y2': rand_y + localized_dim_y,
+                    'cx': rand_x + localized_dim_x / 2,
+                    'cy': rand_y + localized_dim_y / 2,
+                    'height': localized_dim_y,
+                    'width': localized_dim_x
+                }]
 
         """
 
@@ -48,14 +60,17 @@ class MNISTAug:
             centers = []
             widths = []
 
-            for j in range(n_objects):
+            j = 0
+            while j < n_objects:
                 rand_i = random.randrange(0, len(x))
                 x_in = int(max(0, np.random.normal(self.scaling_mean, self.scaling_sd, 1)) * x.shape[1])
                 # x_in = int(random.uniform(self.min_resize, self.max_resize) * x.shape[1])
 
                 try:
                     resized_object = resize(x[rand_i], (x_in, x_in))  # TODO: Find the root cause of this error
-                except:
+                except Exception as e:
+                    print(e)
+                    j -= 1
                     continue
 
                 attempts = 1
@@ -94,6 +109,8 @@ class MNISTAug:
                     'height': localized_dim_y,
                     'width': localized_dim_x
                 })
+
+                j += 1
 
             aug_y.append(aug_yi)
             aug_x[i][aug_x[i] > 1] = 1.0

@@ -162,7 +162,7 @@ export class DeepIris extends React.Component {
 
   getLossGraph() {
     return (
-      <Box maxW="500px">
+      <Box maxW="500px" mt={8}>
         <ResponsiveContainer width="100%" height={300}>
           <LineChart
             data={this.state.lossData}
