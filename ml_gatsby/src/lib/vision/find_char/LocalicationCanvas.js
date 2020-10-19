@@ -18,6 +18,8 @@ export class LocalizationCanvas extends React.Component {
     this.anchor_cx = 56 * 4
     this.anchor_cy = 56 * 4
     this.anchor_w = 28 * 4
+
+    this.isBeingDrawn = false
   }
 
   render() {
@@ -42,19 +44,23 @@ export class LocalizationCanvas extends React.Component {
   }
 
   draw(p5) {
-    if (p5.mouseIsPressed) {
-      if (p5.mouseButton === p5.LEFT) {
-        p5.strokeWeight(15)
-        p5.stroke(0)
-        p5.line(p5.mouseX, p5.mouseY, p5.pmouseX, p5.pmouseY)
+    if (
+      p5.mouseIsPressed &&
+      p5.mouseButton === p5.LEFT &&
+      isCursorInScope(this.p5, this.side, this.side)
+    ) {
+      if (this.props.parent.autoClearEnabled && !this.isBeingDrawn) {
+        this.clearCanvas()
+        this.isBeingDrawn = true
       }
+
+      p5.strokeWeight(15)
+      p5.stroke(0)
+      p5.line(p5.mouseX, p5.mouseY, p5.pmouseX, p5.pmouseY)
     }
   }
 
   drawBoundingBox(cxd, cyd, wd) {
-    // TODO: Draw the bounding box
-    console.log("Drawing ", cxd, cyd, wd)
-
     const cx = (0.5 + cxd) * this.side
     const cy = (0.5 + cyd) * this.side
     const w = (this.anchor_w / this.side + wd) * this.side
@@ -63,7 +69,8 @@ export class LocalizationCanvas extends React.Component {
     const y = cy - w / 2
 
     this.p5.push()
-    this.p5.strokeWeight(2)
+    this.p5.strokeWeight(1)
+    this.p5.stroke("red")
     this.p5.noFill()
     this.p5.rect(y, x, w)
     this.p5.pop()
@@ -80,6 +87,7 @@ export class LocalizationCanvas extends React.Component {
 
     p5.loadPixels()
     this.props.parent.convNet.predict(p5.pixels)
+    this.isBeingDrawn = false
   }
 
   getEmptyMatrix(r, c) {

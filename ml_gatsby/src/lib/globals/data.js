@@ -61,7 +61,7 @@ const projectsRaw = {
   // vision
   which_char: {
     title: "Which Character?",
-    desc: "Visualize the convolutions in recognizing handwritten letters",
+    desc: "Draw a number in the box and recognize what number it is",
     image: "which_char.png",
     status: "to_do",
     links: {
@@ -95,8 +95,7 @@ const projectsRaw = {
   },
   find_char: {
     title: "Find The Number",
-    desc:
-      "Find the location of all the numbers in a large box and recognize what numbers they are.",
+    desc: "Draw a number in the box and find its location",
     image: "find_number.png",
     status: "to_do",
     links: {

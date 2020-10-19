@@ -2,7 +2,7 @@ import React from "react"
 import { projects } from "../../globals/data"
 import { ProjectWrapper } from "../../components/ProjectWrapper"
 import { Centered } from "../../components/commons"
-import { Button, IconButton } from "@chakra-ui/core"
+import { Flex, FormLabel, Switch, IconButton } from "@chakra-ui/core"
 import { LocalizationCanvas } from "./LocalicationCanvas"
 import { FindCharTF } from "./FindCharTF"
 import { MdRefresh } from "react-icons/all"
@@ -19,6 +19,7 @@ export class FindChar extends React.Component {
       predicted: null,
       dataLoaded: false,
     }
+    this.autoClearEnabled = true
 
     this.canvasRef = React.createRef()
 
@@ -35,6 +36,18 @@ export class FindChar extends React.Component {
           {this.state.modelLoaded && (
             <>
               <LocalizationCanvas ref={this.canvasRef} parent={this} />
+              <Flex justify="center" align="center" mt={4}>
+                <FormLabel htmlFor="autoClear">Auto clear</FormLabel>
+                <Switch
+                  id="autoClear"
+                  color="red"
+                  defaultIsChecked
+                  onClick={event => {
+                    if (event.target.checked != null)
+                      this.autoClearEnabled = event.target.checked
+                  }}
+                />
+              </Flex>
               <IconButton
                 aria-label="icon"
                 icon={MdRefresh}
