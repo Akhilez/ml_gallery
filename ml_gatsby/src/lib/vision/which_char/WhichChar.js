@@ -38,8 +38,6 @@ export class WhichChar extends React.Component {
     this.convNet.initialize_model()
     this.convNet.initialize_data()
 
-    this.canvasRef = React.createRef()
-
     this.sampleRefs = []
     for (let i = 0; i < 10; i++) this.sampleRefs.push(React.createRef())
     this.sampleSide = 100
