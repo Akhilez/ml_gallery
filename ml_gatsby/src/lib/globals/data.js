@@ -244,6 +244,16 @@ const projectsRaw = {
       source: "",
     },
   },
+  gridworld: {
+    title: "Grid World",
+    desc: "Navigate the player to a desired location.",
+    image: "gridworld.png",
+    status: "to_do",
+    links: {
+      app: "/gallery/coming_soon",
+      source: "",
+    },
+  },
   racer: {
     title: "Racer",
     desc: "",
@@ -365,6 +375,7 @@ export const categoriesMap = {
     title: "Reinforcement Learning",
     projects: [
       projects.tictactoe,
+      projects.gridworld,
       projects.ping_ping,
       projects.racer,
       projects.dodger,
