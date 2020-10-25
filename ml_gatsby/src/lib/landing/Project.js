@@ -71,6 +71,7 @@ export class Project extends React.Component {
             src={require("./images/" + props.project.image)}
             alt={props.project.title + "Image"}
             width="sm"
+            height={{ base: "150px", md: "250px" }}
             className={"project-image"}
             minW={{ base: "100px", md: "350px" }}
           />
