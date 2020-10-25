@@ -112,7 +112,7 @@ const projectsRaw = {
     image: "faster_rcnn.png",
     status: "to_do",
     links: {
-      app: "/gallery/coming_soon",
+      app: "/gallery/vision/find_all_chars",
       source:
         "https://colab.research.google.com/github/Akhilez/ml_gallery/blob/master/ml_py/app/vision/detector_v1/colab_detection.ipynb",
       colab:
