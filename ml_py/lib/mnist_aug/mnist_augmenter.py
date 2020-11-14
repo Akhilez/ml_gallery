@@ -22,6 +22,9 @@ class MNISTAug:
 
         self.spacing = 0.7  # Fraction: distance(c1, c2) / (r1 + r2)
 
+        self.closeness_fraction = 0  # more = only close ones have relationship
+        self.positional_captions = False
+
     def get_augmented(self, x: np.ndarray, y: np.ndarray, n_out: int, get_captions: bool = False):
         """
 
@@ -141,46 +144,60 @@ class MNISTAug:
     def get_captions(self, boxes):
 
         for box in boxes:
-            caption = self.get_number_caption(box['x1'], box['y1'], box['x2'], box['y2'])
+            if self.positional_captions:
+                caption = self.get_number_caption(box['x1'], box['y1'], box['x2'], box['y2'], box['class'])
+            else:
+                caption = np.random.choice(caption_rules.number_captions).format(c=box['class'])
             box['number'] = box['class']
             box['class'] = caption
 
         return boxes + self.get_relationship_boxes(boxes)
 
     @staticmethod
-    def get_number_caption(x1a, y1a, x2a, y2a):
+    def get_number_caption(x1a, y1a, x2a, y2a, cls):
 
         areas = []
         for grid_box in caption_rules.grid_boxes:
+            if x2a < grid_box[0] \
+                    or x1a > grid_box[2] \
+                    or y1a > grid_box[3] \
+                    or y2a < grid_box[1]:
+                areas.append(0)
+                continue
+
             x1 = max(x1a, grid_box[0])
             y1 = max(y1a, grid_box[1])
-            x2 = max(x2a, grid_box[2])
-            y2 = max(y2a, grid_box[3])
+            x2 = min(x2a, grid_box[2])
+            y2 = min(y2a, grid_box[3])
 
             areas.append((x2 - x1) * (y2 - y1))
 
         argmax = np.argmax(areas)
 
         grid_box_name = np.random.choice(caption_rules.grid_names[argmax])
-        number_name = np.random.choice(caption_rules.class_names[argmax])
-        caption = np.random.choice(caption_rules.number_captions)
+        number_name = np.random.choice(caption_rules.class_names[cls])
+        caption = np.random.choice(caption_rules.positional_captions)
         caption = caption.format(c=number_name, q=grid_box_name)
 
         return caption
 
-    @staticmethod
-    def get_relationship_boxes(boxes):
+    def get_relationship_boxes(self, boxes):
 
         relationship_boxes = []
         done_pairs = []
         box_id = len(boxes)
 
         for i in range(len(boxes)):
-
+            done = False
             distance_factors = []
             for j in range(len(boxes)):
-                if i == j or MNISTAug.is_pair_done(i, j, done_pairs):
+                if i == j:
+                    distance_factors.append(9999)
                     continue
+
+                if MNISTAug.is_pair_done(i, j, done_pairs):
+                    done = True
+                    break
 
                 c1 = np.array((boxes[i]['cx'], boxes[i]['cy'],))
                 c2 = np.array((boxes[j]['cx'], boxes[j]['cy'],))
@@ -188,11 +205,14 @@ class MNISTAug:
                 distance = np.linalg.norm(c2 - c1)
                 side = boxes[i]['width'] + boxes[j]['width']
 
-                distance_factor = distance / side
-                if distance_factor > 1:
+                distance_factor = (side - distance) / side
+                if distance_factor < self.closeness_fraction:
                     distance_factor = 9999
 
                 distance_factors.append(distance_factor)
+
+            if done:
+                continue
 
             arg_min = int(np.argmin(distance_factors))
             if distance_factors[arg_min] == 9999:

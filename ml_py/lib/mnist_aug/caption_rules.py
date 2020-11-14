@@ -36,6 +36,16 @@ for i in range(3):
         grid_boxes.append((x1, y1, x2, y2))
 
 number_captions = [
+    '{c} is in this box',
+    'this box contains a {c}',
+    'this region has a {c}',
+    '{c} is in this region',
+    'this region contains a {c}',
+    'this region consists {c}',
+    'here is a {c}'
+]
+
+positional_captions = [
     '{c} is in the {q}',
     '{c} lies in the {q}',
     '{c} is inside {q}',
@@ -53,7 +63,7 @@ relationship_captions = [
     '{a} and {b} are nearby',
     '{a} and {b} are together',
     '{a} lies close to {b}',
-    '{a} is within {b}',
+    '{a} is with {b}',
     '{a} and {b} lie close together'
 ]
 
