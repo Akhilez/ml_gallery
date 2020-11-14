@@ -30,6 +30,7 @@ class MNISTAug:
         x: a tensor of shape [1000, 28, 28]
         y: a tensor of shape [1000, 1]
         n_out: number of output images
+        get_captions: bool: will return captions for each image
 
         Returns
         -------
@@ -54,7 +55,6 @@ class MNISTAug:
 
         aug_x = np.zeros((n_out, x_out, x_out))
         aug_y = []
-        captions = []
 
         for i in range(n_out):
 
@@ -88,6 +88,7 @@ class MNISTAug:
                     if len(centers) == 0 or not self.is_overlapping(rand_x, rand_y, x_in, centers, widths):
                         break
                 else:
+                    j += 1
                     continue
 
                 widths.append(x_in)
@@ -117,17 +118,12 @@ class MNISTAug:
 
                 j += 1
 
-            aug_y.append(aug_yi)
             aug_x[i][aug_x[i] > 1] = 1.0
 
-            # DataManager.plot_num(aug_x[i], aug_yi)
-            # DataManager.plot_num(aug_x[i])
-
             if get_captions:
-                captions.append(self.get_captions(aug_yi))
+                aug_yi = self.get_captions(aug_yi)
 
-        if get_captions:
-            return aug_x, aug_y, captions
+            aug_y.append(aug_yi)
 
         return aug_x, aug_y
 
@@ -143,19 +139,13 @@ class MNISTAug:
         return False
 
     def get_captions(self, boxes):
-        captions = []
 
         for box in boxes:
-            number_caption = self.get_number_caption(box['x1'], box['y1'], box['x2'], box['y2'])
-            captions.append({'box_id': box['id'], 'caption': number_caption})
+            caption = self.get_number_caption(box['x1'], box['y1'], box['x2'], box['y2'])
+            box['number'] = box['class']
+            box['class'] = caption
 
-        relationship_boxes = self.get_relationship_boxes(boxes)
-
-        for box in relationship_boxes:
-            caption = self.get_relationship_caption(box)
-            captions.append({'box_id': box['id'], 'caption': caption})
-
-        return boxes + relationship_boxes, captions
+        return boxes + self.get_relationship_boxes(boxes)
 
     @staticmethod
     def get_number_caption(x1a, y1a, x2a, y2a):
@@ -178,26 +168,86 @@ class MNISTAug:
 
         return caption
 
-    def get_relationship_boxes(self, boxes):
+    @staticmethod
+    def get_relationship_boxes(boxes):
 
-        # TODO: Finish up
-        return [{
-            'id': 0,
-            'classes': [2, 3],
-            'x1': 0.1,
-            'y1': 1.2,
-            'x2': 3.2,
-            'y2': 2.3,
-            'cx': 4.3,
-            'cy': 5.4,
-            'height': 2.2,
-            'width': 2.4,
+        relationship_boxes = []
+        done_pairs = []
+        box_id = len(boxes)
+
+        for i in range(len(boxes)):
+
+            distance_factors = []
+            for j in range(len(boxes)):
+                if i == j or MNISTAug.is_pair_done(i, j, done_pairs):
+                    continue
+
+                c1 = np.array((boxes[i]['cx'], boxes[i]['cy'],))
+                c2 = np.array((boxes[j]['cx'], boxes[j]['cy'],))
+
+                distance = np.linalg.norm(c2 - c1)
+                side = boxes[i]['width'] + boxes[j]['width']
+
+                distance_factor = distance / side
+                if distance_factor > 1:
+                    distance_factor = 9999
+
+                distance_factors.append(distance_factor)
+
+            arg_min = int(np.argmin(distance_factors))
+            if distance_factors[arg_min] == 9999:
+                continue
+
+            done_pairs.append({'box1': i, 'box2': arg_min, 'dist': distance_factors[arg_min]})
+
+            relationship_box = MNISTAug.get_relationship_bounding_box(boxes[i], boxes[arg_min])
+            relationship_box['id'] = box_id
+            box_id += 1
+
+            relationship_boxes.append(relationship_box)
+
+        return relationship_boxes
+
+    @staticmethod
+    def get_relationship_bounding_box(box1, box2):
+        x1 = min(box1['x1'], box2['x1'])
+        y1 = min(box1['y1'], box2['y1'])
+        x2 = max(box1['x2'], box2['x2'])
+        y2 = max(box1['y2'], box2['y2'])
+
+        cx = (x1 + x2) / 2
+        cy = (y1 + y2) / 2
+
+        w = x2 - x1
+        h = y2 - y1
+
+        number1_name = np.random.choice(caption_rules.class_names[box1['number']])
+        number2_name = np.random.choice(caption_rules.class_names[box2['number']])
+
+        caption = np.random.choice(caption_rules.relationship_captions).format(a=number1_name, b=number2_name)
+
+        return {
+            'classes': [box1['class'], box2['class']],
+            'class': caption,
+            'x1': x1,
+            'y1': y1,
+            'x2': x2,
+            'y2': y2,
+            'cx': cx,
+            'cy': cy,
+            'height': h,
+            'width': w,
             'type': 'relationship'
-        }]
+        }
 
-    def get_relationship_caption(self, box):
-        # TODO: Finish up
-        return 'dummy string'
+    @staticmethod
+    def is_pair_done(i, j, done_pairs):
+        for pair in done_pairs:
+            if pair['box1'] == i and pair['box2'] == j:
+                return True
+            if pair['box1'] == j and pair['box2'] == i:
+                return True
+        return False
 
 
 class DataManager:

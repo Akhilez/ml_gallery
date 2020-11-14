@@ -48,7 +48,7 @@ number_captions = [
     '{q} location contains a {c}'
 ]
 
-closeness_captions = [
+relationship_captions = [
     '{a} and {b} are close to each other',
     '{a} and {b} are nearby',
     '{a} and {b} are together',
