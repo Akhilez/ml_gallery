@@ -20,7 +20,7 @@ class MNISTAug:
 
         self.spacing = 0.7  # Fraction: distance(c1, c2) / (r1 + r2)
 
-    def get_augmented(self, x: np.ndarray, y: np.ndarray, n_out: int):
+    def get_augmented(self, x: np.ndarray, y: np.ndarray, n_out: int, get_captions: bool = False):
         """
 
         Parameters
@@ -32,7 +32,7 @@ class MNISTAug:
         Returns
         -------
         aug_x: np.ndarray: a tensor of shape [1000, 112, 112]
-        aug_y: list of dict: [{
+        aug_y: list of list of dicts: [[{
                     'class': int(np.argmax(y[rand_i])),
                     'class_one_hot': y[rand_i],
                     'x1': rand_x,
@@ -43,7 +43,7 @@ class MNISTAug:
                     'cy': rand_y + localized_dim_y / 2,
                     'height': localized_dim_y,
                     'width': localized_dim_x
-                }]
+                }]]
 
         """
 
@@ -52,6 +52,7 @@ class MNISTAug:
 
         aug_x = np.zeros((n_out, x_out, x_out))
         aug_y = []
+        captions = []
 
         for i in range(n_out):
 
@@ -118,6 +119,12 @@ class MNISTAug:
             # DataManager.plot_num(aug_x[i], aug_yi)
             # DataManager.plot_num(aug_x[i])
 
+            if get_captions:
+                captions.append(self.get_captions(aug_x[i], aug_yi))
+
+        if get_captions:
+            return aug_x, aug_y, captions
+
         return aug_x, aug_y
 
     def is_overlapping(self, x, y, width, centers, widths):
@@ -130,6 +137,9 @@ class MNISTAug:
                 return True
 
         return False
+
+    def get_captions(self, images, boxes):
+        pass
 
 
 class DataManager:
