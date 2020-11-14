@@ -4,6 +4,8 @@ import random
 import numpy as np
 from skimage.transform import resize
 
+from lib.mnist_aug import caption_rules
+
 
 class MNISTAug:
     def __init__(self):
@@ -155,9 +157,26 @@ class MNISTAug:
 
         return boxes + relationship_boxes, captions
 
-    def get_number_caption(self, x1a, y1a, x2a, y2a):
-        # TODO: Finish up
-        return 'dummy string'
+    @staticmethod
+    def get_number_caption(x1a, y1a, x2a, y2a):
+
+        areas = []
+        for grid_box in caption_rules.grid_boxes:
+            x1 = max(x1a, grid_box[0])
+            y1 = max(y1a, grid_box[1])
+            x2 = max(x2a, grid_box[2])
+            y2 = max(y2a, grid_box[3])
+
+            areas.append((x2 - x1) * (y2 - y1))
+
+        argmax = np.argmax(areas)
+
+        grid_box_name = np.random.choice(caption_rules.grid_names[argmax])
+        number_name = np.random.choice(caption_rules.class_names[argmax])
+        caption = np.random.choice(caption_rules.number_captions)
+        caption = caption.format(c=number_name, q=grid_box_name)
+
+        return caption
 
     def get_relationship_boxes(self, boxes):
 
