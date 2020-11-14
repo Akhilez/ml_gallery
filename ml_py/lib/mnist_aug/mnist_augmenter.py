@@ -99,6 +99,7 @@ class MNISTAug:
                 aug_x[i][rand_x:rand_x + localized_dim_x, rand_y:rand_y + localized_dim_y] += localized_xi
 
                 aug_yi.append({
+                    'id': j,
                     'class': int(np.argmax(y[rand_i])),
                     'class_one_hot': y[rand_i],
                     'x1': rand_x,
@@ -108,7 +109,8 @@ class MNISTAug:
                     'cx': rand_x + localized_dim_x / 2,
                     'cy': rand_y + localized_dim_y / 2,
                     'height': localized_dim_y,
-                    'width': localized_dim_x
+                    'width': localized_dim_x,
+                    'type': 'number'
                 })
 
                 j += 1
@@ -120,7 +122,7 @@ class MNISTAug:
             # DataManager.plot_num(aug_x[i])
 
             if get_captions:
-                captions.append(self.get_captions(aug_x[i], aug_yi))
+                captions.append(self.get_captions(aug_yi))
 
         if get_captions:
             return aug_x, aug_y, captions
@@ -138,8 +140,45 @@ class MNISTAug:
 
         return False
 
-    def get_captions(self, images, boxes):
-        pass
+    def get_captions(self, boxes):
+        captions = []
+
+        for box in boxes:
+            number_caption = self.get_number_caption(box['x1'], box['y1'], box['x2'], box['y2'])
+            captions.append({'box_id': box['id'], 'caption': number_caption})
+
+        relationship_boxes = self.get_relationship_boxes(boxes)
+
+        for box in relationship_boxes:
+            caption = self.get_relationship_caption(box)
+            captions.append({'box_id': box['id'], 'caption': caption})
+
+        return boxes + relationship_boxes, captions
+
+    def get_number_caption(self, x1a, y1a, x2a, y2a):
+        # TODO: Finish up
+        return 'dummy string'
+
+    def get_relationship_boxes(self, boxes):
+
+        # TODO: Finish up
+        return [{
+            'id': 0,
+            'classes': [2, 3],
+            'x1': 0.1,
+            'y1': 1.2,
+            'x2': 3.2,
+            'y2': 2.3,
+            'cx': 4.3,
+            'cy': 5.4,
+            'height': 2.2,
+            'width': 2.4,
+            'type': 'relationship'
+        }]
+
+    def get_relationship_caption(self, box):
+        # TODO: Finish up
+        return 'dummy string'
 
 
 class DataManager:
