@@ -2,6 +2,7 @@
 temp/
 venv/
 .DS_Store
+runs/
 
 # Logs
 logs
