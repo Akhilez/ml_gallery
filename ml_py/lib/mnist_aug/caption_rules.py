@@ -23,21 +23,18 @@ grid_names = [
     ['bottom right', 'lower right']
 ]
 
+TL = 'top-left'
+T = 'top'
+TR = 'top-right'
+L = 'left'
+C = 'center'
+R = 'right'
+BL = 'bottom-left'
+B = 'bottom'
+BR = 'bottom-right'
 
-class Pos:
-    TL = 'top-left'
-    T = 'top'
-    TR = 'top-right'
-    L = 'left'
-    C = 'center'
-    R = 'right'
-    BL = 'bottom-left'
-    B = 'bottom'
-    BR = 'bottom-right'
-
-    to_pos = [TL, T, TR, L, C, R, BL, B, BR]
-    to_index = {to_pos[i]: i for i in range(len(to_pos))}
-
+index_to_pos = [TL, T, TR, L, C, R, BL, B, BR]
+pos_to_index = {index_to_pos[i]: i for i in range(len(index_to_pos))}
 
 side = 112 // 3
 
