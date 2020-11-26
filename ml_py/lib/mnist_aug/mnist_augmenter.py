@@ -172,6 +172,7 @@ class MNISTAug:
 
         for box in boxes:
             box['position'] = MNISTAug.get_number_position(box['x1'], box['y1'], box['x2'], box['y2'])
+            box['position_one_hot'] = DataManager.to_one_hot([box['position']], 9)
 
         return boxes
 
@@ -446,7 +447,7 @@ class DataManager:
         return np.argmax(x)
 
     @staticmethod
-    def to_one_hot(x):
-        b = np.zeros((len(x), 10), dtype=np.float32)
+    def to_one_hot(x, num_classes=10):
+        b = np.zeros((len(x), num_classes), dtype=np.float32)
         b[np.arange(len(x)), x] = 1
         return b
