@@ -23,6 +23,22 @@ grid_names = [
     ['bottom right', 'lower right']
 ]
 
+
+class Pos:
+    TL = 'top-left'
+    T = 'top'
+    TR = 'top-right'
+    L = 'left'
+    C = 'center'
+    R = 'right'
+    BL = 'bottom-left'
+    B = 'bottom'
+    BR = 'bottom-right'
+
+    to_pos = [TL, T, TR, L, C, R, BL, B, BR]
+    to_index = {to_pos[i]: i for i in range(len(to_pos))}
+
+
 side = 112 // 3
 
 grid_boxes = []
@@ -36,26 +52,26 @@ for i in range(3):
         grid_boxes.append((x1, y1, x2, y2))
 
 number_captions = [
-    '{c} is in this box',
-    'this box contains a {c}',
-    'this region has a {c}',
-    '{c} is in this region',
-    'this region contains a {c}',
-    'this region consists {c}',
-    'here is a {c}'
+    '{a} is in this box',
+    'this box contains a {a}',
+    'this region has a {a}',
+    '{a} is in this region',
+    'this region contains a {a}',
+    'this region consists {a}',
+    'here is a {a}'
 ]
 
 positional_captions = [
-    '{c} is in the {q}',
-    '{c} lies in the {q}',
-    '{c} is inside {q}',
-    '{c} goes into {q}',
-    '{c} goes inside {q}',
-    '{c} is located in the {q}',
-    '{c} is positioned in the {q}',
-    'position of {c} is in the {q}',
-    'location of {c} is in the {q}',
-    '{q} location contains a {c}'
+    '{a} is in the {p}',
+    '{a} lies in the {p}',
+    '{a} is inside {p}',
+    '{a} goes into {p}',
+    '{a} goes inside {p}',
+    '{a} is located in the {p}',
+    '{a} is positioned in the {p}',
+    'position of {a} is in the {p}',
+    'location of {a} is in the {p}',
+    '{p} location contains a {a}'
 ]
 
 relationship_captions = [
@@ -67,4 +83,16 @@ relationship_captions = [
     '{a} and {b} lie close together'
 ]
 
+positional_relationship_captions = [
+    '{b} is at the {p} of {a}',
+    '{b} lies to the {p} of {a}',
+    '{b} is to the {p} of {a}',
+    '{b} goes to the {p} of {a}',
+    '{b} is positioned to the {p} of {a}',
+    'location of {b} is to the {p} of {a}',
+    'location of {b} is {p} of {a}',
+    'position of {b} is to the {p} of {a}'
+    'position of {b} is {p} of {a}',
+    'position of {b} is {p} of {a}'
+]
 

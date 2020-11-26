@@ -23,9 +23,11 @@ class MNISTAug:
         self.spacing = 0.7  # Fraction: distance(c1, c2) / (r1 + r2)
 
         self.closeness_fraction = 0  # more = only close ones have relationship
-        self.positional_captions = False
 
-    def get_augmented(self, x: np.ndarray, y: np.ndarray, n_out: int, get_captions: bool = False):
+    def get_augmented(self, x: np.ndarray, y: np.ndarray, n_out: int, noisy: bool = False,
+                      get_class_captions: bool = False, get_relationships: bool = False,
+                      get_positional_labels: bool = False, get_positional_relationships: bool = False,
+                      get_relationship_captions: bool = False):
         """
 
         Parameters
@@ -33,7 +35,12 @@ class MNISTAug:
         x: a tensor of shape [1000, 28, 28]
         y: a tensor of shape [1000, 1]
         n_out: number of output images
-        get_captions: bool: will return captions for each image
+        noisy: bool: will add patchy perlin noise to the image # TODO: Lets add some noise to the image
+        get_class_captions: bool: will return captions for each number in the image
+        get_relationships: bool: will return labels with relationship b/w close numbers
+        get_positional_labels: bool: will return labels with positional data. For ex: "2 is in the top right"
+        get_positional_relationships: bool: will return relationships with positional data. Ex: "2 is left of 3"
+        get_relationship_captions: bool: will return captions for each image.
 
         Returns
         -------
@@ -76,7 +83,6 @@ class MNISTAug:
                     resized_object = resize(x[rand_i], (x_in, x_in))  # TODO: Find the root cause of this error
                 except Exception as e:
                     print(e)
-                    j -= 1
                     continue
 
                 attempts = 1
@@ -123,8 +129,22 @@ class MNISTAug:
 
             aug_x[i][aug_x[i] > 1] = 1.0
 
-            if get_captions:
-                aug_yi = self.get_captions(aug_yi)
+            if get_positional_labels:
+                aug_yi = self.get_positional_labels(aug_yi)
+                if get_class_captions:
+                    aug_yi = self.get_positional_captions(aug_yi)
+            elif get_class_captions:
+                aug_yi = self.get_class_captions(aug_yi)
+
+            if get_relationships:
+                rel_boxes = self.get_relationship_boxes(aug_yi)
+                if get_positional_relationships:
+                    rel_boxes = self.get_positional_relationships(rel_boxes)
+                    if get_relationship_captions:
+                        rel_boxes = self.get_positional_relationship_captions(rel_boxes)
+                elif get_relationship_captions:
+                    rel_boxes = self.get_relationship_captions(rel_boxes)
+                aug_yi += rel_boxes
 
             aug_y.append(aug_yi)
 
@@ -141,47 +161,59 @@ class MNISTAug:
 
         return False
 
-    def get_captions(self, boxes):
+    @staticmethod
+    def get_positional_labels(boxes):
+        """
+        For each number in the image:
+            Find the position
+            Add position KV to boxes
+        return boxes
+        """
 
         for box in boxes:
-            if self.positional_captions:
-                caption = self.get_number_caption(box['x1'], box['y1'], box['x2'], box['y2'], box['class'])
-            else:
-                caption = np.random.choice(caption_rules.number_captions).format(c=box['class'])
-            box['number'] = box['class']
-            box['class'] = caption
+            box['position'] = MNISTAug.get_number_position(box['x1'], box['y1'], box['x2'], box['y2'])
 
-        return boxes + self.get_relationship_boxes(boxes)
+        return boxes
 
     @staticmethod
-    def get_number_caption(x1a, y1a, x2a, y2a, cls):
+    def get_positional_captions(boxes):
+        """
+        For each box in boxes:
+            generate a random positional caption for position KV
+            Add class to number key
+            Add positional caption into class key
+        return boxes
+        """
+        for box in boxes:
+            grid_box_name = np.random.choice(caption_rules.grid_names[box['position']])
+            number_name = np.random.choice(caption_rules.class_names[box['class']])
+            caption = np.random.choice(caption_rules.positional_captions)
+            box['caption'] = caption.format(a=number_name, p=grid_box_name)
 
-        areas = []
-        for grid_box in caption_rules.grid_boxes:
-            if x2a < grid_box[0] \
-                    or x1a > grid_box[2] \
-                    or y1a > grid_box[3] \
-                    or y2a < grid_box[1]:
-                areas.append(0)
-                continue
+        return boxes
 
-            x1 = max(x1a, grid_box[0])
-            y1 = max(y1a, grid_box[1])
-            x2 = min(x2a, grid_box[2])
-            y2 = min(y2a, grid_box[3])
+    @staticmethod
+    def get_class_captions(boxes):
+        """
+        For each box:
+            generate a random number caption
+            move class KV to number
+            add caption as class key
+        """
 
-            areas.append((x2 - x1) * (y2 - y1))
+        for box in boxes:
+            box['class'] = np.random.choice(caption_rules.number_captions).format(a=box['class'])
 
-        argmax = np.argmax(areas)
-
-        grid_box_name = np.random.choice(caption_rules.grid_names[argmax])
-        number_name = np.random.choice(caption_rules.class_names[cls])
-        caption = np.random.choice(caption_rules.positional_captions)
-        caption = caption.format(c=number_name, q=grid_box_name)
-
-        return caption
+        return boxes
 
     def get_relationship_boxes(self, boxes):
+        """
+        Find close together pairs
+        For each pair:
+            Add the numbers into 'close_paris' key
+            Add the relationship bounding box coordinates
+            Add both number's bounding box coordinates
+        """
 
         relationship_boxes = []
         done_pairs = []
@@ -229,6 +261,66 @@ class MNISTAug:
         return relationship_boxes
 
     @staticmethod
+    def get_positional_relationships(boxes):
+        """
+        TODO: Complete positional relationships
+        For each box:
+            Get the relationship pairs
+            Find the positional relationship
+            add it to the boxes
+        """
+        return boxes
+
+    @staticmethod
+    def get_positional_relationship_captions(boxes):
+        """
+        TODO: Incomplete
+        For each positional relationship:
+            Get a random caption
+            Add it to the boxes
+        """
+        return boxes
+
+    @staticmethod
+    def get_relationship_captions(boxes):
+        """
+        For each relationship:
+            get a random caption
+            add it to the boxes
+        """
+        for box in boxes:
+            number1_name = np.random.choice(caption_rules.class_names[box['box1']['class']])
+            number2_name = np.random.choice(caption_rules.class_names[box['box2']['class']])
+
+            caption = np.random.choice(caption_rules.relationship_captions).format(a=number1_name, b=number2_name)
+            box['caption'] = caption
+
+        return boxes
+
+    @staticmethod
+    def get_number_position(x1a, y1a, x2a, y2a):
+
+        areas = []
+        for grid_box in caption_rules.grid_boxes:
+            if x2a < grid_box[0] \
+                    or x1a > grid_box[2] \
+                    or y1a > grid_box[3] \
+                    or y2a < grid_box[1]:
+                areas.append(0)
+                continue
+
+            x1 = max(x1a, grid_box[0])
+            y1 = max(y1a, grid_box[1])
+            x2 = min(x2a, grid_box[2])
+            y2 = min(y2a, grid_box[3])
+
+            areas.append((x2 - x1) * (y2 - y1))
+
+        argmax = np.argmax(areas)
+
+        return argmax
+
+    @staticmethod
     def get_relationship_bounding_box(box1, box2):
         x1 = min(box1['x1'], box2['x1'])
         y1 = min(box1['y1'], box2['y1'])
@@ -241,14 +333,8 @@ class MNISTAug:
         w = x2 - x1
         h = y2 - y1
 
-        number1_name = np.random.choice(caption_rules.class_names[box1['number']])
-        number2_name = np.random.choice(caption_rules.class_names[box2['number']])
-
-        caption = np.random.choice(caption_rules.relationship_captions).format(a=number1_name, b=number2_name)
-
         return {
             'classes': [box1['class'], box2['class']],
-            'class': caption,
             'x1': x1,
             'y1': y1,
             'x2': x2,
@@ -257,7 +343,9 @@ class MNISTAug:
             'cy': cy,
             'height': h,
             'width': w,
-            'type': 'relationship'
+            'type': 'relationship',
+            'box1': box1,
+            'box2': box2
         }
 
     @staticmethod
