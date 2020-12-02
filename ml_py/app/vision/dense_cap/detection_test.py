@@ -63,6 +63,42 @@ def generate_anchors(shape, sizes, ratios):
     return torch.stack((cx, cy, w, h)).T
 
 
+def get_iou_map(boxes1, boxes2):
+
+    n1 = boxes1.shape[0]
+    n2 = boxes2.shape[0]
+
+    boxes1 = boxes1.T.repeat_interleave(n2).reshape((4, n1 * n2))  # [1, 2] => [1, 1, 2, 2]
+    boxes2 = boxes2.T.repeat((1, n1))  # [1, 2] => [1, 2, 1, 2]
+
+    w1 = boxes1[2]
+    w2 = boxes2[2]
+
+    h1 = boxes1[3]
+    h2 = boxes2[3]
+
+    cx1 = boxes1[0]
+    cx2 = boxes2[0]
+
+    cy1 = boxes1[1]
+    cy2 = boxes2[1]
+
+    w = ((w1 + w2) / 2) - torch.abs(cx1 - cx2)
+    h = ((h1 + h2) / 2) - torch.abs(cy1 - cy2)
+
+    intersection = w * h
+    intersection[intersection < 0] = 0
+
+    a1 = w1 * h1
+    a2 = w2 * h2
+
+    union = a1 + a2 - intersection
+
+    iou = intersection / union
+
+    return iou.view((n1, n2))
+
+
 y = [
     [
         {'id': 0,
@@ -213,8 +249,11 @@ y = [
 
 y_ = labels_to_tensor(y)
 
-anchors_tensor = generate_anchors(shape=(W, H), sizes=(15, 45, 75), ratios=(0.5, 1, 2))
+anchors_tensor = generate_anchors(shape=(W, H), sizes=(.15, .45, .75), ratios=(0.5, 1, 2))
+
+iou = get_iou_map(y_[1], anchors_tensor)
 
 print(anchors_tensor.shape)
 print([y_i.shape for y_i in y_])
+print(iou.flatten().tolist())
 
