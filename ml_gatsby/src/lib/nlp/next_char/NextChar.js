@@ -14,32 +14,31 @@ export class NextChar extends React.Component {
     this.project = projects.next_char
   }
   handleInput(event) {
-    this.setState({ text: event.target.value })
+    console.log(this.state)
+    this.setState({ text: event.target.value, predicted: "ding dong" })
     // TODO: call the freaking API and set prediction
-    this.setState({ predicted: "ding dong" })
   }
   render() {
     return (
       <ProjectWrapper project={this.project}>
         <Centered>
-          <Box width="4xl">
+          <Box width="4xl" height="120px" mt={4}>
             <Input
               size="lg"
               height="100px"
               fontSize="5xl"
               focusBorderColor="red.400"
               backgroundColor="transparent"
-              onChange={this.handleInput}
+              onChange={event => this.handleInput(event)}
             />
             <Text
               fontSize="5xl"
-              color="gray.500"
+              color="gray.300"
               mt="-85px"
               textAlign="left"
               ml={4}
             >
-              {this.state.text}
-              {this.state.predicted}
+              {`${this.state.text}${this.state.predicted}`}
             </Text>
           </Box>
         </Centered>
