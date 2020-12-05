@@ -1,3 +1,4 @@
+from app.nlp.next_char.utils import save_vocab
 from mlg.settings import BASE_DIR
 import os
 from torchtext.data.utils import get_tokenizer
@@ -32,21 +33,6 @@ with open(cleaned_file_path, 'w') as clean_file:
                 clean_file.write(' '.join(tokenized) + '\n')
                 op_file.write(','.join([str(vocab[token]) for token in tokenized]) + '\n')
             print(f"Done writing tokens of {file_path}")
-
-
-def save_vocab(vocab, path):
-    with open(path, 'w') as f:
-        for token, index in vocab.stoi.items():
-            f.write(f'{index}\t{token}\n')
-
-
-def read_vocab(path):
-    vocab = dict()
-    with open(path, 'r') as f:
-        for line in f:
-            index, token = line.split('\t')
-            vocab[token] = int(index)
-    return vocab
 
 
 save_vocab(vocab, vocab_file_path)

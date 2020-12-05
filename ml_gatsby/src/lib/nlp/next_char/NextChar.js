@@ -29,6 +29,7 @@ export class NextChar extends React.Component {
               fontSize="5xl"
               focusBorderColor="red.400"
               backgroundColor="transparent"
+              pr="200px"
               onChange={event => this.handleInput(event)}
             />
             <Text
