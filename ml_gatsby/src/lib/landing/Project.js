@@ -8,22 +8,23 @@ export class Project extends React.Component {
   render() {
     return (
       <Stack
-        width={{ base: "220px", md: "sm" }}
+        width={{ base: "220px", md: "300px" }}
         bg="white"
-        p={4}
-        borderRadius="25px"
+        pt={2}
+        px={3}
+        borderRadius="15px"
         mx={2}
-        minH={{ base: "sm", md: "550px" }}
+        minH={{ base: "sm", md: "450px" }}
         className="ProjectContainer"
       >
         <this.ProjectImage project={this.props.project} />
         <Box className="project-text-block">
-          <Heading as="h2" fontSize={{ base: "lg", md: "2xl" }} mb={2}>
+          <Heading as="h2" fontSize={{ base: "lg", md: "xl" }} mb={2}>
             <Link as={GLink} to={this.props.project.links.app}>
               {this.props.project.title}
             </Link>
           </Heading>
-          <Text fontSize={{ base: 16, md: 20 }} mb={2}>
+          <Text fontSize={14} mb={2}>
             {this.props.project.desc}
           </Text>
           {this.getIconLinks(this.props.project)}
@@ -70,10 +71,10 @@ export class Project extends React.Component {
           <Image
             src={require("./images/" + props.project.image)}
             alt={props.project.title + "Image"}
-            width="sm"
-            height={{ base: "150px", md: "250px" }}
+            width="300px"
+            height={{ base: "150px", md: "220px" }}
             className={"project-image"}
-            minW={{ base: "100px", md: "350px" }}
+            minW={{ base: "200px", md: "280px" }}
           />
         </GLink>
       </Stack>
