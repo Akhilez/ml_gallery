@@ -1,45 +1,77 @@
+import os
 import torch
-from torchtext.data import Field, TabularDataset, BucketIterator
+
+from app.nlp.next_char.net import NextCharModel
 from mlg.settings import BASE_DIR
-import tqdm
+from torch import nn
+import torch.nn.functional as F
 
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
-cleaned_data_path = f'{BASE_DIR}/data/subtitles/cleaned_test.txt'
-data_path = f'{BASE_DIR}/data/subtitles'
-
-batch_size = 16
-seq_len = 25
+models_path = f'{BASE_DIR}/app/nlp/next_char/models'
+vocab_file_path = f'{BASE_DIR}/data/subtitles/char_vocab.pt'
 
 pad_tkn = '~'
 unk_tkn = '*'
 eos_tkn = '\n'
 init_tkn = '>'
 
-tokenize = lambda string: list(string)
 
-TEXT = Field(sequential=True, tokenize=list, fix_length=seq_len, unk_token=unk_tkn, pad_first=False,
-             pad_token=pad_tkn, eos_token=eos_tkn, init_token=init_tkn)
+class NextCharModel(nn.Module):
+    def __init__(self, vocab_size, embed_size, hidden_size):
+        super().__init__()
 
-train_dataset, test_dataset = TabularDataset.splits(
-    path=data_path,
-    train='cleaned.txt', test='cleaned_test.txt',
-    format='csv',
-    skip_header=False,
-    fields=[("text", TEXT)])
+        self.embed_size = embed_size
+        self.hidden_size = hidden_size
 
-TEXT.build_vocab(train_dataset)
+        self.embed = nn.Embedding(
+            num_embeddings=vocab_size,
+            embedding_dim=self.embed_size
+        )
 
-train_iter, test_iter = BucketIterator.splits(
-    (train_dataset, test_dataset),
-    batch_sizes=(batch_size, batch_size),
-    device=device,
-    sort_key=lambda txt: len(txt.text),
-    sort_within_batch=False,
-    repeat=True
-)
+        self.rnn = nn.RNN(
+            input_size=self.embed_size,
+            hidden_size=self.hidden_size,
+            nonlinearity='relu'
+        )
+
+        self.y = nn.Linear(self.hidden_size, vocab_size)
+
+    def forward(self, x):
+        y = F.relu(self.embed(x))
+        y, _ = self.rnn(y)
+        return F.softmax(self.y(y), 2)
 
 
-for x in test_iter:
-    print(x.text)
-    break
+class NextChar:
+
+    def __init__(self):
+        self.vocab = torch.load(vocab_file_path)
+        self.vocab_size = len(self.vocab.itos)
+        self.model = self.load_model()
+
+    def predict(self, sentence):
+        terminal_chars = [eos_tkn, '\n', pad_tkn]
+        max_len = 50
+        next_char = 0
+        self.model.eval()
+        with torch.no_grad():
+            while next_char not in terminal_chars and len(sentence) < max_len:
+                seq = torch.tensor([self.vocab[s] or self.vocab[unk_tkn] for s in list(sentence.lower())],
+                                   device=device, dtype=torch.long).view((-1, 1))
+                preds = self.model(seq)
+                m = int(preds[-1][0].argmax())
+                next_char = self.vocab.itos[m]
+                sentence = sentence + next_char
+        return sentence
+
+    def load_model(self, latest=True, name=None):
+        model = NextCharModel(self.vocab_size, 512, 1024)
+        try:
+            if latest:
+                name = max(os.listdir(models_path))
+                model.load_state_dict(torch.load(f'{models_path}/{name}', map_location=torch.device(device)))
+                print(f'Loading model {name}')
+        except Exception as e:
+            print(e)
+        return model

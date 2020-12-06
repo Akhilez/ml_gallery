@@ -24,6 +24,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     # 'channels',
+    'rest_framework',
     'corsheaders',
     'webpack_loader',
 ] + NN_GALLERY_APPS
