@@ -1,7 +1,6 @@
 import os
 import torch
 
-from app.nlp.next_char.net import NextCharModel
 from mlg.settings import BASE_DIR
 from torch import nn
 import torch.nn.functional as F
@@ -29,10 +28,10 @@ class NextCharModel(nn.Module):
             embedding_dim=self.embed_size
         )
 
-        self.rnn = nn.RNN(
+        self.rnn = nn.LSTM(
             input_size=self.embed_size,
-            hidden_size=self.hidden_size,
-            nonlinearity='relu'
+            hidden_size=self.hidden_size
+            # nonlinearity='relu'
         )
 
         self.y = nn.Linear(self.hidden_size, vocab_size)
@@ -70,8 +69,8 @@ class NextChar:
         try:
             if latest:
                 name = max(os.listdir(models_path))
-                model.load_state_dict(torch.load(f'{models_path}/{name}', map_location=torch.device(device)))
-                print(f'Loading model {name}')
+            model.load_state_dict(torch.load(f'{models_path}/{name}', map_location=torch.device(device)))
+            print(f'Loading model {name}')
         except Exception as e:
             print(e)
         return model

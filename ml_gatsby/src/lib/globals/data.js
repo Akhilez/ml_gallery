@@ -1,7 +1,7 @@
 export const DEBUG = process.env.NODE_ENV !== "production"
 
 export const MLPyHost = DEBUG
-  ? "http://localhost:8000"
+  ? "http://localhost:8001"
   : "https://py.ml.akhil.ai"
 export const HOST = DEBUG ? "http://localhost:8000" : "https://akhil.ai"
 

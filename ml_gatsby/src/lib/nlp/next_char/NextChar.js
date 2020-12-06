@@ -3,20 +3,26 @@ import { ProjectWrapper } from "../../components/ProjectWrapper"
 import React from "react"
 import { Box, Input, Text } from "@chakra-ui/core"
 import { projects } from "src/lib/globals/data"
+import { mlgApi } from "src/lib/api"
 
 export class NextChar extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
       text: "",
-      predicted: "",
+      predicted: "... Enter text here!",
     }
     this.project = projects.next_char
   }
   handleInput(event) {
-    console.log(this.state)
-    this.setState({ text: event.target.value, predicted: "ding dong" })
-    // TODO: call the freaking API and set prediction
+    const text = event.target.value
+    this.setState({ text })
+    if (!text) this.setState({ predicted: "... Enter text here!" })
+    else
+      mlgApi
+        .nextChar(text)
+        .then(res => res.json())
+        .then(result => this.setState({ predicted: result.pred }))
   }
   render() {
     return (
@@ -39,7 +45,7 @@ export class NextChar extends React.Component {
               textAlign="left"
               ml={4}
             >
-              {`${this.state.text}${this.state.predicted}`}
+              {this.state.predicted}
             </Text>
           </Box>
         </Centered>

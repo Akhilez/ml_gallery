@@ -27,6 +27,7 @@
     "gatsby-plugin-sass": "^2.3.12",
     "google-fonts-plugin": "2.0.2",
     "node-sass": "^4.14.1",
+    "qs": "^6.9.4",
     "react": "^16.12.0",
     "react-dom": "^16.12.0",
     "react-helmet": "^6.1.0",
