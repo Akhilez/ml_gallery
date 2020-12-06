@@ -7,6 +7,10 @@ from rest_framework.response import Response
 from app.nlp.next_char.next_char import NextChar
 
 
+class PreLoaded:
+    next_char = NextChar()
+
+
 def home(request):
     return render(request, 'app/home.html', {'name': 'Akhil'})
 
@@ -26,4 +30,4 @@ def next_char(request):
     text = request.GET.get('text')
     if text is None:
         return Response({}, status=status.HTTP_400_BAD_REQUEST)
-    return Response({'pred': NextChar().predict(text)}, status=status.HTTP_200_OK)
+    return Response({'pred': PreLoaded.next_char.predict(text)}, status=status.HTTP_200_OK)

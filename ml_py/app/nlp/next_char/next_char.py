@@ -50,6 +50,7 @@ class NextChar:
         self.model = self.load_model()
 
     def predict(self, sentence):
+        length = len(sentence)
         terminal_chars = [eos_tkn, '\n', pad_tkn]
         max_len = 50
         next_char = 0
@@ -62,7 +63,7 @@ class NextChar:
                 m = int(preds[-1][0].argmax())
                 next_char = self.vocab.itos[m]
                 sentence = sentence + next_char
-        return sentence
+        return sentence[length:]
 
     def load_model(self, latest=True, name=None):
         model = NextCharModel(self.vocab_size, 512, 1024)
