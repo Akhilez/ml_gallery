@@ -43,7 +43,6 @@ const projectsRaw = {
     links: {
       app: "/gallery/linear/learn_curve",
       source: "https://github.com/Akhilez/ml_gallery",
-      colab: "https://github.com/Akhilez/ml_gallery",
     },
   },
   deep_iris: {
@@ -165,11 +164,14 @@ const projectsRaw = {
     title: "Next Char",
     desc:
       "Visualize how a Recurrent Neural Network predicts which letter comes next.",
-    image: "under_construction2.png",
+    image: "next_char.png",
     status: "to_do",
     links: {
       app: "/gallery/nlp/next_char",
-      source: "/next_char",
+      source:
+        "https://github.com/Akhilez/ml_gallery/blob/master/ml_py/app/nlp/next_char/next_char.py",
+      colab:
+        "https://colab.research.google.com/github/Akhilez/ml_gallery/blob/master/ml_py/app/nlp/next_char/next_char_colab.ipynb",
     },
   },
   word2vec: {

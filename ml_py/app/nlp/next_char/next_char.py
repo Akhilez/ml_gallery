@@ -8,7 +8,7 @@ import torch.nn.functional as F
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
 models_path = f'{BASE_DIR}/app/nlp/next_char/models'
-vocab_file_path = f'{BASE_DIR}/data/subtitles/char_vocab.pt'
+vocab_file_path = f'{models_path}/char_vocab.pt'
 
 pad_tkn = '~'
 unk_tkn = '*'

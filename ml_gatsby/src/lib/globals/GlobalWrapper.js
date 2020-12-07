@@ -5,6 +5,7 @@ import { Box, CSSReset } from "@chakra-ui/core"
 import "src/styles/global.sass"
 import Navbar from "../components/navbar"
 import { Footer } from "../components/commons"
+import "typeface-roboto-condensed"
 
 export default class GlobalWrapper extends React.Component {
   constructor(props) {
