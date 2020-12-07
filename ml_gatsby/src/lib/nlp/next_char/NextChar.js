@@ -36,7 +36,11 @@ export class NextChar extends React.Component {
     return (
       <ProjectWrapper project={this.project}>
         <Centered>
-          <Box width="4xl" height={{ base: "75px", md: "120px" }} mt={4}>
+          <Box
+            width={{ base: "sm", md: "2xl", lg: "4xl" }}
+            height={{ base: "75px", md: "120px" }}
+            mt={4}
+          >
             <Input
               size="lg"
               height={{ base: "70px", md: "100px" }}
@@ -48,7 +52,7 @@ export class NextChar extends React.Component {
             <Text
               fontSize={{ base: "xl", md: "5xl" }}
               color="gray.300"
-              mt={{ base: "-35px", md: "-85px" }}
+              mt={{ base: "-50px", md: "-85px" }}
               textAlign="left"
               ml={4}
               whiteSpace="nowrap"
