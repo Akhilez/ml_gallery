@@ -62,7 +62,7 @@ export class NextChar extends React.Component {
               {`${this.state.text}${this.state.predicted}`}
             </Text>
           </Box>
-          <Box width="4xl" overflowY="auto" maxH="150px">
+          <Box width="4xl" overflowY="auto" maxH="150px" mb={4}>
             {this.state.history.reverse().map(history => (
               <Flex whiteSpace="pre">
                 <Text>{history.text}</Text>
