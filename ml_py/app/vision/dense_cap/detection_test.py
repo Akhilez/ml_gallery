@@ -59,12 +59,13 @@ def generate_anchors(shape, sizes, ratios):
     cx = cx.view((H, W, 1)).expand((H, W, k)).flatten()
     cy = cy.view((H, W, 1)).expand((H, W, k)).flatten()
 
-    w = w.view((1, -1)).expand((H * W, -1)).flatten()
-    h = h.view((1, -1)).expand((H * W, -1)).flatten()
+    w = w.view((1, k)).expand((H * W, k)).flatten()
+    h = h.view((1, k)).expand((H * W, k)).flatten()
 
     return torch.stack((cx, cy, w, h))
 
 
+# TODO: Pass in a batch of bboxes and single set of anchors.
 def get_iou_map(boxes1, boxes2):
     n1 = boxes1.shape[1]
     n2 = boxes2.shape[1]
@@ -141,9 +142,44 @@ def sample_anchors(iou, b=256, positive_threshold=0.7, negative_threshold=0.3):
     return positive_indices, negative_indices
 
 
-def unflatten_pairs(pairs):
-    # TODO: Figure out how flattened, now unflatten in the same way.
-    pass
+def get_diffs(bboxes, anchors, iou):
+    """
+    Parameters
+    ----------
+    bboxes: Tensor of shape (4, n_bboxes)
+    anchors: Tensor of shape (4, H*W*k)
+    iou: Tensor of shape (n_bboxes, H*W*k)
+
+    Returns
+    -------
+    diffs: A Tensor of shape (4*k, H, W)
+
+    Steps:
+    1. Find argmax IOUs
+    2. Extract bbox coordinates of shape (4, H*W*k)
+    3. Find diffs for each pair:
+        i.
+    """
+
+    max_iou, argmax_iou = torch.max(iou, 0)
+    invalid_indices = [max_iou == 0]
+
+    bboxes_max = bboxes[:, argmax_iou]
+
+
+
+
+def get_confidences(iou):
+    """
+    Parameters
+    ----------
+    iou: Tensor of shape (n_bboxes, H*W*k)
+
+    Returns
+    -------
+    confidences: Tensor of shape (k, H, W)
+    """
+
 
 
 if __name__ == '__main__':
@@ -306,6 +342,3 @@ if __name__ == '__main__':
     # print(iou.flatten().tolist())
 
     positive, negative = sample_anchors(iou)
-
-    bbs_idx_positive, anchors_idx_positive = unflatten_pairs(positive)
-    bbs_idx_negative, anchors_idx_negative = unflatten_pairs(negative)
