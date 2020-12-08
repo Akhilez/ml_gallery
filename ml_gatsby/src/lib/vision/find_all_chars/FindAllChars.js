@@ -31,22 +31,17 @@ export class FindAllChars extends React.Component {
     return (
       <ProjectWrapper project={this.project}>
         <Centered>
-          {!this.state.modelLoaded && "Loading model..."}
-          {this.state.modelLoaded && (
-            <>
-              <FindAllCharsCanvas ref={this.canvasRef} parent={this} />
-              <IconButton
-                aria-label="icon"
-                icon={MdRefresh}
-                isRound
-                variant="outline"
-                variantColor="red"
-                size="sm"
-                mt={4}
-                onClick={() => this.canvasRef.current.clearCanvas()}
-              />
-            </>
-          )}
+          <FindAllCharsCanvas ref={this.canvasRef} parent={this} />
+          <IconButton
+            aria-label="icon"
+            icon={MdRefresh}
+            isRound
+            variant="outline"
+            variantColor="red"
+            size="sm"
+            mt={4}
+            onClick={() => this.canvasRef.current.clearCanvas()}
+          />
         </Centered>
       </ProjectWrapper>
     )

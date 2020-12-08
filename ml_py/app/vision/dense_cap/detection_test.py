@@ -121,6 +121,31 @@ def get_iou_map(boxes1, boxes2):
     return iou.view((n1, n2))
 
 
+def sample_anchors(iou, b=256, positive_threshold=0.7, negative_threshold=0.3):
+    n_bb, n_anchors = iou.shape
+    iou[range(n_bb), iou.argmax(1)] = torch.ones(n_bb)  # For each of bb, max iou anchor will be 1
+
+    positive_indices = torch.nonzero(iou > positive_threshold)
+    bp = min(len(positive_indices), b / 2)
+    positive_indices_ = torch.multinomial(torch.ones(len(positive_indices)), bp)  # Sampled
+    positive_indices = positive_indices[positive_indices_]
+
+    iou_n = torch.clone(iou)
+    iou_n[iou_n > negative_threshold] = 0
+
+    negative_indices = torch.nonzero(iou_n > 0)
+    bn = min(len(negative_indices), b - bp)
+    negative_indices_ = torch.multinomial(torch.ones(len(negative_indices), bn))  # Sampled
+    negative_indices = negative_indices[negative_indices_]
+
+    return positive_indices, negative_indices
+
+
+def unflatten_pairs(pairs):
+    # TODO: Figure out how flattened, now unflatten in the same way.
+    pass
+
+
 if __name__ == '__main__':
     y = [
         [
@@ -279,3 +304,8 @@ if __name__ == '__main__':
     print([y_i.shape for y_i in y_])
     print(iou.shape)
     # print(iou.flatten().tolist())
+
+    positive, negative = sample_anchors(iou)
+
+    bbs_idx_positive, anchors_idx_positive = unflatten_pairs(positive)
+    bbs_idx_negative, anchors_idx_negative = unflatten_pairs(negative)
