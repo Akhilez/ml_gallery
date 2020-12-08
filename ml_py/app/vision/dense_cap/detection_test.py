@@ -1,14 +1,10 @@
 import torch
 
-k = 9
-W = 14
-H = 14
-B = 256
-b = 2
+from lib.mnist_aug.mnist_augmenter import DataManager
 
 
 # Converts labels (list of dict) to tensors (list of tensors of shape [n, 4])
-def labels_to_tensor(labels):
+def labels_to_tensor(labels, H, W):
     tensors = []
     for labels_ in labels:
 
@@ -122,6 +118,9 @@ def get_iou_map(boxes1, boxes2):
     return iou.view((n1, n2))
 
 
+# iou = get_iou_map(y_[1], anchors_tensor)
+
+
 def sample_anchors(iou, b=256, positive_threshold=0.7, negative_threshold=0.3):
     n_bb, n_anchors = iou.shape
     iou[range(n_bb), iou.argmax(1)] = torch.ones(n_bb)  # For each of bb, max iou anchor will be 1
@@ -136,19 +135,23 @@ def sample_anchors(iou, b=256, positive_threshold=0.7, negative_threshold=0.3):
 
     negative_indices = torch.nonzero(iou_n > 0)
     bn = min(len(negative_indices), b - bp)
-    negative_indices_ = torch.multinomial(torch.ones(len(negative_indices), bn))  # Sampled
+    negative_indices_ = torch.multinomial(torch.ones(len(negative_indices)), bn)  # Sampled
     negative_indices = negative_indices[negative_indices_]
 
     return positive_indices, negative_indices
 
 
-def get_diffs(bboxes, anchors, iou):
+def get_diffs(bboxes, anchors, max_iou, argmax_iou, k, H, W) -> torch.Tensor:
     """
     Parameters
     ----------
     bboxes: Tensor of shape (4, n_bboxes)
     anchors: Tensor of shape (4, H*W*k)
-    iou: Tensor of shape (n_bboxes, H*W*k)
+    max_iou: Tensor of shape (H*W*k) max of each anchor
+    argmax_iou: Tensor of shape (H*W*k) argmax of each anchor
+    k: well, k. The # of anchors each pixel
+    H: Height of feature map
+    W: Width of feature map
 
     Returns
     -------
@@ -157,32 +160,63 @@ def get_diffs(bboxes, anchors, iou):
     Steps:
     1. Find argmax IOUs
     2. Extract bbox coordinates of shape (4, H*W*k)
-    3. Find diffs for each pair:
-        i.
+    3. Find diffs for each pair
     """
 
-    max_iou, argmax_iou = torch.max(iou, 0)
-    invalid_indices = [max_iou == 0]
+    invalid_indices = torch.nonzero(max_iou == 0).view((-1))
 
     bboxes_max = bboxes[:, argmax_iou]
 
+    tx = (bboxes_max[0] - anchors[0]) / anchors[2]
+    ty = (bboxes_max[1] - anchors[1]) / anchors[3]
+
+    tw = torch.log(bboxes_max[2] / anchors[2])
+    th = torch.log(bboxes_max[3] / anchors[3])
+
+    diffs = torch.stack((tx, ty, tw, th))  # Shape: (4, n_anchors)
+
+    len_invalid = len(invalid_indices)
+    diffs[:, invalid_indices] = torch.tensor([float('nan') for _ in range(4 * len_invalid)]).view((4, len_invalid))
+
+    return diffs.view((4 * k, H, W))
 
 
-
-def get_confidences(iou):
+def get_confidences(max_iou, confidence_threshold: int, shape) -> torch.Tensor:
     """
     Parameters
     ----------
-    iou: Tensor of shape (n_bboxes, H*W*k)
+    max_iou: Tensor of shape (H*W*k), this is the IOU with best bounding box for each anchor
+    confidence_threshold: a real number between 0 to 1. All values >= this will be 1. Rest 0
+    shape: shape of output
 
     Returns
     -------
     confidences: Tensor of shape (k, H, W)
     """
 
+    max_iou = max_iou.clone()
+    max_iou[max_iou < confidence_threshold] = 0
+    max_iou[max_iou >= confidence_threshold] = 1
+
+    return max_iou.view(shape)
 
 
-if __name__ == '__main__':
+def get_labels(iou, bboxes, anchors, k, H, W, confidence_threshold):
+    max_iou, argmax_iou = torch.max(iou, 0)
+
+    confidences = get_confidences(max_iou, confidence_threshold, (k, H, W))
+    diffs = get_diffs(bboxes, anchors, max_iou, argmax_iou, k, H, W)
+
+    return torch.cat((confidences, diffs))
+
+
+def main():
+    k = 9
+    W = 14
+    H = 14
+    B = 256
+    b = 2
+
     y = [
         [
             {'id': 0,
@@ -330,15 +364,18 @@ if __name__ == '__main__':
              'width': 32,
              'type': 'number'}]]
 
-    y_ = labels_to_tensor(y)
+    y_ = labels_to_tensor(y, 112, 112)
 
     anchors_tensor = generate_anchors(shape=(W, H), sizes=(.15, .45, .75), ratios=(0.5, 1, 2))
 
+    DataManager.plot_num(torch.ones((112, 112)), y[1])
+
     iou = get_iou_map(y_[1], anchors_tensor)
 
-    print(anchors_tensor.shape)
-    print([y_i.shape for y_i in y_])
-    print(iou.shape)
-    # print(iou.flatten().tolist())
-
     positive, negative = sample_anchors(iou)
+
+    labels = get_labels(iou, y_[1], anchors_tensor, k, H, W, confidence_threshold=0.7)
+
+
+if __name__ == '__main__':
+    main()
