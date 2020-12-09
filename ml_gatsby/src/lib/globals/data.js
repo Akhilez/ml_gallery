@@ -196,39 +196,10 @@ const projectsRaw = {
         "https://colab.research.google.com/github/Akhilez/ml_gallery/blob/master/ml_py/app/nlp/next_char/next_char_colab.ipynb",
     },
   },
-  word2vec: {
-    title: "Word To Vector",
-    desc: "",
-    image: "under_construction2.png",
-    status: "to_do",
-    links: {
-      app: "/gallery/coming_soon",
-      source: "",
-    },
-  },
-  next_word: {
-    title: "Next Word",
-    desc: "",
-    image: "under_construction2.png",
-    status: "to_do",
-    links: {
-      app: "/gallery/coming_soon",
-      source: "",
-    },
-  },
-  word_attention: {
-    title: "Word Attention",
-    desc: "",
-    image: "under_construction2.png",
-    status: "to_do",
-    links: {
-      app: "/gallery/coming_soon",
-      source: "",
-    },
-  },
-  word2vec_v2: {
-    title: "Word To Vector V2",
-    desc: "Using bert",
+  what_genre: {
+    title: "What Genre - Attention",
+    desc:
+      "Lets predict what genre a movie is based on its plot using Attention!",
     image: "under_construction2.png",
     status: "to_do",
     links: {
@@ -248,20 +219,10 @@ const projectsRaw = {
   },
 
   // Reinforcement Learning
-  tictactoe: {
-    title: "TicTacToe",
-    desc: "",
-    image: "tictactoe.jpg",
-    status: "to_do",
-    links: {
-      app: "/gallery/coming_soon",
-      source: "",
-    },
-  },
-  ping_ping: {
-    title: "Ping-Pong",
-    desc: "",
-    image: "pong.jpg",
+  alpha_mens: {
+    title: "Alpha Mens Morris",
+    desc: "9 Men's Morris with AlphaGo like algorithm",
+    image: "under_construction2.png",
     status: "to_do",
     links: {
       app: "/gallery/coming_soon",
@@ -269,7 +230,7 @@ const projectsRaw = {
     },
   },
   gridworld: {
-    title: "Grid World",
+    title: "Grid World - Actor-Critic",
     desc: "Navigate the player to a desired location.",
     image: "gridworld.png",
     status: "to_do",
@@ -290,7 +251,7 @@ const projectsRaw = {
   },
   dodger: {
     title: "Dodger",
-    desc: "",
+    desc: "Escape the on-coming obstacles by moving left or right",
     image: "under_construction2.png",
     status: "to_do",
     links: {
@@ -388,21 +349,13 @@ export const categoriesMap = {
   },
   nlp: {
     title: "Natural Language Processing",
-    projects: [
-      projects.next_char,
-      projects.word2vec,
-      projects.next_word,
-      projects.word_attention,
-      projects.word2vec_v2,
-      projects.next_sentence,
-    ],
+    projects: [projects.next_char, projects.what_genre, projects.next_sentence],
   },
   reinforce: {
     title: "Reinforcement Learning",
     projects: [
-      projects.tictactoe,
       projects.gridworld,
-      projects.ping_ping,
+      projects.alpha_mens,
       projects.racer,
       projects.dodger,
     ],
