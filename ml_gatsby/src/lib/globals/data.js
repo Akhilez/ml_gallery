@@ -105,6 +105,28 @@ const projectsRaw = {
         "https://colab.research.google.com/github/Akhilez/ml_gallery/blob/master/ml_py/app/vision/detector_v1/colab_localization.ipynb",
     },
   },
+  positional_cnn: {
+    title: "Positional CNN",
+    desc: "A CNN architecture that is not positionally invariant",
+    image: "under_construction2.png",
+    status: "to_do",
+    links: {
+      app: "/gallery/vision/positional_cnn",
+      source:
+        "https://github.com/Akhilez/ml_gallery/blob/master/ml_py/app/vision/positional_mnist/positional_mnist.ipynb",
+      colab:
+        "https://colab.research.google.com/github/Akhilez/ml_gallery/blob/master/ml_py/app/vision/positional_mnist/positional_mnist.ipynb",
+    },
+  },
+  dense_cap: {
+    title: "Dense Cap",
+    desc: "Generate English captions for numbers and their clusters",
+    image: "under_construction2.png",
+    status: "to_do",
+    links: {
+      app: "/gallery/vision/dense_cap",
+    },
+  },
   find_all_chars: {
     title: "Find All Numbers: V1",
     desc: "",
@@ -353,7 +375,9 @@ export const categoriesMap = {
     projects: [
       projects.which_char,
       projects.find_char,
+      projects.positional_cnn,
       projects.find_all_chars,
+      projects.dense_cap,
       projects.mnist_gan,
       projects.colorizer,
       projects.find_all_chars_v2,
