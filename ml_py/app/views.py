@@ -1,3 +1,5 @@
+import json
+
 from django.http import HttpResponse
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
@@ -36,9 +38,9 @@ def next_char(request):
     return Response({'pred': PreLoaded.next_char.predict(text)}, status=status.HTTP_200_OK)
 
 
-@api_view(['GET'])
+@api_view(['POST'])
 def positional_cnn(request):
-    image = request.GET.get('image')
+    image = json.loads(request.body.decode('utf-8')).get('image')
     if image is None:
         return Response({}, status=status.HTTP_400_BAD_REQUEST)
     cls, pos = PreLoaded.positional_cnn.predict(image)
