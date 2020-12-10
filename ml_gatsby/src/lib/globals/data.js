@@ -108,14 +108,14 @@ const projectsRaw = {
   positional_cnn: {
     title: "Positional CNN",
     desc: "A CNN architecture that is not positionally invariant",
-    image: "under_construction2.png",
+    image: "positional_cnn.png",
     status: "to_do",
     links: {
       app: "/gallery/vision/positional_cnn",
       source:
-        "https://github.com/Akhilez/ml_gallery/blob/master/ml_py/app/vision/positional_mnist/positional_mnist.ipynb",
+        "https://github.com/Akhilez/ml_gallery/blob/master/ml_py/app/vision/positional_mnist/positional_mnist.py",
       colab:
-        "https://colab.research.google.com/github/Akhilez/ml_gallery/blob/master/ml_py/app/vision/positional_mnist/positional_mnist.ipynb",
+        "https://colab.research.google.com/github/Akhilez/ml_gallery/blob/master/ml_py/app/vision/positional_mnist/positional_mnist_colab.ipynb",
     },
   },
   dense_cap: {

@@ -39,7 +39,7 @@ export class Project extends React.Component {
     return (
       <Flex alignItems="center">
         {project.links.source && (
-          <a className={"link"} href={project.links.app}>
+          <a className={"link"} href={project.links.source}>
             <Box as={MdCode} fontSize="2xl" mt={1} />
           </a>
         )}
