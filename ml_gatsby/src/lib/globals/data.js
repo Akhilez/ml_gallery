@@ -207,6 +207,17 @@ const projectsRaw = {
       source: "",
     },
   },
+  action_assistant: {
+    title: "Action Assistant",
+    desc:
+      "Take actions by ordering in natural English language.",
+    image: "under_construction2.png",
+    status: "to_do",
+    links: {
+      app: "/gallery/coming_soon",
+      source: "",
+    },
+  },
   next_sentence: {
     title: "Next Sentence",
     desc: "",
