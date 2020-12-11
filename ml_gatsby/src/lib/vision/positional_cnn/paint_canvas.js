@@ -16,6 +16,8 @@ export default class NumberPaintCanvas extends React.Component {
     this.side = 112 * 4
     this.clearPaint = false
     this.p5 = null
+
+    this.isBeingDrawn = false
   }
 
   render() {
@@ -41,12 +43,19 @@ export default class NumberPaintCanvas extends React.Component {
   }
 
   draw(p5) {
-    if (p5.mouseIsPressed) {
-      if (p5.mouseButton === p5.LEFT) {
-        p5.strokeWeight(15)
-        p5.stroke(0)
-        p5.line(p5.mouseX, p5.mouseY, p5.pmouseX, p5.pmouseY)
+    if (
+      p5.mouseIsPressed &&
+      p5.mouseButton === p5.LEFT &&
+      isCursorInScope(this.p5, this.side, this.side)
+    ) {
+      if (!this.isBeingDrawn) {
+        this.clearCanvas()
+        this.isBeingDrawn = true
       }
+
+      p5.strokeWeight(15)
+      p5.stroke(0)
+      p5.line(p5.mouseX, p5.mouseY, p5.pmouseX, p5.pmouseY)
     }
   }
 
@@ -72,6 +81,7 @@ export default class NumberPaintCanvas extends React.Component {
     this.props.parent.predict(
       this.pixToTensor(p5.pixels, 112 * 4, 112 * 4, 112, 112).arraySync()
     )
+    this.isBeingDrawn = false
   }
 
   getEmptyMatrix(r, c) {

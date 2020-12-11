@@ -4,6 +4,8 @@ import { Centered } from "../../components/commons"
 import { ProjectWrapper } from "../../components/ProjectWrapper"
 import NumberPaintCanvas from "./paint_canvas"
 import { mlgApi } from "../../api"
+import { Flex, FormLabel, IconButton, Switch, Text } from "@chakra-ui/core"
+import { MdRefresh } from "react-icons/all"
 
 export class PositionalCNN extends React.Component {
   constructor(props) {
@@ -25,9 +27,34 @@ export class PositionalCNN extends React.Component {
     return (
       <ProjectWrapper project={this.project}>
         <Centered>
-          <NumberPaintCanvas ref={this.paintCanvasRef} parent={this} mt={6} />
-          {this.state.predClass}
-          {this.state.predPosition}
+          <NumberPaintCanvas
+            ref={this.paintCanvasRef}
+            parent={this}
+            mt={6}
+            mb={2}
+          />
+          <IconButton
+            aria-label="icon"
+            icon={MdRefresh}
+            isRound
+            variant="outline"
+            variantColor="red"
+            size="sm"
+            my={4}
+            onClick={() => this.paintCanvasRef.current.clearCanvas()}
+          />
+          {this.state.predPosition && (
+            <>
+              <Text>
+                <strong>Position: </strong>
+                {this.state.predPosition}
+              </Text>
+              <Text>
+                <strong>Class: </strong>
+                {this.state.predClass}
+              </Text>
+            </>
+          )}
         </Centered>
       </ProjectWrapper>
     )
