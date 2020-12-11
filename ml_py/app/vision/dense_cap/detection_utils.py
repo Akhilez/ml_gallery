@@ -5,7 +5,6 @@ from lib.mnist_aug.mnist_augmenter import DataManager
 
 # Converts labels (list of dict) to tensors (list of tensors of shape [n, 4])
 def labels_to_tensor(labels, H, W):
-
     # For each bbox, we will have 4 numbers
     tensor = torch.zeros((len(labels), 4), dtype=torch.float32)
 
@@ -114,27 +113,23 @@ def get_iou_map(boxes1, boxes2):
     return iou.view((n1, n2))
 
 
-# iou = get_iou_map(y_[1], anchors_tensor)
+def raise_bbox_iou(iou: torch.Tensor, threshold: float):
+    """
+    Raises iou to max(threshold, iou_max_a) for each bbox and max anchor iou
+    Parameters
+    ----------
+    iou: Tensor of shape (n_bbox, k*H*W)
+    threshold: threshold to raise iou to
 
+    Returns
+    -------
+    iou with raised values
+    """
 
-def sample_anchors(iou, b, positive_threshold, negative_threshold):
-    n_bb, n_anchors = iou.shape
-    iou[range(n_bb), iou.argmax(1)] = torch.ones(n_bb)  # For each of bb, max iou anchor will be 1
-
-    positive_indices = torch.nonzero(iou > positive_threshold)
-    bp = min(len(positive_indices), b / 2)
-    positive_indices_ = torch.multinomial(torch.ones(len(positive_indices)), bp)  # Sampled
-    positive_indices = positive_indices[positive_indices_]
-
-    iou_n = torch.clone(iou)
-    iou_n[iou_n > negative_threshold] = 0
-
-    negative_indices = torch.nonzero(iou_n > 0)
-    bn = min(len(negative_indices), b - bp)
-    negative_indices_ = torch.multinomial(torch.ones(len(negative_indices)), bn)  # Sampled
-    negative_indices = negative_indices[negative_indices_]
-
-    return positive_indices, negative_indices
+    iou_max_a, iou_argmax = torch.max(iou, 1)
+    iou_max_a = torch.max(iou_max_a, torch.ones(len(iou_max_a)) * threshold)
+    iou[range(len(iou)), tuple(iou_argmax)] = iou_max_a
+    return iou
 
 
 def get_diffs(bboxes, anchors, max_iou, argmax_iou, k, H, W) -> torch.Tensor:
@@ -174,10 +169,10 @@ def get_diffs(bboxes, anchors, max_iou, argmax_iou, k, H, W) -> torch.Tensor:
     len_invalid = len(invalid_indices)
     diffs[:, invalid_indices] = torch.tensor([float('nan') for _ in range(4 * len_invalid)]).view((4, len_invalid))
 
-    return diffs.view((4 * k, H, W))
+    return diffs.view((4, k, H, W))
 
 
-def get_confidences(max_iou, confidence_threshold: int, shape) -> torch.Tensor:
+def get_confidences(max_iou, confidence_threshold: float, shape) -> torch.Tensor:
     """
     Parameters
     ----------
@@ -197,21 +192,122 @@ def get_confidences(max_iou, confidence_threshold: int, shape) -> torch.Tensor:
     return max_iou.view(shape)
 
 
-def get_labels(iou, bboxes, anchors, k, H, W, confidence_threshold):
-    max_iou, argmax_iou = torch.max(iou, 0)
+def sample_pn_indices(confidences: torch.Tensor, threshold_p: float, threshold_n: float, b_samples: int):
+    """
+    Parameters
+    ----------
+    confidences: A flat 1D tensor of confidences
+    threshold_p: something like 0.7
+    threshold_n: something like 0.3
+    b_samples: b number of samples. Something like 256 / 300
 
-    confidences = get_confidences(max_iou, confidence_threshold, (k, H, W))
-    diffs = get_diffs(bboxes, anchors, max_iou, argmax_iou, k, H, W)
+    Returns
+    -------
+    A tuple of two tensors. Each containing arbitrary number of indices.
+    """
 
-    return confidences, diffs
+    positive_indices = torch.nonzero(confidences >= threshold_p).flatten(0)
+    negative_indices = torch.nonzero(confidences <= threshold_n).flatten(0)
+
+    bp = min(len(positive_indices), b_samples / 2)
+    sampled_indices = torch.multinomial(torch.ones(len(positive_indices)), bp)  # Sampled
+    positive_indices = positive_indices[sampled_indices]
+
+    bn = min(len(negative_indices), b_samples - bp)
+    sampled_indices = torch.multinomial(torch.ones(len(negative_indices)), bn)  # Sampled
+    negative_indices = negative_indices[sampled_indices]
+
+    return positive_indices, negative_indices
+
+
+def centers_to_diag(boxes):
+    """
+    Parameters
+    ----------
+    boxes: tensor of shape (4, n)
+
+    Returns
+    -------
+    boxes of shape (4, n)
+    """
+
+    cx = boxes[:, 0]
+    cy = boxes[:, 1]
+    w = boxes[:, 2] / 2
+    h = boxes[:, 3] / 2
+
+    x1 = cx - w
+    y1 = cy - h
+    x2 = cx + w
+    y2 = cy + h
+
+    return torch.stack((x1, y1, x2, y2))  # (4, n)
+
+
+def apply_diff(anchor, diffs):
+    cxa = anchor[0]
+    cya = anchor[1]
+    wa = anchor[2]
+    ha = anchor[3]
+
+    cxd = diffs[0]
+    cyd = diffs[1]
+    wd = diffs[2]
+    hd = diffs[3]
+
+    cxb = cxa + cxd * wa
+    cyb = cya + cyd * ha
+    wb = wa * torch.exp(wd)
+    hb = ha * torch.exp(hd)
+
+    return torch.stack((cxb, cyb, wb, hb))
+
+
+def get_pred_boxes(diffs: torch.Tensor, anchors: torch.Tensor, idx_p: torch.Tensor, idx_n: torch.Tensor):
+    """
+    Parameters
+    ----------
+    idx_p: 1D positive indices tensor
+    idx_n: 1D -ve indices tensor
+    diffs: Tensor of shape (4, k, H, W)
+    anchors: Tensor of shape (4, k*H*W)
+
+    Returns
+    -------
+    A tuple of two tensors -> (4, np), (4, nn)
+
+    Steps
+    -------
+    1. Extract +ve and -ve anchors
+    2. Flatten out diffs at dim 1 to make a diffs tensor of shape (4, k*H*W)
+    3. Extract +ve and -ve diffs
+    4. Apply diffs to anchors
+    5. return pred bboxes
+    """
+
+    anchors_p = anchors[:, idx_p]
+    anchors_n = anchors[:, idx_n]
+
+    diffs = diffs.view((4, -1))
+    diffs_p = diffs[:, idx_p]
+    diffs_n = diffs[:, idx_n]
+
+    bb_p = apply_diff(anchors_p, diffs_p)
+    bb_n = apply_diff(anchors_n, diffs_n)
+
+    return bb_p, bb_n  # (cx, cy, w, h)
 
 
 def main():
     k = 9
-    W = 14
-    H = 14
-    B = 256
-    b = 2
+    H = 112
+    W = 112
+    Wp = 14
+    Hp = 14
+    b_regions = 256
+
+    threshold_p = 0.6
+    threshold_n = 0.3
 
     y = [
         [
@@ -359,18 +455,27 @@ def main():
              'height': 24,
              'width': 32,
              'type': 'number'}]]
+    DataManager.plot_num(torch.ones((H, W)), y[1])
 
-    y_ = labels_to_tensor(y[1], 112, 112)
+    y_ = labels_to_tensor(y[1], H, W)  # Tensor of shape (4, n) -> (cx, cy, w, h) normalized
+    anchors_tensor = generate_anchors(shape=(Wp, Hp), sizes=(.15, .45, .75),
+                                      ratios=(0.5, 1, 2))  # Tensor of shape (4, k*H*W) -> cy, cy, w, h
 
-    anchors_tensor = generate_anchors(shape=(W, H), sizes=(.15, .45, .75), ratios=(0.5, 1, 2))
+    # Looped
+    i = 0
+    iou = get_iou_map(y_[i], anchors_tensor)
+    iou = raise_bbox_iou(iou, threshold_p)
+    iou_max, iou_argmax = torch.max(iou, 0)  # Shape (k*H*W)
 
-    DataManager.plot_num(torch.ones((112, 112)), y[1])
+    confidences = get_confidences(iou_max, threshold_p, (k, Hp, Wp))
+    diffs = get_diffs(y_[i], anchors_tensor, iou_max, iou_argmax, k, Hp, Wp)
 
-    iou = get_iou_map(y_[1], anchors_tensor)
+    idx_p, idx_n = sample_pn_indices(iou_max, threshold_p, threshold_n, b_regions)
 
-    positive, negative = sample_anchors(iou, 256, 0.6, 0.3)
-
-    labels = get_labels(iou, y_[1], anchors_tensor, k, H, W, confidence_threshold=0.7)
+    diffs_pred = diffs
+    pred_bbox_p, pred_bbox_n = get_pred_boxes(diffs_pred, anchors_tensor, idx_p, idx_n)  # (4, n) (cx, cy, w, h)
+    pred_bbox_p = centers_to_diag(pred_bbox_p)
+    pred_bbox_n = centers_to_diag(pred_bbox_n)
 
 
 if __name__ == '__main__':
