@@ -128,7 +128,7 @@ const projectsRaw = {
     },
   },
   find_all_chars: {
-    title: "Find All Numbers: V1",
+    title: "Find All Numbers",
     desc: "",
     image: "faster_rcnn.png",
     status: "to_do",
@@ -138,16 +138,6 @@ const projectsRaw = {
         "https://colab.research.google.com/github/Akhilez/ml_gallery/blob/master/ml_py/app/vision/detector_v1/colab_detection.ipynb",
       colab:
         "https://colab.research.google.com/github/Akhilez/ml_gallery/blob/master/ml_py/app/vision/detector_v1/colab_detection.ipynb",
-    },
-  },
-  find_all_chars_v2: {
-    title: "Find All Numbers: V2",
-    desc: "",
-    image: "faster_rcnn.png",
-    status: "to_do",
-    links: {
-      app: "/gallery/coming_soon",
-      source: "",
     },
   },
   image_attention: {
@@ -209,8 +199,7 @@ const projectsRaw = {
   },
   action_assistant: {
     title: "Action Assistant",
-    desc:
-      "Take actions by ordering in natural English language.",
+    desc: "Take actions by ordering in natural English language.",
     image: "under_construction2.png",
     status: "to_do",
     links: {
@@ -352,7 +341,6 @@ export const categoriesMap = {
       projects.dense_cap,
       projects.mnist_gan,
       projects.colorizer,
-      projects.find_all_chars_v2,
       projects.image_attention,
       projects.style_transfer,
       projects.style_gan,
@@ -360,7 +348,12 @@ export const categoriesMap = {
   },
   nlp: {
     title: "Natural Language Processing",
-    projects: [projects.next_char, projects.what_genre, projects.next_sentence],
+    projects: [
+      projects.next_char,
+      projects.what_genre,
+      projects.action_assistant,
+      projects.next_sentence,
+    ],
   },
   reinforce: {
     title: "Reinforcement Learning",
