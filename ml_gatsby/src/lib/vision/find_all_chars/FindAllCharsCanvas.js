@@ -2,6 +2,7 @@ import React from "react"
 import { Box } from "@chakra-ui/core"
 import loadable from "@loadable/component"
 import { isCursorInScope } from "../../utils/utils"
+import * as tf from "@tensorflow/tfjs"
 
 const Sketch = loadable(() => import("react-p5"))
 
@@ -77,14 +78,26 @@ export class FindAllCharsCanvas extends React.Component {
     this.p5.background(255, 255, 255)
   }
 
+  pixToTensor(pixels, in_height, in_width, height, width) {
+    return tf
+      .scalar(255)
+      .sub(tf.tensor(Array.from(pixels)))
+      .div(255)
+      .reshape([in_height, in_width, 4])
+      .split(4, 2)[0]
+      .resizeBilinear([height, width])
+      .reshape([1, 1, height, width])
+  }
+
   mouseReleased(p5) {
     if (!isCursorInScope(p5, this.side, this.side)) return
 
     // p5.filter(p5.BLUR, 4)
 
     p5.loadPixels()
-    this.props.parent.convNet.predict(p5.pixels)
-    this.isBeingDrawn = false
+    this.props.parent.predict(
+      this.pixToTensor(p5.pixels, 112 * 4, 112 * 4, 112, 112).arraySync()
+    )
   }
 
   getEmptyMatrix(r, c) {
