@@ -231,10 +231,10 @@ def centers_to_diag(boxes):
     boxes of shape (4, n)
     """
 
-    cx = boxes[:, 0]
-    cy = boxes[:, 1]
-    w = boxes[:, 2] / 2
-    h = boxes[:, 3] / 2
+    cx = boxes[0]
+    cy = boxes[1]
+    w = boxes[2] / 2
+    h = boxes[3] / 2
 
     x1 = cx - w
     y1 = cy - h
@@ -296,6 +296,21 @@ def get_pred_boxes(diffs: torch.Tensor, anchors: torch.Tensor, idx_p: torch.Tens
     bb_n = apply_diff(anchors_n, diffs_n)
 
     return bb_p, bb_n  # (cx, cy, w, h)
+
+
+def get_tiny_box_indices(coords, min_side):
+    # type: (torch.Tensor, float) -> torch.Tensor
+    """
+    Parameters
+    -------
+    coords: shape of (4, n) of format (cx cy w h)
+    """
+
+    w = coords[2]
+    h = coords[3]
+
+    mins = torch.min(w, h)
+    return mins > min_side
 
 
 def main():
