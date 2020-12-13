@@ -1,5 +1,6 @@
 .idea/
 temp/
+tmp/
 venv/
 .DS_Store
 runs/
