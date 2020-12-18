@@ -9,7 +9,7 @@ from lib import detection_utils as utils
 
 class MnistDetector(nn.Module):
 
-    def __init__(self, k, Hp, Wp):
+    def __init__(self):
         super().__init__()
 
         self.threshold_p = 0.6
@@ -23,12 +23,12 @@ class MnistDetector(nn.Module):
 
         self.b_regions = 256
 
-        self.k = k
+        self.k = 9
 
         self.DetectorOut = namedtuple('DetectorOut',
                                       ['features', 'confidences', 'diffs', 'regions_p', 'regions_n', 'pred_bbox_p',
                                        'pred_bbox_n', 'idx_p', 'idx_n', 'matched_bboxes', 'iou_max'])
-        self.anchors_tensor = utils.generate_anchors(shape=(Wp, Hp), sizes=(.15, .45, .75),
+        self.anchors_tensor = utils.generate_anchors(shape=(self.Wp, self.Hp), sizes=(.15, .45, .75),
                                                      ratios=(0.5, 1, 2))  # Tensor of shape (4, k*H*W) -> cy, cy, w, h
 
         self.feature_extractor = nn.Sequential(

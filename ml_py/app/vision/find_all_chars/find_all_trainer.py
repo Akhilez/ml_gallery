@@ -1,35 +1,36 @@
-import torch
-from lib.mnist_aug.mnist_augmenter import DataManager, MNISTAug
+from torch.utils.data import DataLoader
+
+from lib.mnist_aug.loader import MNISTAugDataset
 from app.vision.find_all_chars.model import MnistDetector
 
 
-def train(model, x_train, y_train, x_test, y_test):
-    pass
+def train(model, train_set, epochs, batch_size, test_set=None):
 
+    train_loader = DataLoader(train_set, shuffle=True, batch_size=batch_size)
+
+    for epoch in range(epochs):
+        for i_batch, batch in enumerate(train_loader):
+            print(i_batch)
+
+            x = batch['x']
+            y = batch['y']
+
+            print(x.shape)
+            print(y)
+            return
 
 
 def main():
-    k = 9
-    H = 112
-    W = 112
-    Wp = 22
-    Hp = 22
-    b_regions = 256
 
-    threshold_p = 0.6
-    threshold_n = 0.3
+    train_set = MNISTAugDataset(10)
+    test_set = MNISTAugDataset(2)
 
-    dm = DataManager()
-    dm.load()
+    model = MnistDetector()
 
-    aug = MNISTAug()
-    x_train, y_train = aug.get_augmented(dm.x_train, dm.y_train, 10)
-    x_test, y_test = aug.get_augmented(dm.x_test, dm.y_test, 2)
+    epochs = 1
+    batch_size = 2
 
-    x_train = torch.tensor(x_train, dtype=torch.float32).view((-1, 1, H, W))
-    x_test = torch.tensor(x_test, dtype=torch.float32).view((-1, 1, H, W))
-
-    model = MnistDetector
+    train(model, train_set, epochs, batch_size, test_set=test_set)
 
 
 if __name__ == '__main__':

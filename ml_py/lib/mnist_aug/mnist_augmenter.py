@@ -3,7 +3,6 @@ import random
 
 import numpy as np
 from skimage.transform import resize
-from torch.utils.data import Dataset
 
 from lib.mnist_aug import caption_rules
 
@@ -452,31 +451,3 @@ class DataManager:
         b = np.zeros((len(x), num_classes), dtype=np.float32)
         b[np.arange(len(x)), x] = 1
         return b
-
-
-class MNISTAugDataset(Dataset):
-    def __init__(self, n_out: int, test_mode: bool = None, aug: MNISTAug = None, noisy: bool = False,
-                 get_class_captions: bool = False, get_relationships: bool = False, get_positional_labels: bool = False,
-                 get_positional_relationships: bool = False, get_relationship_captions: bool = False):
-        self.data_manager = DataManager()
-        self.data_manager.load()
-
-        self.aug = aug if aug is not None else MNISTAug()
-
-        self.n_out = n_out
-
-        x, y = (self.data_manager.x_test, self.data_manager.y_test) if test_mode else (
-            self.data_manager.x_train, self.data_manager.y_train)
-
-        self.data = self.aug.get_augmented(x, y, n_out=n_out, noisy=noisy,
-                                           get_class_captions=get_class_captions,
-                                           get_relationships=get_relationships,
-                                           get_positional_labels=get_positional_labels,
-                                           get_positional_relationships=get_positional_relationships,
-                                           get_relationship_captions=get_relationship_captions)
-
-    def __len__(self):
-        return self.n_out
-
-    def __getitem__(self, idx):
-        return self.data[idx]
