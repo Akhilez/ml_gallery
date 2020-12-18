@@ -20,6 +20,22 @@ def labels_to_tensor(labels, H, W):
     return tensor.T
 
 
+def tensor_to_labels(tensor, H, W):
+    # type: (torch.Tensor, int, int) -> list[dict]
+    """
+    tensor: shape (4, n) of format (x1y1x2y2)
+    """
+    return [
+        {
+            'x1': tensor[0, i] * W,
+            'y1': tensor[1, i] * H,
+            'x2': tensor[2, i] * W,
+            'y2': tensor[3, i] * H
+        }
+        for i in range(tensor.shape[1])
+    ]
+
+
 def get_shapes_from_sizes_ratios(sizes, ratios):
     sizes_ = torch.tensor(sizes, dtype=torch.float32).repeat_interleave(len(ratios))  # [1, 2, 3] => [1, 1, 2, 2, 3, 3]
     ratios_sqrt = torch.sqrt(torch.tensor(ratios, dtype=torch.float32)).repeat(len(sizes))
@@ -146,7 +162,7 @@ def get_diffs(bboxes, anchors, max_iou, argmax_iou, k, H, W) -> torch.Tensor:
 
     Returns
     -------
-    diffs: A Tensor of shape (4*k, H, W)
+    diffs: A Tensor of shape (4, k, H, W)
 
     Steps:
     1. Find argmax IOUs
