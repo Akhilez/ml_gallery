@@ -20,7 +20,7 @@ def labels_to_tensor(labels, H, W):
     return tensor.T
 
 
-def tensor_to_labels(tensor, H, W):
+def tensor_to_labels(tensor, H=1, W=1):
     # type: (torch.Tensor, int, int) -> list[dict]
     """
     tensor: shape (4, n) of format (x1y1x2y2)
