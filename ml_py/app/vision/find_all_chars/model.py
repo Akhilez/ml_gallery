@@ -162,8 +162,15 @@ class MnistDetector(nn.Module):
         return (pred_bbox_p, pred_bbox_n), (idx_p, idx_n)
 
     def extract_regions(self, features, boxes, indices):
-        # Make crops of features
         regions = []
+
+        # De-Normalize to the feature map size
+        multiplier = torch.tensor([self.Wp, self.Hp, self.Wp, self.Hp]).view((4, 1))
+        boxes = (boxes * multiplier).round().type(torch.int32)  # shape (4, p) (x1y1x2y2)
+
+        # Clip boxes that are out of range
+        boxes = ops.clip_boxes_to_image(boxes.T, (self.Hp, self.Wp)).T
+
         for index in range(len(indices)):
             idx = boxes[:, index]
             cropped = features[:, idx[0]:idx[2] + 1, idx[1]:idx[3] + 1]
@@ -182,11 +189,11 @@ class MnistDetector(nn.Module):
         pred_bbox = utils.centers_to_diag(pred_bbox)  # shape (4, p) (x1y1x2y2)
 
         # De-Normalize - Make coordinates feature indices b/w H and W
-        multiplier = torch.tensor([self.Wp, self.Hp, self.Wp, self.Hp]).view((4, 1))
-        pred_bbox = (pred_bbox * multiplier).round().type(torch.int32)  # shape (4, p) (x1y1x2y2)
+        # multiplier = torch.tensor([self.W, self.H, self.W, self.H]).view((4, 1))
+        # pred_bbox = (pred_bbox * multiplier).round().type(torch.int32)  # shape (4, p) (x1y1x2y2)
 
         # Clip boxes that are out of range
-        pred_bbox = ops.clip_boxes_to_image(pred_bbox.T, (self.Hp, self.Wp)).T
+        # pred_bbox = ops.clip_boxes_to_image(pred_bbox.T, (self.Hp, self.Wp)).T
 
         return pred_bbox, idx
 

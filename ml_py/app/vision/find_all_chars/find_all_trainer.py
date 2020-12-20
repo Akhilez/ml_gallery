@@ -97,7 +97,7 @@ def test(model, dataset):
             print(loss.item())
 
             nms_boxes = []
-            for j_batch in range(batch_size):
+            for j_batch in range(len(x_batch)):
                 pred_boxes = torch.cat((detector_out.pred_bbox_n[j_batch].T, detector_out.pred_bbox_p[j_batch].T)).T
 
                 confidences_batch = detector_out.confidences[j_batch].flatten()
@@ -105,11 +105,15 @@ def test(model, dataset):
                 confidences_batch_n = confidences_batch[detector_out.idx_n[j_batch]]
                 confidences_batch = torch.cat((confidences_batch_n, confidences_batch_p))
 
-                nms_indices = ops.nms(pred_boxes.T.type(torch.float32), confidences_batch, 0.7)
+                # De-Normalize to the feature map size
+                multiplier = torch.tensor([model.W, model.H, model.W, model.H]).view((4, 1))
+                pred_boxes = (pred_boxes * multiplier).round()  # .type(torch.int32)  # shape (4, p) (x1y1x2y2)
+
+                nms_indices = ops.nms(pred_boxes.T, confidences_batch, 0.1)
                 nms_boxes_i = pred_boxes[:, nms_indices]
 
                 print(nms_boxes_i.shape)
-                nms_boxes.append(utils.tensor_to_labels(nms_boxes_i, model.H, model.W))
+                nms_boxes.append(utils.tensor_to_labels(nms_boxes_i))
 
                 DataManager.plot_num(x_batch[j_batch].view((model.H, model.W)), nms_boxes[j_batch])
 
