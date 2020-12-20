@@ -3,6 +3,7 @@ import torch
 from torch import nn
 from torch.optim import Adam
 from torchvision import ops
+from torch.nn import functional as F
 
 from lib.mnist_aug.loader import MNISTAugDataset
 from app.vision.find_all_chars.model import MnistDetector
@@ -12,11 +13,41 @@ from lib.mnist_aug.mnist_augmenter import DataManager
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
 
+def get_labels(model, detector_out, x_batch, y_boxes):
+    # Shape: (batch, k, H, W) | ones and zeros tensor.
+    confidences_labels = utils.get_confidences(
+        torch.stack(detector_out.iou_max),
+        model.threshold_p,
+        (len(x_batch), model.k, model.Hp, model.Wp)
+    )
+
+    diffs_labels = torch.stack([
+        utils.get_diffs(
+            y_boxes[j_batch],
+            model.anchors_tensor,
+            detector_out.iou_max[j_batch],
+            detector_out.matched_bboxes[j_batch],
+            model.k,
+            model.Hp,
+            model.Wp
+        )  # Shape: (4, k, H, W)
+        for j_batch in range(len(x_batch))
+    ])
+
+    return confidences_labels, diffs_labels
+
+
+def get_loss(detector_out, confidences_labels, diffs_labels):
+    confidences_loss = F.binary_cross_entropy(detector_out.confidences, confidences_labels)
+    not_nan_idx = diffs_labels.flatten(0).isnan() == False
+    diffs_loss = F.l1_loss(detector_out.diffs.flatten(0)[not_nan_idx], diffs_labels.flatten(0)[not_nan_idx])
+    total_loss = confidences_loss + diffs_loss
+
+    return total_loss
+
+
 def train(model, train_set, epochs, batch_size, test_set=None):
     train_loader = DataLoader(train_set, shuffle=True, batch_size=batch_size, collate_fn=lambda x: x)
-
-    confidences_loss_fn = nn.BCELoss()
-    diffs_loss_fn = nn.L1Loss()
 
     model.train()
     optimizer = Adam(model.parameters())
@@ -30,35 +61,14 @@ def train(model, train_set, epochs, batch_size, test_set=None):
             y_boxes = [utils.labels_to_tensor(yi, model.H, model.W) for yi in y_batch]
             detector_out = model(x_batch, y_boxes)
 
-            # Shape: (batch, k, H, W) | ones and zeros tensor.
-            confidences_labels = utils.get_confidences(
-                torch.stack(detector_out.iou_max),
-                model.threshold_p,
-                (len(x_batch), model.k, model.Hp, model.Wp)
-            )
+            confidences_labels, diffs_labels = get_labels(model, detector_out, x_batch, y_boxes)
 
-            diffs_labels = torch.stack([
-                utils.get_diffs(
-                    y_boxes[j_batch],
-                    model.anchors_tensor,
-                    detector_out.iou_max[j_batch],
-                    detector_out.matched_bboxes[j_batch],
-                    model.k,
-                    model.Hp,
-                    model.Wp
-                )  # Shape: (4, k, H, W)
-                for j_batch in range(len(x_batch))
-            ])
+            loss = get_loss(detector_out, confidences_labels, diffs_labels)
 
-            confidences_loss = confidences_loss_fn(detector_out.confidences, confidences_labels)
-            not_nan_idx = diffs_labels.flatten(0).isnan() == False
-            diffs_loss = diffs_loss_fn(detector_out.diffs.flatten(0)[not_nan_idx], diffs_labels.flatten(0)[not_nan_idx])
-            total_loss = confidences_loss + diffs_loss
-
-            print(total_loss.item())
+            print(loss.item())
 
             optimizer.zero_grad()
-            total_loss.backward()
+            loss.backward()
             optimizer.step()
 
 
@@ -80,33 +90,11 @@ def test(model, dataset):
             y_boxes = [utils.labels_to_tensor(yi, model.H, model.W) for yi in y_batch]
             detector_out = model(x_batch, y_boxes)
 
-            # Shape: (batch, k, H, W) | ones and zeros tensor.
-            confidences_labels = utils.get_confidences(
-                torch.stack(detector_out.iou_max),
-                model.threshold_p,
-                (batch_size, model.k, model.Hp, model.Wp)
-            )
+            confidences_labels, diffs_labels = get_labels(model, detector_out, x_batch, y_boxes)
 
-            diffs_labels = torch.stack([
-                utils.get_diffs(
-                    y_boxes[j_batch],
-                    model.anchors_tensor,
-                    detector_out.iou_max[j_batch],
-                    detector_out.matched_bboxes[j_batch],
-                    model.k,
-                    model.Hp,
-                    model.Wp
-                )  # Shape: (4, k, H, W)
-                for j_batch in range(batch_size)
-            ])
+            loss = get_loss(detector_out, confidences_labels, diffs_labels)
 
-            confidences_loss_fn = nn.BCELoss()
-            diffs_loss_fn = nn.L1Loss()
-
-            confidences_loss = confidences_loss_fn(detector_out.confidences, confidences_labels)
-            diffs_loss = diffs_loss_fn(detector_out.diffs, diffs_labels)
-
-            total_loss = confidences_loss + diffs_loss
+            print(loss.item())
 
             nms_boxes = []
             for j_batch in range(batch_size):
@@ -135,8 +123,8 @@ def main():
     epochs = 1
     batch_size = 32
 
-    train(model, train_set, epochs, batch_size, test_set=test_set)
-    # test(model, test_set)
+    # train(model, train_set, epochs, batch_size, test_set=test_set)
+    test(model, test_set)
 
 
 if __name__ == '__main__':
