@@ -108,28 +108,28 @@ class MnistDetector(nn.Module):
         iou_max_batch = []
 
         # If training mode, then sample positives and negatives, extract regions
-        if self.training and y_bboxes is not None:
-            for i_batch in range(len(x)):
+        #if self.training and y_bboxes is not None:
+        for i_batch in range(len(x)):
 
-                # 1. Get IOU_max and IOU_argmax
-                iou_max, iou_argmax = self.get_iou_max(y_bboxes[i_batch])  # Shape (k*H*W)
+            # 1. Get IOU_max and IOU_argmax
+            iou_max, iou_argmax = self.get_iou_max(y_bboxes[i_batch])  # Shape (k*H*W)
 
-                # 2. Get +ve and -ve bboxes and indices. denormalize and clip
-                (pred_bbox_p, pred_bbox_n), (idx_p, idx_n) = self.get_indices_and_boxes(iou_max, bboxes[i_batch, 1:])
+            # 2. Get +ve and -ve bboxes and indices. denormalize and clip
+            (pred_bbox_p, pred_bbox_n), (idx_p, idx_n) = self.get_indices_and_boxes(iou_max, bboxes[i_batch, 1:])
 
-                # Make record of these
-                iou_max_batch.append(iou_max)
-                best_bbox_idx_batch.append(iou_argmax)
+            # Make record of these
+            iou_max_batch.append(iou_max)
+            best_bbox_idx_batch.append(iou_argmax)
 
-                idx_p_batch.append(idx_p)
-                idx_n_batch.append(idx_n)
+            idx_p_batch.append(idx_p)
+            idx_n_batch.append(idx_n)
 
-                pred_bbox_p_batch.append(pred_bbox_p)
-                pred_bbox_n_batch.append(pred_bbox_n)
+            pred_bbox_p_batch.append(pred_bbox_p)
+            pred_bbox_n_batch.append(pred_bbox_n)
 
-                # 3. Get regions.
-                regions_p.append(self.extract_regions(features[i_batch], pred_bbox_p, idx_p))
-                regions_n.append(self.extract_regions(features[i_batch], pred_bbox_n, idx_n))
+            # 3. Get regions.
+            regions_p.append(self.extract_regions(features[i_batch], pred_bbox_p, idx_p))
+            regions_n.append(self.extract_regions(features[i_batch], pred_bbox_n, idx_n))
 
         # TODO: If eval mode, then sample top 300 confidence anchors' regions
         if not self.training:

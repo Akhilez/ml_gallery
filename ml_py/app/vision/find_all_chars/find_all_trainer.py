@@ -105,7 +105,7 @@ def test(model, dataset):
                 confidences_batch_n = confidences_batch[detector_out.idx_n[j_batch]]
                 confidences_batch = torch.cat((confidences_batch_n, confidences_batch_p))
 
-                nms_indices = ops.nms(pred_boxes.T, confidences_batch, 0.7)
+                nms_indices = ops.nms(pred_boxes.T.type(torch.float32), confidences_batch, 0.7)
                 nms_boxes_i = pred_boxes[:, nms_indices]
 
                 print(nms_boxes_i.shape)
