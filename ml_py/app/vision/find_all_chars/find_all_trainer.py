@@ -2,6 +2,7 @@ from torch.utils.data import DataLoader
 import torch
 from torch import nn
 from torch.optim import Adam
+from torchvision import ops
 
 from lib.mnist_aug.loader import MNISTAugDataset
 from app.vision.find_all_chars.model import MnistDetector
@@ -23,7 +24,7 @@ def train(model, train_set, epochs, batch_size, test_set=None):
     for epoch in range(epochs):
         for i_batch, batch in enumerate(train_loader):
 
-            x_batch = torch.tensor([xi['x'] for xi in batch], device=device)
+            x_batch = torch.stack([xi['x'] for xi in batch])
             y_batch = [yi['y'] for yi in batch]
 
             y_boxes = [utils.labels_to_tensor(yi, model.H, model.W) for yi in y_batch]
@@ -33,26 +34,28 @@ def train(model, train_set, epochs, batch_size, test_set=None):
             confidences_labels = utils.get_confidences(
                 torch.stack(detector_out.iou_max),
                 model.threshold_p,
-                (batch_size, model.k, model.Hp, model.Wp)
+                (len(x_batch), model.k, model.Hp, model.Wp)
             )
 
             diffs_labels = torch.stack([
                 utils.get_diffs(
-                    y_boxes[i_batch],
+                    y_boxes[j_batch],
                     model.anchors_tensor,
-                    detector_out.iou_max[i_batch],
-                    detector_out.matched_bboxes[i_batch],
+                    detector_out.iou_max[j_batch],
+                    detector_out.matched_bboxes[j_batch],
                     model.k,
                     model.Hp,
                     model.Wp
                 )  # Shape: (4, k, H, W)
-                for i_batch in range(batch_size)
+                for j_batch in range(len(x_batch))
             ])
 
             confidences_loss = confidences_loss_fn(detector_out.confidences, confidences_labels)
-            diffs_loss = diffs_loss_fn(detector_out.diffs, diffs_labels)
-
+            not_nan_idx = diffs_labels.flatten(0).isnan() == False
+            diffs_loss = diffs_loss_fn(detector_out.diffs.flatten(0)[not_nan_idx], diffs_labels.flatten(0)[not_nan_idx])
             total_loss = confidences_loss + diffs_loss
+
+            print(total_loss.item())
 
             optimizer.zero_grad()
             total_loss.backward()
@@ -71,7 +74,7 @@ def test(model, dataset):
     with torch.no_grad():
 
         for i_batch, batch in enumerate(test_loader):
-            x_batch = torch.tensor([xi['x'] for xi in batch], device=device)
+            x_batch = torch.stack([xi['x'] for xi in batch])
             y_batch = [yi['y'] for yi in batch]
 
             y_boxes = [utils.labels_to_tensor(yi, model.H, model.W) for yi in y_batch]
@@ -86,15 +89,15 @@ def test(model, dataset):
 
             diffs_labels = torch.stack([
                 utils.get_diffs(
-                    y_boxes[i_batch],
+                    y_boxes[j_batch],
                     model.anchors_tensor,
-                    detector_out.iou_max[i_batch],
-                    detector_out.matched_bboxes[i_batch],
+                    detector_out.iou_max[j_batch],
+                    detector_out.matched_bboxes[j_batch],
                     model.k,
                     model.Hp,
                     model.Wp
                 )  # Shape: (4, k, H, W)
-                for i_batch in range(batch_size)
+                for j_batch in range(batch_size)
             ])
 
             confidences_loss_fn = nn.BCELoss()
@@ -124,16 +127,16 @@ def test(model, dataset):
 
 
 def main():
-    train_set = MNISTAugDataset(10)
+    train_set = MNISTAugDataset(100)
     test_set = MNISTAugDataset(2, test_mode=True)
 
     model = MnistDetector()
 
     epochs = 1
-    batch_size = 2
+    batch_size = 32
 
-    # train(model, train_set, epochs, batch_size, test_set=test_set)
-    test(model, test_set)
+    train(model, train_set, epochs, batch_size, test_set=test_set)
+    # test(model, test_set)
 
 
 if __name__ == '__main__':

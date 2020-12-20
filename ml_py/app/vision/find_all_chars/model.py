@@ -15,6 +15,9 @@ class MnistDetector(nn.Module):
         self.threshold_p = 0.6
         self.threshold_n = 0.3
 
+        self.H = 112
+        self.W = 112
+
         self.Wp = 22
         self.Hp = 22
 
