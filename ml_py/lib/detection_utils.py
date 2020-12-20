@@ -319,11 +319,11 @@ def get_tiny_box_indices(coords, min_side):
     """
     Parameters
     -------
-    coords: shape of (4, n) of format (cx cy w h)
+    coords: shape of (4, n) of format (x1 y1 x2 y2)
     """
 
-    w = coords[2]
-    h = coords[3]
+    w = coords[2] - coords[0]
+    h = coords[3] - coords[1]
 
     mins = torch.min(w, h)
     return mins > min_side

@@ -53,6 +53,7 @@ def train(model, train_set, epochs, batch_size, test_set=None):
     optimizer = Adam(model.parameters())
 
     for epoch in range(epochs):
+        print(f'\nEpoch: {epoch}\n')
         for i_batch, batch in enumerate(train_loader):
 
             x_batch = torch.stack([xi['x'] for xi in batch])
@@ -109,6 +110,9 @@ def test(model, dataset):
                 multiplier = torch.tensor([model.W, model.H, model.W, model.H]).view((4, 1))
                 pred_boxes = (pred_boxes * multiplier).round()  # .type(torch.int32)  # shape (4, p) (x1y1x2y2)
 
+                # remove small boxes
+                pred_boxes = model.remove_tiny_boxes(pred_boxes, min_side=5)
+
                 nms_indices = ops.nms(pred_boxes.T, confidences_batch, 0.1)
                 nms_boxes_i = pred_boxes[:, nms_indices]
 
@@ -119,7 +123,7 @@ def test(model, dataset):
 
 
 def main():
-    train_set = MNISTAugDataset(100)
+    train_set = MNISTAugDataset(1000)
     test_set = MNISTAugDataset(2, test_mode=True)
 
     model = MnistDetector()
@@ -127,7 +131,7 @@ def main():
     epochs = 1
     batch_size = 32
 
-    # train(model, train_set, epochs, batch_size, test_set=test_set)
+    train(model, train_set, epochs, batch_size, test_set=test_set)
     test(model, test_set)
 
 

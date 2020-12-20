@@ -96,7 +96,7 @@ class MnistDetector(nn.Module):
         features = self.feature_extractor(x)
         bboxes = self.box_regressor(features)
         bboxes = bboxes.view((-1, 5, self.k, *bboxes.shape[-2:]))
-        confidences = F.sigmoid(bboxes[:, 0])
+        confidences = torch.sigmoid(bboxes[:, 0])
 
         regions_p = []
         regions_n = []
@@ -171,22 +171,27 @@ class MnistDetector(nn.Module):
         # Clip boxes that are out of range
         boxes = ops.clip_boxes_to_image(boxes.T, (self.Hp, self.Wp)).T
 
+        # Remove tiny boxes
+        boxes, indices = self.remove_tiny_boxes(boxes, min_side=(self.Wp + self.Hp) // 20, idx=indices)
+
         for index in range(len(indices)):
             idx = boxes[:, index]
-            cropped = features[:, idx[0]:idx[2] + 1, idx[1]:idx[3] + 1]
+            x_min, x_max = idx[0], idx[2]
+            y_min, y_max = idx[1], idx[3]
+            #print(f'{x_min}, {x_max} | {y_min}, {y_max}')
+            cropped = features[:, x_min:x_max + 1, y_min:y_max + 1]
             cropped = F.interpolate(cropped.view((1, *cropped.shape)), (self.X, self.Y), mode='bilinear')[0]
             regions.append(cropped)
-        regions = torch.stack(regions)
+        regions = torch.stack(regions) if len(regions) > 0 else torch.empty(0)
         return regions
 
     def get_processed_pred_boxes_and_indices(self, boxes, idx):
-        # Remove tiny boxes
-        big_box_indices = utils.get_tiny_box_indices(boxes, 0.05)
-        pred_bbox = boxes[:, big_box_indices]
-        idx = idx[big_box_indices]
 
         # Change format from (cx cy w h) to (x1 y1 x2 y2)
-        pred_bbox = utils.centers_to_diag(pred_bbox)  # shape (4, p) (x1y1x2y2)
+        pred_bbox = utils.centers_to_diag(boxes)  # shape (4, p) (x1y1x2y2)
+
+        # Remove tiny boxes
+        pred_bbox, idx = self.remove_tiny_boxes(pred_bbox, min_side=0.1, idx=idx)
 
         # De-Normalize - Make coordinates feature indices b/w H and W
         # multiplier = torch.tensor([self.W, self.H, self.W, self.H]).view((4, 1))
@@ -202,3 +207,12 @@ class MnistDetector(nn.Module):
         iou = utils.raise_bbox_iou(iou, self.threshold_p)
         iou_max, iou_argmax = torch.max(iou, 0)  # Shape (k*H*W)
         return iou_max, iou_argmax
+
+    def remove_tiny_boxes(self, boxes, min_side, idx=None):
+        # Remove tiny boxes
+        big_box_indices = utils.get_tiny_box_indices(boxes, min_side)
+        pred_bbox = boxes[:, big_box_indices]
+        if idx is not None:
+            idx = idx[big_box_indices]
+            return pred_bbox, idx
+        return pred_bbox
