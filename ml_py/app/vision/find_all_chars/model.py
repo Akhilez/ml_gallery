@@ -98,6 +98,7 @@ class MnistDetector(nn.Module):
         bboxes = self.box_regressor(features)
         bboxes = bboxes.view((-1, 5, self.k, *bboxes.shape[-2:]))
         confidences = torch.sigmoid(bboxes[:, 0])
+        diffs_pred = bboxes[:, 1:]
 
         regions_p = []
         regions_n = []
@@ -109,37 +110,51 @@ class MnistDetector(nn.Module):
         iou_max_batch = []
 
         # If training mode, then sample positives and negatives, extract regions
-        #if self.training and y_bboxes is not None:
-        for i_batch in range(len(x)):
+        if self.training and y_bboxes is not None:
+            for i_batch in range(len(x)):
 
-            # 1. Get IOU_max and IOU_argmax
-            iou_max, iou_argmax = self.get_iou_max(y_bboxes[i_batch])  # Shape (k*H*W)
+                # 1. Get IOU_max and IOU_argmax
+                iou_max, iou_argmax = self.get_iou_max(y_bboxes[i_batch])  # Shape (k*H*W)
 
-            # 2. Get +ve and -ve bboxes and indices. denormalize and clip
-            (pred_bbox_p, pred_bbox_n), (idx_p, idx_n) = self.get_indices_and_boxes(iou_max, bboxes[i_batch, 1:])
+                # 2. Get +ve and -ve bboxes and indices. denormalize and clip
+                (pred_bbox_p, pred_bbox_n), (idx_p, idx_n) = self.get_indices_and_boxes(iou_max, bboxes[i_batch, 1:])
 
-            # Make record of these
-            iou_max_batch.append(iou_max)
-            best_bbox_idx_batch.append(iou_argmax)
+                # Make record of these
+                iou_max_batch.append(iou_max)
+                best_bbox_idx_batch.append(iou_argmax)
 
-            idx_p_batch.append(idx_p)
-            idx_n_batch.append(idx_n)
+                idx_p_batch.append(idx_p)
+                idx_n_batch.append(idx_n)
 
-            pred_bbox_p_batch.append(pred_bbox_p)
-            pred_bbox_n_batch.append(pred_bbox_n)
+                pred_bbox_p_batch.append(pred_bbox_p)
+                pred_bbox_n_batch.append(pred_bbox_n)
 
-            # 3. Get regions.
-            regions_p.append(self.extract_regions(features[i_batch], pred_bbox_p, idx_p))
-            regions_n.append(self.extract_regions(features[i_batch], pred_bbox_n, idx_n))
+                # 3. Get regions.
+                regions_p.append(self.extract_regions(features[i_batch], pred_bbox_p, idx_p))
+                regions_n.append(self.extract_regions(features[i_batch], pred_bbox_n, idx_n))
 
-        # TODO: If eval mode, then sample top 300 confidence anchors' regions
         if not self.training:
-            pass
+            # Get top b confidence anchors
+            confidences_flat = confidences.flatten(1)
+            confidences_flat, idx = torch.topk(confidences_flat, k=self.b_regions_test, dim=1)
+
+            for i_batch in range(len(x)):
+                if y_bboxes is not None:
+                    iou_max, iou_argmax = self.get_iou_max(y_bboxes[i_batch])  # Shape (k*H*W)
+                    iou_max_batch.append(iou_max)
+                    best_bbox_idx_batch.append(iou_argmax)
+
+                pred_bbox_p = utils.get_pred_boxes(diffs_pred[i_batch], self.anchors_tensor, idx[i_batch])
+                pred_bbox_p, idx_p = self.get_processed_pred_boxes_and_indices(pred_bbox_p, idx[i_batch])
+
+                idx_p_batch.append(idx_p)
+                pred_bbox_p_batch.append(pred_bbox_p)
+                regions_p.append(self.extract_regions(features[i_batch], pred_bbox_p, idx_p))
 
         return self.DetectorOut(
             features=features,
             confidences=confidences,
-            diffs=bboxes[:, 1:],
+            diffs=diffs_pred,
             regions_p=regions_p,
             regions_n=regions_n,
             pred_bbox_p=pred_bbox_p_batch,
@@ -155,7 +170,8 @@ class MnistDetector(nn.Module):
         idx_p, idx_n = utils.sample_pn_indices(iou_max, self.threshold_p, self.threshold_n, self.b_regions)
 
         # Get off-set boxes  (4, n) (cx, cy, w, h)
-        pred_bbox_p, pred_bbox_n = utils.get_pred_boxes(boxes_pred, self.anchors_tensor, idx_p, idx_n)
+        pred_bbox_p = utils.get_pred_boxes(boxes_pred, self.anchors_tensor, idx_p)
+        pred_bbox_n = utils.get_pred_boxes(boxes_pred, self.anchors_tensor, idx_n)
 
         pred_bbox_p, idx_p = self.get_processed_pred_boxes_and_indices(pred_bbox_p, idx_p)
         pred_bbox_n, idx_n = self.get_processed_pred_boxes_and_indices(pred_bbox_n, idx_n)

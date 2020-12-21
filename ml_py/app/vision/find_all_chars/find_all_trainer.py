@@ -16,7 +16,7 @@ device = 'cuda' if torch.cuda.is_available() else 'cpu'
 def get_labels(model, detector_out, x_batch, y_boxes):
     # Shape: (batch, k, H, W) | ones and zeros tensor.
     confidences_labels = utils.get_confidences(
-        torch.stack(detector_out.iou_max),
+        torch.stack(detector_out.iou_max) if len(detector_out.iou_max) > 0 else torch.empty([]),
         model.threshold_p,
         (len(x_batch), model.k, model.Hp, model.Wp)
     )
@@ -103,12 +103,13 @@ def test(model, dataset):
 
             nms_boxes = []
             for j_batch in range(len(x_batch)):
-                pred_boxes = torch.cat((detector_out.pred_bbox_n[j_batch].T, detector_out.pred_bbox_p[j_batch].T)).T
+                # pred_boxes = torch.cat((detector_out.pred_bbox_n[j_batch].T, detector_out.pred_bbox_p[j_batch].T)).T
+                pred_boxes = detector_out.pred_bbox_p[j_batch]
 
-                confidences_batch = detector_out.confidences[j_batch].flatten()
-                confidences_batch_p = confidences_batch[detector_out.idx_p[j_batch]]
-                confidences_batch_n = confidences_batch[detector_out.idx_n[j_batch]]
-                confidences_batch = torch.cat((confidences_batch_n, confidences_batch_p))
+                confidences_batch = detector_out.confidences[j_batch].flatten(0)
+                confidences_batch = confidences_batch[detector_out.idx_p[j_batch]]
+                # confidences_batch_n = confidences_batch[detector_out.idx_n[j_batch]]
+                # confidences_batch = torch.cat((confidences_batch_n, confidences_batch_p))
 
                 # De-Normalize to the feature map size
                 multiplier = torch.tensor([model.W, model.H, model.W, model.H]).view((4, 1))
@@ -129,8 +130,8 @@ def test(model, dataset):
 def main():
 
     aug = MNISTAug()
-    aug.min_objects = 1
-    aug.max_objects = 3
+    aug.min_objects = 5
+    aug.max_objects = 9
 
     train_set = MNISTAugDataset(200, aug=aug)
     test_set = MNISTAugDataset(2, test_mode=True, aug=aug)

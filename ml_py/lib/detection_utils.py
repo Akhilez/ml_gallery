@@ -279,12 +279,11 @@ def apply_diff(anchor, diffs):
     return torch.stack((cxb, cyb, wb, hb))
 
 
-def get_pred_boxes(diffs: torch.Tensor, anchors: torch.Tensor, idx_p: torch.Tensor, idx_n: torch.Tensor):
+def get_pred_boxes(diffs: torch.Tensor, anchors: torch.Tensor, idx: torch.Tensor):
     """
     Parameters
     ----------
-    idx_p: 1D positive indices tensor
-    idx_n: 1D -ve indices tensor
+    idx: 1D indices tensor
     diffs: Tensor of shape (4, k, H, W)
     anchors: Tensor of shape (4, k*H*W)
 
@@ -294,24 +293,21 @@ def get_pred_boxes(diffs: torch.Tensor, anchors: torch.Tensor, idx_p: torch.Tens
 
     Steps
     -------
-    1. Extract +ve and -ve anchors
+    1. Extract +ve anchors
     2. Flatten out diffs at dim 1 to make a diffs tensor of shape (4, k*H*W)
-    3. Extract +ve and -ve diffs
+    3. Extract diffs
     4. Apply diffs to anchors
     5. return pred bboxes
     """
 
-    anchors_p = anchors[:, idx_p]
-    anchors_n = anchors[:, idx_n]
+    anchors = anchors[:, idx]
 
     diffs = diffs.view((4, -1))
-    diffs_p = diffs[:, idx_p]
-    diffs_n = diffs[:, idx_n]
+    diffs = diffs[:, idx]
 
-    bb_p = apply_diff(anchors_p, diffs_p)
-    bb_n = apply_diff(anchors_n, diffs_n)
+    bb = apply_diff(anchors, diffs)
 
-    return bb_p, bb_n  # (cx, cy, w, h)
+    return bb  # (cx, cy, w, h)
 
 
 def get_tiny_box_indices(coords, min_side):
