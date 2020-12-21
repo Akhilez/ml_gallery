@@ -12,8 +12,8 @@ class MnistDetector(nn.Module):
     def __init__(self):
         super().__init__()
 
-        self.threshold_p = 0.6
-        self.threshold_n = 0.3
+        self.threshold_p = 0.5
+        self.threshold_n = 0.1
 
         self.H = 112
         self.W = 112
@@ -136,16 +136,23 @@ class MnistDetector(nn.Module):
         if not self.training:
             # Get top b confidence anchors
             confidences_flat = confidences.flatten(1)
-            confidences_flat, idx = torch.topk(confidences_flat, k=self.b_regions_test, dim=1)
 
             for i_batch in range(len(x)):
+
+                confidences_flat_i = confidences_flat[i_batch]
+                larger_iou_len = len(torch.nonzero(confidences_flat_i >= 0.1))
+                confidences_flat_i, idx_i = torch.topk(confidences_flat_i, k=min(self.b_regions_test, larger_iou_len), dim=0)
+
+                print(confidences_flat_i[0:5])
+                print(confidences_flat_i[-5:])
+
                 if y_bboxes is not None:
                     iou_max, iou_argmax = self.get_iou_max(y_bboxes[i_batch])  # Shape (k*H*W)
                     iou_max_batch.append(iou_max)
                     best_bbox_idx_batch.append(iou_argmax)
 
-                pred_bbox_p = utils.get_pred_boxes(diffs_pred[i_batch], self.anchors_tensor, idx[i_batch])
-                pred_bbox_p, idx_p = self.get_processed_pred_boxes_and_indices(pred_bbox_p, idx[i_batch])
+                pred_bbox_p = utils.get_pred_boxes(diffs_pred[i_batch], self.anchors_tensor, idx_i)
+                pred_bbox_p, idx_p = self.get_processed_pred_boxes_and_indices(pred_bbox_p, idx_i)
 
                 idx_p_batch.append(idx_p)
                 pred_bbox_p_batch.append(pred_bbox_p)

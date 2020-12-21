@@ -1,7 +1,7 @@
 from torch.utils.data import DataLoader
 import torch
 from torch import nn
-from torch.optim import Adam
+from torch.optim import Adam, RMSprop
 from torchvision import ops
 from torch.nn import functional as F
 
@@ -53,7 +53,8 @@ def train(model, train_set, epochs, batch_size, test_set=None):
     train_loader = DataLoader(train_set, shuffle=True, batch_size=batch_size, collate_fn=lambda x: x)
 
     model.train()
-    optimizer = Adam(model.parameters())  # , lr=1e-4)
+    # optimizer = Adam(model.parameters(), lr=1e-4)
+    optimizer = RMSprop(model.parameters(), lr=1e-4)
 
     for epoch in range(epochs):
         print(f'\nEpoch: {epoch}\n')
@@ -133,13 +134,13 @@ def main():
     aug.min_objects = 5
     aug.max_objects = 9
 
-    train_set = MNISTAugDataset(200, aug=aug)
+    train_set = MNISTAugDataset(5000, aug=aug)
     test_set = MNISTAugDataset(2, test_mode=True, aug=aug)
 
     model = MnistDetector()
 
-    epochs = 1
-    batch_size = 16
+    epochs = 2
+    batch_size = 32
 
     train(model, train_set, epochs, batch_size, test_set=test_set)
     test(model, test_set)
