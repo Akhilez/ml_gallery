@@ -225,7 +225,7 @@ def sample_pn_indices(confidences: torch.Tensor, threshold_p: float, threshold_n
     positive_indices = torch.nonzero(confidences >= threshold_p).flatten(0)
     negative_indices = torch.nonzero(confidences <= threshold_n).flatten(0)
 
-    bp = min(len(positive_indices), b_samples / 2)
+    bp = min(len(positive_indices), b_samples // 2)
     sampled_indices = [] if bp <= 0 else torch.multinomial(torch.ones(len(positive_indices)), bp)  # Sampled
     positive_indices = positive_indices[sampled_indices]
 

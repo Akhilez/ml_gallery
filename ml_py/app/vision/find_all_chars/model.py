@@ -24,7 +24,8 @@ class MnistDetector(nn.Module):
         self.X = 28  # Width of region
         self.Y = 28
 
-        self.b_regions = 256
+        self.b_regions = 64
+        self.b_regions_test = 100
 
         self.k = 9
 

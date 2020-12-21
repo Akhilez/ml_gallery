@@ -8,7 +8,7 @@ from torch.nn import functional as F
 from lib.mnist_aug.loader import MNISTAugDataset
 from app.vision.find_all_chars.model import MnistDetector
 from lib import detection_utils as utils
-from lib.mnist_aug.mnist_augmenter import DataManager
+from lib.mnist_aug.mnist_augmenter import DataManager, MNISTAug
 
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
@@ -37,12 +37,15 @@ def get_labels(model, detector_out, x_batch, y_boxes):
     return confidences_labels, diffs_labels
 
 
-def get_loss(detector_out, confidences_labels, diffs_labels):
+def get_loss(detector_out, confidences_labels, diffs_labels, get_all=False):
     confidences_loss = F.binary_cross_entropy(detector_out.confidences, confidences_labels)
     not_nan_idx = diffs_labels.flatten(0).isnan() == False
-    diffs_loss = F.l1_loss(detector_out.diffs.flatten(0)[not_nan_idx], diffs_labels.flatten(0)[not_nan_idx])
-    total_loss = confidences_loss + diffs_loss
+    diffs_loss = F.mse_loss(detector_out.diffs.flatten(0)[not_nan_idx], diffs_labels.flatten(0)[not_nan_idx])
 
+    if get_all:
+        return confidences_loss, diffs_loss
+
+    total_loss = confidences_loss + diffs_loss
     return total_loss
 
 
@@ -50,7 +53,7 @@ def train(model, train_set, epochs, batch_size, test_set=None):
     train_loader = DataLoader(train_set, shuffle=True, batch_size=batch_size, collate_fn=lambda x: x)
 
     model.train()
-    optimizer = Adam(model.parameters())
+    optimizer = Adam(model.parameters())  # , lr=1e-4)
 
     for epoch in range(epochs):
         print(f'\nEpoch: {epoch}\n')
@@ -64,9 +67,10 @@ def train(model, train_set, epochs, batch_size, test_set=None):
 
             confidences_labels, diffs_labels = get_labels(model, detector_out, x_batch, y_boxes)
 
-            loss = get_loss(detector_out, confidences_labels, diffs_labels)
+            confidence_loss, diff_loss = get_loss(detector_out, confidences_labels, diffs_labels, get_all=True)
+            loss = confidence_loss + diff_loss
 
-            print(loss.item())
+            print(confidence_loss.item(), diff_loss.item())
 
             optimizer.zero_grad()
             loss.backward()
@@ -123,13 +127,18 @@ def test(model, dataset):
 
 
 def main():
-    train_set = MNISTAugDataset(1000)
-    test_set = MNISTAugDataset(2, test_mode=True)
+
+    aug = MNISTAug()
+    aug.min_objects = 1
+    aug.max_objects = 3
+
+    train_set = MNISTAugDataset(200, aug=aug)
+    test_set = MNISTAugDataset(2, test_mode=True, aug=aug)
 
     model = MnistDetector()
 
     epochs = 1
-    batch_size = 32
+    batch_size = 16
 
     train(model, train_set, epochs, batch_size, test_set=test_set)
     test(model, test_set)
