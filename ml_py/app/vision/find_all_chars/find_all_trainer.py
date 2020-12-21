@@ -39,8 +39,19 @@ def get_labels(model, detector_out, x_batch, y_boxes):
 
 def get_loss(detector_out, confidences_labels, diffs_labels, get_all=False):
     confidences_loss = F.binary_cross_entropy(detector_out.confidences, confidences_labels)
-    not_nan_idx = diffs_labels.flatten(0).isnan() == False
-    diffs_loss = F.mse_loss(detector_out.diffs.flatten(0)[not_nan_idx], diffs_labels.flatten(0)[not_nan_idx])
+
+    diffs_loss = []
+
+    for i_batch in range(len(detector_out.diffs)):
+        idx = torch.cat((detector_out.idx_p[i_batch], detector_out.idx_n[i_batch])) if len(detector_out.idx_n) > 0 else detector_out.idx_p[i_batch]
+        not_nan_idx = diffs_labels[i_batch].flatten(0)[idx].isnan() == False
+
+        diffs_pred = detector_out.diffs[i_batch].flatten(0)[idx][not_nan_idx]
+        diffs_labels_ = diffs_labels[i_batch].flatten(0)[idx][not_nan_idx]
+
+        diffs_loss.append(F.mse_loss(diffs_pred, diffs_labels_))
+
+    diffs_loss = sum(diffs_loss)
 
     if get_all:
         return confidences_loss, diffs_loss
@@ -53,8 +64,8 @@ def train(model, train_set, epochs, batch_size, test_set=None):
     train_loader = DataLoader(train_set, shuffle=True, batch_size=batch_size, collate_fn=lambda x: x)
 
     model.train()
-    # optimizer = Adam(model.parameters(), lr=1e-4)
-    optimizer = RMSprop(model.parameters(), lr=1e-4)
+    optimizer = Adam(model.parameters())
+    # optimizer = RMSprop(model.parameters(), lr=1e-4)
 
     for epoch in range(epochs):
         print(f'\nEpoch: {epoch}\n')
@@ -134,7 +145,7 @@ def main():
     aug.min_objects = 5
     aug.max_objects = 9
 
-    train_set = MNISTAugDataset(5000, aug=aug)
+    train_set = MNISTAugDataset(1000, aug=aug)
     test_set = MNISTAugDataset(2, test_mode=True, aug=aug)
 
     model = MnistDetector()

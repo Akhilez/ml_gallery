@@ -18,8 +18,8 @@ class MnistDetector(nn.Module):
         self.H = 112
         self.W = 112
 
-        self.Wp = 22
-        self.Hp = 22
+        self.Wp = 16
+        self.Hp = 16
 
         self.X = 28  # Width of region
         self.Y = 28
@@ -36,52 +36,34 @@ class MnistDetector(nn.Module):
                                                      ratios=(0.5, 1, 2))  # Tensor of shape (4, k*H*W) -> cy, cy, w, h
 
         self.feature_extractor = nn.Sequential(
-            nn.Conv2d(1, 16, 3),
-            nn.ReLU(),
-            nn.Conv2d(16, 16, 3, padding=1),
-            nn.ReLU(),
-            nn.MaxPool2d(2, 2),
-
-            nn.Conv2d(16, 32, 3),
+            nn.Conv2d(1, 32, 3, padding=1),
             nn.ReLU(),
             nn.Conv2d(32, 32, 3, padding=1),
             nn.ReLU(),
             nn.MaxPool2d(2, 2),
 
-            nn.Conv2d(32, 64, 3),
+            nn.Conv2d(32, 64, 3, padding=1),
             nn.ReLU(),
             nn.Conv2d(64, 64, 3, padding=1),
             nn.ReLU(),
-            # nn.MaxPool2d(2,2),
-
-            nn.Conv2d(64, 128, 3),
-            nn.ReLU(),
-            nn.Conv2d(128, 128, 3, padding=1),
-            nn.ReLU(),
-            # nn.MaxPool2d(2,2),
+            nn.MaxPool2d(2, 2),
         )
         self.box_regressor = nn.Sequential(
+            nn.Conv2d(64, 128, 3, padding=1),
+            nn.ReLU(),
             nn.Conv2d(128, 256, 3, padding=1),
             nn.ReLU(),
+            nn.MaxPool2d(2, 2),
 
-            nn.Conv2d(256, 5 * self.k, 1)
+            nn.Conv2d(256, 5 * self.k, 1, padding=1),
+            nn.Tanh()
         )
         self.classifier = nn.Sequential(
-            nn.Conv2d(128, 256, 3, padding=1),
-            nn.ReLU(),
-            nn.MaxPool2d(2, 2),
-
-            nn.Conv2d(256, 256, 3, padding=1),
-            nn.ReLU(),
-            nn.MaxPool2d(2, 2),
-
-            nn.Conv2d(256, 128, 3, padding=1),
+            nn.Conv2d(64, 128, 3, padding=1),
             nn.ReLU(),
             nn.MaxPool2d(2, 2),
 
             nn.Flatten(),
-            nn.Linear(1152, 512),
-            nn.ReLU(),
 
             nn.Linear(512, 10),
             nn.Softmax()
