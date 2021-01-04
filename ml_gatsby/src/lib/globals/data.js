@@ -219,13 +219,13 @@ const projectsRaw = {
   },
 
   // Reinforcement Learning
-  alpha_mens: {
-    title: "Alpha Mens Morris",
+  alpha_nine: {
+    title: "Alpha Nine Morris",
     desc: "9 Men's Morris with AlphaGo like algorithm",
     image: "under_construction2.png",
     status: "to_do",
     links: {
-      app: "/gallery/coming_soon",
+      app: "/gallery/rl/alpha_nine",
       source: "",
     },
   },
@@ -359,7 +359,7 @@ export const categoriesMap = {
     title: "Reinforcement Learning",
     projects: [
       projects.gridworld,
-      projects.alpha_mens,
+      projects.alpha_nine,
       projects.racer,
       projects.dodger,
     ],
