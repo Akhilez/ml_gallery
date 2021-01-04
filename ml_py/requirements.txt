@@ -16,3 +16,5 @@ tensorboard==2.4.0
 torchtext==0.8.0
 # spacy==2.3.4
 djangorestframework==3.12.2
+
+-e git+git@github.com:Akhilez/gyms.git#egg=gym_nine_mens_morris&subdirectory=gym-nine-mens-morris
