@@ -6,6 +6,8 @@ export class AlphaNineCanvas extends React.Component {
     super(props)
     this.parent = parent
     this.scale = scale
+    this.positions = this.getPositions()
+    this.position_to_coords = this.getPositionsToCoords(this.positions)
   }
 
   render() {
@@ -21,34 +23,14 @@ export class AlphaNineCanvas extends React.Component {
   }
 
   PositionalDots = () => {
-    const dots = [
-      [10, 70],
-      [20, 60],
-      [30, 50],
-    ]
-    const m = 40
-    const positions = []
-    for (let i = 0; i < 3; i++) {
-      const [p, q] = dots[i]
-
-      positions.push([p, p, [i, 0, 0]])
-      positions.push([q, p, [i, 0, 1]])
-      positions.push([q, q, [i, 0, 2]])
-      positions.push([p, q, [i, 0, 3]])
-
-      positions.push([p, m, [i, 1, 0]])
-      positions.push([m, p, [i, 1, 1]])
-      positions.push([q, m, [i, 1, 2]])
-      positions.push([m, q, [i, 1, 3]])
-    }
     return (
       <>
-        {positions.map(p => (
+        {this.positions.map(p => (
           <this.Dot
-            cx={p[0]}
-            cy={p[1]}
+            cx={p.x}
+            cy={p.y}
             onClick={() => {
-              console.log(p[2])
+              console.log(p.coord)
             }}
           />
         ))}
@@ -89,4 +71,36 @@ export class AlphaNineCanvas extends React.Component {
 
   Line = props => <line {...props} stroke="red" strokeWidth="1" />
   Dot = props => <circle {...props} r={1.5} stroke="none" />
+
+  getPositions() {
+    const dots = [
+      [10, 70],
+      [20, 60],
+      [30, 50],
+    ]
+    const m = 40
+    const positions = []
+    for (let i = 0; i < 3; i++) {
+      const [p, q] = dots[i]
+
+      positions.push({ x: p, y: p, coord: [i, 0, 0] })
+      positions.push({ x: q, y: p, coord: [i, 0, 1] })
+      positions.push({ x: q, y: q, coord: [i, 0, 2] })
+      positions.push({ x: p, y: q, coord: [i, 0, 3] })
+
+      positions.push({ x: p, y: m, coord: [i, 1, 0] })
+      positions.push({ x: m, y: p, coord: [i, 1, 1] })
+      positions.push({ x: q, y: m, coord: [i, 1, 2] })
+      positions.push({ x: m, y: q, coord: [i, 1, 3] })
+    }
+    return positions
+  }
+
+  getPositionsToCoords(positions) {
+    const map = {}
+    for (let p of positions) {
+      map[p.coord.toString()] = p
+    }
+    return map
+  }
 }
