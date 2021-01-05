@@ -31,20 +31,26 @@ export class AlphaNineCanvas extends React.Component {
     for (let i = 0; i < 3; i++) {
       const [p, q] = dots[i]
 
-      positions.push([p, p])
-      positions.push([q, p])
-      positions.push([p, q])
-      positions.push([q, q])
+      positions.push([p, p, [i, 0, 0]])
+      positions.push([q, p, [i, 0, 1]])
+      positions.push([q, q, [i, 0, 2]])
+      positions.push([p, q, [i, 0, 3]])
 
-      positions.push([m, p])
-      positions.push([m, q])
-      positions.push([p, m])
-      positions.push([q, m])
+      positions.push([p, m, [i, 1, 0]])
+      positions.push([m, p, [i, 1, 1]])
+      positions.push([q, m, [i, 1, 2]])
+      positions.push([m, q, [i, 1, 3]])
     }
     return (
       <>
         {positions.map(p => (
-          <this.Dot cx={p[0]} cy={p[1]} />
+          <this.Dot
+            cx={p[0]}
+            cy={p[1]}
+            onClick={() => {
+              console.log(p[2])
+            }}
+          />
         ))}
       </>
     )
