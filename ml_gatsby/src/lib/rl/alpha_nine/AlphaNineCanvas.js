@@ -1,5 +1,5 @@
 import React from "react"
-import { Box } from "@chakra-ui/core"
+import { Box, CircularProgress } from "@chakra-ui/core"
 import { Spring } from "react-spring/renderprops"
 
 const w = "w"
@@ -18,6 +18,8 @@ export class AlphaNineCanvas extends React.Component {
         w: this.getInitialPrevPositions(),
         b: this.getInitialPrevPositions(),
       },
+      apiWait: false,
+      me: w,
     }
     this.parent = parent
     this.scale = scale
@@ -26,7 +28,6 @@ export class AlphaNineCanvas extends React.Component {
 
     // Game state
     this.gameStarted = false
-    this.currentPlayer = w
     this.pieceStack = { w: 8, b: 8 }
   }
 
@@ -39,6 +40,14 @@ export class AlphaNineCanvas extends React.Component {
           <this.PositionalDots />
           <this.Pieces />
         </svg>
+        {this.state.apiWait && (
+          <CircularProgress
+            isIndeterminate
+            color="red.300"
+            position="relative"
+            top="-250px"
+          />
+        )}
       </Box>
     )
   }
@@ -141,18 +150,20 @@ export class AlphaNineCanvas extends React.Component {
   }
 
   /*
-  if in phase 1, pop form player pieces and place it on pos.
+  if in phase 1, pop form player pieces and place it on pos, build state and make api call.
   */
   handleDotClick = (e, pos) => {
-    // if Phase 1
-    if (this.pieceStack[this.currentPlayer] > -1) {
-      const menIdx = this.pieceStack[this.currentPlayer]
-      this.pieceStack[this.currentPlayer] -= 1
+    if (this.state.apiWait) return
 
-      this.state.pos_prev[this.currentPlayer][menIdx] = this.state.pos[
-        this.currentPlayer
+    // if Phase 1
+    if (this.pieceStack[this.state.me] > -1) {
+      const menIdx = this.pieceStack[this.state.me]
+      this.pieceStack[this.state.me] -= 1
+
+      this.state.pos_prev[this.state.me][menIdx] = this.state.pos[
+        this.state.me
       ][menIdx]
-      this.state.pos[this.currentPlayer][menIdx] = [pos.x, pos.y]
+      this.state.pos[this.state.me][menIdx] = [pos.x, pos.y]
 
       this.setState({ pos: this.state.pos, pos_prev: this.state.pos_prev })
 
@@ -161,7 +172,7 @@ export class AlphaNineCanvas extends React.Component {
   }
 
   swapPlayer = () => {
-    this.currentPlayer = this.currentPlayer === w ? b : w
+    this.setState({ me: this.state.me === w ? b : w })
   }
 
   getPositions() {
@@ -203,7 +214,6 @@ export class AlphaNineCanvas extends React.Component {
     const sidePad = 2
     for (let i = 0; i < 9; i++)
       pos.push([leftPad + i * (this.pieceRadius + sidePad) + 1, y])
-    console.log(pos)
     return pos
   }
 
