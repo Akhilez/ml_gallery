@@ -1,9 +1,15 @@
 import React from "react"
 import { Box } from "@chakra-ui/core"
+import { Spring } from "react-spring/renderprops"
 
 export class AlphaNineCanvas extends React.Component {
   constructor({ parent, scale = 5, ...props }) {
     super(props)
+    this.pieceRadius = 4.5
+    this.state = {
+      wPos: this.getInitialUnusedPositions("w"),
+      bPos: this.getInitialUnusedPositions("b"),
+    }
     this.parent = parent
     this.scale = scale
     this.positions = this.getPositions()
@@ -14,11 +20,25 @@ export class AlphaNineCanvas extends React.Component {
     const realSide = this.scale * 60
     return (
       <Box w={`${realSide}px`} h={`${realSide}px`}>
-        <svg viewBox={`0 0 80 80`}>
+        <svg viewBox={`0 0 80 100`}>
           <this.LineFrame />
           <this.PositionalDots />
+          <this.Pieces />
         </svg>
       </Box>
+    )
+  }
+
+  Pieces = () => {
+    return (
+      <>
+        {this.state.wPos.map(pos => (
+          <this.Piece cx={pos[0]} cy={pos[1]} stroke="black" />
+        ))}
+        {this.state.bPos.map(pos => (
+          <this.Piece cx={pos[0]} cy={pos[1]} stroke="black" fill="white" />
+        ))}
+      </>
     )
   }
 
@@ -70,7 +90,17 @@ export class AlphaNineCanvas extends React.Component {
   }
 
   Line = props => <line {...props} stroke="red" strokeWidth="1" />
-  Dot = props => <circle {...props} r={1.5} stroke="none" />
+  Dot = props => (
+    <circle
+      {...props}
+      r={1.5}
+      stroke="none"
+      fill="red"
+      onMouseOver={event => event.target.setAttribute("r", "2")}
+      onMouseOut={e => e.target.setAttribute("r", "1.5")}
+    />
+  )
+  Piece = props => <circle {...props} r={2} strokeWidth={0.5} />
 
   getPositions() {
     const dots = [
@@ -102,5 +132,16 @@ export class AlphaNineCanvas extends React.Component {
       map[p.coord.toString()] = p
     }
     return map
+  }
+
+  getInitialUnusedPositions(piece) {
+    const pos = []
+    const y = piece === "w" ? 80 : 80 + this.pieceRadius + 2
+    const leftPad = 10
+    const sidePad = 2
+    for (let i = 0; i < 9; i++)
+      pos.push([leftPad + i * (this.pieceRadius + sidePad) + 1, y])
+    console.log(pos)
+    return pos
   }
 }
