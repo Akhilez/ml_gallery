@@ -2,18 +2,32 @@ import React from "react"
 import { Box } from "@chakra-ui/core"
 import { Spring } from "react-spring/renderprops"
 
+const w = "w"
+const b = "b"
+
 export class AlphaNineCanvas extends React.Component {
   constructor({ parent, scale = 5, ...props }) {
     super(props)
     this.pieceRadius = 4.5
     this.state = {
-      wPos: this.getInitialUnusedPositions("w"),
-      bPos: this.getInitialUnusedPositions("b"),
+      pos: {
+        w: this.getInitialUnusedPositions(w),
+        b: this.getInitialUnusedPositions(b),
+      },
+      pos_prev: {
+        w: this.getInitialPrevPositions(),
+        b: this.getInitialPrevPositions(),
+      },
     }
     this.parent = parent
     this.scale = scale
     this.positions = this.getPositions()
     this.position_to_coords = this.getPositionsToCoords(this.positions)
+
+    // Game state
+    this.gameStarted = false
+    this.currentPlayer = w
+    this.pieceStack = { w: 8, b: 8 }
   }
 
   render() {
@@ -30,14 +44,20 @@ export class AlphaNineCanvas extends React.Component {
   }
 
   Pieces = () => {
+    const players = [b, w]
     return (
       <>
-        {this.state.wPos.map(pos => (
-          <this.Piece cx={pos[0]} cy={pos[1]} stroke="black" />
-        ))}
-        {this.state.bPos.map(pos => (
-          <this.Piece cx={pos[0]} cy={pos[1]} stroke="black" fill="white" />
-        ))}
+        {players.map(player =>
+          this.state.pos[player].map((pos, index) => (
+            <this.Piece
+              pos={pos}
+              key={pos}
+              player={player}
+              fill={player === b ? "black" : "white"}
+              index={index}
+            />
+          ))
+        )}
       </>
     )
   }
@@ -49,9 +69,8 @@ export class AlphaNineCanvas extends React.Component {
           <this.Dot
             cx={p.x}
             cy={p.y}
-            onClick={() => {
-              console.log(p.coord)
-            }}
+            onClick={e => this.handleDotClick(e, p)}
+            key={p.pos}
           />
         ))}
       </>
@@ -100,7 +119,50 @@ export class AlphaNineCanvas extends React.Component {
       onMouseOut={e => e.target.setAttribute("r", "1.5")}
     />
   )
-  Piece = props => <circle {...props} r={2} strokeWidth={0.5} />
+  Piece = ({ pos, index, player, ...props }) => {
+    const prev_pos = this.state.pos_prev[player][index]
+    return (
+      <Spring
+        from={{ cx: prev_pos[0], cy: prev_pos[1] }}
+        to={{ cx: pos[0], cy: pos[1] }}
+      >
+        {springProps => (
+          <circle
+            {...props}
+            cx={springProps.cx}
+            cy={springProps.cy}
+            r={2}
+            strokeWidth={0.5}
+            stroke="black"
+          />
+        )}
+      </Spring>
+    )
+  }
+
+  /*
+  if in phase 1, pop form player pieces and place it on pos.
+  */
+  handleDotClick = (e, pos) => {
+    // if Phase 1
+    if (this.pieceStack[this.currentPlayer] > -1) {
+      const menIdx = this.pieceStack[this.currentPlayer]
+      this.pieceStack[this.currentPlayer] -= 1
+
+      this.state.pos_prev[this.currentPlayer][menIdx] = this.state.pos[
+        this.currentPlayer
+      ][menIdx]
+      this.state.pos[this.currentPlayer][menIdx] = [pos.x, pos.y]
+
+      this.setState({ pos: this.state.pos, pos_prev: this.state.pos_prev })
+
+      this.swapPlayer()
+    }
+  }
+
+  swapPlayer = () => {
+    this.currentPlayer = this.currentPlayer === w ? b : w
+  }
 
   getPositions() {
     const dots = [
@@ -143,5 +205,15 @@ export class AlphaNineCanvas extends React.Component {
       pos.push([leftPad + i * (this.pieceRadius + sidePad) + 1, y])
     console.log(pos)
     return pos
+  }
+
+  getInitialPrevPositions() {
+    const pos = []
+    for (let i of this.range(0, 9)) pos.push([40, 40])
+    return pos
+  }
+
+  range(start, end) {
+    return Array.from({ length: end - start + 1 }, (_, i) => i)
   }
 }
