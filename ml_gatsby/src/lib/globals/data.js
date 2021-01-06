@@ -222,7 +222,7 @@ const projectsRaw = {
   alpha_nine: {
     title: "Alpha Nine Morris",
     desc: "9 Men's Morris with AlphaGo like algorithm",
-    image: "under_construction2.png",
+    image: "alpha_nine.png",
     status: "to_do",
     links: {
       app: "/gallery/rl/alpha_nine",
