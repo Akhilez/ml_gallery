@@ -72,12 +72,14 @@ export class AlphaNineCanvas extends React.Component {
 
     // if Phase 1
     if (this.unused[me] > -1) {
-
       if (this.is_killing) {
-        if (pos.piece != null && pos.piece !== me){
+        if (pos.piece != null && pos.piece !== me) {
           this.kill(pos)
         } else {
-          this.setState({message: "You selected a wrong piece. Select an opponent piece to remove"})
+          this.setState({
+            message:
+              "You selected a wrong piece. Select an opponent piece to remove",
+          })
         }
         this.actionable = true
         return
@@ -108,7 +110,7 @@ export class AlphaNineCanvas extends React.Component {
           this.setState(this.state)
           this.swapPlayer()
         } else if (data.info.code === infoCode.kill_position_missing) {
-          this.setState({message: 'Select an opponent piece to remove'})
+          this.setState({ message: "Select an opponent piece to remove" })
           this.is_killing = true
         }
       })
