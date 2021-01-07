@@ -6,6 +6,12 @@ import { mlgApi } from "src/lib/api"
 const w = "w"
 const b = "b"
 
+const infoCode = {
+  normal: 0,
+  kill_position_missing: 1,
+  move_missing: 2,
+}
+
 export class AlphaNineCanvas extends React.Component {
   constructor({ parent, scale = 5, ...props }) {
     super(props)
@@ -20,11 +26,14 @@ export class AlphaNineCanvas extends React.Component {
     this.scale = scale
     this.positions = this.getPositions()
     this.posMap = this.getPosMap(this.positions)
+    this.killedTargetPosition = { x: 40, y: 100 }
 
     // Game state
     this.gameStarted = false
     this.unused = { w: 8, b: 8 }
     this.killed = { w: 0, b: 0 }
+    this.is_killing = false
+    this.actionable = true
   }
 
   render() {
@@ -52,37 +61,70 @@ export class AlphaNineCanvas extends React.Component {
   if in phase 1, pop form player pieces and place it on pos, build state and make api call.
   */
   handleDotClick = (e, pos) => {
+    console.log(this.actionable)
+    if (!this.actionable) return
     if (this.state.apiWait) return
 
+    this.actionable = false
+
     const me = this.state.me
-    console.log(this.unused[me])
-    console.log(me)
-    console.log(this.unused)
+    const coord = this.posMap[pos.x + "," + pos.y].coord
 
     // if Phase 1
     if (this.unused[me] > -1) {
-      const newIdx = this.unused[me]
-      this.unused[me] -= 1
 
-      this.state[me][newIdx].px = this.state[me][newIdx].x
-      this.state[me][newIdx].py = this.state[me][newIdx].y
+      if (this.is_killing) {
+        if (pos.piece != null && pos.piece !== me){
+          this.kill(pos)
+        } else {
+          this.setState({message: "You selected a wrong piece. Select an opponent piece to remove"})
+        }
+        this.actionable = true
+        return
+      }
 
-      this.state[me][newIdx].x = pos.x
-      this.state[me][newIdx].y = pos.y
-
-      this.state[me][newIdx].status = "alive"
-      this.state[me][newIdx].coord = this.posMap[pos.x + "," + pos.y].coord
-      this.state.apiWait = true
-
-      this.setState(this.state)
-      this.swapPlayer()
+      this.setState({ apiWait: true })
 
       const [board, mens] = this.buildState()
-      mlgApi.alphaNine.stepEnv(board, mens, this.state.me).then(data => {
+      mlgApi.alphaNine.stepEnv(board, mens, this.state.me, coord).then(data => {
         console.log(data)
-        this.setState({ apiWait: false })
+
+        if (data.info.code === infoCode.normal) {
+          const newIdx = this.unused[me]
+          this.unused[me] -= 1
+
+          this.state[me][newIdx].px = this.state[me][newIdx].x
+          this.state[me][newIdx].py = this.state[me][newIdx].y
+
+          this.state[me][newIdx].x = pos.x
+          this.state[me][newIdx].y = pos.y
+
+          this.state[me][newIdx].status = "alive"
+          this.state[me][newIdx].coord = this.posMap[pos.x + "," + pos.y].coord
+          this.state.apiWait = false
+          pos.piece = me
+          pos.pieceIndex = newIdx
+
+          this.setState(this.state)
+          this.swapPlayer()
+        } else if (data.info.code === infoCode.kill_position_missing) {
+          this.setState({message: 'Select an opponent piece to remove'})
+          this.is_killing = true
+        }
       })
     }
+    this.actionable = true
+  }
+
+  kill(pos) {
+    const idx = pos.pieceIndex
+    const piece = pos.piece
+    this.killed[pos.piece] += 1
+    pos.piece = null
+    pos.pieceIndex = null
+    this.state[piece][idx].x = this.killedTargetPosition.x
+    this.state[piece][idx].y = this.killedTargetPosition.y
+    this.setState(this.state)
   }
 
   Pieces = () => {

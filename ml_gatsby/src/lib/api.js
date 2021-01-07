@@ -24,7 +24,14 @@ export const mlgApi = {
     fetch(`${MLPyHost}/next_char?${qs.stringify({ text: text })}`),
   positionalCnn: image => fetchPost(`${MLPyHost}/positional_cnn`, { image }),
   alphaNine: {
-    stepEnv: (board, mens, me) =>
-      fetchPost(`${MLPyHost}/alpha_nine/step`, { board, mens, me }),
+    stepEnv: (board, mens, me, actionPosition, move, killPosition) =>
+      fetchPost(`${MLPyHost}/alpha_nine/step`, {
+        board,
+        mens,
+        me,
+        actionPosition,
+        move,
+        killPosition,
+      }),
   },
 }
