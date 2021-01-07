@@ -1,6 +1,7 @@
 import React from "react"
 import { Box, CircularProgress } from "@chakra-ui/core"
 import { Spring } from "react-spring/renderprops"
+import { mlgApi } from "src/lib/api"
 
 const w = "w"
 const b = "b"
@@ -54,6 +55,9 @@ export class AlphaNineCanvas extends React.Component {
     if (this.state.apiWait) return
 
     const me = this.state.me
+    console.log(this.unused[me])
+    console.log(me)
+    console.log(this.unused)
 
     // if Phase 1
     if (this.unused[me] > -1) {
@@ -68,13 +72,16 @@ export class AlphaNineCanvas extends React.Component {
 
       this.state[me][newIdx].status = "alive"
       this.state[me][newIdx].coord = this.posMap[pos.x + "," + pos.y].coord
+      this.state.apiWait = true
 
       this.setState(this.state)
-
-      const state = this.buildState()
-      console.log(state)
-
       this.swapPlayer()
+
+      const [board, mens] = this.buildState()
+      mlgApi.alphaNine.stepEnv(board, mens, this.state.me).then(data => {
+        console.log(data)
+        this.setState({ apiWait: false })
+      })
     }
   }
 
@@ -208,7 +215,7 @@ export class AlphaNineCanvas extends React.Component {
 
     const mens = [this.unused.w, this.unused.b, this.killed.w, this.killed.b]
 
-    return [state, mens, this.state.me]
+    return [state, mens]
   }
 
   getPositions() {

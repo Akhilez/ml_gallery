@@ -9,6 +9,7 @@ from rest_framework.response import Response
 
 from app.nlp.next_char.next_char import NextChar
 from app.vision.positional_mnist.positional_mnist import PositionalCNN
+from app.rl.alpha_nine import alpha_nine as alpha_nine_handler
 
 
 class PreLoaded:
@@ -45,3 +46,7 @@ def positional_cnn(request):
         return Response({}, status=status.HTTP_400_BAD_REQUEST)
     cls, pos = PreLoaded.positional_cnn.predict(image)
     return Response({'class': cls, 'position': pos}, status=status.HTTP_200_OK)
+
+
+def alpha_nine_step(request):
+    return alpha_nine_handler.handle_step_request(request)

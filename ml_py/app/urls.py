@@ -11,5 +11,6 @@ urlpatterns = [
     path('ajax/learn_curve', views.rest_learn_curve, name='rest-learn-curve'),
     path('next_char', views.next_char, name='next_char'),
     path('positional_cnn', views.positional_cnn, name='positional_cnn'),
+    path('alpha_nine/step', views.alpha_nine_step, name='alpha_nine_step'),
     path('', views.home, name='home'),
 ]
