@@ -18,7 +18,7 @@ export class AlphaNineCanvas extends React.Component {
     this.parent = parent
     this.scale = scale
     this.positions = this.getPositions()
-    this.position_to_coords = this.getPositionsToCoords(this.positions)
+    this.posMap = this.getPosMap(this.positions)
 
     // Game state
     this.gameStarted = false
@@ -66,7 +66,13 @@ export class AlphaNineCanvas extends React.Component {
       this.state[me][newIdx].x = pos.x
       this.state[me][newIdx].y = pos.y
 
+      this.state[me][newIdx].status = "alive"
+      this.state[me][newIdx].coord = this.posMap[pos.x + "," + pos.y].coord
+
       this.setState(this.state)
+
+      const state = this.buildState()
+      console.log(state)
 
       this.swapPlayer()
     }
@@ -172,6 +178,39 @@ export class AlphaNineCanvas extends React.Component {
     this.setState({ me: this.state.me === w ? b : w })
   }
 
+  buildState = () => {
+    const state = []
+    for (let l = 0; l < 3; l++) {
+      const level = []
+      for (let ce = 0; ce < 2; ce++) {
+        const all4 = []
+        for (let i = 0; i < 4; i++) {
+          all4.push([1, 0, 0])
+        }
+        level.push(all4)
+      }
+      state.push(level)
+    }
+
+    const ws = this.state.w
+    const bs = this.state.b
+
+    for (let i = 0; i < 9; i++) {
+      if (ws[i].status === "alive") {
+        const idx = ws[i].coord
+        state[idx[0]][idx[1]][idx[2]] = [0, 1, 0]
+      }
+      if (bs[i].status === "alive") {
+        const idx = bs[i].coord
+        state[idx[0]][idx[1]][idx[2]] = [0, 0, 1]
+      }
+    }
+
+    const mens = [this.unused.w, this.unused.b, this.killed.w, this.killed.b]
+
+    return [state, mens, this.state.me]
+  }
+
   getPositions() {
     const dots = [
       [10, 70],
@@ -196,10 +235,11 @@ export class AlphaNineCanvas extends React.Component {
     return positions
   }
 
-  getPositionsToCoords(positions) {
+  getPosMap(positions) {
     const map = {}
     for (let p of positions) {
-      map[p.coord.toString()] = p
+      map[p.x + "," + p.y] = p
+      map[p.coord.join(",")] = p
     }
     return map
   }
