@@ -10,14 +10,8 @@ export class AlphaNineCanvas extends React.Component {
     super(props)
     this.pieceRadius = 4.5
     this.state = {
-      pos: {
-        w: this.getInitialUnusedPositions(w),
-        b: this.getInitialUnusedPositions(b),
-      },
-      pos_prev: {
-        w: this.getInitialPrevPositions(),
-        b: this.getInitialPrevPositions(),
-      },
+      w: this.getInitialStateValues(w),
+      b: this.getInitialStateValues(b),
       apiWait: false,
       me: w,
     }
@@ -28,7 +22,8 @@ export class AlphaNineCanvas extends React.Component {
 
     // Game state
     this.gameStarted = false
-    this.pieceStack = { w: 8, b: 8 }
+    this.unused = { w: 8, b: 8 }
+    this.killed = { w: 0, b: 0 }
   }
 
   render() {
@@ -52,15 +47,40 @@ export class AlphaNineCanvas extends React.Component {
     )
   }
 
+  /*
+  if in phase 1, pop form player pieces and place it on pos, build state and make api call.
+  */
+  handleDotClick = (e, pos) => {
+    if (this.state.apiWait) return
+
+    const me = this.state.me
+
+    // if Phase 1
+    if (this.unused[me] > -1) {
+      const newIdx = this.unused[me]
+      this.unused[me] -= 1
+
+      this.state[me][newIdx].px = this.state[me][newIdx].x
+      this.state[me][newIdx].py = this.state[me][newIdx].y
+
+      this.state[me][newIdx].x = pos.x
+      this.state[me][newIdx].y = pos.y
+
+      this.setState(this.state)
+
+      this.swapPlayer()
+    }
+  }
+
   Pieces = () => {
     const players = [b, w]
     return (
       <>
         {players.map(player =>
-          this.state.pos[player].map((pos, index) => (
+          this.state[player].map((piece, index) => (
             <this.Piece
-              pos={pos}
-              key={pos}
+              piece={piece}
+              key={`${piece.x}${piece.y}`}
               player={player}
               fill={player === b ? "black" : "white"}
               index={index}
@@ -128,12 +148,11 @@ export class AlphaNineCanvas extends React.Component {
       onMouseOut={e => e.target.setAttribute("r", "1.5")}
     />
   )
-  Piece = ({ pos, index, player, ...props }) => {
-    const prev_pos = this.state.pos_prev[player][index]
+  Piece = ({ piece, index, player, ...props }) => {
     return (
       <Spring
-        from={{ cx: prev_pos[0], cy: prev_pos[1] }}
-        to={{ cx: pos[0], cy: pos[1] }}
+        from={{ cx: piece.px, cy: piece.py }}
+        to={{ cx: piece.x, cy: piece.y }}
       >
         {springProps => (
           <circle
@@ -147,28 +166,6 @@ export class AlphaNineCanvas extends React.Component {
         )}
       </Spring>
     )
-  }
-
-  /*
-  if in phase 1, pop form player pieces and place it on pos, build state and make api call.
-  */
-  handleDotClick = (e, pos) => {
-    if (this.state.apiWait) return
-
-    // if Phase 1
-    if (this.pieceStack[this.state.me] > -1) {
-      const menIdx = this.pieceStack[this.state.me]
-      this.pieceStack[this.state.me] -= 1
-
-      this.state.pos_prev[this.state.me][menIdx] = this.state.pos[
-        this.state.me
-      ][menIdx]
-      this.state.pos[this.state.me][menIdx] = [pos.x, pos.y]
-
-      this.setState({ pos: this.state.pos, pos_prev: this.state.pos_prev })
-
-      this.swapPlayer()
-    }
   }
 
   swapPlayer = () => {
@@ -207,23 +204,21 @@ export class AlphaNineCanvas extends React.Component {
     return map
   }
 
-  getInitialUnusedPositions(piece) {
-    const pos = []
-    const y = piece === "w" ? 80 : 80 + this.pieceRadius + 2
+  getInitialStateValues(piece) {
+    const values = []
+    const y = piece === w ? 80 : 80 + this.pieceRadius + 2
     const leftPad = 10
     const sidePad = 2
-    for (let i = 0; i < 9; i++)
-      pos.push([leftPad + i * (this.pieceRadius + sidePad) + 1, y])
-    return pos
-  }
 
-  getInitialPrevPositions() {
-    const pos = []
-    for (let i of this.range(0, 9)) pos.push([40, 40])
-    return pos
-  }
-
-  range(start, end) {
-    return Array.from({ length: end - start + 1 }, (_, i) => i)
+    for (let i = 0; i < 9; i++) {
+      values.push({
+        x: leftPad + i * (this.pieceRadius + sidePad) + 1,
+        y: y,
+        px: 40,
+        py: 40,
+        status: "unused",
+      })
+    }
+    return values
   }
 }
