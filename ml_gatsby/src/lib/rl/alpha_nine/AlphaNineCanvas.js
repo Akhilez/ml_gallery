@@ -8,8 +8,8 @@ const b = "b"
 
 const infoCode = {
   normal: 0,
-  kill_position_missing: 1,
-  move_missing: 2,
+  move_missing: 1,
+  kill_position_missing: 2,
 }
 
 export class AlphaNineCanvas extends React.Component {
@@ -57,9 +57,6 @@ export class AlphaNineCanvas extends React.Component {
     )
   }
 
-  /*
-  if in phase 1, pop form player pieces and place it on pos, build state and make api call.
-  */
   handleDotClick = (e, pos) => {
     console.log(this.actionable)
     if (!this.actionable) return
@@ -90,6 +87,12 @@ export class AlphaNineCanvas extends React.Component {
       const [board, mens] = this.buildState()
       mlgApi.alphaNine.stepEnv(board, mens, this.state.me, coord).then(data => {
         console.log(data)
+
+        if (data?.info?.code == null) {
+          this.setState({ message: "Something went wrong, please try again" })
+          this.actionable = true
+          return
+        }
 
         if (data.info.code === infoCode.normal) {
           const newIdx = this.unused[me]
