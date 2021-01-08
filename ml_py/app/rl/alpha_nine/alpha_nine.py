@@ -29,7 +29,7 @@ def handle_step_request(request):
     env.player = Pix.B if me == 'b' else Pix.W
 
     action_position = np.array(action_position)
-    move = env.get_move_from_position(action_position, move_position)
+    move = env.get_move_from_position(action_position, move_position) if move_position else move_position
     kill_position = np.array(kill_position) if kill_position else kill_position
 
     state, reward, is_done, info = env.step(action_position, move, kill_position)

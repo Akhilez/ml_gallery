@@ -16,24 +16,26 @@ const infoCode = {
 export class AlphaNineCanvas extends React.Component {
   constructor({ parent, scale = 5, ...props }) {
     super(props)
+
+    // UI related
     this.pieceRadius = 4.5
+    this.scale = scale
+    this.killedTargetPosition = { x: 40, y: -10 }
+
     this.state = {
       w: this.getInitialStateValues(w),
       b: this.getInitialStateValues(b),
       apiWait: false,
       me: w,
+      scores: { w: 0, b: 0 },
     }
     this.parent = parent
-    this.scale = scale
-    this.positions = this.getPositions()
-    this.posMap = this.getPosMap(this.positions)
-    this.killedTargetPosition = { x: 40, y: 100 }
 
     // Game state
-    this.gameStarted = false
+    this.positions = this.getPositions()
+    this.posMap = this.getPosMap(this.positions)
     this.unused = { w: 8, b: 8 }
     this.killed = { w: 0, b: 0 }
-    this.is_killing = false
     this.actionable = true
     this.currentAction = {}
   }
@@ -73,71 +75,6 @@ export class AlphaNineCanvas extends React.Component {
     this.actionable = true
   }
 
-  handleDotClick2 = (e, pos) => {
-    console.log(this.actionable)
-    if (!this.actionable) return
-    if (this.state.apiWait) return
-
-    this.actionable = false
-
-    const me = this.state.me
-    const coord = this.posMap[pos.x + "," + pos.y].coord
-
-    // if Phase 1
-    if (this.unused[me] > -1) {
-      if (this.is_killing) {
-        if (pos.piece != null && pos.piece !== me) {
-          const [board, mens] = this.buildState()
-          this.kill(pos)
-        } else {
-          this.setState({
-            message:
-              "You selected a wrong piece. Select an opponent piece to remove",
-          })
-        }
-        this.actionable = true
-        return
-      }
-
-      this.setState({ apiWait: true })
-
-      const [board, mens] = this.buildState()
-      mlgApi.alphaNine.stepEnv(board, mens, this.state.me, coord).then(data => {
-        console.log(data)
-
-        if (data?.info?.code == null) {
-          this.setState({ message: "Something went wrong, please try again" })
-          this.actionable = true
-          return
-        }
-
-        if (data.info.code === infoCode.normal) {
-          const newIdx = this.unused[me]
-          this.unused[me] -= 1
-
-          this.state[me][newIdx].px = this.state[me][newIdx].x
-          this.state[me][newIdx].py = this.state[me][newIdx].y
-
-          this.state[me][newIdx].x = pos.x
-          this.state[me][newIdx].y = pos.y
-
-          this.state[me][newIdx].status = "alive"
-          this.state[me][newIdx].coord = this.posMap[pos.x + "," + pos.y].coord
-          this.state.apiWait = false
-          pos.piece = me
-          pos.pieceIndex = newIdx
-
-          this.setState(this.state)
-          this.swapPlayer()
-        } else if (data.info.code === infoCode.bad_kill_position) {
-          this.setState({ message: "Select an opponent piece to remove" })
-          this.is_killing = true
-        }
-      })
-    }
-    this.actionable = true
-  }
-
   preStep(coord) {
     const code = this.currentAction.prevCode
     if (code == null || code === infoCode.bad_action_position) {
@@ -171,18 +108,17 @@ export class AlphaNineCanvas extends React.Component {
 
     const action = this.currentAction
     const code = status?.info?.code
+    action.prevCode = code
 
     if (code == null) {
       this.setState({ message: "Something went wrong. Please try again" })
     } else if (code === infoCode.normal) {
-      if (action.killPosition != null) {
-        // TODO: Remove the piece at killPosition, update score
-      }
+      const pos = this.posMap[action.actionPosition.join(",")]
+      if (action.killPosition != null) this.kill(pos, status.reward)
       if (action.movePosition != null) {
-        // TODO: Move the piece in actionPosition to movePosition
-      } else {
-        // TODO: Move an unused piece to actionPosition
-      }
+        const targetPos = this.posMap[action.movePosition.join(",")]
+        this.move(pos, targetPos)
+      } else this.firstMove(pos)
       this.currentAction = {}
       this.swapPlayer()
     } else if (code === infoCode.bad_action_position) {
@@ -197,15 +133,63 @@ export class AlphaNineCanvas extends React.Component {
     }
   }
 
-  kill(pos) {
-    const idx = pos.pieceIndex
+  kill(pos, reward) {
     const piece = pos.piece
+
     this.killed[pos.piece] += 1
+
+    pos.piece.status = "killed"
     pos.piece = null
-    pos.pieceIndex = null
-    this.state[piece][idx].x = this.killedTargetPosition.x
-    this.state[piece][idx].y = this.killedTargetPosition.y
+
+    piece.px = x
+    piece.py = y
+    piece.x = this.killedTargetPosition.x
+    piece.y = this.killedTargetPosition.y
+    this.state.scores[this.state.me] += reward
     this.setState(this.state)
+  }
+
+  move(initPos, targetPos) {
+    /*
+    1. change piece position
+    2. update position's piece
+    */
+    const piece = initPos.piece
+    piece.px = piece.x
+    piece.py = piece.y
+    piece.x = targetPos.x
+    piece.y = targetPos.y
+    piece.coord = targetPos.coord
+    this.setState(this.state)
+
+    initPos.piece = null
+    targetPos.piece = piece
+  }
+
+  firstMove(pos) {
+    /*
+    1. Get latest piece
+    2. Update piece's positions
+    3. Update position's piece
+     */
+    const me = this.state.me
+    const newIdx = this.unused[me]
+    this.unused[me] -= 1
+
+    const piece = this.state[me][newIdx]
+
+    piece.px = piece.x
+    piece.py = piece.y
+
+    piece.x = pos.x
+    piece.y = pos.y
+
+    piece.status = "alive"
+    piece.coord = this.posMap[pos.x + "," + pos.y].coord
+
+    this.setState(this.state)
+
+    pos.piece = piece
   }
 
   Pieces = () => {
