@@ -68,16 +68,11 @@ export class AlphaNineCanvas extends React.Component {
 
   handleClick = async (x, y) => {
     const coord = this.posMap[x + "," + y]?.coord
-    if (coord == null) return
-    if (!this.actionable || this.state.apiWait) return
-    //this.actionable = false
+    if (!this.actionable || this.state.apiWait || coord == null) return
+    this.actionable = false
 
     this.preStep(coord)
-    const status = await this.step()
-    console.log(status)
-    this.postStep(status)
-
-    this.actionable = true
+    this.step().then(this.postStep).catch(this.apiError)
   }
 
   preStep(coord) {
@@ -91,9 +86,9 @@ export class AlphaNineCanvas extends React.Component {
     }
   }
 
-  async step() {
+  step() {
     const [board, mens] = this.buildState()
-    return await mlgApi.alphaNine.stepEnv(
+    return mlgApi.alphaNine.stepEnv(
       board,
       mens,
       this.state.me,
@@ -103,46 +98,47 @@ export class AlphaNineCanvas extends React.Component {
     )
   }
 
-  postStep(status) {
-    if (status.done) {
-      const player = this.state.me === w ? "Whites" : "Blacks"
-      this.setState({
-        message: `Congratulations! ${player} won! Hit refresh icon below to restart`,
-      })
-    }
+  postStep = status => {
+    if (status.done) this.postDone(status)
+    else {
+      const action = this.currentAction
+      const code = status?.info?.code
+      action.prevCode = code
 
-    const action = this.currentAction
-    const code = status?.info?.code
-    action.prevCode = code
-
-    if (code == null) {
-      this.setState({ message: "Something went wrong. Please try again" })
-    } else if (code === infoCode.normal) {
-      const pos = this.posMap[action.actionPosition.join(",")]
-      if (action.killPosition != null) {
-        const killPos = this.posMap[action.killPosition.join(",")]
-        this.kill(killPos, status.reward)
+      if (code == null)
+        this.setState({ message: "Something went wrong. Please try again" })
+      else if (code === infoCode.normal) this.legalPostStep(status, action)
+      else if (code === infoCode.bad_action_position) {
+        this.setState({ message: "Wrong spot! Try again." })
+        this.currentAction = {}
+      } else if (code === infoCode.bad_move) {
+        this.setState({ message: "Your piece can't move there." })
+        this.currentAction.movePosition = null
+      } else if (code === infoCode.bad_kill_position) {
+        this.setState({ message: "Select your opponent to remove." })
+        this.currentAction.killPosition = null
       }
-      if (action.movePosition != null) {
-        const targetPos = this.posMap[action.movePosition.join(",")]
-        this.move(pos, targetPos)
-      } else this.firstMove(pos)
-      this.setState({ message: null })
-      this.currentAction = {}
-      this.swapPlayer()
-    } else if (code === infoCode.bad_action_position) {
-      this.setState({ message: "Wrong spot! Try again." })
-      this.currentAction = {}
-    } else if (code === infoCode.bad_move) {
-      this.setState({ message: "Your piece can't move there." })
-      this.currentAction.movePosition = null
-    } else if (code === infoCode.bad_kill_position) {
-      this.setState({ message: "Select your opponent to remove." })
-      this.currentAction.killPosition = null
     }
+
+    this.actionable = true
   }
 
-  kill(pos, reward) {
+  legalPostStep = (status, action) => {
+    const pos = this.posMap[action.actionPosition.join(",")]
+    if (action.killPosition != null) {
+      const killPos = this.posMap[action.killPosition.join(",")]
+      this.kill(killPos, status.reward)
+    }
+    if (action.movePosition != null) {
+      const targetPos = this.posMap[action.movePosition.join(",")]
+      this.move(pos, targetPos)
+    } else this.firstMove(pos)
+    this.setState({ message: null })
+    this.currentAction = {}
+    this.swapPlayer()
+  }
+
+  kill = (pos, reward) => {
     console.log(pos)
     console.log(this.posMap)
     const piece = pos.piece
@@ -160,7 +156,7 @@ export class AlphaNineCanvas extends React.Component {
     this.setState(this.state)
   }
 
-  move(initPos, targetPos) {
+  move = (initPos, targetPos) => {
     /*
     1. change piece position
     2. update position's piece
@@ -177,7 +173,7 @@ export class AlphaNineCanvas extends React.Component {
     targetPos.piece = piece
   }
 
-  firstMove(pos) {
+  firstMove = pos => {
     /*
     1. Get latest piece
     2. Update piece's positions
@@ -204,6 +200,20 @@ export class AlphaNineCanvas extends React.Component {
     pos.piece = piece
     console.log(pos)
     console.log(this.posMap)
+  }
+
+  postDone = status => {
+    const player = status.winner === "W" ? "Whites" : "Blacks"
+    this.setState({
+      message: `Congratulations! ${player} won! Hit refresh icon below to restart`,
+    })
+  }
+
+  apiError = err => {
+    console.log(err)
+    this.currentAction = {}
+    this.setState({ message: "Something went wrong. Please try again." })
+    this.actionable = true
   }
 
   Pieces = () => {
