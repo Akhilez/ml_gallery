@@ -8,8 +8,9 @@ const b = "b"
 
 const infoCode = {
   normal: 0,
-  move_missing: 1,
-  kill_position_missing: 2,
+  bad_action_position: 1,
+  bad_move: 2,
+  bad_kill_position: 3,
 }
 
 export class AlphaNineCanvas extends React.Component {
@@ -34,30 +35,45 @@ export class AlphaNineCanvas extends React.Component {
     this.killed = { w: 0, b: 0 }
     this.is_killing = false
     this.actionable = true
+    this.currentAction = {}
   }
 
   render() {
     const realSide = this.scale * 60
     return (
-      <Box w={`${realSide}px`} h={`${realSide}px`}>
-        <svg viewBox={`0 0 80 100`}>
-          <this.LineFrame />
-          <this.PositionalDots />
-          <this.Pieces />
-        </svg>
-        {this.state.apiWait && (
-          <CircularProgress
-            isIndeterminate
-            color="red.300"
-            position="relative"
-            top="-250px"
-          />
-        )}
+      <Box>
+        {this.state.message}
+        <Box w={`${realSide}px`} h={`${realSide}px`}>
+          <svg viewBox={`0 0 80 100`}>
+            <this.LineFrame />
+            <this.PositionalDots />
+            <this.Pieces />
+          </svg>
+          {this.state.apiWait && (
+            <CircularProgress
+              isIndeterminate
+              color="red.300"
+              position="relative"
+              top="-250px"
+            />
+          )}
+        </Box>
       </Box>
     )
   }
 
-  handleDotClick = (e, pos) => {
+  handleDotClick = async (e, pos) => {
+    if (!this.actionable || this.state.apiWait) return
+    this.actionable = false
+
+    this.preStep(this.posMap[pos.x + "," + pos.y].coord)
+    const status = await this.step()
+    this.postStep(status)
+
+    this.actionable = true
+  }
+
+  handleDotClick2 = (e, pos) => {
     console.log(this.actionable)
     if (!this.actionable) return
     if (this.state.apiWait) return
@@ -71,6 +87,7 @@ export class AlphaNineCanvas extends React.Component {
     if (this.unused[me] > -1) {
       if (this.is_killing) {
         if (pos.piece != null && pos.piece !== me) {
+          const [board, mens] = this.buildState()
           this.kill(pos)
         } else {
           this.setState({
@@ -112,13 +129,70 @@ export class AlphaNineCanvas extends React.Component {
 
           this.setState(this.state)
           this.swapPlayer()
-        } else if (data.info.code === infoCode.kill_position_missing) {
+        } else if (data.info.code === infoCode.bad_kill_position) {
           this.setState({ message: "Select an opponent piece to remove" })
           this.is_killing = true
         }
       })
     }
     this.actionable = true
+  }
+
+  preStep(coord) {
+    const code = this.currentAction.prevCode
+    if (code == null || code === infoCode.bad_action_position) {
+      this.currentAction.actionPosition = coord
+    } else if (code === infoCode.bad_move) {
+      this.currentAction.movePosition = coord
+    } else if (code === infoCode.bad_kill_position) {
+      this.currentAction.killPosition = coord
+    }
+  }
+
+  async step() {
+    const [board, mens] = this.buildState()
+    return await mlgApi.alphaNine.stepEnv(
+      board,
+      mens,
+      this.state.me,
+      this.currentAction.actionPosition,
+      this.currentAction.movePosition,
+      this.currentAction.killPosition
+    )
+  }
+
+  postStep(status) {
+    if (status.done) {
+      const player = this.state.me === w? "Whites" : "Blacks"
+      setState({message: `Congratulations! ${player} won! Hit refresh icon below to restart`})
+    }
+
+    const action = this.currentAction
+    const code = status?.info?.code
+
+    if (code == null) {
+      this.setState({ message: "Something went wrong. Please try again" })
+    } else if (code === infoCode.normal) {
+      if (action.killPosition != null) {
+        // TODO: Remove the piece at killPosition, update score
+      }
+      if (action.movePosition != null) {
+        // TODO: Move the piece in actionPosition to movePosition
+      } else {
+        // TODO: Move an unused piece to actionPosition
+      }
+      this.currentAction = {}
+      this.swapPlayer()
+    } else if (code === infoCode.bad_action_position) {
+      this.setState({ message: "Wrong spot! Try again." })
+      this.currentAction = {}
+    } else if (code === infoCode.bad_move) {
+      this.setState({ message: "Your piece can't move there." })
+      this.currentAction.movePosition = null
+    } else if (code === infoCode.bad_kill_position) {
+      this.setState({ message: "You must select your opponent to remove." })
+      this.currentAction.killPosition = null
+    }
   }
 
   kill(pos) {
@@ -198,16 +272,18 @@ export class AlphaNineCanvas extends React.Component {
   }
 
   Line = props => <line {...props} stroke="red" strokeWidth="1" />
-  Dot = props => (
-    <circle
-      {...props}
-      r={1.5}
-      stroke="none"
-      fill="red"
-      onMouseOver={event => event.target.setAttribute("r", "2")}
-      onMouseOut={e => e.target.setAttribute("r", "1.5")}
-    />
-  )
+  Dot = props => {
+    return (
+      <circle
+        {...props}
+        r={1.5}
+        stroke="none"
+        fill="red"
+        onMouseOver={event => event.target.setAttribute("r", "2")}
+        onMouseOut={e => e.target.setAttribute("r", "1.5")}
+      />
+    )
+  }
   Piece = ({ piece, index, player, ...props }) => {
     return (
       <Spring

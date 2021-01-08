@@ -12,14 +12,14 @@ def handle_step_request(request):
     mens = request.data.get('mens')
     me = request.data.get('me')
     action_position = request.data.get('actionPosition')
-    move = request.data.get('move')
+    move_position = request.data.get('movePosition')
     kill_position = request.data.get('killPosition')
 
     logger.info(f'Hey. Board: {board}')
     logger.info(f'Hey. mens: {mens}')
     logger.info(f'Hey. me: {me}')
     logger.info(f'Hey. action: {action_position}')
-    logger.info(f'Hey. move: {move}')
+    logger.info(f'Hey. move: {move_position}')
     logger.info(f'Hey. kill at: {kill_position}')
 
     env = NineMensMorrisEnv()
@@ -29,6 +29,7 @@ def handle_step_request(request):
     env.player = Pix.B if me == 'b' else Pix.W
 
     action_position = np.array(action_position)
+    move = env.get_move_from_position(action_position, move_position)
     kill_position = np.array(kill_position) if kill_position else kill_position
 
     state, reward, is_done, info = env.step(action_position, move, kill_position)
