@@ -163,8 +163,10 @@ export class AlphaNineCanvas extends React.Component {
 
   postStep(status) {
     if (status.done) {
-      const player = this.state.me === w? "Whites" : "Blacks"
-      setState({message: `Congratulations! ${player} won! Hit refresh icon below to restart`})
+      const player = this.state.me === w ? "Whites" : "Blacks"
+      setState({
+        message: `Congratulations! ${player} won! Hit refresh icon below to restart`,
+      })
     }
 
     const action = this.currentAction
