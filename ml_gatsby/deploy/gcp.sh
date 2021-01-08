@@ -5,7 +5,7 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )/.."
 cd $DIR
 echo "PWD: `pwd`"
 
-# # Build the project
+# Build the project
 npm run clean
 npm run build
 
@@ -15,7 +15,7 @@ cp deploy/nginx.conf public/
 cd public
 
 # Deployment
-PROJECT_ID="graphic-jet-278213"
+source ../deploy/.env
 IMAGE_NAME="mlg"
 
 gcloud builds submit --tag gcr.io/$PROJECT_ID/$IMAGE_NAME:v1 `pwd`
