@@ -64,12 +64,15 @@ export class AlphaNineCanvas extends React.Component {
     )
   }
 
-  handleDotClick = async (e, pos) => {
+  handleClick = async (x, y) => {
+    const coord = this.posMap[x + "," + y]?.coord
+    if (coord == null) return
     if (!this.actionable || this.state.apiWait) return
-    this.actionable = false
+    //this.actionable = false
 
-    this.preStep(this.posMap[pos.x + "," + pos.y].coord)
+    this.preStep(coord)
     const status = await this.step()
+    console.log(status)
     this.postStep(status)
 
     this.actionable = true
@@ -101,7 +104,7 @@ export class AlphaNineCanvas extends React.Component {
   postStep(status) {
     if (status.done) {
       const player = this.state.me === w ? "Whites" : "Blacks"
-      setState({
+      this.setState({
         message: `Congratulations! ${player} won! Hit refresh icon below to restart`,
       })
     }
@@ -114,7 +117,10 @@ export class AlphaNineCanvas extends React.Component {
       this.setState({ message: "Something went wrong. Please try again" })
     } else if (code === infoCode.normal) {
       const pos = this.posMap[action.actionPosition.join(",")]
-      if (action.killPosition != null) this.kill(pos, status.reward)
+      if (action.killPosition != null) {
+        const killPos = this.posMap[action.killPosition.join(",")]
+        this.kill(killPos, status.reward)
+      }
       if (action.movePosition != null) {
         const targetPos = this.posMap[action.movePosition.join(",")]
         this.move(pos, targetPos)
@@ -128,21 +134,23 @@ export class AlphaNineCanvas extends React.Component {
       this.setState({ message: "Your piece can't move there." })
       this.currentAction.movePosition = null
     } else if (code === infoCode.bad_kill_position) {
-      this.setState({ message: "You must select your opponent to remove." })
+      this.setState({ message: "Select your opponent to remove." })
       this.currentAction.killPosition = null
     }
   }
 
   kill(pos, reward) {
+    console.log(pos)
+    console.log(this.posMap)
     const piece = pos.piece
 
-    this.killed[pos.piece] += 1
+    this.killed[this.getOpponent()] += 1
 
     pos.piece.status = "killed"
     pos.piece = null
 
-    piece.px = x
-    piece.py = y
+    piece.px = piece.x
+    piece.py = piece.y
     piece.x = this.killedTargetPosition.x
     piece.y = this.killedTargetPosition.y
     this.state.scores[this.state.me] += reward
@@ -172,6 +180,7 @@ export class AlphaNineCanvas extends React.Component {
     2. Update piece's positions
     3. Update position's piece
      */
+
     const me = this.state.me
     const newIdx = this.unused[me]
     this.unused[me] -= 1
@@ -190,6 +199,8 @@ export class AlphaNineCanvas extends React.Component {
     this.setState(this.state)
 
     pos.piece = piece
+    console.log(pos)
+    console.log(this.posMap)
   }
 
   Pieces = () => {
@@ -204,6 +215,7 @@ export class AlphaNineCanvas extends React.Component {
               player={player}
               fill={player === b ? "black" : "white"}
               index={index}
+              onClick={() => this.handleClick(piece.x, piece.y)}
             />
           ))
         )}
@@ -218,7 +230,7 @@ export class AlphaNineCanvas extends React.Component {
           <this.Dot
             cx={p.x}
             cy={p.y}
-            onClick={e => this.handleDotClick(e, p)}
+            onClick={() => this.handleClick(p.x, p.y)}
             key={p.pos}
           />
         ))}
@@ -294,6 +306,10 @@ export class AlphaNineCanvas extends React.Component {
     this.setState({ me: this.state.me === w ? b : w })
   }
 
+  getOpponent = () => {
+    return this.state.me === b ? w : b
+  }
+
   buildState = () => {
     const state = []
     for (let l = 0; l < 3; l++) {
@@ -353,9 +369,9 @@ export class AlphaNineCanvas extends React.Component {
 
   getPosMap(positions) {
     const map = {}
-    for (let p of positions) {
-      map[p.x + "," + p.y] = p
-      map[p.coord.join(",")] = p
+    for (let i = 0; i < positions.length; i++) {
+      map[positions[i].x + "," + positions[i].y] = positions[i]
+      map[positions[i].coord.join(",")] = positions[i]
     }
     return map
   }
