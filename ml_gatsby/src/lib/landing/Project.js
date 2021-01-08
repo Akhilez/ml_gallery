@@ -8,18 +8,18 @@ export class Project extends React.Component {
   render() {
     return (
       <Stack
-        width={{ base: "220px", md: "300px" }}
+        width="220px"
         bg="white"
         pt={2}
         px={3}
         borderRadius="15px"
         mx={2}
-        minH={{ base: "sm", md: "450px" }}
+        minH="sm"
         className="ProjectContainer"
       >
         <this.ProjectImage project={this.props.project} />
         <Box className="project-text-block">
-          <Heading as="h2" fontSize={{ base: "lg", md: "xl" }} mb={2}>
+          <Heading as="h2" fontSize="lg" mb={2}>
             <Link as={GLink} to={this.props.project.links.app}>
               {this.props.project.title}
             </Link>
@@ -72,9 +72,9 @@ export class Project extends React.Component {
             src={require("./images/" + props.project.image)}
             alt={props.project.title + "Image"}
             width="300px"
-            height={{ base: "150px", md: "220px" }}
+            height="150px"
             className={"project-image"}
-            minW={{ base: "200px", md: "280px" }}
+            minW="200px"
           />
         </GLink>
       </Stack>
