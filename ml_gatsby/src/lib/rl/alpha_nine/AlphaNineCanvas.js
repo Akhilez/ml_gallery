@@ -44,7 +44,9 @@ export class AlphaNineCanvas extends React.Component {
     const realSide = this.scale * 60
     return (
       <Box>
-        {this.state.message}
+        {`${this.state.me === w ? "Whites'" : "Blacks'"} turn! ${
+          this.state.message ?? ""
+        }`}
         <Box w={`${realSide}px`} h={`${realSide}px`}>
           <svg viewBox={`0 0 80 100`}>
             <this.LineFrame />
@@ -125,6 +127,7 @@ export class AlphaNineCanvas extends React.Component {
         const targetPos = this.posMap[action.movePosition.join(",")]
         this.move(pos, targetPos)
       } else this.firstMove(pos)
+      this.setState({ message: null })
       this.currentAction = {}
       this.swapPlayer()
     } else if (code === infoCode.bad_action_position) {
