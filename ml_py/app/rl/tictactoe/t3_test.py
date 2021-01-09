@@ -40,7 +40,7 @@ class SelfAttention(nn.Module):
         return self.attention(x, key, value)
 
 
-class Model(nn.Module):
+class T3Model(nn.Module):
     def __init__(self, embed_dim):
         super().__init__()
         self.piece_embed = nn.Embedding(num_embeddings=3, embedding_dim=embed_dim)
@@ -81,7 +81,7 @@ class Model(nn.Module):
         x = F.leaky_relu(self.linear2(x))
         x = F.dropout(x, 0.3)
 
-        x = torch.softmax(self.linear3(x), 1)
+        x = F.relu(self.linear3(x))
         return x
 
 
