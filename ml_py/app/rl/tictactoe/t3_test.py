@@ -59,7 +59,7 @@ class T3Model(nn.Module):
         """
         # Positional Embeddings
         batch_size = len(x)
-        pos = torch.arange(9).unsqueeze(0).expand((batch_size, 9)).T
+        pos = torch.arange(9).unsqueeze(0).expand((batch_size, 9)).T.to(device)
         pos_embed = self.pos_embed(pos)  # shape: (seq, batch, embed)
 
         # Concatenate positional embeddings
