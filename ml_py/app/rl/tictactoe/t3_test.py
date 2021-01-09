@@ -41,62 +41,43 @@ class SelfAttention(nn.Module):
 
 
 class T3Model(nn.Module):
-    def __init__(self, embed_dim):
+    def __init__(self, embed_dim, attentions_depth=2):
+        # type: (int, int) -> None
         super().__init__()
         self.piece_embed = nn.Embedding(num_embeddings=3, embedding_dim=embed_dim)
         self.pos_embed = nn.Embedding(num_embeddings=9, embedding_dim=embed_dim)
 
-        self.linear1 = nn.Linear(2 * embed_dim, embed_dim)
+        self.squeeze = nn.Linear(2 * embed_dim, embed_dim)
 
-        self.attention1 = SelfAttention(embed_dim)
-        self.attention2 = SelfAttention(embed_dim)
+        self.attentions = nn.ModuleList([SelfAttention(embed_dim) for _ in range(attentions_depth)])
 
-        self.linear2 = nn.Linear(9 * embed_dim, 64)
-        self.linear3 = nn.Linear(64, 9)
+        self.out = nn.Linear(9 * embed_dim, 9)
 
     def forward(self, x):
         """
         x: int tensor of shape (batch_size, seq_len)
         """
+        # Positional Embeddings
         batch_size = len(x)
         pos = torch.arange(9).unsqueeze(0).expand((batch_size, 9)).T
         pos_embed = self.pos_embed(pos)  # shape: (seq, batch, embed)
 
+        # Concatenate positional embeddings
         x_embed = self.piece_embed(x.flatten(1).T)  # shape: (seq, batch, embed)
-
         x = torch.cat((x_embed, pos_embed), 2)  # shape: (seq, batch, 2 * embed)
 
-        x = F.leaky_relu(self.linear1(x))  # shape: (seq, batch, embed)
+        # Squeeze to embed_dim
+        x = F.leaky_relu(self.squeeze(x))  # shape: (seq, batch, embed)
         x = F.dropout(x, 0.3)
 
-        x = F.leaky_relu(self.attention1(x)[0])
-        x = F.dropout(x, 0.3)
-
-        x = F.leaky_relu(self.attention2(x)[0])  # shape: (seq, batch, embed)
-        x = F.dropout(x, 0.3)
+        # Attention layers
+        for attention in self.attentions:
+            x = F.leaky_relu(attention(x)[0])
+            x = F.dropout(x, 0.3)
 
         # Flatten the sequence
         x = x.transpose(0, 1).flatten(1)
 
-        x = F.leaky_relu(self.linear2(x))
-        x = F.dropout(x, 0.3)
-
-        x = torch.softmax(self.linear3(x), 1)
+        # Output action
+        x = torch.softmax(self.out(x), 1)
         return x
-
-
-def train():
-    env = TicTacToeEnv()
-    env.reset()
-    env.step(0)
-    env.step(1)
-    env.step(2)
-    env.step(5)
-    env.render()
-
-    model = T3Model(8).double().to(device)
-
-    x = convert_inputs(env.state, env.player).flatten()
-    x = torch.stack((x, x))
-
-    yh = model(x)
