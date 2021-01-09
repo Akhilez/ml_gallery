@@ -81,7 +81,7 @@ class T3Model(nn.Module):
         x = F.leaky_relu(self.linear2(x))
         x = F.dropout(x, 0.3)
 
-        x = F.relu(self.linear3(x))
+        x = torch.softmax(self.linear3(x), 1)
         return x
 
 
@@ -94,7 +94,7 @@ def train():
     env.step(5)
     env.render()
 
-    model = Model(8).double().to(device)
+    model = T3Model(8).double().to(device)
 
     x = convert_inputs(env.state, env.player).flatten()
     x = torch.stack((x, x))
