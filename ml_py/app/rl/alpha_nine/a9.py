@@ -121,5 +121,14 @@ env = NineMensMorrisEnv()
 env.reset()
 env.step((0, 0, 0))
 env.step((0, 0, 1))
-x = convert_inputs(env.board, Pix.W)
+x = torch.stack([convert_inputs(env.board, Pix.W)])
 print(x)
+
+model = A9Model(4, 1, 1, 1)
+f1, f2, move, kill = model(x)
+
+print(f1.shape)
+print(f2.shape)
+print(kill.shape)
+print(move)
+
