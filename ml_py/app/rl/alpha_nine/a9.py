@@ -280,7 +280,6 @@ def get_returns(rewards, gamma):
 def get_loss(stats):
     loss = 0
     for i_env in range(len(stats)):
-
         returns = get_returns(stats[i_env].rewards, gamma=0.99)
         probs = torch.log(torch.stack([prob for prob in stats[i_env].probs]))
         credits = get_credits(len(stats[i_env].rewards), gamma=0.99)
@@ -305,6 +304,7 @@ class EpisodicStat:
     def __init__(self, batch_size):
         self.loss = None
         self.stats = [Stat() for _ in range(batch_size)]
+        self.time_step = 0
 
 
 def plot_interval(stats, episode_number):
@@ -327,7 +327,8 @@ def plot_interval(stats, episode_number):
     plt.show()
 
 
-def run_time_step(stats, opponent):
+def run_time_step(stat_ep, opponent):
+    stats = stat_ep.stats
     xs = create_state_batch([stat.env for stat in stats])
 
     yh = model(xs)
@@ -358,6 +359,8 @@ def run_time_step(stats, opponent):
             if is_done:
                 stats[i].has_won = stats[i].player.string == info.get('winner')
 
+    stat_ep.time_step += 1
+
 
 def train():
     batch_size = 4
@@ -377,8 +380,8 @@ def train():
         randomize_ai_player(stat_ep.stats)
 
         # Monte Carlo loop
-        while not is_all_done(stat_ep.stats):
-            run_time_step(stat_ep.stats, opponent)
+        while not is_all_done(stat_ep.stats) and stat_ep.time_step < 1000:
+            run_time_step(stat_ep, opponent)
 
         loss = get_loss(stat_ep.stats)
 
@@ -393,4 +396,3 @@ def train():
             plot_interval(episodic_stats, episode)
             episodic_stats = []
             prev_models = reset_opponent_model(opponent, prev_models)
-
