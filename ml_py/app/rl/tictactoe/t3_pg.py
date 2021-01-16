@@ -81,19 +81,11 @@ class T3Model(nn.Module):
         x = x.transpose(0, 1).flatten(1)
 
         # Output action
-        x = torch.softmax(self.out(x), 1)
+        x = self.out(x)
         return x
 
 
-model = T3Model(8, 4).double().to(device)
-
-
-def custom_pre_sampler(probs, noise=True, episode=None, episodic_temperature=False, temperature=None):
-    """
-    1. Add dirchilet noise
-    2. Set temperature based on episode number or given temperature
-    """
-    # TODO: Implement
+model = T3Model(4, 1).double().to(device)
 
 
 default_action = 4
@@ -101,6 +93,32 @@ player_p = Pix.X
 player_n = Pix.O
 gamma_returns = 0.99
 gamma_credits = 0.99
+all_actions = torch.arange(0, 9)
+
+
+class CustomPreSampler:
+    def __init__(self):
+        self.episodes = 0
+
+    def __call__(self, probs):
+        """
+        1. Add dirchilet noise
+        2. Set temperature based on episode number or given temperature
+        """
+        episode_number = self.episodes
+
+        # tau = max((1 / np.log(episode_number)) * 5, 0.7)
+        probs = F.gumbel_softmax(probs, tau=1, dim=0)
+
+        # Add Noise
+        # noise = torch.rand(len(probs)) * 0.01
+        # probs = probs + noise
+
+        # if episode_number % 145 == 0:
+            # print('-------- LEGAL PROBS: ')
+            # print(probs)
+
+        return probs
 
 
 # Game specific
@@ -113,8 +131,14 @@ def sample_action(all_actions, legal_action_idx, probs, pre_sampling_fn=None):
     4. Sample action idx from probs
     5. Return action and prob of the action idx
     """
-    # TODO: Implement
-    return None, None
+    legal_actions = all_actions[legal_action_idx]
+    legal_probs = probs[legal_action_idx]
+    if pre_sampling_fn:
+        legal_probs = pre_sampling_fn(legal_probs)
+    else:
+        legal_probs = torch.softmax(legal_probs, 0)
+    idx = torch.multinomial(legal_probs, 1)[0]
+    return legal_actions[idx], legal_probs[idx]
 
 
 def reset_opponent_model(opponent, prev_models):
@@ -176,8 +200,7 @@ class AIPlayer:
         if was_train:
             self.model.train()
 
-        action, _ = sample_action(all_actions=legal_actions, legal_action_idx=legal_actions, probs=probs,
-                                  pre_sampling_fn=custom_pre_sampler)
+        action, _ = sample_action(all_actions=all_actions, legal_action_idx=legal_actions, probs=probs[0])
 
         return action
 
@@ -193,7 +216,7 @@ def randomize_ai_player(stats):
 
     # Set player's piece to these random values
     for i in range(batch_size):
-        stats[i].player = player_p if bools[i] else player_n
+        stats[i].player = Pix.X if bools[i] else Pix.O
 
 
 def create_state_batch(envs):
@@ -245,6 +268,7 @@ class Stat:
         self.env = TicTacToeEnv()
         self.steps = []
         self.has_won = None
+        self.has_drawn = False
         self.probs = []
         self.rewards = []
 
@@ -268,7 +292,7 @@ def plot_interval(stats, episode_number, plot=False):
             plays += 1
             if stat_t.has_won:
                 wins += 1
-            else:
+            elif not stat_t.has_drawn:
                 loses += 1
 
     print(f'W: {wins / plays * 100} L: {loses / plays * 100} P: {plays}')
@@ -278,12 +302,16 @@ def plot_interval(stats, episode_number, plot=False):
         plt.show()
 
 
-def run_time_step(stats, opponent):
+def run_time_step(stats, opponent, sampler, episode_num):
     xs = create_state_batch([stat.env for stat in stats])
 
     yh = model(xs)
     with torch.no_grad():
         yh_op = opponent.model(xs)
+
+    # if episode_num % 145 == 0:
+        # print("All probs ------------------------")
+        # print(yh[:5])
 
     for i in range(len(stats)):
         if not stats[i].env.is_done:
@@ -296,28 +324,30 @@ def run_time_step(stats, opponent):
 
             # Is current player AI or other?
             if env.player == stats[i].player:
-                action, prob = sample_action(legal_actions, legal_actions, yh, custom_pre_sampler)
+                action, prob = sample_action(all_actions, legal_actions, yh[i], sampler)
                 state, reward, is_done, info = env.step(action)
 
                 stats[i].probs.append(prob)
                 stats[i].rewards.append(reward)
             else:
-                action, _ = sample_action(legal_actions, legal_actions, yh_op, custom_pre_sampler)
+                action, _ = sample_action(all_actions, legal_actions, yh_op[i], sampler)
                 _, _, is_done, info = env.step(action)
 
             if is_done:
                 stats[i].has_won = stats[i].player.string == info.get('winner')
+                stats[i].has_drawn = info.get('winner') is None
 
 
 def train():
-    batch_size = 4
-    episodes = 10
-    reset_length = 2
+    batch_size = 64
+    episodes = 1000
+    reset_length = 50
     episodic_stats = []
     prev_models = []
 
     model.train()
-    optim = torch.optim.Adam(model.parameters(), lr=1e-4)
+    optim = torch.optim.Adam(model.parameters(), lr=1e-3)
+    sampler = CustomPreSampler()
     opponent = AIPlayer(copy.deepcopy(model))
     opponent.model.eval()
 
@@ -328,7 +358,7 @@ def train():
 
         # Monte Carlo loop
         while not is_all_done(stat_ep.stats):
-            run_time_step(stat_ep.stats, opponent)
+            run_time_step(stat_ep.stats, opponent, sampler, episode)
 
         loss = get_loss(stat_ep.stats)
 
@@ -338,6 +368,7 @@ def train():
 
         stat_ep.loss = loss.item()
         episodic_stats.append(stat_ep)
+        sampler.episodes += 1
         print('.', end='')
 
         if (episode + 1) % reset_length == 0:
@@ -367,5 +398,5 @@ loses = len(torch.nonzero(winners == 2))
 print(draws, wins, loses)
 
 play(random_player, AIPlayer(model), render=True)
-play(random_player, random_player, render=True)
+play(AIPlayer(model), random_player, render=True)
 
