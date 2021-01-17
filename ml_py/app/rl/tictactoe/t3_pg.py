@@ -91,8 +91,8 @@ model = T3Model(4, 1).double().to(device)
 default_action = 4
 player_p = Pix.X
 player_n = Pix.O
-gamma_returns = 0.99
-gamma_credits = 0.99
+gamma_returns = 0.75
+gamma_credits = 0.75
 all_actions = torch.arange(0, 9)
 
 
