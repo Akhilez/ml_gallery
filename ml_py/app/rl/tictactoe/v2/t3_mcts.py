@@ -14,10 +14,10 @@ class MctsNode:
         self.action = action
         self.n = 0
         self.wins = 0
-        self.is_learner = False if parent is None else not parent.is_learner
+        self.turn = -learner if parent is None else -parent.turn
         self.state = copy.deepcopy(parent.state) if parent is not None else np.zeros(9)
         if action is not None:
-            self.state[action] = learner if self.is_learner else -learner
+            self.state[action] = self.turn
 
     def __str__(self):
         return f'({self.wins}/{self.n})'
@@ -86,7 +86,7 @@ def backprop(node, win):
 def iter_mcts():
     node = select(tree)
     node = expand(node)
-    win = rollout(copy.deepcopy(node.state), learner if node.is_learner else -learner)
+    win = rollout(copy.deepcopy(node.state), node.turn)
     backprop(node, win)
 
 
