@@ -44,7 +44,7 @@ class T3LinearModel(nn.Module):
             for xi in xb:
                 if xi == 1:
                     inputs_b.extend([1, 0, 0])
-                if xi == -1:
+                elif xi == -1:
                     inputs_b.extend([0, 0, 1])
                 else:
                     inputs_b.extend([0, 1, 0])
@@ -60,9 +60,9 @@ gamma_credits = 0.5
 
 
 current_episode = 1
-total_episodes = 10
-n_env = 10
-buffer_reset_size = 2
+total_episodes = 1000
+n_env = 100
+buffer_reset_size = 100
 
 envs = [TicTacToeEnvV2() for i in range(n_env)]
 prev_models = [copy.deepcopy(model)]
@@ -99,10 +99,21 @@ def sample_action(yh, i):
     # Apply some softmax
     # sample an action
 
+    # Sample legal
     legal_actions = envs[i].get_legal_actions()
     legal_yh = yh[legal_actions]
-    legal_yh = F.gumbel_softmax(legal_yh, dim=0)
+
+    # Add noise
+    noise = torch.rand(len(legal_actions)) * 0.01
+    legal_yh = legal_yh + noise
+
+    # Softmax
+    tau = max((1 / np.log(current_episode)) * 5, 0.7)
+    legal_yh = F.gumbel_softmax(legal_yh, tau=tau, dim=0)
+
+    # Sample
     sampled = torch.multinomial(legal_yh, 1)[0]
+
     return legal_actions[sampled], legal_yh[sampled]
 
 
@@ -132,7 +143,7 @@ def log_stats():
 
     loss = np.mean(losses)
 
-    print(f'Loss: {loss}\tW: {wins}\tL: {loses}\tD: {draws}')
+    print(f'Ep: {current_episode}\tLoss: {loss}\tW: {wins}\tL: {loses}\tD: {draws}')
 
 
 def reset_buffer():
@@ -144,7 +155,7 @@ def reset_buffer():
     prev_models = prev_models[-10:]
     prev_models.append(copy.deepcopy(model))
     prev_model = prev_models[np.random.choice(len(prev_models), 1)[0]]
-    prev_model.model.eval()
+    prev_model.eval()
 
 
 def learn():
@@ -180,8 +191,8 @@ def run_time_step(yh, yo):
         if is_learners_turn:
             stats_e[i].append({'reward': reward, 'prob': prob})
 
-        if done:
-            won[i] = is_learners_turn
+        if done and envs[i].winner is not None:
+            won[i] = envs[i].winner == learners[i]
 
 
 def run_episode():
@@ -208,3 +219,47 @@ while current_episode <= total_episodes:
         log_stats()
         reset_buffer()
     current_episode += 1
+
+
+def AIPlayer(env):
+    x = T3LinearModel.convert_inputs([env.state])
+    with torch.no_grad():
+        yh = model(x)
+    legal_actions = env.get_legal_actions()
+    action = yh[0][legal_actions]
+    action = int(action.argmax(0))
+    return action
+
+
+def play(p1, p2, render=False):
+    env = TicTacToeEnvV2()
+    env.reset()
+
+    while not env.done:
+        p = p1 if env.turn > 0 else p2
+        _, _, done, _ = env.step(p(env))
+        if render:
+            env.render()
+
+    return env.winner
+
+
+def random_player(env):
+    actions = env.get_legal_actions()
+    return np.random.choice(actions)
+
+
+def play_out(p1, p2, plays):
+    results = [play(p1, p2) for _ in range(plays)]
+    p1 = sum([1 for r in results if r == 1])
+    p2 = sum([1 for r in results if r == -1])
+    d = sum([1 for r in results if r is None])
+
+    return p1/plays, p2/plays, d/plays
+
+
+print(play_out(random_player, AIPlayer, 100))
+print(play_out(AIPlayer, random_player, 100))
+
+print(play(random_player, AIPlayer, render=True))
+print(play(AIPlayer, random_player, render=True))

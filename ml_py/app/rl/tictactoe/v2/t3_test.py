@@ -11,7 +11,7 @@ def play(p1, p2):
         _, _, done, _ = env.step(p(env))
         env.render()
 
-    print(f'Won = {-env.turn}')
+    print(f'Won = {env.winner}')
 
 
 def random_player(env):
