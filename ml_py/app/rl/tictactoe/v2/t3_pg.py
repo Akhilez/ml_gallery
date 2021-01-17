@@ -52,17 +52,17 @@ class T3LinearModel(nn.Module):
         return torch.tensor(inputs).double().to(device)
 
 
-model = T3LinearModel([10, 10]).double().to(device)
+model = T3LinearModel([50, 50]).double().to(device)
 optim = torch.optim.Adam(model.parameters(), lr=1e-3)
 
 gamma_returns = 0.5
 gamma_credits = 0.5
 
 
-current_episode = 1
 total_episodes = 1000
 n_env = 100
 buffer_reset_size = 100
+current_episode = 1
 
 envs = [TicTacToeEnvV2() for i in range(n_env)]
 prev_models = [copy.deepcopy(model)]
@@ -226,9 +226,9 @@ def AIPlayer(env):
     with torch.no_grad():
         yh = model(x)
     legal_actions = env.get_legal_actions()
-    action = yh[0][legal_actions]
-    action = int(action.argmax(0))
-    return action
+    legal_yh = yh[0][legal_actions]
+    idx = int(legal_yh.argmax(0))
+    return legal_actions[idx]
 
 
 def play(p1, p2, render=False):
