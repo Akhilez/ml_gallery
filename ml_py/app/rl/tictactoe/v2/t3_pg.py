@@ -185,6 +185,8 @@ def run_time_step(yh, yo):
 
         is_learners_turn = learners[i] == envs[i].turn
         yi = yh[i] if is_learners_turn else yo[i]
+        if not is_learners_turn:
+            yi = torch.ones(9).double().to(device)
         action, prob = sample_action(yi, i)
         _, reward, done, _ = envs[i].step(action)
 
