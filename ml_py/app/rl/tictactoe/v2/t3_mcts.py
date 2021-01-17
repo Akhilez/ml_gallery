@@ -1,9 +1,9 @@
 from gym_tic_tac_toe.envs import TicTacToeEnvV2
 import numpy as np
 import copy
+import torch
 
 env = TicTacToeEnvV2()
-
 learner = 1
 
 
@@ -14,10 +14,14 @@ class MctsNode:
         self.action = action
         self.n = 0
         self.wins = 0
-        self.turn = -learner if parent is None else -parent.turn
+        self.turn = -1 if parent is None else -parent.turn
         self.state = copy.deepcopy(parent.state) if parent is not None else np.zeros(9)
+        self.illegal = False
         if action is not None:
-            self.state[action] = self.turn
+            if self.state[action] != 0:
+                self.illegal = True
+            else:
+                self.state[action] = self.turn
 
     def __str__(self):
         return f'({self.wins}/{self.n})'
@@ -50,14 +54,20 @@ def uct(node):
 
 def select(node):
     if node.n != 0 and node.children is not None:
-        idx = np.argmax([uct(child) for child in node.children])
+        legal_actions = env.get_legal_actions(node.state)
+        scores = np.array([uct(child) for child in node.children])
+        scores = scores[legal_actions]
+        idx = legal_actions[np.argmax(scores)]
         return select(node.children[idx])
     return node
 
 
 def expand(node):
-    node.children = [MctsNode(node, action) for action in range(9)]
-    idx = np.random.choice(range(9))
+    if env.is_done(node.state):
+        return node
+    if node.children is None:
+        node.children = [MctsNode(node, action) for action in range(9)]
+    idx = np.random.choice(env.get_legal_actions())
     return node.children[idx]
 
 
@@ -66,13 +76,15 @@ def rollout(state, turn):
     env.reset()
     env.state = state
     env.turn = turn
+    if env.is_done():
+        is_winner = env.is_winner()
+        if is_winner is not None:
+            winner = turn if is_winner else -turn
+            return max(0, winner * learner)
+        return 0
     actions = env.get_legal_actions()
     action = np.random.choice(actions)
     state, _, done, _ = env.step(action)
-    if done:
-        if env.winner is not None:
-            return max(0, env.winner * learner)
-        return 0
     return rollout(state, env.turn)
 
 
@@ -110,8 +122,60 @@ def print_tree(nodes, max_depth=4):
         return print_tree(new_nodes, max_depth - 1)
 
 
-iterations = 800
-for i in range(iterations):
-    iter_mcts()
+def find_state_node(state):
+    return tree
 
-print_tree([[tree]])
+
+def mcts_player(env):
+    global tree
+    if all(tree.state != env.state):
+        tree = find_state_node(tree.state)
+
+    [iter_mcts() for _ in range(800)]
+
+    probs = torch.tensor([0 if child.n == 0 else child.wins / child.n for child in tree.children])
+    print(tree, probs)
+    legal_actions = env.get_legal_actions()
+    probs = probs[legal_actions]
+    probs = torch.softmax(probs, 0)
+    idx = probs.argmax(0)
+    action = legal_actions[idx]
+    return action
+
+
+def random_player(env):
+    actions = env.get_legal_actions()
+    return np.random.choice(actions)
+
+
+def play(mcts_p, other_p, mcts_turn=1, render=False):
+    global tree
+    global learner
+
+    env.reset()
+    learner = mcts_turn
+    tree = MctsNode()
+    if env.turn != mcts_turn:
+        expand(tree)
+
+    while not env.done:
+        p = mcts_p if env.turn == mcts_turn else other_p
+        action = p(env)
+        env.step(action)
+        if render:
+            env.render()
+
+        # Continue with the same tree
+        # tree = tree.children[action] if tree.children is not None else tree
+        # tree.parent = None
+
+        tree = MctsNode()
+        tree.state = env.state
+        tree.turn = -env.turn
+
+    return env.winner
+
+
+print(play(mcts_player, random_player, -1, True))
+print('----')
+print(play(mcts_player, random_player, 1, True))
