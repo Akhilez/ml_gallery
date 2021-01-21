@@ -1,6 +1,9 @@
 from typing import List
 import torch
 from torch import nn
+import copy
+import numpy as np
+from torch.nn import functional as F
 from gym_nine_mens_morris.envs.nmm_v2 import NineMensMorrisEnvV2
 
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
@@ -66,18 +69,140 @@ class A9PgModel(nn.Module):
 
 
 lrs = [1e-3]
+depths = [1]
+unitss = [2]
+
+lr = lrs[0]
+depth = depths[0]
+units = unitss[0]
+
 
 epochs = 1
-lr = lrs[0]
+gamma_returns = 0.99
+gamma_credits = 0.99
+total_episodes = 1
+n_env = 2
+buffer_reset_size = 1
+current_episode = 1
 
-env = NineMensMorrisEnvV2()
-env.reset()
+model = A9PgModel([units for _ in range(depth)]).double().to(device)
+envs = [NineMensMorrisEnvV2() for i in range(n_env)]
+prev_models = [copy.deepcopy(model)]
+prev_model = prev_models[0]
+prev_model.eval()
+stats_e = []
+learners = []
+won = []
 
-model = A9PgModel([200]).double().to(device)
+"""
+Log the following:
+For each episode:
+  - Episode length
+  - Win / lose
+  - sum of rewards
+  - loss
+For every nth episodes, for each timestep:
+  - Policy histogram
+  - value
+"""
+
 optim = torch.optim.Adam(model.parameters(), lr=lr)
 
-x = model.convert_inputs([env.state])
-yh = model(x)
 
-print(yh.shape)
+def randomize_learners():
+    turns = torch.rand(n_env)
+    turns[turns > 0.5] = 1
+    turns[turns <= 0.5] = -1
+    if all(turns > 0) or all(turns < 0):
+        return randomize_learners()
+    return turns
+
+
+def reset_episode():
+    global stats_e
+    global learners
+    global won
+
+    [env.reset() for env in envs]
+    stats_e = [[] for _ in envs]
+    learners = randomize_learners()
+    won = [None for _ in envs]
+
+
+def convert_actions_to_indices(actions):
+    pass
+
+
+def sample_action(yh, i):
+    # TODO: Implement
+    # Get legal actions
+    # Convert legal actions to indices
+    # Determine if phase 1 or 2
+    # Subsample probabilities
+    # Apply some softmax
+    # sample an action
+
+    legal_actions = envs[i].get_legal_actions()
+    legal_actions = convert_actions_to_indices(legal_actions)
+
+    legal_yh = yh[legal_actions]
+
+    # Add noise
+    noise = torch.rand(len(legal_actions)) * 0.01
+    legal_yh = legal_yh + noise
+
+    # Softmax
+    tau = max((1 / np.log(current_episode)) * 5, 0.7)
+    legal_yh = F.gumbel_softmax(legal_yh, tau=tau, dim=0)
+
+    # Sample
+    sampled = torch.multinomial(legal_yh, 1)[0]
+
+    return legal_actions[sampled], legal_yh[sampled]
+
+
+def run_time_step(yh, yo):
+    for i in range(n_env):
+
+        if envs[i].done:
+            continue
+
+        is_learners_turn = learners[i] == envs[i].turn
+        yi = yh[i] if is_learners_turn else yo[i]
+        if not is_learners_turn:
+            yi = torch.ones(9).double().to(device)
+        action, prob = sample_action(yi, i)
+        _, reward, done, _ = envs[i].step(action)
+
+        if is_learners_turn:
+            stats_e[i].append({'reward': reward, 'prob': prob})
+
+        if done and envs[i].winner is not None:
+            won[i] = envs[i].winner == learners[i]
+
+
+
+def run_episode():
+    # Reset envs
+    reset_episode()
+
+    while not all([env.done for env in envs]):
+        # Predict actions
+
+        x = A9PgModel.convert_inputs([env.state for env in envs])
+        yh = model(x)
+        with torch.no_grad():
+            yo = prev_model(x)
+
+        run_time_step(yh, yo)
+
+    learn()
+    log_stats()
+    reset_buffer()
+
+
+while current_episode <= total_episodes:
+    run_episode()
+    print('.', end='')
+    current_episode += 1
 
