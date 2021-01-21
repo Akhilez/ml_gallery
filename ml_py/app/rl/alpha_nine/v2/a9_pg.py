@@ -1,6 +1,5 @@
 from typing import List
 import torch
-import numpy as np
 from torch import nn
 from gym_nine_mens_morris.envs.nmm_v2 import NineMensMorrisEnvV2
 
@@ -17,7 +16,7 @@ class A9PgModel(nn.Module):
         super().__init__()
 
         self.first = nn.Sequential(
-            nn.Linear(9 * 3, units[0]),
+            nn.Linear(24 * 3, units[0]),
             nn.ReLU(),
             nn.Dropout(0.3)
         )
@@ -37,11 +36,12 @@ class A9PgModel(nn.Module):
         return self.out(x).view((7, 24))
 
     @staticmethod
-    def convert_inputs(x):
-        # x: shape(n, 24)
+    def convert_inputs(states):
+        # state: shape(n, 24), mens
         # output: shape(n, 72)
         inputs = []
-        for xb in x:
+        for state in states:
+            xb = state[0]
             inputs_b = []
             for xi in xb:
                 if xi == 1:
@@ -63,3 +63,21 @@ class A9PgModel(nn.Module):
         kill = op[:, -1]
 
         return pos1, pos2, moves, kill
+
+
+lrs = [1e-3]
+
+epochs = 1
+lr = lrs[0]
+
+env = NineMensMorrisEnvV2()
+env.reset()
+
+model = A9PgModel([200]).double().to(device)
+optim = torch.optim.Adam(model.parameters(), lr=lr)
+
+x = model.convert_inputs([env.state])
+yh = model(x)
+
+print(yh.shape)
+
