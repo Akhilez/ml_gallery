@@ -118,6 +118,25 @@ def randomize_learners():
     return turns
 
 
+def get_credits(t):
+    credits = []
+    prev_credit = 1
+    for i in range(t):
+        credits.append(prev_credit)
+        prev_credit *= gamma_credits
+    return torch.tensor(list(reversed(credits))).double().to(device)
+
+
+def get_returns(rewards):
+    total_t = len(rewards)
+    returns = []
+    prev_return = 0
+    for t in range(total_t):
+        prev_return = rewards[total_t - t - 1] + (gamma_returns * prev_return)
+        returns.append(prev_return)
+    return torch.tensor(list(reversed(returns))).double().to(device)
+
+
 def reset_episode():
     global stats_e
     global learners
@@ -129,7 +148,20 @@ def reset_episode():
     won = [None for _ in envs]
 
 
+def reset_buffer():
+    # global losses
+    global prev_model
+    global prev_models
+
+    # losses = []
+    prev_models = prev_models[-10:]
+    prev_models.append(copy.deepcopy(model))
+    prev_model = prev_models[np.random.choice(len(prev_models), 1)[0]]
+    prev_model.eval()
+
+
 def convert_actions_to_indices(actions):
+    # TODO: Implement
     pass
 
 
@@ -181,6 +213,24 @@ def run_time_step(yh, yo):
             won[i] = envs[i].winner == learners[i]
 
 
+def learn():
+    loss = torch.tensor(0).double().to(device)
+    for i in range(n_env):
+        rewards = [stat['reward'] for stat in stats_e[i]]
+        returns = get_returns(rewards)
+        probs = torch.stack([stat['prob'] for stat in stats_e[i]])
+        credits = get_credits(len(rewards))
+
+        loss += torch.sum(probs * credits * returns)
+
+    loss = -1 * loss / n_env
+
+    optim.zero_grad()
+    loss.backward()
+    optim.step()
+
+    # losses.append(loss.item())
+
 
 def run_episode():
     # Reset envs
@@ -197,7 +247,6 @@ def run_episode():
         run_time_step(yh, yo)
 
     learn()
-    log_stats()
     reset_buffer()
 
 
