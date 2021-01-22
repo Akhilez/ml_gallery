@@ -36,7 +36,7 @@ class A9PgModel(nn.Module):
         x = self.first(x)
         for hidden in self.hidden:
             x = hidden(x)
-        return self.out(x).view((7, 24))
+        return self.out(x).view((-1, 7, 24))
 
     @staticmethod
     def convert_inputs(states):
@@ -160,37 +160,69 @@ def reset_buffer():
     prev_model.eval()
 
 
-def convert_actions_to_indices(actions):
-    # TODO: Implement
-    pass
-
-
-def sample_action(yh, i):
-    # TODO: Implement
-    # Get legal actions
-    # Convert legal actions to indices
-    # Determine if phase 1 or 2
-    # Subsample probabilities
-    # Apply some softmax
-    # sample an action
-
-    legal_actions = envs[i].get_legal_actions()
-    legal_actions = convert_actions_to_indices(legal_actions)
-
-    legal_yh = yh[legal_actions]
+def sample_from_probs(probs, legal_idx):
 
     # Add noise
-    noise = torch.rand(len(legal_actions)) * 0.01
-    legal_yh = legal_yh + noise
+    # noise = torch.rand(len(probs)) * 0.01
+    # probs = probs + noise
 
     # Softmax
     tau = max((1 / np.log(current_episode)) * 5, 0.7)
-    legal_yh = F.gumbel_softmax(legal_yh, tau=tau, dim=0)
+    probs = F.gumbel_softmax(probs, tau=tau, dim=0)
 
-    # Sample
-    sampled = torch.multinomial(legal_yh, 1)[0]
+    # Subsample legal probs
+    legal_probs = probs[legal_idx]
 
-    return legal_actions[sampled], legal_yh[sampled]
+    # Sample action idx
+    if len(legal_probs) == 0:
+        return 0, 0, 0
+    action_idx = torch.multinomial(legal_probs, 1)[0]
+
+    action_prob = legal_probs[action_idx]
+    legal_action_idx = legal_idx[action_idx]
+    return legal_action_idx, action_prob, action_idx
+
+
+def sample_action(yh, env):
+    """
+    yh: A tensor of shape (7, 24)
+    i: current batch_number
+    return: A tuple (
+        action: (pos, move, kill),
+        probability distribution indices: (pos_idx, move_idx, kill_idx)
+    )
+    Steps:
+        - Determine legal actions and subsample them.
+          - Get all legal POS
+          - For each legal POS, get legal moves.
+          - Get all legal kills
+        - Sample legal pos from probs
+        - Sample legal moves from the selected pos
+        - Sample legal kill
+    Legal action format given:
+        [(pos, moves, bools)], [kill positions]
+    """
+    is_phase_1 = env.is_phase_1()
+    legal_actions = env.get_legal_actions()
+
+    pos, move, kill, pos_prob, move_prob, kill_prob = None, None, None, None, None, None
+
+    if is_phase_1:
+        pos, pos_prob, pos_idx = sample_from_probs(yh[0], [action[0] for action in legal_actions[0]])
+
+        if legal_actions[0][pos_idx][2]:
+            kill, kill_prob, kill_idx = sample_from_probs(yh[-1], legal_actions[1])
+
+        return (pos, None, kill), (pos_prob, None, kill_prob)
+
+    pos, pos_prob, pos_idx = sample_from_probs(yh[1], [action[0] for action in legal_actions[0]])
+
+    move, move_prob, move_idx = sample_from_probs(yh[2:6].T[pos_idx], legal_actions[0][pos_idx][1])
+
+    if legal_actions[0][pos_idx][2][move_idx]:
+        kill, kill_prob, kill_idx = sample_from_probs(yh[-1], legal_actions[1])
+
+    return (pos, move, kill), (pos_prob, move_prob, kill_prob)
 
 
 def run_time_step(yh, yo):
@@ -201,10 +233,9 @@ def run_time_step(yh, yo):
 
         is_learners_turn = learners[i] == envs[i].turn
         yi = yh[i] if is_learners_turn else yo[i]
-        if not is_learners_turn:
-            yi = torch.ones(9).double().to(device)
-        action, prob = sample_action(yi, i)
+        action, prob = sample_action(yi, envs[i])
         _, reward, done, _ = envs[i].step(action)
+        envs[i].render()
 
         if is_learners_turn:
             stats_e[i].append({'reward': reward, 'prob': prob})
