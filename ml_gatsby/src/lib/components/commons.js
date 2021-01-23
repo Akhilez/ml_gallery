@@ -26,7 +26,7 @@ export function Footer() {
   return (
     <Container textAlign="center" mt="50px">
       <Centered>
-        <Divider borderColor="red.500" />
+        <Divider />
         <Box my="25px">
           <Text>
             ML Gallery by{" "}

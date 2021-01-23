@@ -65,3 +65,20 @@ export default function Navbar() {
     </Container>
   )
 }
+
+export const StaticNavbar = () => (
+  <Container>
+    <Flex as="nav" alignItems="center" justify="space-between" wrap="wrap">
+      <GLink to={urls.profile} className="navbar-brand logo">
+        <Image src={ak_logo} height="40px" alt="ak_logo" ml={2} />
+      </GLink>
+      <Box width="auto" />
+      <Flex zIndex={5}>
+        <DarkModeButton />
+        <NavLink href={urls.gallery} icon={MdHome} />
+        <NavLink href={urls.profile} icon={MdPerson} />
+        <NavLink href={urls.repo} icon={FaGithub} isExternal />
+      </Flex>
+    </Flex>
+  </Container>
+)
