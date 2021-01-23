@@ -14,12 +14,14 @@ import { Container } from "../components/commons"
 import mlg_logo from "../media/ml_logo/ml_logo.png"
 import { urls } from "../globals/data"
 import { BasicsSection } from "./components/BasicsSection"
+import { ComputerVisionSection } from "./components/ComputerVisionSection"
 
 export const LandingPageV2 = () => (
   <Box>
     <MetaTags />
     <IntroSection />
     <BasicsSection />
+    <ComputerVisionSection />
   </Box>
 )
 

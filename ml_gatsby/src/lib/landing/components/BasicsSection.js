@@ -9,7 +9,7 @@ import {
   useColorModeValue,
 } from "@chakra-ui/react"
 import { Link as GLink } from "gatsby"
-import { projects } from "../../globals/data"
+import { categoriesMap, projects } from "../../globals/data"
 
 const RightSection = () => {
   return (
@@ -72,10 +72,9 @@ const LeftSection = () => {
       justify="flex-end"
     >
       <Box w={{ base: "sm", sm: "lg" }} py={6} pr={8}>
-        <BasicProject project={projects.learn_line} />
-        <BasicProject project={projects.linear_classifier} />
-        <BasicProject project={projects.learn_curve} />
-        <BasicProject project={projects.deep_iris} />
+        {categoriesMap.linear.projects.map(project => (
+          <BasicProject project={project} key={project.id} />
+        ))}
       </Box>
     </Flex>
   )

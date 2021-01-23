@@ -1,5 +1,7 @@
-$primary-color: #dd0939
-$link-color: #f44336
+$primary-color: #e91e62
+$secondary-color: #ff9900
+$link-color: #646464
+$primary-light: #f48fb0
 
 
 .ProjectContainer
@@ -21,8 +23,8 @@ $link-color: #f44336
     padding: 10px
 
   &:hover
-    background-color: #f44336
-    background-image: linear-gradient(to bottom left, #f44336, #e91e63)
+    background-color: $primary-color
+    background-image: linear-gradient(to bottom left, $primary-color, $secondary-color)
     color: #ffffff
 
     img
@@ -42,3 +44,12 @@ $link-color: #f44336
     font-size: 48px
     text-align: center
     margin-bottom: 50px
+
+
+.vision_carousal
+  .swiper-button-disabled
+    color: $primary-light
+  .swiper-button-next, .swiper-button-prev
+    color: $primary-color
+  .swiper-pagination-bullet-active
+    background: $secondary-color

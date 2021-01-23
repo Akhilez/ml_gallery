@@ -312,14 +312,13 @@ const projectsRaw = {
 }
 
 Object.keys(projectsRaw).map(key => {
-  projectsRaw[key]["id"] = key
+  projectsRaw[key].id = key
 })
 
 export const projects = projectsRaw
 
 export const categoriesMap = {
   linear: {
-    title: "Linear Neural Networks",
     projects: [
       projects.learn_line,
       projects.linear_classifier,
