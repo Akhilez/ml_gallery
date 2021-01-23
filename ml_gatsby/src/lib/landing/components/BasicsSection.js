@@ -21,12 +21,13 @@ const RightSection = () => {
     >
       <Box>
         <Heading>The Basics</Heading>
-        <Text my={2}>
+        <Text variant="dynamicColorMode" my={2}>
           Start your Deep Learning journey with simple problems
         </Text>
         <Button my={2} size="sm" colorScheme="secondary">
           Start with basics
         </Button>
+        <Box height={{ base: 0, md: "100px" }} />
       </Box>
     </Flex>
   )

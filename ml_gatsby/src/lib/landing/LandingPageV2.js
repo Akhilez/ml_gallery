@@ -53,7 +53,7 @@ const IntroSection = () => {
             Developed by <Link href={urls.profile}>Akhilez</Link>
           </Text>
           <Text mt={2} color={line2Color}>
-            This is a master project of my experiments with Neural Networks.
+            This is a master project of some experiments with Neural Networks.
             Every project here is runnable, visualized and explained clearly.
           </Text>
           <Button mt={4} colorScheme="secondary" size="sm">
