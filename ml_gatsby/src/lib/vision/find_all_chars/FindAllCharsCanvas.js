@@ -1,5 +1,5 @@
 import React from "react"
-import { Box } from "@chakra-ui/core"
+import { Box } from "@chakra-ui/react"
 import loadable from "@loadable/component"
 import { isCursorInScope } from "../../utils/utils"
 import * as tf from "@tensorflow/tfjs"

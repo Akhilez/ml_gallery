@@ -2,7 +2,7 @@ import React from "react"
 import { projects } from "../../globals/data"
 import { ProjectWrapper } from "../../components/ProjectWrapper"
 import { Centered } from "../../components/commons"
-import { IconButton } from "@chakra-ui/core"
+import { IconButton } from "@chakra-ui/react"
 import { FindAllCharsCanvas } from "./FindAllCharsCanvas"
 import { MdRefresh } from "react-icons/all"
 
@@ -28,8 +28,8 @@ export class FindAllChars extends React.Component {
             icon={MdRefresh}
             isRound
             variant="outline"
-            variantColor="red"
-            size="sm"
+            colorScheme="red"
+            boxSize="sm"
             mt={4}
             onClick={() => this.canvasRef.current.clearCanvas()}
           />

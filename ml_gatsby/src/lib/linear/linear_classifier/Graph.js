@@ -4,7 +4,7 @@ import loadable from "@loadable/component"
 import React from "react"
 import Chartist from "../../utils/chartist"
 import { isCursorInScope } from "src/lib/utils/utils"
-import { Box } from "@chakra-ui/core"
+import { Box } from "@chakra-ui/react"
 
 const Sketch = loadable(() => import("react-p5"))
 

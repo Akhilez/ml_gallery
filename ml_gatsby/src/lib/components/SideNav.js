@@ -13,7 +13,7 @@ import {
   DrawerOverlay,
   DrawerContent,
   DrawerCloseButton,
-} from "@chakra-ui/core"
+} from "@chakra-ui/react"
 import { projectCategories } from "../globals/data"
 import { Link as GLink } from "gatsby"
 import { FiMenu } from "react-icons/all"

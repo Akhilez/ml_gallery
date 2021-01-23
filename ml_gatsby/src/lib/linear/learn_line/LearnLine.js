@@ -2,7 +2,7 @@ import React from "react"
 import { projects } from "src/lib/globals/data"
 import { ProjectWrapper } from "src/lib/components/ProjectWrapper"
 import MLHelper from "src/lib/linear/learn_line/neural_net"
-import { NumberInput, Flex, Button, Box } from "@chakra-ui/core"
+import { NumberInput, Flex, Button, Box } from "@chakra-ui/react"
 import {
   CartesianGrid,
   Legend,
@@ -46,7 +46,7 @@ export class LearnLine extends React.Component {
           {this.getEquationInput()}
           {!this.state.isTraining && (
             <Button
-              variantColor="brand"
+              colorScheme="brand"
               borderRadius="lg"
               isLoading={this.state.isTraining}
               loadingText="Training"
@@ -78,7 +78,7 @@ export class LearnLine extends React.Component {
     return (
       <Button
         variant="outline"
-        variantColor="brand"
+        colorScheme="brand"
         onClick={() => this.setState({ isTraining: false })}
       >
         Stop

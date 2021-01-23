@@ -1,7 +1,7 @@
 import { Centered } from "../../components/commons"
 import { ProjectWrapper } from "../../components/ProjectWrapper"
 import React from "react"
-import { Box, Flex, Input, Text } from "@chakra-ui/core"
+import { Box, Flex, Input, Text } from "@chakra-ui/react"
 import { projects } from "src/lib/globals/data"
 import { mlgApi } from "src/lib/api"
 
@@ -42,7 +42,7 @@ export class NextChar extends React.Component {
             mt={4}
           >
             <Input
-              size="lg"
+              boxSize="lg"
               height={{ base: "70px", md: "100px" }}
               fontSize={{ base: "xl", md: "5xl" }}
               focusBorderColor="red.400"

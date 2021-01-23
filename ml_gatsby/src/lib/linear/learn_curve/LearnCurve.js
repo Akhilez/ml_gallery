@@ -21,7 +21,7 @@ import {
   AlertIcon,
   CloseButton,
   Box,
-} from "@chakra-ui/core"
+} from "@chakra-ui/react"
 import { LearnCurveTF } from "./LearnCurveTF"
 
 export class LearnCurve extends React.Component {
@@ -56,7 +56,7 @@ export class LearnCurve extends React.Component {
 
           {!this.state.isTraining && (
             <Button
-              variantColor="brand"
+              colorScheme="brand"
               borderRadius="lg"
               m={1}
               isLoading={this.state.isTraining}
@@ -70,7 +70,7 @@ export class LearnCurve extends React.Component {
             <Button
               m={1}
               variant="outline"
-              variantColor="brand"
+              colorScheme="brand"
               borderRadius="lg"
               onClick={() => this.stopTraining()}
             >
@@ -81,7 +81,7 @@ export class LearnCurve extends React.Component {
             <Button
               m={1}
               variant="outline"
-              variantColor="brand"
+              colorScheme="brand"
               borderRadius="lg"
               onClick={() => this.clearData()}
             >
@@ -142,9 +142,9 @@ export class LearnCurve extends React.Component {
         Change Complexity:
         <Button
           variant="outline"
-          variantColor="brand"
+          colorScheme="brand"
           ml={2}
-          size="sm"
+          boxSize="sm"
           disabled={this.state.isTraining}
           onClick={() => this.changeOrder(1)}
         >
@@ -153,9 +153,9 @@ export class LearnCurve extends React.Component {
         {this.state.order > 1 && (
           <Button
             variant="outline"
-            variantColor="brand"
+            colorScheme="brand"
             ml={2}
-            size="sm"
+            boxSize="sm"
             disabled={this.state.isTraining}
             onClick={() => this.changeOrder(-1)}
           >

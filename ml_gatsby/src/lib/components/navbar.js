@@ -1,18 +1,30 @@
 import React from "react"
 import ak_logo from "src/lib/media/ak_logo.png"
 import { urls } from "src/lib/globals/data"
-import { Box, Flex, Image } from "@chakra-ui/core"
+import { Box, Flex, Image, IconButton, useColorMode } from "@chakra-ui/react"
 import { Link as GLink } from "gatsby"
-import { FaGithub, FiMenu, MdHome, MdPerson } from "react-icons/all"
+import {
+  FaGithub,
+  FiMenu,
+  MdHome,
+  MdPerson,
+  IoMdMoon,
+  IoMdSunny,
+} from "react-icons/all"
 import { Container, SolidLink } from "./commons"
 
-function NavItem({ href, text, icon, ...props }) {
+const NavLink = ({ href, icon, ...props }) => (
+  <SolidLink href={href} mx={1} {...props}>
+    <Box as={icon} fontSize="lg" />
+  </SolidLink>
+)
+
+const DarkModeButton = () => {
+  const { colorMode, toggleColorMode } = useColorMode()
+  const isLight = colorMode === "light"
   return (
-    <SolidLink href={href} fontSize="sm" {...props}>
-      <Flex alignItems="center">
-        <Box as={icon} fontSize="lg" mr={2} />
-        {text}
-      </Flex>
+    <SolidLink as={Box} mx={1} onClick={toggleColorMode}>
+      <Box fontSize="lg" as={isLight ? IoMdMoon : IoMdSunny} />
     </SolidLink>
   )
 }
@@ -42,12 +54,12 @@ export default function Navbar() {
         <Box
           display={{ base: show ? "block" : "none", sm: "flex" }}
           mt={{ base: 4, sm: 0 }}
-          bg="backgroundColor"
           zIndex={5}
         >
-          <NavItem href={urls.gallery} text="ML GALLERY" icon={MdHome} />
-          <NavItem href={urls.profile} text="PROFILE" icon={MdPerson} />
-          <NavItem href={urls.repo} text="REPO" icon={FaGithub} isExternal />
+          <DarkModeButton />
+          <NavLink href={urls.gallery} icon={MdHome} />
+          <NavLink href={urls.profile} icon={MdPerson} />
+          <NavLink href={urls.repo} icon={FaGithub} isExternal />
         </Box>
       </Flex>
     </Container>

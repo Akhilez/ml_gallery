@@ -14,13 +14,13 @@
     "test": "jest"
   },
   "dependencies": {
-    "@chakra-ui/core": "^0.8.0",
-    "@emotion/core": "^10.0.35",
-    "@emotion/styled": "^10.0.27",
+    "@chakra-ui/react": "^1.1.5",
+    "@emotion/react": "^11.1.4",
+    "@emotion/styled": "^11.0.0",
     "@loadable/component": "^5.13.1",
     "@tensorflow/tfjs": "^1.7.4",
     "@tensorflow/tfjs-vis": "^1.4.3",
-    "emotion-theming": "^10.0.27",
+    "framer-motion": "^3.2.2-rc.1",
     "gatsby": "^2.24.47",
     "gatsby-plugin-google-fonts-v2": "0.0.6",
     "gatsby-plugin-react-helmet": "^3.3.14",
@@ -39,6 +39,7 @@
     "typeface-roboto-condensed": "^1.1.13"
   },
   "devDependencies": {
+    "@chakra-ui/theme-tools": "^1.0.3",
     "babel-jest": "^26.3.0",
     "babel-preset-gatsby": "^0.5.11",
     "enzyme": "^3.11.0",

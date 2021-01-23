@@ -1,5 +1,5 @@
 import React from "react"
-import { Box, Flex, Heading, Image, Link, Stack, Text } from "@chakra-ui/core"
+import { Box, Flex, Heading, Image, Link, Stack, Text } from "@chakra-ui/react"
 import { Link as GLink } from "gatsby"
 import { MdCode } from "react-icons/md"
 import colabImage from "./images/colab.png"

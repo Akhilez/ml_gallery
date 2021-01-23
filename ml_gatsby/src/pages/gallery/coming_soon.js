@@ -1,5 +1,5 @@
 import React from "react"
-import { Text, Box, Flex } from "@chakra-ui/core"
+import { Text, Box, Flex } from "@chakra-ui/react"
 import { Centered, Container } from "src/lib/components/commons"
 import { projects } from "src/lib/globals/data"
 import { ProjectWrapper } from "../../lib/components/ProjectWrapper"

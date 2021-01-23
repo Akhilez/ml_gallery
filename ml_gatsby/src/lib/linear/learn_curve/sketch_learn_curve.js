@@ -1,7 +1,7 @@
 import React from "react"
 import { isCursorInScope } from "../../utils/utils"
 import loadable from "@loadable/component"
-import { Box } from "@chakra-ui/core"
+import { Box } from "@chakra-ui/react"
 const Sketch = loadable(() => import("react-p5"))
 
 export default class Graph extends React.Component {

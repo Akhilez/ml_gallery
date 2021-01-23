@@ -5,7 +5,14 @@ import MnistClassifier from "./classifier"
 import { Centered } from "../../components/commons"
 import { MdRefresh } from "react-icons/all"
 import NumberPaintCanvas from "./paint_canvas"
-import { Box, Button, Flex, IconButton, PseudoBox, Text } from "@chakra-ui/core"
+import {
+  Box,
+  Button,
+  Flex,
+  IconButton,
+  PseudoBox,
+  Text,
+} from "@chakra-ui/react"
 import {
   Bar,
   BarChart,
@@ -62,8 +69,8 @@ export class WhichChar extends React.Component {
                 icon={MdRefresh}
                 isRound
                 variant="outline"
-                variantColor="red"
-                size="sm"
+                colorScheme="red"
+                boxSize="sm"
                 mt={4}
                 onClick={() => this.paintCanvasRef.current.clearCanvas()}
               />
@@ -73,7 +80,7 @@ export class WhichChar extends React.Component {
               {this.state.confidences && <this.PredictionChart />}
               <Flex justifyContent="center" mt={4}>
                 <Button
-                  variantColor="brand"
+                  colorScheme="brand"
                   borderRadius="lg"
                   m={1}
                   isLoading={this.state.isTraining || !this.state.dataLoaded}
@@ -88,7 +95,7 @@ export class WhichChar extends React.Component {
                   <Button
                     m={1}
                     variant="outline"
-                    variantColor="brand"
+                    colorScheme="brand"
                     borderRadius="lg"
                     onClick={() => this.stopTraining()}
                   >

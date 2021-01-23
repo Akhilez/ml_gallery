@@ -1,5 +1,5 @@
 import React from "react"
-import { Flex, Box, Text, Divider } from "@chakra-ui/core"
+import { Flex, Box, Text, Divider } from "@chakra-ui/react"
 import { orderedProjects } from "../globals/data"
 import { SolidLink } from "./commons"
 

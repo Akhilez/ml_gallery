@@ -4,7 +4,7 @@ import { projects } from "../../globals/data"
 import { Centered } from "../../components/commons"
 import Neuron from "../learn_line/neuron"
 import { Graph } from "./Graph"
-import { Button } from "@chakra-ui/core"
+import { Button } from "@chakra-ui/react"
 
 export class LinearClassifier extends React.Component {
   constructor(props) {
@@ -21,7 +21,7 @@ export class LinearClassifier extends React.Component {
         <Centered>
           <Neuron ref={this.neuronRef} />
           <Button
-            variantColor="brand"
+            colorScheme="brand"
             borderRadius="lg"
             m={1}
             isLoading={this.state.isTraining}
@@ -38,7 +38,7 @@ export class LinearClassifier extends React.Component {
               m={1}
               variant="outline"
               borderRadius="lg"
-              variantColor="brand"
+              colorScheme="brand"
               onClick={() => {
                 this.graphRef.current.stopTraining()
                 this.setState({ isTraining: false })
@@ -50,7 +50,7 @@ export class LinearClassifier extends React.Component {
           <Button
             m={1}
             variant="outline"
-            variantColor="brand"
+            colorScheme="brand"
             borderRadius="lg"
             onClick={() => this.graphRef.current.removeData()}
           >

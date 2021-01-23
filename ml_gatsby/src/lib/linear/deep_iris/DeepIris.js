@@ -27,7 +27,7 @@ import {
   Text,
   Stack,
   Heading,
-} from "@chakra-ui/core"
+} from "@chakra-ui/react"
 
 export class DeepIris extends React.Component {
   constructor(props) {
@@ -71,7 +71,7 @@ export class DeepIris extends React.Component {
           {this.UpdateLayersButtons()}
 
           <Button
-            variantColor="brand"
+            colorScheme="brand"
             borderRadius="lg"
             m={1}
             isLoading={this.state.isTraining}
@@ -84,7 +84,7 @@ export class DeepIris extends React.Component {
             <Button
               m={1}
               variant="outline"
-              variantColor="brand"
+              colorScheme="brand"
               borderRadius="lg"
               onClick={() => this.stopTraining()}
             >
@@ -218,9 +218,9 @@ export class DeepIris extends React.Component {
         Change Depth:
         <Button
           variant="outline"
-          variantColor="brand"
+          colorScheme="brand"
           ml={2}
-          size="sm"
+          boxSize="sm"
           isDisabled={this.state.isTraining}
           onClick={() => this.updateLayers(1)}
         >
@@ -228,9 +228,9 @@ export class DeepIris extends React.Component {
         </Button>
         <Button
           variant="outline"
-          variantColor="brand"
+          colorScheme="brand"
           ml={2}
-          size="sm"
+          boxSize="sm"
           isDisabled={this.state.isTraining}
           onClick={() => this.updateLayers(-1)}
         >

@@ -1,41 +1,67 @@
-import { theme } from "@chakra-ui/core"
+import { extendTheme } from "@chakra-ui/react"
+import { createBreakpoints } from "@chakra-ui/theme-tools"
 
-export default {
-  ...theme,
-  fonts: {
-    body: "'Roboto Condensed', sans-serif",
-    heading: "'Roboto Condensed', sans-serif",
+export default extendTheme({
+  styles: {
+    global: {
+      body: {
+        fontFamily: "body",
+      },
+      a: {
+        color: "text.default",
+        _hover: {
+          textDecoration: "underline",
+        },
+      },
+    },
   },
+  components: {
+    Link: {
+      textDecoration: "none",
+    },
+  },
+  breakpoints: createBreakpoints({
+    sm: "30em",
+    md: "48em",
+    lg: "62em",
+    xl: "80em",
+  }),
+  fonts: {
+    body: "'Roboto Condensed', system-ui, sans-serif",
+    heading: "'Roboto Condensed', system-ui, sans-serif",
+  },
+  initialColorMode: "dark",
+  useSystemColorMode: false,
   colors: {
-    ...theme.colors,
     brand: {
-      50: "#ffe4f0",
-      100: "#fdb7d0",
-      200: "#f68aae",
-      300: "#f05b8e",
-      400: "#eb2e6e",
-      500: "#d11455",
-      600: "#a40d42",
-      700: "#76062f",
-      800: "#49021c",
-      900: "#1e000a",
+      50: "#fce4ec",
+      100: "#f8bbd0",
+      200: "#f48fb0",
+      300: "#f06291",
+      400: "#ec4079",
+      500: "#e91e62",
+      600: "#d81b5f",
+      700: "#c2185a",
+      800: "#ad1356",
+      900: "#880d4e",
     },
     secondary: {
-      50: "#ffe2ec",
-      100: "#ffb3c5",
-      200: "#fc839f",
-      300: "#f95278",
-      400: "#f62252",
-      500: "#dd0939",
-      600: "#ad032c",
-      700: "#7c001e",
-      800: "#4d0012",
-      900: "#200005",
+      50: "#fff3e0",
+      100: "#ffe0b2",
+      200: "#ffcd80",
+      300: "#ffb84d",
+      400: "#ffa826",
+      500: "#ff9900",
+      600: "#fb8d00",
+      700: "#f57d00",
+      800: "#ef6d00",
+      900: "#e65200",
     },
     text: {
-      default: "#c62828",
-      light: "#f44336",
+      heading: "#435066",
+      default: "#646464",
+      light: "#757575",
     },
-    backgroundColor: "#f2f3f4",
+    backgroundColor: "#ffffff",
   },
-}
+})

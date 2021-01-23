@@ -1,6 +1,6 @@
 import React from "react"
 import loadable from "@loadable/component"
-import { Box } from "@chakra-ui/core"
+import { Box } from "@chakra-ui/react"
 
 const Sketch = loadable(() => import("react-p5"))
 

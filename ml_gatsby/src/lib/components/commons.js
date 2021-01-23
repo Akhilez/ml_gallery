@@ -1,6 +1,5 @@
 import React from "react"
-import { Divider, Link, Text, useTheme } from "@chakra-ui/core"
-import Box from "@chakra-ui/core/dist/Box"
+import { Box, Divider, Link, Text, useTheme } from "@chakra-ui/react"
 import { Link as GLink } from "gatsby"
 import { urls } from "../globals/data"
 

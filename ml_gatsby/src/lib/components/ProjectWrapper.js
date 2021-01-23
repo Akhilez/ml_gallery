@@ -5,7 +5,7 @@ import {
   Image,
   Link as CLink,
   Text,
-} from "@chakra-ui/core"
+} from "@chakra-ui/react"
 import colabImage from "../landing/images/colab.png"
 import { Container } from "./commons"
 import { BreadCrumb } from "./BreadCrumb"
@@ -20,9 +20,9 @@ function ActionButtons({ project }) {
       <Button
         as={CLink}
         href="#how_it_works"
-        variantColor="brand"
+        colorScheme="brand"
         variant="outline"
-        size="sm"
+        boxSize="sm"
         mr={2}
         fontWeight="light"
       >
@@ -31,13 +31,13 @@ function ActionButtons({ project }) {
       <Button
         as={CLink}
         href={project.links.colab}
-        size="sm"
+        boxSize="sm"
         display={project.links.colab ? "block" : "none"}
         variant="outline"
-        variantColor="gray"
+        colorScheme="gray"
         isExternal
       >
-        <Image src={colabImage} objectFit="cover" size="23px" mt="3px" />
+        <Image src={colabImage} objectFit="cover" boxSize="23px" mt="3px" />
       </Button>
     </Flex>
   )

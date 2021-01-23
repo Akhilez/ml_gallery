@@ -10,7 +10,7 @@ import {
   Heading,
   Divider,
   IconButton,
-} from "@chakra-ui/core"
+} from "@chakra-ui/react"
 import { Link as GLink } from "gatsby"
 import ScrollMenu from "react-horizontal-scrolling-menu"
 import { MetaTags } from "../components/MetaTags"
@@ -54,7 +54,7 @@ export default class LandingPage extends React.Component {
         </Text>
         <Button
           variant="outline"
-          variantColor="brand"
+          colorScheme="brand"
           borderRadius="lg"
           as={GLink}
           to={projects.learn_line.links.app}
@@ -88,8 +88,8 @@ export default class LandingPage extends React.Component {
               aria-label="icon"
               icon="chevron-left"
               isRound
-              size="sm"
-              variantColor="red"
+              boxSize="sm"
+              colorScheme="red"
               variant="ghost"
               display={{ base: "none", md: "block" }}
               m={5}
@@ -100,8 +100,8 @@ export default class LandingPage extends React.Component {
               aria-label="icon"
               icon="chevron-right"
               isRound
-              size="sm"
-              variantColor="red"
+              boxSize="sm"
+              colorScheme="red"
               variant="ghost"
               display={{ base: "none", md: "block" }}
               m={5}

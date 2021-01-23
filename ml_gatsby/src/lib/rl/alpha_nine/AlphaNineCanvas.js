@@ -1,5 +1,5 @@
 import React from "react"
-import { Box, CircularProgress } from "@chakra-ui/core"
+import { Box, CircularProgress } from "@chakra-ui/react"
 import { Spring } from "react-spring/renderprops"
 import { mlgApi } from "src/lib/api"
 

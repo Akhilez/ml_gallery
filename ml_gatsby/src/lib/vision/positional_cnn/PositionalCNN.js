@@ -4,7 +4,7 @@ import { Centered } from "../../components/commons"
 import { ProjectWrapper } from "../../components/ProjectWrapper"
 import NumberPaintCanvas from "./paint_canvas"
 import { mlgApi } from "../../api"
-import { Flex, FormLabel, IconButton, Switch, Text } from "@chakra-ui/core"
+import { Flex, FormLabel, IconButton, Switch, Text } from "@chakra-ui/react"
 import { MdRefresh } from "react-icons/all"
 
 export class PositionalCNN extends React.Component {
@@ -38,8 +38,8 @@ export class PositionalCNN extends React.Component {
             icon={MdRefresh}
             isRound
             variant="outline"
-            variantColor="red"
-            size="sm"
+            colorScheme="red"
+            boxSize="sm"
             my={4}
             onClick={() => this.paintCanvasRef.current.clearCanvas()}
           />
