@@ -1,7 +1,7 @@
 import React from "react"
-import { Box, Heading, Text } from "@chakra-ui/react"
+import { Box, Heading, Text, Image, useColorModeValue } from "@chakra-ui/react"
 import { Centered, Container } from "../../components/commons"
-import SwiperCore, { Navigation, Pagination, Scrollbar, A11y } from "swiper"
+import SwiperCore, { Navigation, Pagination } from "swiper"
 import { Swiper, SwiperSlide } from "swiper/react"
 import { categoriesMap } from "../../globals/data"
 
@@ -13,16 +13,35 @@ import "swiper/components/scrollbar/scrollbar.scss"
 SwiperCore.use([Navigation, Pagination])
 
 const ProjectSlide = ({ project }) => {
+  const bg = useColorModeValue("white", "gray.700")
   return (
-    <Box backgroundColor="red.300" w="full" h="lg">
-      {project.title}
+    <Box w="full" my={10}>
+      <Box
+        backgroundColor={bg}
+        ml={14}
+        mx={12}
+        boxShadow="xl"
+        p={4}
+        borderRadius="15px"
+      >
+        <Image
+          src={require("../images/" + project.image)}
+          borderRadius="10px"
+        />
+        <Box textAlign="left" p={4}>
+          <Heading variant="dynamicGray" fontSize="2xl" my={2}>
+            {project.title}
+          </Heading>
+          <Text variant="dynamicColorMode">{project.desc}</Text>
+        </Box>
+      </Box>
     </Box>
   )
 }
 
 export const ComputerVisionSection = () => {
   return (
-    <Container my={12} py={8} px={2}>
+    <Container my={12} py={8}>
       <Centered>
         <Heading variant="dynamicColorMode">Computer Vision</Heading>
         <Swiper
