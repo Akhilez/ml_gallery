@@ -2,6 +2,32 @@ import { extendTheme } from "@chakra-ui/react"
 import { createBreakpoints } from "@chakra-ui/theme-tools"
 
 export default extendTheme({
+  components: {
+    Text: {
+      baseStyle: {
+        color: "gray.600",
+      },
+      variants: {
+        dynamicColorMode: props => ({
+          color: props.colorMode === "dark" ? "gray.200" : "gray.600",
+        }),
+      },
+    },
+    Heading: {
+      baseStyle: {
+        fontWeight: "500",
+        color: "brand.500",
+      },
+      variants: {
+        dynamicBrandColor: props => ({
+          color: props.colorMode === "dark" ? "brand.400" : "brand.500",
+        }),
+        dynamicGray: props => ({
+          color: props.colorMode === "dark" ? "gray.200" : "gray.600",
+        }),
+      },
+    },
+  },
   breakpoints: createBreakpoints({
     base: "150px",
     sm: "600px",

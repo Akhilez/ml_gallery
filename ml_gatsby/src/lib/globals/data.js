@@ -14,8 +14,7 @@ export const urls = {
 const projectsRaw = {
   learn_line: {
     title: "Learn a Line",
-    desc:
-      "Visualize the learning of a basic neural network by learning a straight line equation.",
+    desc: "Train a neuron to learn line equation",
     image: "learn_line.jpg",
     status: "in_progress",
     links: {
@@ -25,8 +24,7 @@ const projectsRaw = {
   },
   linear_classifier: {
     title: "Linear Classifier",
-    desc:
-      "Visualize the learning of a linear classifier: learns to distinguish between two different type of points in space that are linearly separable.",
+    desc: "Train a neuron to classify data",
     image: "linear_classifier.png",
     status: "in_progress",
     links: {
@@ -35,9 +33,8 @@ const projectsRaw = {
     },
   },
   learn_curve: {
-    title: "Learn A Curve!",
-    desc:
-      "Neural Networks can learn any continuous function! Here's a model that visualizes this concept. You can add data points and the network will learn its mathematical function.",
+    title: "Learn A Curve",
+    desc: "Train a neural net to predict curves",
     image: "learn_curve.png",
     status: "in_progress",
     links: {
@@ -47,8 +44,7 @@ const projectsRaw = {
   },
   deep_iris: {
     title: "Deep Iris",
-    desc:
-      "Visualize how a multi-layer neural network tries to classify flowers from its petal and sepal dimensions",
+    desc: "Train a neural net to classify Iris dataset",
     image: "deep_iris.png",
     status: "to_do",
     links: {

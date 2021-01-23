@@ -8,11 +8,9 @@ import "typeface-roboto-condensed"
 
 const GlobalWrapper = ({ children }) => (
   <ChakraProvider resetCSS theme={theme}>
-    <Box m={2}>
-      <StaticNavbar />
-      {children}
-      <Footer />
-    </Box>
+    <StaticNavbar />
+    {children}
+    <Footer />
   </ChakraProvider>
 )
 

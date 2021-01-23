@@ -33,7 +33,8 @@ const IntroSection = () => {
         direction={{ base: "column", md: "row-reverse" }}
         justify="center"
         alignItems="center"
-        my="100px"
+        mt="100px"
+        mb="150px"
       >
         <Box
           w={{ base: "sm", md: "md" }}
@@ -52,11 +53,11 @@ const IntroSection = () => {
             Developed by <Link href={urls.profile}>Akhilez</Link>
           </Text>
           <Text mt={2} color={line2Color}>
-            This is a master project of my experiments with Neural Networks. You
-            can Every project is runnable, visualized and explained clearly.
+            This is a master project of my experiments with Neural Networks.
+            Every project here is runnable, visualized and explained clearly.
           </Text>
           <Button mt={4} colorScheme="secondary" size="sm">
-            Take a Tour
+            Take a tour
           </Button>
         </Box>
       </Flex>

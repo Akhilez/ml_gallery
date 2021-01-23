@@ -1,7 +1,13 @@
 import React from "react"
 import ak_logo from "src/lib/media/ak_logo.png"
 import { urls } from "src/lib/globals/data"
-import { Box, Flex, Image, IconButton, useColorMode } from "@chakra-ui/react"
+import {
+  Box,
+  Flex,
+  Image,
+  useColorMode,
+  useColorModeValue,
+} from "@chakra-ui/react"
 import { Link as GLink } from "gatsby"
 import {
   FaGithub,
@@ -55,6 +61,7 @@ export default function Navbar() {
           display={{ base: show ? "block" : "none", sm: "flex" }}
           mt={{ base: 4, sm: 0 }}
           zIndex={5}
+          style={{ color: "gray.400" }}
         >
           <DarkModeButton />
           <NavLink href={urls.gallery} icon={MdHome} />
@@ -66,19 +73,24 @@ export default function Navbar() {
   )
 }
 
-export const StaticNavbar = () => (
-  <Container>
-    <Flex as="nav" alignItems="center" justify="space-between" wrap="wrap">
-      <GLink to={urls.profile} className="navbar-brand logo">
-        <Image src={ak_logo} height="40px" alt="ak_logo" ml={2} />
-      </GLink>
-      <Box width="auto" />
-      <Flex zIndex={5}>
-        <DarkModeButton />
-        <NavLink href={urls.gallery} icon={MdHome} />
-        <NavLink href={urls.profile} icon={MdPerson} />
-        <NavLink href={urls.repo} icon={FaGithub} isExternal />
-      </Flex>
-    </Flex>
-  </Container>
-)
+export const StaticNavbar = () => {
+  const bg = useColorModeValue("white", "gray.800")
+  return (
+    <Box backgroundColor={bg} position="sticky" top="0" py={2}>
+      <Container>
+        <Flex as="nav" alignItems="center" justify="space-between" wrap="wrap">
+          <GLink to={urls.profile} className="navbar-brand logo">
+            <Image src={ak_logo} height="30px" alt="ak_logo" ml={1} mt={1} />
+          </GLink>
+          <Box width="auto" />
+          <Flex zIndex={5}>
+            <DarkModeButton />
+            <NavLink href={urls.gallery} icon={MdHome} />
+            <NavLink href={urls.profile} icon={MdPerson} />
+            <NavLink href={urls.repo} icon={FaGithub} isExternal />
+          </Flex>
+        </Flex>
+      </Container>
+    </Box>
+  )
+}
