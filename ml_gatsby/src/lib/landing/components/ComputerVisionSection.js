@@ -15,7 +15,7 @@ SwiperCore.use([Navigation, Pagination])
 const ProjectSlide = ({ project }) => {
   const bg = useColorModeValue("white", "gray.700")
   return (
-    <Box w="full" my={10}>
+    <Box w="full" maxWidth="900px" mb={10} mt={4}>
       <Box
         backgroundColor={bg}
         ml={14}
@@ -41,7 +41,7 @@ const ProjectSlide = ({ project }) => {
 
 export const ComputerVisionSection = () => {
   return (
-    <Container my={12} py={8}>
+    <Container mt={12} py={8}>
       <Centered>
         <Heading variant="dynamicColorMode">Computer Vision</Heading>
         <Swiper

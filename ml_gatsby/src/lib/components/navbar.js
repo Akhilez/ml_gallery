@@ -76,14 +76,14 @@ export default function Navbar() {
 export const StaticNavbar = () => {
   const bg = useColorModeValue("white", "gray.800")
   return (
-    <Box backgroundColor={bg} position="sticky" top="0" py={2}>
+    <Box backgroundColor={bg} position="sticky" top="0" py={2} zIndex={5}>
       <Container>
         <Flex as="nav" alignItems="center" justify="space-between" wrap="wrap">
           <GLink to={urls.profile} className="navbar-brand logo">
             <Image src={ak_logo} height="30px" alt="ak_logo" ml={1} mt={1} />
           </GLink>
           <Box width="auto" />
-          <Flex zIndex={5}>
+          <Flex>
             <DarkModeButton />
             <NavLink href={urls.gallery} icon={MdHome} />
             <NavLink href={urls.profile} icon={MdPerson} />

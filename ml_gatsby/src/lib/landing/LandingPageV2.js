@@ -15,6 +15,7 @@ import mlg_logo from "../media/ml_logo/ml_logo.png"
 import { urls } from "../globals/data"
 import { BasicsSection } from "./components/BasicsSection"
 import { ComputerVisionSection } from "./components/ComputerVisionSection"
+import { NLPSection } from "./components/NLPSection"
 
 export const LandingPageV2 = () => (
   <Box>
@@ -22,6 +23,7 @@ export const LandingPageV2 = () => (
     <IntroSection />
     <BasicsSection />
     <ComputerVisionSection />
+    <NLPSection />
   </Box>
 )
 

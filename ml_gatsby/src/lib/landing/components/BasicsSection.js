@@ -44,7 +44,6 @@ const BasicProject = ({ project }) => {
             alt={project.title + "Image"}
             width="120px"
             height="100px"
-            className={"project-image"}
             borderRadius="8px"
             minW="50px"
           />

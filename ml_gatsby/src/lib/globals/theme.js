@@ -3,6 +3,17 @@ import { createBreakpoints } from "@chakra-ui/theme-tools"
 
 export default extendTheme({
   components: {
+    Flex: {
+      baseStyle: {
+        backgroundColor: "transparent",
+      },
+      variants: {
+        dynamicColorBox: props => ({
+          backgroundColor: props.colorMode === "dark" ? "gray.700" : "white",
+          direction: "row",
+        }),
+      },
+    },
     Text: {
       baseStyle: {
         color: "gray.600",
