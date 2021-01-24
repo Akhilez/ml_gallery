@@ -15,8 +15,8 @@ import { Container } from "../../components/commons"
 
 const LeftSection = () => (
   <Flex w={{ base: "100%", md: "50%" }} justify="flex-end">
-    <Box w="md">
-      <Heading>RL</Heading>
+    <Box w={{ base: "full", md: "md", lg: "lg" }} p={4}>
+      <Heading variant="dynamicColorMode">RL</Heading>
       <Text>Hellooo</Text>
       <Button>Get started</Button>
     </Box>
@@ -38,7 +38,12 @@ const RightSection = () => {
 
 export const RLSection = () => {
   return (
-    <Flex justify="center" alignItems="center" mt="100px" mb="150px">
+    <Flex
+      justify="center"
+      alignItems="center"
+      my="100px"
+      direction={{ base: "column", md: "row" }}
+    >
       <LeftSection />
       <RightSection />
     </Flex>

@@ -1,5 +1,15 @@
 import React from "react"
-import { Box, Image, Flex, Divider, Text, Heading } from "@chakra-ui/react"
+import {
+  Box,
+  Image,
+  Flex,
+  Divider,
+  Text,
+  Heading,
+  SimpleGrid,
+  Wrap,
+  WrapItem,
+} from "@chakra-ui/react"
 import { Centered, Container } from "../../components/commons"
 import { categoriesMap } from "../../globals/data"
 import { DynamicColorBox } from "../../components/dynamicColorMode"
@@ -32,11 +42,15 @@ const Project = ({ project }) => (
 
 export const NLPSection = () => (
   <Container my={8}>
-    <Heading mb={4}>Natural Language Processing</Heading>
-    <Flex>
+    <Heading mb={4} ml={4}>
+      Natural Language Processing
+    </Heading>
+    <Wrap>
       {categoriesMap.nlp.projects.map(project => (
-        <Project project={project} />
+        <WrapItem key={project.id}>
+          <Project project={project} />
+        </WrapItem>
       ))}
-    </Flex>
+    </Wrap>
   </Container>
 )

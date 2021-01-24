@@ -1,11 +1,11 @@
 import React from "react"
-import { useColorModeValue, Box } from "@chakra-ui/react"
+import { useColorModeValue, Flex } from "@chakra-ui/react"
 
 export const DynamicColorBox = ({ children, ...props }) => {
   const bg = useColorModeValue("white", "gray.700")
   return (
-    <Box backgroundColor={bg} {...props}>
+    <Flex backgroundColor={bg} direction="column" {...props}>
       {children}
-    </Box>
+    </Flex>
   )
 }
