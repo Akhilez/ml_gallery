@@ -22,6 +22,7 @@ import "swiper/swiper.scss"
 import "swiper/components/navigation/navigation.scss"
 import "swiper/components/pagination/pagination.scss"
 import "swiper/components/scrollbar/scrollbar.scss"
+import { BrandFlex } from "../../components/dynamicColorMode"
 
 SwiperCore.use([Pagination])
 
@@ -33,7 +34,7 @@ const RLTag = ({ name }) => (
 
 const LeftSection = () => (
   <Flex w={{ base: "100%", md: "50%" }} justify="flex-end" mr={8}>
-    <Box w={{ base: "full", md: "md", lg: "lg" }} p={4}>
+    <Box w={{ base: "full", md: "md", "2xl": "3xl" }} p={4} pl={16}>
       <Heading variant="dynamicColorMode">Reinforcement Learning</Heading>
       <Text variant="dynamicColorMode" mt={2} mb={4}>
         Learn how models are trained to play games from basic to
@@ -54,26 +55,26 @@ const LeftSection = () => (
 )
 
 const RLProject = ({ project }) => (
-  <Box width="lg" py={16} pl={16}>
+  <Box width={{ base: "sm", md: "lg" }} py={16} pl={16}>
     <Image
       src={require("../images/" + project.image)}
       alt={project.title + "Image"}
-      height="250px"
+      maxWidth="90%"
+      maxHeight="250px"
       borderRadius="8px"
     />
-    <Heading variant="dynamicGray" fontSize="2xl" mt={4} mb={2}>
+    <Heading color="white" fontSize="2xl" mt={4} mb={2}>
       {project.title}
     </Heading>
-    <Text variant="dynamicColorMode">{project.desc}</Text>
+    <Text color="white">{project.desc}</Text>
   </Box>
 )
 
 const RightSection = () => {
-  const bg = useColorModeValue("brand.500", "brand.800")
   return (
-    <Flex
+    <BrandFlex
+      direction="column"
       borderLeftRadius="40px"
-      backgroundColor={bg}
       w={{ base: "100%", md: "50%" }}
       h="500px"
     >
@@ -91,7 +92,7 @@ const RightSection = () => {
           </SwiperSlide>
         ))}
       </Swiper>
-    </Flex>
+    </BrandFlex>
   )
 }
 

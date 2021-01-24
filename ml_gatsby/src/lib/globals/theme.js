@@ -35,6 +35,11 @@ export default extendTheme({
         }),
         dynamicGray: props => ({
           color: props.colorMode === "dark" ? "gray.200" : "gray.600",
+          fontSize: "lg",
+        }),
+        smallBrand: props => ({
+          color: props.colorMode === "dark" ? "brand.400" : "gray.500",
+          fontSize: "lg",
         }),
       },
     },

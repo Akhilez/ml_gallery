@@ -9,3 +9,12 @@ export const DynamicColorBox = ({ children, ...props }) => {
     </Flex>
   )
 }
+
+export const BrandFlex = ({ children, ...props }) => {
+  const bg = useColorModeValue("brand.500", "brand.800")
+  return (
+    <Flex backgroundColor={bg} {...props}>
+      {children}
+    </Flex>
+  )
+}
