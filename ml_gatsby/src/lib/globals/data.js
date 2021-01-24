@@ -385,3 +385,22 @@ export const projectCategories = [
 export const orderedProjects = projectCategories
   .map(category => category.projects)
   .flat()
+
+export const papers = {
+  dis_cease: {
+    title: "DisCease: Evolving Social Distancing And Herd Immunity",
+    abstract: "This paper ...",
+    image: "dis_cease.png",
+    link: "https://akhil.ai/",
+    conference: "Complex Systems And Networks",
+    association: "University of Cincinnati",
+  },
+  rl_survey: {
+    title: "A Brief Survey of Model-Free Deep Reinforcement Learning",
+    abstract: "This paper ...",
+    image: "rl_survey.png",
+    link: "https://akhil.ai/",
+  },
+}
+
+export const papersList = [papers.dis_cease, papers.rl_survey]

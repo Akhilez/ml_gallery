@@ -16,6 +16,9 @@ import { urls } from "../globals/data"
 import { BasicsSection } from "./components/BasicsSection"
 import { ComputerVisionSection } from "./components/ComputerVisionSection"
 import { NLPSection } from "./components/NLPSection"
+import { RLSection } from "./components/RLSection"
+import { PapersSection } from "./components/PapersSection"
+import { UpcomingSection } from "./components/UpcomingSection"
 
 export const LandingPageV2 = () => (
   <Box>
@@ -24,6 +27,9 @@ export const LandingPageV2 = () => (
     <BasicsSection />
     <ComputerVisionSection />
     <NLPSection />
+    <RLSection />
+    <PapersSection />
+    <UpcomingSection />
   </Box>
 )
 

@@ -31,17 +31,12 @@ const Project = ({ project }) => (
 )
 
 export const NLPSection = () => (
-  <Container>
-    <Centered>
-      <Divider w="2xl" mt={8} />
-      <Heading mt={16} mb={4}>
-        Natural Language Processing
-      </Heading>
-      <Flex justify="center">
-        {categoriesMap.nlp.projects.map(project => (
-          <Project project={project} />
-        ))}
-      </Flex>
-    </Centered>
+  <Container my={8}>
+    <Heading mb={4}>Natural Language Processing</Heading>
+    <Flex>
+      {categoriesMap.nlp.projects.map(project => (
+        <Project project={project} />
+      ))}
+    </Flex>
   </Container>
 )
