@@ -62,17 +62,19 @@ const LeftSection = () => (
 
 const RLProject = ({ project }) => (
   <Box width={{ base: "sm", md: "lg" }} py={16} pl={16}>
-    <Image
-      src={require("../images/" + project.image)}
-      alt={project.title + "Image"}
-      maxWidth="90%"
-      maxHeight="250px"
-      borderRadius="8px"
-    />
-    <Heading color="white" fontSize="2xl" mt={4} mb={2}>
-      {project.title}
-    </Heading>
-    <Text color="gray.300">{project.desc}</Text>
+    <GLink to={project.links.app}>
+      <Image
+        src={require("../images/" + project.image)}
+        alt={project.title + "Image"}
+        maxWidth="90%"
+        maxHeight="250px"
+        borderRadius="8px"
+      />
+      <Heading color="white" fontSize="2xl" mt={4} mb={2}>
+        {project.title}
+      </Heading>
+      <Text color="gray.100">{project.desc}</Text>
+    </GLink>
   </Box>
 )
 

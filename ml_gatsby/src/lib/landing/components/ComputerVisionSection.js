@@ -19,6 +19,7 @@ import "swiper/swiper.scss"
 import "swiper/components/navigation/navigation.scss"
 import "swiper/components/pagination/pagination.scss"
 import "swiper/components/scrollbar/scrollbar.scss"
+import { IconLinks } from "./commons"
 
 SwiperCore.use([Navigation, Pagination, Autoplay])
 
@@ -34,15 +35,20 @@ const ProjectSlide = ({ project }) => {
         p={4}
         borderRadius="15px"
       >
-        <Image
-          src={require("../images/" + project.image)}
-          borderRadius="10px"
-        />
+        <GLink to={project.links.app}>
+          <Image
+            src={require("../images/" + project.image)}
+            borderRadius="10px"
+          />
+        </GLink>
         <Box textAlign="left" p={4}>
-          <Heading variant="dynamicGray" fontSize="2xl" my={2}>
-            {project.title}
-          </Heading>
-          <Text variant="dynamicColorMode">{project.desc}</Text>
+          <GLink to={project.links.app}>
+            <Heading variant="dynamicGray" fontSize="2xl" my={2}>
+              {project.title}
+            </Heading>
+            <Text variant="dynamicColorMode">{project.desc}</Text>
+          </GLink>
+          <IconLinks project={project} />
         </Box>
       </Box>
     </Box>

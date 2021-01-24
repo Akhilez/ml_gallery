@@ -27,25 +27,29 @@ const Project = ({ project }) => (
     width="220px"
     minH="312px"
   >
-    <Image
-      src={require("../images/" + project.image)}
-      alt={project.title + "Image"}
-      height="150px"
-      borderRadius="8px"
-    />
+    <GLink to={project.links.app}>
+      <Image
+        src={require("../images/" + project.image)}
+        alt={project.title + "Image"}
+        height="150px"
+        borderRadius="8px"
+      />
+    </GLink>
     <Box textAlign="left" p={2}>
-      <Heading variant="dynamicGray" fontSize="lg" my={2}>
-        {project.title}
-      </Heading>
-      <Text
-        variant="dynamicColorMode"
-        lineHeight={1.25}
-        fontSize="sm"
-        mt={2}
-        noOfLines={3}
-      >
-        {project.desc}
-      </Text>
+      <GLink to={project.links.app}>
+        <Heading variant="dynamicGray" fontSize="lg" my={2}>
+          {project.title}
+        </Heading>
+        <Text
+          variant="dynamicColorMode"
+          lineHeight={1.25}
+          fontSize="sm"
+          mt={2}
+          noOfLines={3}
+        >
+          {project.desc}
+        </Text>
+      </GLink>
       <IconLinks project={project} />
     </Box>
   </DynamicColorBox>
@@ -62,7 +66,6 @@ export const NLPSection = () => (
         <Tag mr={1}>RNNs</Tag>
         <Tag mx={1}>Embeddings</Tag>
         <Tag mx={1}>Attention</Tag>
-        <Tag mx={1}>Classification</Tag>
       </Flex>
       <Button
         colorScheme="secondary"
