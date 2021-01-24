@@ -13,6 +13,7 @@ import {
 import { Centered, Container } from "../../components/commons"
 import { categoriesMap } from "../../globals/data"
 import { DynamicColorBox } from "../../components/dynamicColorMode"
+import { IconLinks } from "./commons"
 
 const Project = ({ project }) => (
   <DynamicColorBox
@@ -21,7 +22,7 @@ const Project = ({ project }) => (
     boxShadow="xl"
     borderRadius="10px"
     width="220px"
-    h="350px"
+    minH="312px"
   >
     <Image
       src={require("../images/" + project.image)}
@@ -33,9 +34,16 @@ const Project = ({ project }) => (
       <Heading variant="dynamicGray" fontSize="lg" my={2}>
         {project.title}
       </Heading>
-      <Text variant="dynamicColorMode" lineHeight={1.25} fontSize="sm" mt={2}>
+      <Text
+        variant="dynamicColorMode"
+        lineHeight={1.25}
+        fontSize="sm"
+        mt={2}
+        noOfLines={3}
+      >
         {project.desc}
       </Text>
+      <IconLinks project={project} />
     </Box>
   </DynamicColorBox>
 )

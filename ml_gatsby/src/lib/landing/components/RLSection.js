@@ -16,7 +16,7 @@ import { Link as GLink } from "gatsby"
 import { categoriesMap, projects, urls } from "../../globals/data"
 import { Container } from "../../components/commons"
 import { Swiper, SwiperSlide } from "swiper/react"
-import SwiperCore, { Navigation, Pagination } from "swiper"
+import SwiperCore, { Navigation, Pagination, Autoplay } from "swiper"
 
 import "swiper/swiper.scss"
 import "swiper/components/navigation/navigation.scss"
@@ -24,7 +24,7 @@ import "swiper/components/pagination/pagination.scss"
 import "swiper/components/scrollbar/scrollbar.scss"
 import { BrandFlex } from "../../components/dynamicColorMode"
 
-SwiperCore.use([Pagination])
+SwiperCore.use([Pagination, Autoplay])
 
 const RLTag = ({ name }) => (
   <WrapItem>
@@ -70,29 +70,37 @@ const RLProject = ({ project }) => (
   </Box>
 )
 
-const RightSection = () => (
-  <BrandFlex
-    direction="column"
-    borderLeftRadius="40px"
-    w={{ base: "100%", md: "50%" }}
-    h="500px"
-  >
-    <Swiper
-      spaceBetween={50}
-      slidesPerView={1}
-      pagination={{ clickable: true }}
-      className="vision_carousal"
-      direction="vertical"
-      style={{ marginLeft: 0 }}
+const RightSection = () => {
+  const bg = useColorModeValue(
+    "linear(to-br, brand.500, red.500)",
+    "linear(to-br, brand.700, red.700)"
+  )
+  return (
+    <Flex
+      direction="column"
+      borderLeftRadius="40px"
+      w={{ base: "100%", md: "50%" }}
+      h="500px"
+      bgGradient={bg}
     >
-      {categoriesMap.reinforce.projects.map(project => (
-        <SwiperSlide key={project.id}>
-          <RLProject project={project} />
-        </SwiperSlide>
-      ))}
-    </Swiper>
-  </BrandFlex>
-)
+      <Swiper
+        spaceBetween={50}
+        slidesPerView={1}
+        pagination={{ clickable: true }}
+        className="vision_carousal"
+        direction="vertical"
+        style={{ marginLeft: 0 }}
+        autoplay={{ delay: 2500, disableOnInteraction: true }}
+      >
+        {categoriesMap.reinforce.projects.map(project => (
+          <SwiperSlide key={project.id}>
+            <RLProject project={project} />
+          </SwiperSlide>
+        ))}
+      </Swiper>
+    </Flex>
+  )
+}
 
 export const RLSection = () => {
   return (

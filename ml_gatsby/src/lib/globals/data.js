@@ -323,6 +323,8 @@ const categoriesMap_ = {
   },
   vision: {
     title: "Computer Vision",
+    desc:
+      "Visualize and learn Computer Vision models from basic classifiers to complex vision problems",
     projects: [
       projects.which_char,
       projects.find_char,

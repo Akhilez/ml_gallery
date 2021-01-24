@@ -9,10 +9,11 @@ import {
   Flex,
   useColorModeValue,
 } from "@chakra-ui/react"
+import { Link as GLink } from "gatsby"
 import { MetaTags } from "../components/MetaTags"
 import { Container } from "../components/commons"
 import mlg_logo from "../media/ml_logo/ml_logo.png"
-import { urls } from "../globals/data"
+import { projects, urls } from "../globals/data"
 import { BasicsSection } from "./components/BasicsSection"
 import { ComputerVisionSection } from "./components/ComputerVisionSection"
 import { NLPSection } from "./components/NLPSection"
@@ -62,7 +63,13 @@ const IntroSection = () => (
           This is a master project of some experiments with Neural Networks.
           Every project here is runnable, visualized and explained clearly.
         </Text>
-        <Button mt={4} colorScheme="secondary" size="sm">
+        <Button
+          mt={4}
+          colorScheme="secondary"
+          size="sm"
+          as={GLink}
+          to={projects.learn_line.links.app}
+        >
           Take a tour
         </Button>
       </Box>

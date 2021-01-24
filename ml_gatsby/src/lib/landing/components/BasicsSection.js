@@ -7,10 +7,16 @@ import {
   Text,
   Tag,
   Image,
+  Wrap,
+  Link,
+  WrapItem,
   useColorModeValue,
 } from "@chakra-ui/react"
 import { Link as GLink } from "gatsby"
 import { categoriesMap, projects } from "../../globals/data"
+import { BiCode } from "react-icons/all"
+import colabIcon from "src/lib/landing/images/colab.png"
+import { IconLinks } from "./commons"
 
 const RightSection = () => {
   return (
@@ -29,7 +35,13 @@ const RightSection = () => {
           <Tag mr={2}>Regression</Tag>
           <Tag>Classification</Tag>
         </Flex>
-        <Button my={2} size="sm" colorScheme="secondary">
+        <Button
+          my={2}
+          size="sm"
+          colorScheme="secondary"
+          as={GLink}
+          to={projects.learn_line.links.app}
+        >
           Start with basics
         </Button>
         <Box height={{ base: 0, md: "100px" }} />
@@ -55,25 +67,31 @@ const BasicProject = ({ project }) => {
         </GLink>
       </Box>
       <Box p={2}>
-        <Heading variant="dynamicGray" fontSize="lg" my={2}>
-          {project.title}
-        </Heading>
-        <Text variant="dynamicColorMode" fontSize="sm" lineHeight="1">
-          {project.desc}
-        </Text>
+        <GLink to={project.links.app}>
+          <Heading variant="dynamicGray" fontSize="lg" my={2}>
+            {project.title}
+          </Heading>
+          <Text variant="dynamicColorMode" fontSize="sm" lineHeight="1">
+            {project.desc}
+          </Text>
+        </GLink>
+        <IconLinks project={project} />
       </Box>
     </Flex>
   )
 }
 
 const LeftSection = () => {
-  const bg = useColorModeValue("brand.500", "brand.800")
+  const bg = useColorModeValue(
+    "linear(to-bl, brand.500, red.500)",
+    "linear(to-bl, brand.700, red.700)"
+  )
   return (
     <Flex
       borderRightRadius="40px"
-      backgroundColor={bg}
       w={{ base: "100%", md: "50%" }}
       justify="flex-end"
+      bgGradient={bg}
     >
       <Box w={{ base: "sm", sm: "lg" }} py={6} pr={8}>
         {categoriesMap.linear.projects.map(project => (

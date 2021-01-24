@@ -6,13 +6,13 @@ import {
   Box,
   UnorderedList,
   ListItem,
+  Text,
 } from "@chakra-ui/react"
 import { projectCategories, projectStatus } from "../../globals/data"
-import { Text } from "recharts"
 
 const ToDoSection = ({ category }) => (
   <Box>
-    <Heading variant="dynamicGray" mt={6} fontWeight="bold">
+    <Heading variant="dynamicGray" mt={6}>
       {category.title}
     </Heading>
     <Divider width="md" my={2} />
