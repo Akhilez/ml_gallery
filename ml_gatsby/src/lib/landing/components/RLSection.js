@@ -66,35 +66,33 @@ const RLProject = ({ project }) => (
     <Heading color="white" fontSize="2xl" mt={4} mb={2}>
       {project.title}
     </Heading>
-    <Text color="white">{project.desc}</Text>
+    <Text color="gray.300">{project.desc}</Text>
   </Box>
 )
 
-const RightSection = () => {
-  return (
-    <BrandFlex
-      direction="column"
-      borderLeftRadius="40px"
-      w={{ base: "100%", md: "50%" }}
-      h="500px"
+const RightSection = () => (
+  <BrandFlex
+    direction="column"
+    borderLeftRadius="40px"
+    w={{ base: "100%", md: "50%" }}
+    h="500px"
+  >
+    <Swiper
+      spaceBetween={50}
+      slidesPerView={1}
+      pagination={{ clickable: true }}
+      className="vision_carousal"
+      direction="vertical"
+      style={{ marginLeft: 0 }}
     >
-      <Swiper
-        spaceBetween={50}
-        slidesPerView={1}
-        pagination={{ clickable: true }}
-        className="vision_carousal"
-        direction="vertical"
-        style={{ marginLeft: 0 }}
-      >
-        {categoriesMap.reinforce.projects.map(project => (
-          <SwiperSlide key={project.id}>
-            <RLProject project={project} />
-          </SwiperSlide>
-        ))}
-      </Swiper>
-    </BrandFlex>
-  )
-}
+      {categoriesMap.reinforce.projects.map(project => (
+        <SwiperSlide key={project.id}>
+          <RLProject project={project} />
+        </SwiperSlide>
+      ))}
+    </Swiper>
+  </BrandFlex>
+)
 
 export const RLSection = () => {
   return (

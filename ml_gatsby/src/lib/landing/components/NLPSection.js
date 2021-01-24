@@ -42,7 +42,7 @@ const Project = ({ project }) => (
 
 export const NLPSection = () => (
   <Container my={8}>
-    <Heading mb={4} ml={4}>
+    <Heading mb={4} ml={4} variant="dynamicColorMode">
       Natural Language Processing
     </Heading>
     <Wrap>

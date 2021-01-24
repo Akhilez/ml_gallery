@@ -1,7 +1,19 @@
 import React from "react"
-import { Box, Divider, Link, Text, useTheme } from "@chakra-ui/react"
+import {
+  Box,
+  Divider,
+  Link,
+  Text,
+  Flex,
+  Image,
+  IconButton,
+  useColorModeValue,
+  useTheme,
+} from "@chakra-ui/react"
 import { Link as GLink } from "gatsby"
 import { urls } from "../globals/data"
+import ak_logo_white from "src/lib/media/ak_white.svg"
+import { AiFillGithub, BiEnvelope } from "react-icons/all"
 
 export const Container = ({ children, ...props }) => {
   const theme = useTheme()
@@ -22,21 +34,31 @@ export function Centered(props) {
   return <div align={"center"}>{props.children}</div>
 }
 
+const ContactIcon = ({ icon: Icon, url }) => (
+  <IconButton as={Link} mx={2} isRound size="sm" href={url} isExternal>
+    <Icon />
+  </IconButton>
+)
+
 export function Footer() {
+  const bg = useColorModeValue("gray.600", "gray.900")
   return (
-    <Container textAlign="center" mt="50px">
-      <Centered>
-        <Divider />
-        <Box my="25px">
-          <Text>
-            ML Gallery by{" "}
-            <Link href={urls.profile} fontStyle="italic" fontWeight="bold">
-              Akhilez
-            </Link>
-          </Text>
-        </Box>
-      </Centered>
-    </Container>
+    <Box backgroundColor={bg} h="150px">
+      <Container pt="50px" pl={4}>
+        <Flex justify="space-between">
+          <Flex align="center">
+            <Image src={ak_logo_white} height="20px" />
+            <Text color="white" ml={4} fontSize="20px">
+              ML Gallery
+            </Text>
+          </Flex>
+          <Flex>
+            <ContactIcon icon={AiFillGithub} url={urls.repo} />
+            <ContactIcon icon={BiEnvelope} url="mailto:akhilez.ai@gmail.com" />
+          </Flex>
+        </Flex>
+      </Container>
+    </Box>
   )
 }
 

@@ -20,7 +20,7 @@ export default extendTheme({
       },
       variants: {
         dynamicColorMode: props => ({
-          color: props.colorMode === "dark" ? "gray.200" : "gray.600",
+          color: props.colorMode === "dark" ? "gray.400" : "gray.600",
         }),
       },
     },
@@ -30,12 +30,12 @@ export default extendTheme({
         color: "brand.500",
       },
       variants: {
-        dynamicBrandColor: props => ({
+        dynamicColorMode: props => ({
           color: props.colorMode === "dark" ? "brand.400" : "brand.500",
         }),
         dynamicGray: props => ({
           color: props.colorMode === "dark" ? "gray.200" : "gray.600",
-          fontSize: "lg",
+          fontSize: "xl",
         }),
         smallBrand: props => ({
           color: props.colorMode === "dark" ? "brand.400" : "gray.500",

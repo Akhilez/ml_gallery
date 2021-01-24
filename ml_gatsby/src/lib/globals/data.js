@@ -11,12 +11,18 @@ export const urls = {
   repo: "https://github.com/Akhilez/ml_gallery",
 }
 
+export const projectStatus = {
+  toDo: "Yet to start",
+  inProgress: "In Progress",
+  done: "Done",
+}
+
 const projectsRaw = {
   learn_line: {
     title: "Learn a Line",
     desc: "Train a neuron to learn line equation",
     image: "learn_line.jpg",
-    status: "in_progress",
+    status: projectStatus.done,
     links: {
       app: "/gallery/linear/learn_line",
       source: "https://github.com/Akhilez/ml_gallery",
@@ -26,7 +32,7 @@ const projectsRaw = {
     title: "Linear Classifier",
     desc: "Train a neuron to classify data",
     image: "linear_classifier.png",
-    status: "in_progress",
+    status: projectStatus.done,
     links: {
       app: "/gallery/linear/linear_classifier",
       source: "https://github.com/Akhilez/ml_gallery",
@@ -36,7 +42,7 @@ const projectsRaw = {
     title: "Learn A Curve",
     desc: "Train a neural net to predict curves",
     image: "learn_curve.png",
-    status: "in_progress",
+    status: projectStatus.done,
     links: {
       app: "/gallery/linear/learn_curve",
       source: "https://github.com/Akhilez/ml_gallery",
@@ -46,7 +52,7 @@ const projectsRaw = {
     title: "Deep Iris",
     desc: "Train a neural net to classify Iris dataset",
     image: "deep_iris.png",
-    status: "to_do",
+    status: projectStatus.done,
     links: {
       app: "/gallery/linear/deep_iris",
       source: "https://github.com/Akhilez/ml_gallery",
@@ -58,7 +64,7 @@ const projectsRaw = {
     title: "Which Character?",
     desc: "Draw a number in the box and recognize what number it is",
     image: "which_char.png",
-    status: "to_do",
+    status: projectStatus.done,
     links: {
       app: "/gallery/vision/which_char",
       source: "https://github.com/Akhilez/ml_gallery",
@@ -69,7 +75,7 @@ const projectsRaw = {
     desc:
       "Generate handwritten numbers using Generative Adversarial Network fused with a Classifier.",
     image: "mnist_gan.png",
-    status: "to_do",
+    status: projectStatus.toDo,
     links: {
       app: "/gallery/vision/mnist_gan",
       source: "/mnist_gan",
@@ -82,7 +88,7 @@ const projectsRaw = {
     desc:
       "A web application that colorizes grayscale images using a Convolutional Neural Network. This was my major project in my undergrad.",
     image: "colorizer.jpg",
-    status: "to_do",
+    status: projectStatus.done,
     links: {
       app: "https://akhilez.com/colorizer/",
       source: "https://github.com/Akhilez/ml_gallery",
@@ -92,7 +98,7 @@ const projectsRaw = {
     title: "Find The Number",
     desc: "Draw a number in the box and find its location",
     image: "find_number.png",
-    status: "to_do",
+    status: projectStatus.done,
     links: {
       app: "/gallery/vision/find_char",
       source:
@@ -105,7 +111,7 @@ const projectsRaw = {
     title: "Positional CNN",
     desc: "A CNN architecture that is not positionally invariant",
     image: "positional_cnn.png",
-    status: "to_do",
+    status: projectStatus.done,
     links: {
       app: "/gallery/vision/positional_cnn",
       source:
@@ -118,7 +124,7 @@ const projectsRaw = {
     title: "Dense Cap",
     desc: "Generate English captions for numbers and their clusters",
     image: "under_construction2.png",
-    status: "to_do",
+    status: projectStatus.toDo,
     links: {
       app: "/gallery/vision/dense_cap",
     },
@@ -127,7 +133,7 @@ const projectsRaw = {
     title: "Find All Numbers",
     desc: "",
     image: "faster_rcnn.png",
-    status: "to_do",
+    status: projectStatus.toDo,
     links: {
       app: "/gallery/vision/find_all_chars",
       source:
@@ -140,7 +146,7 @@ const projectsRaw = {
     title: "Attention, Attention!",
     desc: "",
     image: "under_construction2.png",
-    status: "to_do",
+    status: projectStatus.toDo,
     links: {
       app: "/gallery/coming_soon",
       source: "",
@@ -150,7 +156,7 @@ const projectsRaw = {
     title: "Style, Please",
     desc: "",
     image: "under_construction2.png",
-    status: "to_do",
+    status: projectStatus.toDo,
     links: {
       app: "/gallery/coming_soon",
       source: "",
@@ -160,7 +166,7 @@ const projectsRaw = {
     title: "Style, Please V2",
     desc: "Style GAN",
     image: "under_construction2.png",
-    status: "to_do",
+    status: projectStatus.toDo,
     links: {
       app: "/gallery/coming_soon",
       source: "",
@@ -173,7 +179,7 @@ const projectsRaw = {
     desc:
       "Visualize how a Recurrent Neural Network predicts which letter comes next.",
     image: "next_char.png",
-    status: "to_do",
+    status: projectStatus.done,
     links: {
       app: "/gallery/nlp/next_char",
       source:
@@ -187,7 +193,7 @@ const projectsRaw = {
     desc:
       "Lets predict what genre a movie is based on its plot using Attention!",
     image: "under_construction2.png",
-    status: "to_do",
+    status: projectStatus.inProgress,
     links: {
       app: "/gallery/coming_soon",
       source: "",
@@ -197,7 +203,7 @@ const projectsRaw = {
     title: "Action Assistant",
     desc: "Take actions by ordering in natural English language.",
     image: "under_construction2.png",
-    status: "to_do",
+    status: projectStatus.toDo,
     links: {
       app: "/gallery/coming_soon",
       source: "",
@@ -207,7 +213,7 @@ const projectsRaw = {
     title: "Next Sentence",
     desc: "",
     image: "under_construction2.png",
-    status: "to_do",
+    status: projectStatus.toDo,
     links: {
       app: "/gallery/coming_soon",
       source: "",
@@ -216,30 +222,20 @@ const projectsRaw = {
 
   // Reinforcement Learning
   alpha_nine: {
-    title: "Alpha Nine Morris",
+    title: "Nine Mens Morris",
     desc: "9 Men's Morris with AlphaGo like algorithm",
     image: "alpha_nine.png",
-    status: "to_do",
+    status: projectStatus.inProgress,
     links: {
       app: "/gallery/rl/alpha_nine",
       source: "",
     },
   },
   gridworld: {
-    title: "Grid World - Actor-Critic",
+    title: "Grid World",
     desc: "Navigate the player to a desired location.",
     image: "gridworld.png",
-    status: "to_do",
-    links: {
-      app: "/gallery/coming_soon",
-      source: "",
-    },
-  },
-  racer: {
-    title: "Racer",
-    desc: "",
-    image: "under_construction2.png",
-    status: "to_do",
+    status: projectStatus.toDo,
     links: {
       app: "/gallery/coming_soon",
       source: "",
@@ -249,7 +245,7 @@ const projectsRaw = {
     title: "Dodger",
     desc: "Escape the on-coming obstacles by moving left or right",
     image: "under_construction2.png",
-    status: "to_do",
+    status: projectStatus.toDo,
     links: {
       app: "/gallery/coming_soon",
       source: "",
@@ -261,7 +257,7 @@ const projectsRaw = {
     title: "AutoEncoder",
     desc: "",
     image: "under_construction2.png",
-    status: "to_do",
+    status: projectStatus.toDo,
     links: {
       app: "/gallery/coming_soon",
       source: "",
@@ -271,7 +267,7 @@ const projectsRaw = {
     title: "Self-Organizing Feature Maps",
     desc: "",
     image: "under_construction2.png",
-    status: "to_do",
+    status: projectStatus.toDo,
     links: {
       app: "/gallery/coming_soon",
       source: "",
@@ -281,7 +277,7 @@ const projectsRaw = {
     title: "Memorize Please",
     desc: "",
     image: "under_construction2.png",
-    status: "to_do",
+    status: projectStatus.toDo,
     links: {
       app: "/gallery/coming_soon",
       source: "",
@@ -293,7 +289,7 @@ const projectsRaw = {
     title: "Spiking Neurons",
     desc: "",
     image: "under_construction2.png",
-    status: "to_do",
+    status: projectStatus.toDo,
     links: {
       app: "/gallery/coming_soon",
       source: "",
@@ -303,22 +299,21 @@ const projectsRaw = {
     title: "MNIST Detection Dataset",
     desc: "",
     image: "under_construction2.png",
-    status: "in_progress",
+    status: projectStatus.inProgress,
     links: {
       app: "/gallery/coming_soon",
       source: "",
     },
   },
 }
-
 Object.keys(projectsRaw).map(key => {
   projectsRaw[key].id = key
 })
-
 export const projects = projectsRaw
 
-export const categoriesMap = {
+const categoriesMap_ = {
   linear: {
+    title: "Linear Neural Networks",
     projects: [
       projects.learn_line,
       projects.linear_classifier,
@@ -352,12 +347,7 @@ export const categoriesMap = {
   },
   reinforce: {
     title: "Reinforcement Learning",
-    projects: [
-      projects.gridworld,
-      projects.alpha_nine,
-      projects.racer,
-      projects.dodger,
-    ],
+    projects: [projects.gridworld, projects.alpha_nine, projects.dodger],
   },
   unsupervised: {
     title: "Unsupervised Learning",
@@ -372,6 +362,10 @@ export const categoriesMap = {
     projects: [projects.spiking_neurons, projects.mnist_detection_dataset],
   },
 }
+Object.keys(categoriesMap_).map(key => {
+  categoriesMap_[key].category = key
+})
+export const categoriesMap = categoriesMap_
 
 export const projectCategories = [
   categoriesMap.linear,
