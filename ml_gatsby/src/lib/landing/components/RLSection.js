@@ -47,7 +47,13 @@ const LeftSection = () => (
         <RLTag name="AlphaZero" />
         <RLTag name="MuZero" />
       </Wrap>
-      <Button mt={4} colorScheme="secondary" size="sm">
+      <Button
+        mt={4}
+        colorScheme="secondary"
+        size="sm"
+        as={GLink}
+        to={projects.alpha_nine.links.app}
+      >
         Get started
       </Button>
     </Box>

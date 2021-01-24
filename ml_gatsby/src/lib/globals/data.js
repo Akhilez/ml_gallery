@@ -340,6 +340,7 @@ const categoriesMap_ = {
   },
   nlp: {
     title: "Natural Language Processing",
+    desc: "Learn how neural networks are trained on text",
     projects: [
       projects.next_char,
       projects.what_genre,

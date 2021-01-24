@@ -6,11 +6,14 @@ import {
   Image,
   useColorModeValue,
   Button,
+  Tag,
+  Flex,
 } from "@chakra-ui/react"
+import { Link as GLink } from "gatsby"
 import { Centered, Container } from "../../components/commons"
 import SwiperCore, { Navigation, Pagination, Autoplay } from "swiper"
 import { Swiper, SwiperSlide } from "swiper/react"
-import { categoriesMap } from "../../globals/data"
+import { categoriesMap, projects } from "../../globals/data"
 
 import "swiper/swiper.scss"
 import "swiper/components/navigation/navigation.scss"
@@ -54,7 +57,19 @@ export const ComputerVisionSection = () => {
         <Text variant="dynamicColorMode" mt={2}>
           {categoriesMap.vision.desc}
         </Text>
-        <Button colorScheme="secondary" size="sm" mt={4}>
+        <Flex my={2} justify="center">
+          <Tag mx={1}>Classification</Tag>
+          <Tag mx={1}>Detection</Tag>
+          <Tag mx={1}>Captioning</Tag>
+          <Tag mx={1}>GANs</Tag>
+        </Flex>
+        <Button
+          colorScheme="secondary"
+          size="sm"
+          mt={4}
+          as={GLink}
+          to={projects.which_char.links.app}
+        >
           Start here
         </Button>
         <Swiper

@@ -6,6 +6,7 @@ import {
   Divider,
   Heading,
   Flex,
+  Link,
   Image,
   Wrap,
   WrapItem,
@@ -29,6 +30,7 @@ const Paper = ({ paper }) => (
         {paper.title}
       </Heading>
       <Text variant="dynamicColorMode" noOfLines={5}>
+        <strong>Abstract: </strong>
         {paper.abstract}
       </Text>
       <Button
@@ -36,6 +38,9 @@ const Paper = ({ paper }) => (
         size="sm"
         mt={4}
         rightIcon={<HiExternalLink />}
+        as={Link}
+        href={paper.link}
+        isExternal
       >
         Read
       </Button>
