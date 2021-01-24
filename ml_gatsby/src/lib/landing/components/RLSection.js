@@ -54,16 +54,17 @@ const LeftSection = () => (
 )
 
 const RLProject = ({ project }) => (
-  <Box>
+  <Box width="lg" py={16} pl={16}>
     <Image
       src={require("../images/" + project.image)}
       alt={project.title + "Image"}
-      height="150px"
+      height="250px"
+      borderRadius="8px"
     />
-    <Heading variant="dynamicGray" fontSize="lg">
+    <Heading variant="dynamicGray" fontSize="2xl" mt={4} mb={2}>
       {project.title}
     </Heading>
-    <Text>{project.desc}</Text>
+    <Text variant="dynamicColorMode">{project.desc}</Text>
   </Box>
 )
 
@@ -82,6 +83,7 @@ const RightSection = () => {
         pagination={{ clickable: true }}
         className="vision_carousal"
         direction="vertical"
+        style={{ marginLeft: 0 }}
       >
         {categoriesMap.reinforce.projects.map(project => (
           <SwiperSlide key={project.id}>
