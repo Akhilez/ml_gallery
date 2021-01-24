@@ -5,6 +5,7 @@ import {
   Flex,
   Heading,
   Text,
+  Tag,
   Image,
   useColorModeValue,
 } from "@chakra-ui/react"
@@ -24,6 +25,10 @@ const RightSection = () => {
         <Text variant="dynamicColorMode" my={2}>
           Start your Deep Learning journey with simple problems
         </Text>
+        <Flex my={2}>
+          <Tag mr={2}>Regression</Tag>
+          <Tag>Classification</Tag>
+        </Flex>
         <Button my={2} size="sm" colorScheme="secondary">
           Start with basics
         </Button>

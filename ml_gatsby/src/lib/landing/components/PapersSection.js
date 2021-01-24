@@ -69,7 +69,7 @@ const Paper2 = ({ paper }) => (
         {paper.title}
       </Heading>
       <Text fontSize="sm" lineHeight="1.15">
-        {paper.abstract}
+        Abstract: {paper.abstract}
       </Text>
     </Flex>
     <Box w="100px">
