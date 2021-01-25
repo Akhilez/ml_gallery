@@ -17,6 +17,7 @@ import { Centered, Container } from "../../components/commons"
 import { categoriesMap, projects } from "../../globals/data"
 import { DynamicColorBox } from "../../components/dynamicColorMode"
 import { IconLinks } from "./commons"
+import Typing from "react-typing-animation"
 
 const Project = ({ project }) => (
   <DynamicColorBox
@@ -59,7 +60,14 @@ export const NLPSection = () => (
   <Container my={8}>
     <Box ml={4} mb={4}>
       <Heading mb={2} variant="dynamicColorMode">
-        Natural Language Processing
+        <Typing speed={100} loop>
+          <span>
+            Natural <Typing.Speed ms={5} />
+            Language
+            <Typing.Speed ms={10} /> Processing
+          </span>
+          <Typing.Backspace count={27} speed={1} delay={3000} />
+        </Typing>
       </Heading>
       <Text variant="dynamicColorMode">{categoriesMap.nlp.desc}</Text>
       <Flex my={2}>
