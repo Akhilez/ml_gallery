@@ -35,7 +35,7 @@ export class PositionalCNN extends React.Component {
           />
           <IconButton
             aria-label="icon"
-            icon={MdRefresh}
+            icon={<MdRefresh />}
             isRound
             variant="outline"
             colorScheme="red"

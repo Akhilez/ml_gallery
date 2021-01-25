@@ -25,7 +25,7 @@ export class FindAllChars extends React.Component {
           <FindAllCharsCanvas ref={this.canvasRef} parent={this} />
           <IconButton
             aria-label="icon"
-            icon={MdRefresh}
+            icon={<MdRefresh />}
             isRound
             variant="outline"
             colorScheme="red"

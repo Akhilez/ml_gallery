@@ -50,7 +50,7 @@ export class FindChar extends React.Component {
               </Flex>
               <IconButton
                 aria-label="icon"
-                icon={MdRefresh}
+                icon={<MdRefresh />}
                 isRound
                 variant="outline"
                 colorScheme="red"

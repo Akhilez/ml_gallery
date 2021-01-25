@@ -2,7 +2,16 @@ import React from "react"
 import { projects } from "src/lib/globals/data"
 import { ProjectWrapper } from "src/lib/components/ProjectWrapper"
 import MLHelper from "src/lib/linear/learn_line/neural_net"
-import { NumberInput, Flex, Button, Box } from "@chakra-ui/react"
+import {
+  Flex,
+  Button,
+  Box,
+  NumberInput,
+  NumberInputField,
+  NumberInputStepper,
+  NumberIncrementStepper,
+  NumberDecrementStepper,
+} from "@chakra-ui/react"
 import {
   CartesianGrid,
   Legend,
@@ -66,7 +75,7 @@ export class LearnLine extends React.Component {
 
   getEquationInput() {
     return (
-      <Flex alignItems="center" justifyContent="center" mb={4}>
+      <Flex alignItems="center" justifyContent="center" my={4}>
         y = m:
         {this.getParamsPicker("M")} x + c:
         {this.getParamsPicker("C")}
@@ -169,7 +178,13 @@ export class LearnLine extends React.Component {
           placeholder="m"
           mx={2}
           onChange={value => this.setState({ m: value })}
-        />
+        >
+          <NumberInputField />
+          <NumberInputStepper>
+            <NumberIncrementStepper />
+            <NumberDecrementStepper />
+          </NumberInputStepper>
+        </NumberInput>
       )
     else if (params === "C") {
       return (
@@ -178,7 +193,13 @@ export class LearnLine extends React.Component {
           placeholder="c"
           mx={2}
           onChange={value => this.setState({ c: value })}
-        />
+        >
+          <NumberInputField />
+          <NumberInputStepper>
+            <NumberIncrementStepper />
+            <NumberDecrementStepper />
+          </NumberInputStepper>
+        </NumberInput>
       )
     }
   }
