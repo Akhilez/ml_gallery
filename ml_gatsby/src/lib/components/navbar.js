@@ -21,7 +21,7 @@ import { Container, SolidLink } from "./commons"
 
 const NavLink = ({ href, icon, ...props }) => (
   <SolidLink href={href} mx={1} {...props}>
-    <Box as={icon} fontSize="lg" />
+    <Box as={icon} color="gray.500" fontSize="lg" />
   </SolidLink>
 )
 
