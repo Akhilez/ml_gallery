@@ -126,7 +126,7 @@ const projectsRaw = {
     image: "under_construction2.png",
     status: projectStatus.toDo,
     links: {
-      app: "/gallery/vision/dense_cap",
+      app: "/gallery/coming_soon",
     },
   },
   find_all_chars: {

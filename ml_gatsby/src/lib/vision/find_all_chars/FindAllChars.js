@@ -37,4 +37,6 @@ export class FindAllChars extends React.Component {
       </ProjectWrapper>
     )
   }
+
+  predict = () => {}
 }

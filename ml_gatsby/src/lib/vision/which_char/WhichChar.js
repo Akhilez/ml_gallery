@@ -5,14 +5,7 @@ import MnistClassifier from "./classifier"
 import { Centered } from "../../components/commons"
 import { MdRefresh } from "react-icons/all"
 import NumberPaintCanvas from "./paint_canvas"
-import {
-  Box,
-  Button,
-  Flex,
-  IconButton,
-  PseudoBox,
-  Text,
-} from "@chakra-ui/react"
+import { Box, Button, Flex, IconButton, Text } from "@chakra-ui/react"
 import {
   Bar,
   BarChart,
@@ -116,7 +109,7 @@ export class WhichChar extends React.Component {
     return (
       <Flex justifyContent={{ lg: "center" }} overflow="auto" py={4}>
         {this.sampleRefs.map((ref, index) => (
-          <PseudoBox
+          <Box
             as="canvas"
             onClick={() => this.setSampleImage(index)}
             key={index}
