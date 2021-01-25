@@ -13,6 +13,7 @@ export const IconLinks = ({ project }) => (
           color="secondary.500"
           href={project.links.source}
           isExternal
+          _groupHover={{ color: "white" }}
         />
       </WrapItem>
     )}

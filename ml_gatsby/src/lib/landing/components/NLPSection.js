@@ -27,6 +27,8 @@ const Project = ({ project }) => (
     borderRadius="10px"
     width="220px"
     minH="312px"
+    role="group"
+    _hover={{ backgroundColor: "secondary.500", transitionDuration: "0.4s" }}
   >
     <GLink to={project.links.app}>
       <Image
@@ -38,7 +40,12 @@ const Project = ({ project }) => (
     </GLink>
     <Box textAlign="left" p={2}>
       <GLink to={project.links.app}>
-        <Heading variant="dynamicGray" fontSize="lg" my={2}>
+        <Heading
+          variant="dynamicGray"
+          fontSize="lg"
+          my={2}
+          _groupHover={{ color: "white" }}
+        >
           {project.title}
         </Heading>
         <Text
@@ -47,6 +54,7 @@ const Project = ({ project }) => (
           fontSize="sm"
           mt={2}
           noOfLines={3}
+          _groupHover={{ color: "white" }}
         >
           {project.desc}
         </Text>

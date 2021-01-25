@@ -20,17 +20,21 @@ import {
 } from "react-icons/all"
 import { Container, SolidLink } from "./commons"
 
-const NavLink = ({ href, icon, ...props }) => (
-  <SolidLink href={href} color="brand.500" mx={1} {...props}>
-    <Icon as={icon} fontSize="lg" />
-  </SolidLink>
-)
+const NavLink = ({ href, icon, ...props }) => {
+  const color = useColorModeValue("brand.500", "gray.400")
+  return (
+    <SolidLink href={href} color={color} mx={1} {...props}>
+      <Icon as={icon} fontSize="lg" />
+    </SolidLink>
+  )
+}
 
 const DarkModeButton = () => {
   const { colorMode, toggleColorMode } = useColorMode()
   const isLight = colorMode === "light"
+  const color = useColorModeValue("brand.500", "gray.400")
   return (
-    <SolidLink as={Box} mx={1} color="brand.500" onClick={toggleColorMode}>
+    <SolidLink as={Box} mx={1} color={color} onClick={toggleColorMode}>
       <Icon fontSize="lg" as={isLight ? IoMdMoon : IoMdSunny} />
     </SolidLink>
   )

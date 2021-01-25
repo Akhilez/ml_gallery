@@ -53,7 +53,18 @@ const RightSection = () => {
 const BasicProject = ({ project }) => {
   const bg = useColorModeValue("backgroundColor", "gray.800")
   return (
-    <Flex backgroundColor={bg} m={6} borderRadius="14px" boxShadow="xl">
+    <Flex
+      backgroundColor={bg}
+      m={6}
+      borderRadius="14px"
+      boxShadow="xl"
+      role="group"
+      _hover={{
+        backgroundColor: "secondary.500",
+        transitionDuration: "0.4s",
+        color: "white",
+      }}
+    >
       <Box p={2}>
         <GLink to={project.links.app}>
           <Image
@@ -68,10 +79,20 @@ const BasicProject = ({ project }) => {
       </Box>
       <Box p={2}>
         <GLink to={project.links.app}>
-          <Heading variant="dynamicGray" fontSize="lg" my={2}>
+          <Heading
+            variant="dynamicGray"
+            fontSize="lg"
+            my={2}
+            _groupHover={{ color: "white" }}
+          >
             {project.title}
           </Heading>
-          <Text variant="dynamicColorMode" fontSize="sm" lineHeight="1">
+          <Text
+            variant="dynamicColorMode"
+            fontSize="sm"
+            lineHeight="1"
+            _groupHover={{ color: "white" }}
+          >
             {project.desc}
           </Text>
         </GLink>
