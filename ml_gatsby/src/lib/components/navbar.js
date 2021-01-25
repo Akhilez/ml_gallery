@@ -6,6 +6,7 @@ import {
   Flex,
   Image,
   useColorMode,
+  Icon,
   useColorModeValue,
 } from "@chakra-ui/react"
 import { Link as GLink } from "gatsby"
@@ -20,8 +21,8 @@ import {
 import { Container, SolidLink } from "./commons"
 
 const NavLink = ({ href, icon, ...props }) => (
-  <SolidLink href={href} mx={1} {...props}>
-    <Box as={icon} color="gray.500" fontSize="lg" />
+  <SolidLink href={href} color="brand.500" mx={1} {...props}>
+    <Icon as={icon} fontSize="lg" />
   </SolidLink>
 )
 
@@ -29,8 +30,8 @@ const DarkModeButton = () => {
   const { colorMode, toggleColorMode } = useColorMode()
   const isLight = colorMode === "light"
   return (
-    <SolidLink as={Box} mx={1} onClick={toggleColorMode}>
-      <Box fontSize="lg" as={isLight ? IoMdMoon : IoMdSunny} />
+    <SolidLink as={Box} mx={1} color="brand.500" onClick={toggleColorMode}>
+      <Icon fontSize="lg" as={isLight ? IoMdMoon : IoMdSunny} />
     </SolidLink>
   )
 }
