@@ -18,7 +18,7 @@ const ToDoSection = ({ category }) => (
     <Divider width="md" my={2} />
     <UnorderedList spacing={1}>
       {category.toDoProjects.map(project => (
-        <ListItem>
+        <ListItem key={project.title}>
           <Text variant="dynamicColorMode">{project.title}</Text>
         </ListItem>
       ))}
@@ -39,7 +39,7 @@ export const UpcomingSection = () => {
     <Container my={16} p={4}>
       <Heading variant="dynamicColorMode">More to come</Heading>
       {toDoProjects.map(category => (
-        <ToDoSection category={category} />
+        <ToDoSection key={category.title} category={category} />
       ))}
     </Container>
   )

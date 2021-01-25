@@ -1,7 +1,7 @@
 import React from "react"
 import {
   Accordion,
-  AccordionHeader,
+  AccordionButton,
   AccordionIcon,
   AccordionItem,
   AccordionPanel,
@@ -41,12 +41,12 @@ export class SideNav extends React.Component {
         <Accordion allowMultiple>
           {projectCategories.map(category => (
             <AccordionItem key={category.title}>
-              <AccordionHeader border={0} backgroundColor="transparent">
+              <AccordionButton border={0} backgroundColor="transparent">
                 <Box flex="1" textAlign="left">
                   <Text>{category.title}</Text>
                 </Box>
                 <AccordionIcon />
-              </AccordionHeader>
+              </AccordionButton>
               <AccordionPanel pb={4}>
                 {category.projects.map(project => (
                   <Box key={project.title}>

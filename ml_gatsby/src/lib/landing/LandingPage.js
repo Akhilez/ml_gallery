@@ -88,7 +88,7 @@ export default class LandingPage extends React.Component {
               aria-label="icon"
               icon="chevron-left"
               isRound
-              boxSize="sm"
+              size="sm"
               colorScheme="red"
               variant="ghost"
               display={{ base: "none", md: "block" }}
@@ -100,7 +100,7 @@ export default class LandingPage extends React.Component {
               aria-label="icon"
               icon="chevron-right"
               isRound
-              boxSize="sm"
+              size="sm"
               colorScheme="red"
               variant="ghost"
               display={{ base: "none", md: "block" }}

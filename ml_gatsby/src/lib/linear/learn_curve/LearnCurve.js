@@ -144,7 +144,7 @@ export class LearnCurve extends React.Component {
           variant="outline"
           colorScheme="brand"
           ml={2}
-          boxSize="sm"
+          size="sm"
           disabled={this.state.isTraining}
           onClick={() => this.changeOrder(1)}
         >
@@ -155,7 +155,7 @@ export class LearnCurve extends React.Component {
             variant="outline"
             colorScheme="brand"
             ml={2}
-            boxSize="sm"
+            size="sm"
             disabled={this.state.isTraining}
             onClick={() => this.changeOrder(-1)}
           >

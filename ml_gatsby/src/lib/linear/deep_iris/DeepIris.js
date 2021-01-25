@@ -220,7 +220,7 @@ export class DeepIris extends React.Component {
           variant="outline"
           colorScheme="brand"
           ml={2}
-          boxSize="sm"
+          size="sm"
           isDisabled={this.state.isTraining}
           onClick={() => this.updateLayers(1)}
         >
@@ -230,7 +230,7 @@ export class DeepIris extends React.Component {
           variant="outline"
           colorScheme="brand"
           ml={2}
-          boxSize="sm"
+          size="sm"
           isDisabled={this.state.isTraining}
           onClick={() => this.updateLayers(-1)}
         >

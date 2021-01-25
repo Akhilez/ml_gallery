@@ -22,7 +22,7 @@ function ActionButtons({ project }) {
         href="#how_it_works"
         colorScheme="brand"
         variant="outline"
-        boxSize="sm"
+        size="sm"
         mr={2}
         fontWeight="light"
       >
@@ -31,7 +31,7 @@ function ActionButtons({ project }) {
       <Button
         as={CLink}
         href={project.links.colab}
-        boxSize="sm"
+        size="sm"
         display={project.links.colab ? "block" : "none"}
         variant="outline"
         colorScheme="gray"

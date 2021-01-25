@@ -29,7 +29,7 @@ export class FindAllChars extends React.Component {
             isRound
             variant="outline"
             colorScheme="red"
-            boxSize="sm"
+            size="sm"
             mt={4}
             onClick={() => this.canvasRef.current.clearCanvas()}
           />

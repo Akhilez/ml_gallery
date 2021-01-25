@@ -39,7 +39,7 @@ export class PositionalCNN extends React.Component {
             isRound
             variant="outline"
             colorScheme="red"
-            boxSize="sm"
+            size="sm"
             my={4}
             onClick={() => this.paintCanvasRef.current.clearCanvas()}
           />

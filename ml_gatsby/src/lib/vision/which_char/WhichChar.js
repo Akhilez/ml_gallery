@@ -70,7 +70,7 @@ export class WhichChar extends React.Component {
                 isRound
                 variant="outline"
                 colorScheme="red"
-                boxSize="sm"
+                size="sm"
                 mt={4}
                 onClick={() => this.paintCanvasRef.current.clearCanvas()}
               />

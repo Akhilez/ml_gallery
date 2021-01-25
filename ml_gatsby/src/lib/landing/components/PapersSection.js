@@ -65,7 +65,7 @@ export const PapersSection = () => (
     </Heading>
     <Wrap>
       {papersList.map(paper => (
-        <WrapItem key={paper.id}>
+        <WrapItem key={paper.title}>
           <Paper paper={paper} />
         </WrapItem>
       ))}

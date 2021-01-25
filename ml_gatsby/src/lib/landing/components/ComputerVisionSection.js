@@ -84,7 +84,7 @@ export const ComputerVisionSection = () => {
           navigation
           pagination={{ clickable: true }}
           className="vision_carousal"
-          autoplay={{ delay: 2500, disableOnInteraction: true }}
+          autoplay={{ delay: 1000, disableOnInteraction: true }}
         >
           {categoriesMap.vision.projects.map(project => (
             <SwiperSlide key={project.id}>

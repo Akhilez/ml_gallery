@@ -42,7 +42,7 @@ export class NextChar extends React.Component {
             mt={4}
           >
             <Input
-              boxSize="lg"
+              size="lg"
               height={{ base: "70px", md: "100px" }}
               fontSize={{ base: "xl", md: "5xl" }}
               focusBorderColor="red.400"
