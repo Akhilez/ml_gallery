@@ -5,6 +5,8 @@ import copy
 import numpy as np
 from torch.nn import functional as F
 from gym_nine_mens_morris.envs.nmm_v2 import NineMensMorrisEnvV2
+from datetime import datetime
+from torch.utils.tensorboard import SummaryWriter
 
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
@@ -77,15 +79,16 @@ depth = depths[0]
 units = unitss[0]
 
 
-epochs = 1
 gamma_returns = 0.99
 gamma_credits = 0.99
-total_episodes = 1
+total_episodes = 10
 n_env = 2
 buffer_reset_size = 1
 current_episode = 1
 
 model = A9PgModel([units for _ in range(depth)]).double().to(device)
+optim = torch.optim.Adam(model.parameters(), lr=lr)
+writer = SummaryWriter(f'./runs/9mm_policy_grad__{int(datetime.now().timestamp())}')
 envs = [NineMensMorrisEnvV2() for i in range(n_env)]
 prev_models = [copy.deepcopy(model)]
 prev_model = prev_models[0]
@@ -97,7 +100,7 @@ won = []
 """
 Log the following:
 For each episode:
-  - Episode length
+  - Episode length (min, max, avg)
   - Win / lose
   - sum of rewards
   - loss
@@ -105,8 +108,6 @@ For every nth episodes, for each timestep:
   - Policy histogram
   - value
 """
-
-optim = torch.optim.Adam(model.parameters(), lr=lr)
 
 
 def randomize_learners():
@@ -204,8 +205,10 @@ def sample_action(yh, env):
     """
     is_phase_1 = env.is_phase_1()
     legal_actions = env.get_legal_actions()
+    if len(legal_actions[0]) == 0:
+        return (0, None, None), torch.tensor(0)
 
-    pos, move, kill, pos_prob, move_prob, kill_prob = None, None, None, 0, 0, 0
+    pos, move, kill, (pos_prob, move_prob, kill_prob) = None, None, None, torch.tensor([0, 0, 0])
 
     if is_phase_1:
         pos, pos_prob, pos_idx = sample_from_probs(yh[0], [action[0] for action in legal_actions[0]])
@@ -235,7 +238,7 @@ def run_time_step(yh, yo):
         yi = yh[i] if is_learners_turn else yo[i]
         action, prob = sample_action(yi, envs[i])
         _, reward, done, _ = envs[i].step(action)
-        envs[i].render()
+        # envs[i].render()
 
         if is_learners_turn:
             stats_e[i].append({'reward': reward, 'prob': prob})
@@ -263,6 +266,7 @@ def learn():
     loss.backward()
     optim.step()
     print(f"loss: {loss}")
+    writer.add_scalar('Training loss', loss.item(), global_step=current_episode)
 
     # losses.append(loss.item())
 
