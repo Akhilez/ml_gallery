@@ -205,7 +205,7 @@ def sample_action(yh, env):
     is_phase_1 = env.is_phase_1()
     legal_actions = env.get_legal_actions()
 
-    pos, move, kill, pos_prob, move_prob, kill_prob = None, None, None, None, None, None
+    pos, move, kill, pos_prob, move_prob, kill_prob = None, None, None, 0, 0, 0
 
     if is_phase_1:
         pos, pos_prob, pos_idx = sample_from_probs(yh[0], [action[0] for action in legal_actions[0]])
@@ -213,7 +213,7 @@ def sample_action(yh, env):
         if legal_actions[0][pos_idx][2]:
             kill, kill_prob, kill_idx = sample_from_probs(yh[-1], legal_actions[1])
 
-        return (pos, None, kill), (pos_prob, None, kill_prob)
+        return (pos, None, kill), sum((pos_prob, move_prob, kill_prob)) / 3
 
     pos, pos_prob, pos_idx = sample_from_probs(yh[1], [action[0] for action in legal_actions[0]])
 
@@ -222,7 +222,7 @@ def sample_action(yh, env):
     if legal_actions[0][pos_idx][2][move_idx]:
         kill, kill_prob, kill_idx = sample_from_probs(yh[-1], legal_actions[1])
 
-    return (pos, move, kill), (pos_prob, move_prob, kill_prob)
+    return (pos, move, kill), sum((pos_prob, move_prob, kill_prob)) / 3
 
 
 def run_time_step(yh, yo):
@@ -247,9 +247,12 @@ def run_time_step(yh, yo):
 def learn():
     loss = torch.tensor(0).double().to(device)
     for i in range(n_env):
+        probs = [stat['prob'] for stat in stats_e[i]]
+        if len(probs) == 0:
+            continue
+        probs = torch.stack(probs)
         rewards = [stat['reward'] for stat in stats_e[i]]
         returns = get_returns(rewards)
-        probs = torch.stack([stat['prob'] for stat in stats_e[i]])
         credits = get_credits(len(rewards))
 
         loss += torch.sum(probs * credits * returns)
@@ -259,6 +262,7 @@ def learn():
     optim.zero_grad()
     loss.backward()
     optim.step()
+    print(f"loss: {loss}")
 
     # losses.append(loss.item())
 
