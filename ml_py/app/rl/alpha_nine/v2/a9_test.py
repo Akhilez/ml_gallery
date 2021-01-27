@@ -9,6 +9,7 @@ def play(p1, p2, render=False):
     while not env.done:
         p = p1 if env.turn == 1 else p2
         action = p(env)
+        print(f'Action: {action}')
         state, reward, done, info = env.step(action)
         print(reward, done, info)
         if render:
@@ -20,6 +21,8 @@ def play(p1, p2, render=False):
 def random_player(env):
     actions, opponents = env.get_legal_actions()
     action = actions[np.random.choice(range(len(actions)))]
+    if action[1] is not None and len(action[1]) > 0:
+        action[1] = np.random.choice(action[1])
     if action[2]:
         action[2] = np.random.choice(opponents)
     return action
