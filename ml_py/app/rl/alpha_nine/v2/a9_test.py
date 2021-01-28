@@ -22,7 +22,9 @@ def random_player(env):
     actions, opponents = env.get_legal_actions()
     action = actions[np.random.choice(range(len(actions)))]
     if action[1] is not None and len(action[1]) > 0:
-        action[1] = np.random.choice(action[1])
+        move_idx = np.random.choice(range(len(action[1])))
+        action[1] = action[1][move_idx]
+        action[2] = action[2][move_idx]
     if action[2]:
         action[2] = np.random.choice(opponents)
     return action
