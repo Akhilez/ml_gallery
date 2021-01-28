@@ -168,7 +168,7 @@ def sample_from_probs(probs, legal_idx):
     # probs = probs + noise
 
     # Softmax
-    tau = max((1 / np.log(current_episode)) * 5, 0.7)
+    tau = max((1 / (np.log(current_episode)) * 5 + 0.0001), 0.7)
     probs = F.gumbel_softmax(probs, tau=tau, dim=0)
 
     # Subsample legal probs
