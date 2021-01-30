@@ -34,7 +34,7 @@ if [[ $2 == "local" ]]; then
 
   # 4. Deploy
   echo --------- Deploying -----------
-  docker run -d -p 80:80 $project:v0
+  docker run -d --publish 8001:80 $project:v0
 
 else
 
@@ -44,7 +44,8 @@ else
   # 4. Deploy
   echo --------- Deploying -----------
   service_name=${project/_/-}  # Because underscores are not allowed
-  gcloud beta run deploy $service_name --image=gcr.io/$GCP_PROJECT/$project:v0 --allow-unauthenticated --memory=2048Mi --timeout=900 --platform managed
+  gcloud beta run deploy mlg-$service_name --image=gcr.io/$GCP_PROJECT/$project:v0 --allow-unauthenticated --memory=2048Mi --timeout=900 --platform managed
+  gcloud beta run domain-mappings create --service mlg-$service_name --domain $service_name.api.akhil.ai --platform managed
 
 fi
 

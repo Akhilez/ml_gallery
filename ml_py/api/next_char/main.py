@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 
-from next_char.model import NextChar
+from model import NextChar
 
 app = FastAPI()
 next_char = NextChar()

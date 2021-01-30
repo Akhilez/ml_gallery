@@ -15,5 +15,6 @@ fi
 
 echo Running project $project
 
-uvicorn $project.main:app --reload
+cd $project
 
+uvicorn main:app --reload

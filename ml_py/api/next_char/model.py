@@ -5,7 +5,7 @@ import torch.nn.functional as F
 
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
-models_path = f'next_char/models'
+models_path = f'./models'
 vocab_file_path = f'{models_path}/char_vocab.pt'
 
 pad_tkn = '~'
