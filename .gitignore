@@ -4,6 +4,7 @@ tmp/
 venv/
 .DS_Store
 runs/
+env.*
 
 # Logs
 logs
