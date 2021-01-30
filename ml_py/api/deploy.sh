@@ -19,6 +19,7 @@ source .env
 
 # 1. Copy dockerfile to project directory
 cp ./Dockerfile $project/
+cp ./docker_requirements.txt $project/
 
 # 2. Update dockerfile: a. Change project name.
 # sed -i "s/PROJECT/$project/g" $project/Dockerfile
@@ -49,3 +50,8 @@ fi
 
 # 5. Delete dockerfile
 rm ./Dockerfile
+rm ./docker_requirements.txt
+
+
+# Helpful commands:
+# Remove all untagged images: docker rmi -f `docker images -f "dangling=true" -q`
