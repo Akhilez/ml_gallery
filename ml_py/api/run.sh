@@ -17,4 +17,4 @@ echo Running project $project
 
 cd $project
 
-uvicorn main:app --reload
+uvicorn main:app --reload --port 8001

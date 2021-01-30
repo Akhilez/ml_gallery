@@ -1,8 +1,10 @@
 export const DEBUG = process.env.NODE_ENV !== "production"
 
-export const MLPyHost = DEBUG
-  ? "http://localhost:8001"
-  : "https://py.ml.akhil.ai"
+export const apiHost = project => {
+  if (DEBUG) return "http://localhost:8001"
+  const project_name = project.id.replace("_", "-")
+  return `https://${project_name}.api.akhil.ai`
+}
 export const HOST = DEBUG ? "http://localhost:8000" : "https://akhil.ai"
 
 export const urls = {

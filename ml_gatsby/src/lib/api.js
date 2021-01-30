@@ -1,5 +1,5 @@
 import qs from "qs"
-import { MLPyHost } from "./globals/data"
+import { apiHost, projects } from "./globals/data"
 
 const fetchPost = async (url = "", data = {}) => {
   // Default options are marked with *
@@ -21,11 +21,12 @@ const fetchPost = async (url = "", data = {}) => {
 
 export const mlgApi = {
   nextChar: text =>
-    fetch(`${MLPyHost}/next_char?${qs.stringify({ text: text })}`),
-  positionalCnn: image => fetchPost(`${MLPyHost}/positional_cnn`, { image }),
+    fetch(`${apiHost(projects.next_char)}?${qs.stringify({ text: text })}`),
+  positionalCnn: image =>
+    fetchPost(`${apiHost(projects.positional_cnn)}/`, { image }),
   alphaNine: {
     stepEnv: (board, mens, me, actionPosition, movePosition, killPosition) =>
-      fetchPost(`${MLPyHost}/alpha_nine/step`, {
+      fetchPost(`${apiHost(projects.alpha_nine)}/step`, {
         board,
         mens,
         me,
