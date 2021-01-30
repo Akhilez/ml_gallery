@@ -43,8 +43,8 @@ const ContactIcon = ({ icon: Icon, url }) => (
 export function Footer() {
   const bg = useColorModeValue("gray.600", "gray.900")
   return (
-    <Box backgroundColor={bg} h="150px">
-      <Container pt="50px" pl={4}>
+    <Box backgroundColor={bg} minH="10vh">
+      <Container py={8} pl={4}>
         <Flex justify="space-between">
           <Flex align="center">
             <Image src={ak_logo_white} height="20px" />

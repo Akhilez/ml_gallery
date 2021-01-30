@@ -45,7 +45,7 @@ function ActionButtons({ project }) {
 
 export function ProjectWrapper({ project, children, ...props }) {
   return (
-    <Container>
+    <Container minH="90vh">
       <MetaTags title={`${project.title} | ML Gallery`} />
       <Flex
         justifyContent="space-between"
