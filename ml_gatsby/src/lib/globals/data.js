@@ -1,7 +1,7 @@
 export const DEBUG = process.env.NODE_ENV !== "production"
 
 export const apiHost = project => {
-  if (!DEBUG) return "http://localhost:8001"
+  if (DEBUG) return "http://localhost:8001"
   const project_name = project.id.replace("_", "-")
   return `https://${project_name}.api.akhil.ai`
 }
