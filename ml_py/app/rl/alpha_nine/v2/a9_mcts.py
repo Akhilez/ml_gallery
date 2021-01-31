@@ -23,6 +23,7 @@ class MctsNode:
                 self.illegal = True
             else:
                 env_ = NineMensMorrisEnvV2()
+                env_.turn = self.turn
                 env_.state = self.state
                 self.state, _, self.is_terminal, _ = env_.step(action)
 
@@ -70,11 +71,8 @@ def uct(node):
 
 def select(node):
     if node.n != 0 and node.children is not None:
-        legal_actions = env.get_legal_actions(node.state)
         scores = np.array([uct(child) for child in node.children])
-        scores = scores[legal_actions]
-        idx = legal_actions[np.argmax(scores)]
-        return select(node.children[idx])
+        return select(node.children[np.argmax(scores)])
     return node
 
 
@@ -82,9 +80,9 @@ def expand(node):
     if env.is_done(node.state):
         return node
     if node.children is None:
-        node.children = [MctsNode(node, action) for action in range(9)]
-    idx = np.random.choice(env.get_legal_actions())
-    return node.children[idx]
+        flattened_actions = env.flatten_actions(env.get_legal_actions())
+        node.children = [MctsNode(node, action) for action in flattened_actions]
+    return np.random.choice(node.children)
 
 
 def rollout(state, turn):
@@ -95,8 +93,8 @@ def rollout(state, turn):
     winner = env.is_done(env.state)
     if winner:
         return max(0, winner * learner)
-    actions = env.get_legal_actions()
-    action = np.random.choice(actions)
+    actions = env.flatten_actions(env.get_legal_actions())
+    action = actions[np.random.choice(range(len(actions)))]
     state, _, done, _ = env.step(action)
     return rollout(state, env.turn)
 
@@ -161,6 +159,7 @@ def play(mcts_p, other_p, mcts_turn=1, render=False):
     return env.winner
 
 
-print(play(mcts_player, random_player, -1, True))
-print('----')
-print(play(mcts_player, random_player, 1, True))
+if __name__ == "__main__":
+    print(play(mcts_player, random_player, -1, True))
+    print('----')
+    print(play(mcts_player, random_player, 1, True))
