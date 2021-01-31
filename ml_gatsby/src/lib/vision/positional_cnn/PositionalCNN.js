@@ -62,14 +62,9 @@ export class PositionalCNN extends React.Component {
 
   predict = image => {
     console.log(image)
-    mlgApi
-      .positionalCnn(image)
-      .then(response => response.json())
-      .then(result => {
-        this.setState({
-          predClass: result.class,
-          predPosition: result.position,
-        })
-      })
+    mlgApi.positionalCnn(image).then(result => {
+      console.log(result)
+      this.setState({ predClass: result.class, predPosition: result.position })
+    })
   }
 }

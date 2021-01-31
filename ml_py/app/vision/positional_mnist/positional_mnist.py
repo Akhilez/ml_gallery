@@ -9,7 +9,6 @@ import torch.nn.functional as F
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
 models_path = f'{BASE_DIR}/app/vision/positional_mnist/models'
-vocab_file_path = f'{models_path}/positional_cnn.pt'
 
 
 class PositionalEncoder2D(nn.Module):
