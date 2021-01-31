@@ -109,8 +109,9 @@ def backprop(node, win):
 def iter_mcts():
     node = select(tree)
     node = expand(node)
-    win = rollout(copy.deepcopy(node.state), node.turn)
+    win = rollout(copy.deepcopy(node.state), -node.turn)
     backprop(node, win)
+    print('`', end='')
 
 
 def mcts_player(env):
@@ -119,16 +120,12 @@ def mcts_player(env):
         # tree = find_state_node(tree.state)
         # pass
 
-    [iter_mcts() for _ in range(800)]
+    [iter_mcts() for _ in range(8)]
 
     probs = torch.tensor([0 if child.n == 0 else child.wins / child.n for child in tree.children])
     print(tree, probs)
-    legal_actions = env.get_legal_actions()
-    probs = probs[legal_actions]
     probs = torch.softmax(probs, 0)
-    idx = probs.argmax(0)
-    action = legal_actions[idx]
-    return action
+    return tree.children[probs.argmax(0)].action
 
 
 def play(mcts_p, other_p, mcts_turn=1, render=False):
