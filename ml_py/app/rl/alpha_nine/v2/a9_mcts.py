@@ -80,7 +80,7 @@ def expand(node):
     if env.is_done(node.state):
         return node
     if node.children is None:
-        flattened_actions = env.flatten_actions(env.get_legal_actions())
+        flattened_actions = env.flatten_actions(env.get_legal_actions_(node.state, node.turn))
         node.children = [MctsNode(node, action) for action in flattened_actions]
     return np.random.choice(node.children)
 
@@ -93,7 +93,7 @@ def rollout(state, turn):
     winner = env.is_done(env.state)
     if winner:
         return max(0, winner * learner)
-    actions = env.flatten_actions(env.get_legal_actions())
+    actions = env.flatten_actions(env.get_legal_actions_(state, turn))
     action = actions[np.random.choice(range(len(actions)))]
     state, _, done, _ = env.step(action)
     return rollout(state, env.turn)
