@@ -18,4 +18,4 @@ cd public
 IMAGE_NAME="mlg"
 
 docker build -t $IMAGE_NAME:v1 `pwd`
-docker run --publish 8000:8000 $IMAGE_NAME:v1
+docker run --publish 8000:80 $IMAGE_NAME:v1

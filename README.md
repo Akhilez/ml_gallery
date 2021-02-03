@@ -1,4 +1,4 @@
-![MLGalleryLogo](ml_gatsby/src/lib/media/ml_logo/ml_logo.png)
+![MLGalleryLogo](ml_js/src/lib/media/ml_logo/ml_logo.png)
 
 **Machine Learning Gallery** is a master project of few of my experiments with Neural Networks.
 It is designed in a way to help a beginner understand the concepts with visualizations.
