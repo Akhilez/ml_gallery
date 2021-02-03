@@ -8,21 +8,18 @@ import {
   Image,
   Tag,
   useColorModeValue,
-  Link,
   Wrap,
   WrapItem,
 } from "@chakra-ui/react"
 import { Link as GLink } from "gatsby"
-import { categoriesMap, projects, urls } from "../../globals/data"
-import { Container } from "../../components/commons"
+import { categoriesMap, projects, projectStatus } from "../../globals/data"
 import { Swiper, SwiperSlide } from "swiper/react"
-import SwiperCore, { Navigation, Pagination, Autoplay } from "swiper"
+import SwiperCore, { Pagination, Autoplay } from "swiper"
 
 import "swiper/swiper.scss"
 import "swiper/components/navigation/navigation.scss"
 import "swiper/components/pagination/pagination.scss"
 import "swiper/components/scrollbar/scrollbar.scss"
-import { BrandFlex } from "../../components/dynamicColorMode"
 
 SwiperCore.use([Pagination, Autoplay])
 
@@ -61,24 +58,29 @@ const LeftSection = () => (
 )
 
 const RLProject = ({ project }) => (
-  <Box width={{ base: "sm", md: "lg" }} py={16} pl={16}>
-    <GLink to={project.links.app}>
-      <Image
-        src={require("../images/" + project.image)}
-        alt={project.title + "Image"}
-        maxWidth="90%"
-        maxHeight="250px"
-        borderRadius="8px"
-      />
-      <Heading color="white" fontSize="2xl" mt={4} mb={2}>
-        {project.title}
-      </Heading>
-      <Text color="gray.100">{project.desc}</Text>
-    </GLink>
+  <Box width={{ base: "sm", md: "lg" }}>
+    <Box py={16} pl={16}>
+      <GLink to={project.links.app}>
+        <Image
+          src={require("../images/" + project.image)}
+          alt={project.title + "Image"}
+          maxWidth="90%"
+          maxHeight="250px"
+          borderRadius="8px"
+        />
+        <Heading color="white" fontSize="2xl" mt={4} mb={2}>
+          {project.title}
+        </Heading>
+        <Text color="gray.100">{project.desc}</Text>
+      </GLink>
+    </Box>
   </Box>
 )
 
 const RightSection = () => {
+  const projects = categoriesMap.reinforce.projects.filter(
+    project => project.status !== projectStatus.toDo
+  )
   const bg = useColorModeValue(
     "linear(to-br, brand.500, red.500)",
     "linear(to-br, brand.700, red.700)"
@@ -88,7 +90,7 @@ const RightSection = () => {
       direction="column"
       borderLeftRadius="40px"
       w={{ base: "100%", md: "50%" }}
-      h="500px"
+      minH="500px"
       bgGradient={bg}
     >
       <Swiper
@@ -100,7 +102,7 @@ const RightSection = () => {
         style={{ marginLeft: 0 }}
         autoplay={{ delay: 1000, disableOnInteraction: true }}
       >
-        {categoriesMap.reinforce.projects.map(project => (
+        {projects.map(project => (
           <SwiperSlide key={project.id}>
             <RLProject project={project} />
           </SwiperSlide>

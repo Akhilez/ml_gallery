@@ -7,15 +7,10 @@ import {
   Text,
   Tag,
   Image,
-  Wrap,
-  Link,
-  WrapItem,
   useColorModeValue,
 } from "@chakra-ui/react"
 import { Link as GLink } from "gatsby"
-import { categoriesMap, projects } from "../../globals/data"
-import { BiCode } from "react-icons/all"
-import colabIcon from "src/lib/landing/images/colab.png"
+import { categoriesMap, projects, projectStatus } from "../../globals/data"
 import { IconLinks } from "./commons"
 
 const RightSection = () => {
@@ -103,6 +98,9 @@ const BasicProject = ({ project }) => {
 }
 
 const LeftSection = () => {
+  const projects = categoriesMap.linear.projects.filter(
+    project => project.status !== projectStatus.toDo
+  )
   const bg = useColorModeValue(
     "linear(to-bl, brand.500, red.500)",
     "linear(to-bl, brand.700, red.700)"
@@ -115,7 +113,7 @@ const LeftSection = () => {
       bgGradient={bg}
     >
       <Box w={{ base: "sm", sm: "lg" }} py={6} pr={8}>
-        {categoriesMap.linear.projects.map(project => (
+        {projects.map(project => (
           <BasicProject project={project} key={project.id} />
         ))}
       </Box>

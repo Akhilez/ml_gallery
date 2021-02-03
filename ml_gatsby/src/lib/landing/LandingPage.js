@@ -1,14 +1,5 @@
 import React from "react"
-import {
-  Box,
-  Button,
-  Image,
-  Text,
-  Link,
-  Heading,
-  Flex,
-  useColorModeValue,
-} from "@chakra-ui/react"
+import { Box, Button, Image, Text, Link, Heading, Flex } from "@chakra-ui/react"
 import { Link as GLink } from "gatsby"
 import { MetaTags } from "../components/MetaTags"
 import { Container } from "../components/commons"

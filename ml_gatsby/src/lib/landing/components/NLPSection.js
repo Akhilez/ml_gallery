@@ -3,18 +3,20 @@ import {
   Box,
   Image,
   Flex,
-  Divider,
   Button,
   Text,
   Heading,
-  SimpleGrid,
   Wrap,
   WrapItem,
   Tag,
 } from "@chakra-ui/react"
 import { Link as GLink } from "gatsby"
-import { Centered, Container } from "../../components/commons"
-import { categoriesMap, projects } from "../../globals/data"
+import { Container } from "../../components/commons"
+import {
+  categoriesMap,
+  projects as allProjects,
+  projectStatus,
+} from "../../globals/data"
 import { DynamicColorBox } from "../../components/dynamicColorMode"
 import { IconLinks } from "./commons"
 import Typical from "react-typical"
@@ -64,44 +66,49 @@ const Project = ({ project }) => (
   </DynamicColorBox>
 )
 
-export const NLPSection = () => (
-  <Container my={8}>
-    <Box ml={4} mb={4}>
-      <Heading mb={2} variant="dynamicColorMode">
-        <Typical
-          steps={[
-            "Natural",
-            400,
-            "Natural Language Processing",
-            2000,
-            "NLP",
-            1000,
-          ]}
-          loop={Infinity}
-        />
-      </Heading>
-      <Text variant="dynamicColorMode">{categoriesMap.nlp.desc}</Text>
-      <Flex my={2}>
-        <Tag mr={1}>RNNs</Tag>
-        <Tag mx={1}>Embeddings</Tag>
-        <Tag mx={1}>Attention</Tag>
-      </Flex>
-      <Button
-        colorScheme="secondary"
-        size="sm"
-        mt={2}
-        as={GLink}
-        to={projects.next_char.links.app}
-      >
-        Get started
-      </Button>
-    </Box>
-    <Wrap>
-      {categoriesMap.nlp.projects.map(project => (
-        <WrapItem key={project.id}>
-          <Project project={project} />
-        </WrapItem>
-      ))}
-    </Wrap>
-  </Container>
-)
+export const NLPSection = () => {
+  const projects = categoriesMap.nlp.projects.filter(
+    project => project.status !== projectStatus.toDo
+  )
+  return (
+    <Container my={8}>
+      <Box ml={4} mb={4}>
+        <Heading mb={2} variant="dynamicColorMode">
+          <Typical
+            steps={[
+              "Natural",
+              400,
+              "Natural Language Processing",
+              2000,
+              "NLP",
+              1000,
+            ]}
+            loop={Infinity}
+          />
+        </Heading>
+        <Text variant="dynamicColorMode">{categoriesMap.nlp.desc}</Text>
+        <Flex my={2}>
+          <Tag mr={1}>RNNs</Tag>
+          <Tag mx={1}>Embeddings</Tag>
+          <Tag mx={1}>Attention</Tag>
+        </Flex>
+        <Button
+          colorScheme="secondary"
+          size="sm"
+          mt={2}
+          as={GLink}
+          to={allProjects.next_char.links.app}
+        >
+          Get started
+        </Button>
+      </Box>
+      <Wrap>
+        {projects.map(project => (
+          <WrapItem key={project.id}>
+            <Project project={project} />
+          </WrapItem>
+        ))}
+      </Wrap>
+    </Container>
+  )
+}

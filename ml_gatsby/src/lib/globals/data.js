@@ -195,7 +195,7 @@ const projectsRaw = {
     desc:
       "Lets predict what genre a movie is based on its plot using Attention!",
     image: "under_construction2.png",
-    status: projectStatus.inProgress,
+    status: projectStatus.toDo,
     links: {
       app: "/coming_soon",
       source: "",

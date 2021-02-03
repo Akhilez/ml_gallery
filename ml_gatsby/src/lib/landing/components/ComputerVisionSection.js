@@ -13,7 +13,11 @@ import { Link as GLink } from "gatsby"
 import { Centered, Container } from "../../components/commons"
 import SwiperCore, { Navigation, Pagination, Autoplay } from "swiper"
 import { Swiper, SwiperSlide } from "swiper/react"
-import { categoriesMap, projects } from "../../globals/data"
+import {
+  categoriesMap,
+  projects as allProjects,
+  projectStatus,
+} from "../../globals/data"
 
 import "swiper/swiper.scss"
 import "swiper/components/navigation/navigation.scss"
@@ -56,6 +60,9 @@ const ProjectSlide = ({ project }) => {
 }
 
 export const ComputerVisionSection = () => {
+  const projects = categoriesMap.vision.projects.filter(
+    project => project.status !== projectStatus.toDo
+  )
   return (
     <Container mt={12} py={8}>
       <Centered>
@@ -74,7 +81,7 @@ export const ComputerVisionSection = () => {
           size="sm"
           mt={4}
           as={GLink}
-          to={projects.which_char.links.app}
+          to={allProjects.which_char.links.app}
         >
           Start here
         </Button>
@@ -86,7 +93,7 @@ export const ComputerVisionSection = () => {
           className="vision_carousal"
           autoplay={{ delay: 1000, disableOnInteraction: true }}
         >
-          {categoriesMap.vision.projects.map(project => (
+          {projects.map(project => (
             <SwiperSlide key={project.id}>
               <ProjectSlide project={project} />
             </SwiperSlide>
