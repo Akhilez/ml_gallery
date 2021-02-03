@@ -301,7 +301,7 @@ const projectsRaw = {
     title: "MNIST Detection Dataset",
     desc: "",
     image: "under_construction2.png",
-    status: projectStatus.inProgress,
+    status: projectStatus.toDo,
     links: {
       app: "/coming_soon",
       source: "",
@@ -380,10 +380,6 @@ export const projectCategories = [
   categoriesMap.unsupervised,
   categoriesMap.misc,
 ]
-
-export const orderedProjects = projectCategories
-  .map(category => category.projects)
-  .flat()
 
 export const papers = {
   dis_cease: {

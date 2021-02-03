@@ -1,18 +1,23 @@
 import React from "react"
 import { Flex, Box, Text, Divider } from "@chakra-ui/react"
-import { orderedProjects } from "../globals/data"
 import { SolidLink } from "./commons"
+import { projectCategories, projectStatus } from "../globals/data"
 
 export class ProjectPaginator extends React.Component {
   constructor(props) {
     super(props)
     this.props = props
     this.project = props.project
-    this.projectIndex = orderedProjects.findIndex(
+    this.orderedProjects = projectCategories
+      .map(category => category.projects)
+      .flat()
+      .filter(project => project.status !== projectStatus.toDo)
+    console.log(this.orderedProjects)
+    this.projectIndex = this.orderedProjects.findIndex(
       project => project.id === this.project.id
     )
-    this.prevProject = orderedProjects[this.projectIndex - 1]
-    this.nextProject = orderedProjects[this.projectIndex + 1]
+    this.prevProject = this.orderedProjects[this.projectIndex - 1]
+    this.nextProject = this.orderedProjects[this.projectIndex + 1]
   }
   render() {
     return (

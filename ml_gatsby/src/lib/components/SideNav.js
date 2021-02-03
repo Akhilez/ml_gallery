@@ -14,7 +14,7 @@ import {
   DrawerContent,
   DrawerCloseButton,
 } from "@chakra-ui/react"
-import { projectCategories } from "../globals/data"
+import { projectCategories, projectStatus } from "../globals/data"
 import { Link as GLink } from "gatsby"
 import { FiMenu } from "react-icons/all"
 
@@ -48,13 +48,15 @@ export class SideNav extends React.Component {
                 <AccordionIcon />
               </AccordionButton>
               <AccordionPanel pb={4}>
-                {category.projects.map(project => (
-                  <Box key={project.title}>
-                    <Link as={GLink} to={project.links.app} color="gray.400">
-                      {project.title}
-                    </Link>
-                  </Box>
-                ))}
+                {category.projects
+                  .filter(project => project.status !== projectStatus.toDo)
+                  .map(project => (
+                    <Box key={project.title}>
+                      <Link as={GLink} to={project.links.app} color="gray.400">
+                        {project.title}
+                      </Link>
+                    </Box>
+                  ))}
               </AccordionPanel>
             </AccordionItem>
           ))}
