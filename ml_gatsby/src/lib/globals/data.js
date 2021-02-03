@@ -9,7 +9,7 @@ export const HOST = DEBUG ? "http://localhost:8000" : "https://akhil.ai"
 
 export const urls = {
   profile: "https://akhil.ai",
-  gallery: "/gallery",
+  gallery: "/",
   repo: "https://github.com/Akhilez/ml_gallery",
 }
 
@@ -26,7 +26,7 @@ const projectsRaw = {
     image: "learn_line.jpg",
     status: projectStatus.done,
     links: {
-      app: "/gallery/linear/learn_line",
+      app: "/learn_line",
       source: "https://github.com/Akhilez/ml_gallery",
     },
   },
@@ -36,7 +36,7 @@ const projectsRaw = {
     image: "linear_classifier.png",
     status: projectStatus.done,
     links: {
-      app: "/gallery/linear/linear_classifier",
+      app: "/linear_classifier",
       source: "https://github.com/Akhilez/ml_gallery",
     },
   },
@@ -46,7 +46,7 @@ const projectsRaw = {
     image: "learn_curve.png",
     status: projectStatus.done,
     links: {
-      app: "/gallery/linear/learn_curve",
+      app: "/learn_curve",
       source: "https://github.com/Akhilez/ml_gallery",
     },
   },
@@ -56,7 +56,7 @@ const projectsRaw = {
     image: "deep_iris.png",
     status: projectStatus.done,
     links: {
-      app: "/gallery/linear/deep_iris",
+      app: "/deep_iris",
       source: "https://github.com/Akhilez/ml_gallery",
     },
   },
@@ -68,7 +68,7 @@ const projectsRaw = {
     image: "which_char.png",
     status: projectStatus.done,
     links: {
-      app: "/gallery/vision/which_char",
+      app: "/which_char",
       source: "https://github.com/Akhilez/ml_gallery",
     },
   },
@@ -79,7 +79,7 @@ const projectsRaw = {
     image: "mnist_gan.png",
     status: projectStatus.toDo,
     links: {
-      app: "/gallery/vision/mnist_gan",
+      app: "/mnist_gan",
       source: "/mnist_gan",
       colab:
         "https://colab.research.google.com/github/Akhilez/ml_gallery/blob/master/ml_py/app/vision/selective_generator/colab.ipynb",
@@ -102,7 +102,7 @@ const projectsRaw = {
     image: "find_number.png",
     status: projectStatus.done,
     links: {
-      app: "/gallery/vision/find_char",
+      app: "/find_char",
       source:
         "https://colab.research.google.com/github/Akhilez/ml_gallery/blob/master/ml_py/app/vision/detector_v1/colab_localization.ipynb",
       colab:
@@ -115,7 +115,7 @@ const projectsRaw = {
     image: "positional_cnn.png",
     status: projectStatus.done,
     links: {
-      app: "/gallery/vision/positional_cnn",
+      app: "/positional_cnn",
       source:
         "https://github.com/Akhilez/ml_gallery/blob/master/ml_py/app/vision/positional_mnist/positional_mnist.py",
       colab:
@@ -128,7 +128,7 @@ const projectsRaw = {
     image: "under_construction2.png",
     status: projectStatus.toDo,
     links: {
-      app: "/gallery/coming_soon",
+      app: "/coming_soon",
     },
   },
   find_all_chars: {
@@ -137,7 +137,7 @@ const projectsRaw = {
     image: "faster_rcnn.png",
     status: projectStatus.toDo,
     links: {
-      app: "/gallery/vision/find_all_chars",
+      app: "/find_all_chars",
       source:
         "https://colab.research.google.com/github/Akhilez/ml_gallery/blob/master/ml_py/app/vision/detector_v1/colab_detection.ipynb",
       colab:
@@ -150,7 +150,7 @@ const projectsRaw = {
     image: "under_construction2.png",
     status: projectStatus.toDo,
     links: {
-      app: "/gallery/coming_soon",
+      app: "/coming_soon",
       source: "",
     },
   },
@@ -160,7 +160,7 @@ const projectsRaw = {
     image: "under_construction2.png",
     status: projectStatus.toDo,
     links: {
-      app: "/gallery/coming_soon",
+      app: "/coming_soon",
       source: "",
     },
   },
@@ -170,7 +170,7 @@ const projectsRaw = {
     image: "under_construction2.png",
     status: projectStatus.toDo,
     links: {
-      app: "/gallery/coming_soon",
+      app: "/coming_soon",
       source: "",
     },
   },
@@ -183,7 +183,7 @@ const projectsRaw = {
     image: "next_char.png",
     status: projectStatus.done,
     links: {
-      app: "/gallery/nlp/next_char",
+      app: "/next_char",
       source:
         "https://github.com/Akhilez/ml_gallery/blob/master/ml_py/app/nlp/next_char/next_char.py",
       colab:
@@ -197,7 +197,7 @@ const projectsRaw = {
     image: "under_construction2.png",
     status: projectStatus.inProgress,
     links: {
-      app: "/gallery/coming_soon",
+      app: "/coming_soon",
       source: "",
     },
   },
@@ -207,7 +207,7 @@ const projectsRaw = {
     image: "under_construction2.png",
     status: projectStatus.toDo,
     links: {
-      app: "/gallery/coming_soon",
+      app: "/coming_soon",
       source: "",
     },
   },
@@ -217,7 +217,7 @@ const projectsRaw = {
     image: "under_construction2.png",
     status: projectStatus.toDo,
     links: {
-      app: "/gallery/coming_soon",
+      app: "/coming_soon",
       source: "",
     },
   },
@@ -229,7 +229,7 @@ const projectsRaw = {
     image: "alpha_nine.png",
     status: projectStatus.inProgress,
     links: {
-      app: "/gallery/rl/alpha_nine",
+      app: "/alpha_nine",
       source: "",
     },
   },
@@ -239,7 +239,7 @@ const projectsRaw = {
     image: "gridworld.png",
     status: projectStatus.toDo,
     links: {
-      app: "/gallery/coming_soon",
+      app: "/coming_soon",
       source: "",
     },
   },
@@ -249,7 +249,7 @@ const projectsRaw = {
     image: "under_construction2.png",
     status: projectStatus.toDo,
     links: {
-      app: "/gallery/coming_soon",
+      app: "/coming_soon",
       source: "",
     },
   },
@@ -261,7 +261,7 @@ const projectsRaw = {
     image: "under_construction2.png",
     status: projectStatus.toDo,
     links: {
-      app: "/gallery/coming_soon",
+      app: "/coming_soon",
       source: "",
     },
   },
@@ -271,7 +271,7 @@ const projectsRaw = {
     image: "under_construction2.png",
     status: projectStatus.toDo,
     links: {
-      app: "/gallery/coming_soon",
+      app: "/coming_soon",
       source: "",
     },
   },
@@ -281,7 +281,7 @@ const projectsRaw = {
     image: "under_construction2.png",
     status: projectStatus.toDo,
     links: {
-      app: "/gallery/coming_soon",
+      app: "/coming_soon",
       source: "",
     },
   },
@@ -293,7 +293,7 @@ const projectsRaw = {
     image: "under_construction2.png",
     status: projectStatus.toDo,
     links: {
-      app: "/gallery/coming_soon",
+      app: "/coming_soon",
       source: "",
     },
   },
@@ -303,7 +303,7 @@ const projectsRaw = {
     image: "under_construction2.png",
     status: projectStatus.inProgress,
     links: {
-      app: "/gallery/coming_soon",
+      app: "/coming_soon",
       source: "",
     },
   },
