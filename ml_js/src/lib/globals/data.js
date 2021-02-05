@@ -233,11 +233,11 @@ const projectsRaw = {
       source: "",
     },
   },
-  gridworld: {
+  grid_world: {
     title: "Grid World",
     desc: "Navigate the player to a desired location.",
     image: "gridworld.png",
-    status: projectStatus.toDo,
+    status: projectStatus.inProgress,
     links: {
       app: "/coming_soon",
       source: "",
@@ -352,7 +352,7 @@ const categoriesMap_ = {
   },
   reinforce: {
     title: "Reinforcement Learning",
-    projects: [projects.gridworld, projects.alpha_nine, projects.dodger],
+    projects: [projects.grid_world, projects.alpha_nine, projects.dodger],
   },
   unsupervised: {
     title: "Unsupervised Learning",
