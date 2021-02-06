@@ -1,9 +1,10 @@
 from datetime import datetime
 from typing import List
 
+import hydra
 import numpy as np
 import torch
-from omegaconf import OmegaConf
+from omegaconf import OmegaConf, DictConfig
 from torch import nn
 from torch.nn import functional as F
 from torch.utils.tensorboard import SummaryWriter
@@ -11,24 +12,6 @@ from torch.utils.tensorboard import SummaryWriter
 from gym_grid_world.envs import GridWorldEnv
 
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
-
-
-lrs = [1e-4, 1e-3, 1e-2, 1e-1]
-depths = [2]
-unitss = [50]
-
-lr = lrs[0]
-depth = depths[0]
-units = unitss[0]
-
-gamma_returns = 0.80
-gamma_credits = 0.95
-total_episodes = 2
-n_env = 1
-current_episode = 1
-max_steps = 50
-size = 4
-mode = 'static'
 
 
 class GWPgModel(nn.Module):
@@ -68,10 +51,10 @@ class GWPolicyGradTrainer:
     def __init__(self, **config):
         self.cfg = OmegaConf.create(config)
 
-        self.model = GWPgModel(size, [units for _ in range(depth)]).double().to(device)
-        self.optim = torch.optim.Adam(self.model.parameters(), lr=lr)
+        self.model = GWPgModel(self.cfg.grid_size, [self.cfg.units for _ in range(self.cfg.depth)]).double().to(device)
+        self.optim = torch.optim.Adam(self.model.parameters(), lr=self.cfg.lr)
         self.writer = SummaryWriter(f'./runs/gw_policy_grad__{int(datetime.now().timestamp())}')
-        self.envs = [GridWorldEnv(size=size, mode=mode) for _ in range(n_env)]
+        self.envs = [GridWorldEnv(size=self.cfg.grid_size, mode=self.cfg.env_mode) for _ in range(self.cfg.n_env)]
         self.stats_e = []
         self.won = []
 
@@ -83,7 +66,7 @@ class GWPolicyGradTrainer:
         prev_credit = 1
         for i in range(t):
             credits.append(prev_credit)
-            prev_credit *= gamma_credits
+            prev_credit *= self.cfg.gamma_credits
         return torch.tensor(list(reversed(credits))).double().to(device)
 
     def get_returns(self, rewards):
@@ -91,7 +74,7 @@ class GWPolicyGradTrainer:
         returns = []
         prev_return = 0
         for t in range(total_t):
-            prev_return = rewards[total_t - t - 1] + (gamma_returns * prev_return)
+            prev_return = rewards[total_t - t - 1] + (self.cfg.gamma_returns * prev_return)
             returns.append(prev_return)
         return torch.tensor(list(reversed(returns))).double().to(device)
 
@@ -103,7 +86,7 @@ class GWPolicyGradTrainer:
 
     def sample_action(self, probs):
         # Softmax
-        tau = max((1 / (np.log(current_episode) * 5 + 0.0001)), 0.7)
+        tau = max((1 / (np.log(self.cfg.current_episode) * 5 + 0.0001)), 0.7)
         probs = F.gumbel_softmax(probs, tau=tau, dim=0)
         # probs = F.softmax(probs, dim=0)
 
@@ -122,7 +105,7 @@ class GWPolicyGradTrainer:
         return action, probs[action]
 
     def run_time_step(self, yh):
-        for i in range(n_env):
+        for i in range(self.cfg.n_env):
 
             if self.envs[i].done:
                 continue
@@ -137,7 +120,7 @@ class GWPolicyGradTrainer:
     def learn(self):
         loss = torch.tensor(0).double().to(device)
         rewards_list = []
-        for i in range(n_env):
+        for i in range(self.cfg.n_env):
             probs = [stat['prob'] for stat in self.stats_e[i]]
             if len(probs) == 0:
                 continue
@@ -149,14 +132,14 @@ class GWPolicyGradTrainer:
             loss += torch.sum(probs * credits * returns)
             rewards_list.append(np.mean(rewards))
 
-        loss = -1 * loss / n_env
+        loss = -1 * loss / self.cfg.n_env
 
         self.optim.zero_grad()
         loss.backward()
         self.optim.step()
         print(f"loss: {loss}")
-        self.writer.add_scalar('Training loss', loss.item(), global_step=current_episode)
-        self.writer.add_scalar('Mean Rewards', np.mean(rewards_list), global_step=current_episode)
+        self.writer.add_scalar('Training loss', loss.item(), global_step=self.cfg.current_episode)
+        self.writer.add_scalar('Mean Rewards', np.mean(rewards_list), global_step=self.cfg.current_episode)
 
         # losses.append(loss.item())
 
@@ -165,7 +148,7 @@ class GWPolicyGradTrainer:
         self.reset_episode()
         step = 0
 
-        while not all([env.done for env in self.envs]) and step < max_steps:
+        while not all([env.done for env in self.envs]) and step < self.cfg.max_steps:
             # Predict actions
 
             x = GWPgModel.convert_inputs(self.envs)
@@ -174,13 +157,12 @@ class GWPolicyGradTrainer:
             self.run_time_step(yh)
             step += 1
 
-        if step == max_steps:
-            for i in range(n_env):
+        if step == self.cfg.max_steps:
+            for i in range(self.cfg.n_env):
                 if not self.envs[i].done:
                     self.stats_e[i].append({'reward': -10, 'prob': torch.tensor(0)})
 
         self.learn()
-
 
 
 """
@@ -195,25 +177,16 @@ For every nth episodes, for each timestep:
   - value
 """
 
-trainer = GWPolicyGradTrainer()
 
-while current_episode <= total_episodes:
-    trainer.run_episode()
-    print('.', end='')
-    current_episode += 1
-
-trainer.writer.close()
-
-
-def play():
-    env = GridWorldEnv(size, mode)
+def play(model, cfg):
+    env = GridWorldEnv(cfg.grid_size, cfg.env_mode)
     env.reset()
     env.render()
     step = 0
 
-    while not env.done and step < max_steps:
+    while not env.done and step < cfg.max_steps:
         x = GWPgModel.convert_inputs([env])
-        yh = trainer.model(x)
+        yh = model(x)
         yh = F.softmax(yh, 1)
         action = yh[0].argmax(0)
 
@@ -223,4 +196,19 @@ def play():
         step += 1
 
 
-play()
+@hydra.main(config_name="config")
+def main(cfg: DictConfig) -> None:
+    trainer = GWPolicyGradTrainer(**dict(cfg))
+
+    while trainer.cfg.current_episode <= cfg.total_episodes:
+        trainer.run_episode()
+        print('.', end='')
+        trainer.cfg.current_episode += 1
+
+    trainer.writer.close()
+
+    play(trainer.model, cfg)
+
+
+if __name__ == "__main__":
+    main()

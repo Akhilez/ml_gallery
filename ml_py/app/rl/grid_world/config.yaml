@@ -1,4 +1,18 @@
-db:
-  driver: mysql
-  user: omry
-  pass: secret
+lrs: [0.0001, 0.001, 0.01, 0.1]
+depths: [2]
+unitss: [50]
+
+lr: 0.001
+depth: 2
+units: 50
+
+gamma_returns: 0.80
+gamma_credits: 0.95
+total_episodes: 2
+n_env: 1
+current_episode: 1
+max_steps: 50
+grid_size: 4
+env_mode: static
+
+model_save_path: ./models/
