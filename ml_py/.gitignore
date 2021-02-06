@@ -9,6 +9,7 @@ models/
 node_modules/
 bundles/
 webpack-stats.json
+outputs/
 
 ### OSX ###
 .DS_Store

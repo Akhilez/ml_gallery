@@ -25,3 +25,4 @@ uvicorn==0.13.3
 -e git+https://github.com/Akhilez/gyms.git/#egg=gym_grid_world&subdirectory=gym-grid-world
 
 gym-minigrid==1.0.2
+hydra-core==1.0.6
