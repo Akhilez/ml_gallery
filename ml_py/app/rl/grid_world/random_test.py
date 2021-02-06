@@ -3,7 +3,7 @@ import numpy as np
 
 
 def play(player):
-    env = GridWorldEnv(size=4, mode='static')
+    env = GridWorldEnv(size=4, mode='random')
     env.reset()
     max_episode_len = 100
 

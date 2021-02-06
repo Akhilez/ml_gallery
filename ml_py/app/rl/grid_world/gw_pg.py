@@ -55,11 +55,11 @@ units = unitss[0]
 gamma_returns = 0.80
 gamma_credits = 0.95
 total_episodes = 500
-n_env = 10
+n_env = 50
 current_episode = 1
 max_steps = 100
 size = 4
-mode = 'static'
+mode = 'random'
 
 model = GWPgModel(size, [units for _ in range(depth)]).double().to(device)
 optim = torch.optim.Adam(model.parameters(), lr=lr)
@@ -201,7 +201,7 @@ while current_episode <= total_episodes:
 
 
 def play():
-    env = GridWorldEnv(4, 'static')
+    env = GridWorldEnv(4, mode)
     env.reset()
     env.render()
 
