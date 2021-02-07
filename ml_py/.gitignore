@@ -10,6 +10,7 @@ node_modules/
 bundles/
 webpack-stats.json
 outputs/
+multirun/
 
 ### OSX ###
 .DS_Store

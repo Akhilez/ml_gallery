@@ -10,6 +10,7 @@ from torch.nn import functional as F
 from torch.utils.tensorboard import SummaryWriter
 
 from gym_grid_world.envs import GridWorldEnv
+from settings import BASE_DIR
 
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
@@ -53,7 +54,8 @@ class GWPolicyGradTrainer:
 
         self.model = GWPgModel(self.cfg.grid_size, [self.cfg.units for _ in range(self.cfg.depth)]).double().to(device)
         self.optim = torch.optim.Adam(self.model.parameters(), lr=self.cfg.lr)
-        self.writer = SummaryWriter(f'./runs/gw_policy_grad__{int(datetime.now().timestamp())}')
+        self.writer = SummaryWriter(
+            f'{BASE_DIR}/app/rl/grid_world/runs/gw_policy_grad__{int(datetime.now().timestamp())}')
         self.envs = [GridWorldEnv(size=self.cfg.grid_size, mode=self.cfg.env_mode) for _ in range(self.cfg.n_env)]
         self.stats_e = []
         self.won = []
@@ -196,6 +198,15 @@ def play(model, cfg):
         step += 1
 
 
+def get_final_reward(trainer):
+    reward = 0
+    n = 0
+    for stat in trainer.stats_e:
+        reward += stat[-1]['reward']
+        n += 1
+    return reward / (n + 0.00001)
+
+
 @hydra.main(config_name="config")
 def main(cfg: DictConfig) -> None:
     trainer = GWPolicyGradTrainer(**dict(cfg))
@@ -205,6 +216,8 @@ def main(cfg: DictConfig) -> None:
         print('.', end='')
         trainer.cfg.current_episode += 1
 
+    hparams = {key: cfg[key] for key in ['lr', 'depth', 'units']}
+    trainer.writer.add_hparams(hparams, {'final_reward': get_final_reward(trainer)})
     trainer.writer.close()
 
     play(trainer.model, cfg)
