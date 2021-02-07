@@ -34,12 +34,7 @@ const IntroSection = () => (
       mt="100px"
       mb="150px"
     >
-      <Box
-        w={{ base: "sm", md: "md" }}
-        align="center"
-        justify="center"
-        alignItems="center"
-      >
+      <Box w={{ base: "sm", md: "md" }} align="center">
         <Image src={mlg_logo} />
       </Box>
       <Box w="100px" h="50px" />
