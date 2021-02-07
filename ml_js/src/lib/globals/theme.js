@@ -4,9 +4,7 @@ import { createBreakpoints } from "@chakra-ui/theme-tools"
 export default extendTheme({
   components: {
     Flex: {
-      baseStyle: {
-        backgroundColor: "transparent",
-      },
+      baseStyle: { backgroundColor: "transparent" },
       variants: {
         dynamicColorBox: props => ({
           backgroundColor: props.colorMode === "dark" ? "gray.700" : "white",
@@ -15,9 +13,7 @@ export default extendTheme({
       },
     },
     Text: {
-      baseStyle: {
-        color: "gray.600",
-      },
+      baseStyle: { color: "gray.600" },
       variants: {
         dynamicColorMode: props => ({
           color: props.colorMode === "dark" ? "gray.400" : "gray.600",
@@ -25,10 +21,7 @@ export default extendTheme({
       },
     },
     Heading: {
-      baseStyle: {
-        fontWeight: "500",
-        color: "brand.500",
-      },
+      baseStyle: { fontWeight: "500", color: "brand.500" },
       variants: {
         dynamicColorMode: props => ({
           color: props.colorMode === "dark" ? "brand.400" : "brand.500",
@@ -91,4 +84,5 @@ export default extendTheme({
     },
     backgroundColor: "#ffffff",
   },
+  shadows: { outline: "none" },
 })
