@@ -11,9 +11,7 @@ from torch.nn import functional as F
 from torch.utils.tensorboard import SummaryWriter
 
 from gym_grid_world.envs import GridWorldEnv
-from settings import BASE_DIR
-
-device = 'cuda' if torch.cuda.is_available() else 'cpu'
+from settings import BASE_DIR, device
 
 
 class GWPgModel(nn.Module):
