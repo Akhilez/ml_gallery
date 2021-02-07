@@ -6,7 +6,7 @@
   "license": "0BSD",
   "scripts": {
     "build": "gatsby build",
-    "develop": "gatsby develop",
+    "develop": "NODE_OPTIONS=--max-old-space-size=8192 gatsby develop",
     "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,md}\"",
     "start": "npm run develop",
     "serve": "gatsby serve",
@@ -33,6 +33,8 @@
     "react-helmet": "^6.1.0",
     "react-icons": "^3.11.0",
     "react-p5": "^1.3.6",
+    "react-query": "2.5.13",
+    "react-query-devtools": "2.4.2",
     "react-spring": "^8.0.27",
     "react-typical": "^0.1.3",
     "recharts": "^1.8.5",
