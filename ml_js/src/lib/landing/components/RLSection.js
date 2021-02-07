@@ -90,7 +90,7 @@ const RightSection = () => {
       direction="column"
       borderLeftRadius="40px"
       w={{ base: "100%", md: "50%" }}
-      minH="500px"
+      maxH="500px"
       bgGradient={bg}
     >
       <Swiper
