@@ -21,7 +21,8 @@ uvicorn==0.13.3
 -e git+https://github.com/Akhilez/gyms.git/#egg=gym_nine_mens_morris&subdirectory=gym-nine-mens-morris
 -e git+https://github.com/Akhilez/gyms.git/#egg=gym_tic_tac_toe&subdirectory=gym-tic-tac-toe
 -e git+https://github.com/Akhilez/gyms.git/#egg=gym_grid_world&subdirectory=gym-grid-world
-
+gym-sokoban==0.0.6
 gym-minigrid==1.0.2
+
 hydra-core==1.0.6
 # optuna==2.3.0
