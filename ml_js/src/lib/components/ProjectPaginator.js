@@ -12,7 +12,6 @@ export class ProjectPaginator extends React.Component {
       .map(category => category.projects)
       .flat()
       .filter(project => project.status !== projectStatus.toDo)
-    console.log(this.orderedProjects)
     this.projectIndex = this.orderedProjects.findIndex(
       project => project.id === this.project.id
     )
