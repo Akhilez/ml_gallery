@@ -14,16 +14,18 @@ gamma = 0.9
 
 lr = 0.01
 
+mode = 'random'
+
 
 def main():
-    env = GridWorldEnv(size=grid_size, mode='static')
+    env = GridWorldEnv(size=grid_size, mode=mode)
     model = GWPgModel(size=grid_size, units=[50]).double().to(device)
     optim = torch.optim.Adam(model.parameters(), lr=lr)
 
     writer = SummaryWriter(
-        f'{BASE_DIR}/app/rl/grid_world/runs/gw_q_LR{str(lr)[:7]}_1x50_{int(datetime.now().timestamp())}')
+        f'{BASE_DIR}/app/rl/grid_world/runs/gw_q_LR{str(lr)[:7]}_{mode}_{int(datetime.now().timestamp())}')
 
-    for epoch in range(10):
+    for epoch in range(2000):
         env.reset()
         step = 0
         losses = []
