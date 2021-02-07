@@ -8,7 +8,7 @@ units: 50
 
 gamma_returns: 0.80
 gamma_credits: 0.95
-total_episodes: 200
+total_episodes: 50
 n_env: 50
 current_episode: 1
 max_steps: 50

@@ -3,6 +3,7 @@ from typing import List
 
 import hydra
 import numpy as np
+import optuna
 import torch
 from omegaconf import OmegaConf, DictConfig
 from torch import nn
@@ -55,7 +56,7 @@ class GWPolicyGradTrainer:
         self.model = GWPgModel(self.cfg.grid_size, [self.cfg.units for _ in range(self.cfg.depth)]).double().to(device)
         self.optim = torch.optim.Adam(self.model.parameters(), lr=self.cfg.lr)
         self.writer = SummaryWriter(
-            f'{BASE_DIR}/app/rl/grid_world/runs/gw_policy_grad__{int(datetime.now().timestamp())}')
+            f'{BASE_DIR}/app/rl/grid_world/runs/gw_policy_grad_LR{str(self.cfg.lr)[:7]}_{self.cfg.depth}x{self.cfg.units}_{int(datetime.now().timestamp())}')
         self.envs = [GridWorldEnv(size=self.cfg.grid_size, mode=self.cfg.env_mode) for _ in range(self.cfg.n_env)]
         self.stats_e = []
         self.won = []
@@ -139,7 +140,7 @@ class GWPolicyGradTrainer:
         self.optim.zero_grad()
         loss.backward()
         self.optim.step()
-        print(f"loss: {loss}")
+        # print(f"loss: {loss}")
         self.writer.add_scalar('Training loss', loss.item(), global_step=self.cfg.current_episode)
         self.writer.add_scalar('Mean Rewards', np.mean(rewards_list), global_step=self.cfg.current_episode)
 
@@ -207,8 +208,11 @@ def get_final_reward(trainer):
     return reward / (n + 0.00001)
 
 
-@hydra.main(config_name="config")
-def main(cfg: DictConfig) -> None:
+def run_trainer(cfg: DictConfig, trail: optuna.Trial) -> float:
+    cfg.lr = trail.suggest_loguniform('lr', 0.00001, 0.1)
+    cfg.depth = trail.suggest_int('depth', 1, 4)
+    cfg.units = trail.suggest_int('units', 5, 500)
+
     trainer = GWPolicyGradTrainer(**dict(cfg))
 
     while trainer.cfg.current_episode <= cfg.total_episodes:
@@ -216,12 +220,25 @@ def main(cfg: DictConfig) -> None:
         print('.', end='')
         trainer.cfg.current_episode += 1
 
+    final_reward = get_final_reward(trainer)
     hparams = {key: cfg[key] for key in ['lr', 'depth', 'units']}
-    trainer.writer.add_hparams(hparams, {'final_reward': get_final_reward(trainer)})
+    trainer.writer.add_hparams(hparams, {'final_reward': final_reward})
     trainer.writer.close()
 
-    play(trainer.model, cfg)
+    # play(trainer.model, cfg)
+
+    return final_reward
+
+
+@hydra.main(config_name="config")
+def main(cfg: DictConfig) -> None:
+    study = optuna.create_study(direction='maximize')
+    study.optimize(lambda trail: run_trainer(cfg, trail), n_trials=10)
+    print(f'{study.best_params=}')
+    print(f'{study.best_value=}')
 
 
 if __name__ == "__main__":
     main()
+
+# python gw_pg.py --multirun lr=0.0001,0.001,0.01,0.1
