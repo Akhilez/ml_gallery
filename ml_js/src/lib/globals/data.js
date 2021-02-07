@@ -239,7 +239,7 @@ const projectsRaw = {
     image: "gridworld.png",
     status: projectStatus.inProgress,
     links: {
-      app: "/coming_soon",
+      app: "/grid_world",
       source: "",
     },
   },
