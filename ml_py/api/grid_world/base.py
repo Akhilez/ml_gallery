@@ -1,15 +1,19 @@
+from abc import ABC, abstractmethod
+
 import numpy as np
 
-
-grid_size = 10
-mode = 'random'
+from gym_grid_world.envs import GridWorldEnv
 
 
-class GridWorld:
+class GridWorldBase (ABC):
+
+    @abstractmethod
+    def predict(self, env: GridWorldEnv) -> dict:
+        pass
+
     @staticmethod
     def get_item_positions(state):
         pos = []
         for s in state:
             pos.append(np.array(np.nonzero(s == 1)).flatten().tolist())
         return pos
-
