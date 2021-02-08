@@ -48,24 +48,26 @@ export class LearnLine extends React.Component {
 
   render() {
     return (
-      <ProjectWrapper project={this.project} align="center">
-        <Neuron ref={this.neuronRef} />
-        {this.getEquationInput()}
-        {!this.state.isTraining && (
-          <Button
-            colorScheme="brand"
-            borderRadius="lg"
-            isLoading={this.state.isTraining}
-            loadingText="Training"
-            onClick={() => this.startTrainingPipeline()}
-          >
-            TRAIN
-          </Button>
-        )}
-        {this.state.isTraining && this.showStopTrainingButton()}
-        {this.state.didTrainingStart && this.getGraph()}
-        {this.state.didTrainingStart && this.getParametersGraph()}
-        {this.state.didTrainingStart && this.getLossGraph()}
+      <ProjectWrapper project={this.project}>
+        <Box align="center">
+          <Neuron ref={this.neuronRef} />
+          {this.getEquationInput()}
+          {!this.state.isTraining && (
+            <Button
+              colorScheme="brand"
+              borderRadius="lg"
+              isLoading={this.state.isTraining}
+              loadingText="Training"
+              onClick={() => this.startTrainingPipeline()}
+            >
+              TRAIN
+            </Button>
+          )}
+          {this.state.isTraining && this.showStopTrainingButton()}
+          {this.state.didTrainingStart && this.getGraph()}
+          {this.state.didTrainingStart && this.getParametersGraph()}
+          {this.state.didTrainingStart && this.getLossGraph()}
+        </Box>
       </ProjectWrapper>
     )
   }

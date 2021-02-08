@@ -1,18 +1,33 @@
 import React from "react"
-import { Flex } from "@chakra-ui/react"
+import { Flex, Link, useColorModeValue } from "@chakra-ui/react"
 import { urls } from "../globals/data"
-import { SolidLink } from "./commons"
+import { Link as GLink } from "gatsby"
+
+const BreadCrumbLink = ({ href, ...props }) => (
+  <Link
+    as={GLink}
+    to={href}
+    py={1}
+    href={href}
+    _hover={{
+      color: "brand.500",
+      textDecoration: "none",
+    }}
+    mr={2}
+    {...props}
+  >
+    {props.children}
+  </Link>
+)
 
 export function BreadCrumb({ project, ...props }) {
+  const color = useColorModeValue("gray.500", "gray.300")
   return (
-    <Flex alignItems="center" fontSize="sm" {...props}>
-      <SolidLink to={urls.gallery} py={1} mr={2}>
-        Home
-      </SolidLink>{" "}
-      /{" "}
-      <SolidLink to={project.links.app} py={1} ml={2}>
+    <Flex alignItems="center" color={color} fontSize="sm" {...props}>
+      <BreadCrumbLink to={urls.gallery}>Home</BreadCrumbLink> /
+      <BreadCrumbLink to={project.links.app} ml={2}>
         {project.title}
-      </SolidLink>
+      </BreadCrumbLink>
     </Flex>
   )
 }
