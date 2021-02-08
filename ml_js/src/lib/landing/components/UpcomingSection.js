@@ -1,6 +1,6 @@
 import React from "react"
-import { Container } from "../../components/commons"
 import {
+  Container,
   Divider,
   Heading,
   Box,

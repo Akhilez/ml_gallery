@@ -1,6 +1,7 @@
 import React from "react"
 import {
   Box,
+  Container,
   Image,
   Flex,
   Button,
@@ -11,7 +12,6 @@ import {
   Tag,
 } from "@chakra-ui/react"
 import { Link as GLink } from "gatsby"
-import { Container } from "../../components/commons"
 import {
   categoriesMap,
   projects as allProjects,

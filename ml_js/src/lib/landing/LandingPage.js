@@ -1,8 +1,16 @@
 import React from "react"
-import { Box, Button, Image, Text, Link, Heading, Flex } from "@chakra-ui/react"
+import {
+  Box,
+  Button,
+  Container,
+  Image,
+  Text,
+  Link,
+  Heading,
+  Flex,
+} from "@chakra-ui/react"
 import { Link as GLink } from "gatsby"
 import { MetaTags } from "../components/MetaTags"
-import { Container } from "../components/commons"
 import mlg_logo from "../media/ml_logo/ml_logo.png"
 import { projects, urls } from "../globals/data"
 import { BasicsSection } from "./components/BasicsSection"

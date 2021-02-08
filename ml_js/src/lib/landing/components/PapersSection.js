@@ -2,16 +2,14 @@ import React from "react"
 import {
   Button,
   Box,
+  Container,
   Text,
-  Divider,
   Heading,
-  Flex,
   Link,
   Image,
   Wrap,
   WrapItem,
 } from "@chakra-ui/react"
-import { Centered, Container } from "../../components/commons"
 import { papersList } from "../../globals/data"
 import { DynamicColorBox } from "../../components/dynamicColorMode"
 import { HiExternalLink } from "react-icons/all"
@@ -25,7 +23,7 @@ const Paper = ({ paper }) => (
     borderRightRadius={{ base: "8px", md: 0 }}
     direction="row"
   >
-    <Box w={{ base: "xs", md: "lg" }} p={4}>
+    <Box w={{ base: "xs", md: "sm" }} p={4}>
       <Heading variant="dynamicGray" fontSize="2xl" mb={4}>
         {paper.title}
       </Heading>

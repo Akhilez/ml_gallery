@@ -1,6 +1,7 @@
 import React from "react"
 import {
   Box,
+  Container,
   Heading,
   Text,
   Image,
@@ -10,7 +11,7 @@ import {
   Flex,
 } from "@chakra-ui/react"
 import { Link as GLink } from "gatsby"
-import { Centered, Container } from "../../components/commons"
+import { Centered } from "../../components/commons"
 import SwiperCore, { Navigation, Pagination, Autoplay } from "swiper"
 import { Swiper, SwiperSlide } from "swiper/react"
 import {

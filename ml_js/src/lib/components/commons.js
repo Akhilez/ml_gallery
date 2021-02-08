@@ -1,6 +1,7 @@
 import React from "react"
 import {
   Box,
+  Container,
   Link,
   Text,
   Flex,
@@ -13,21 +14,6 @@ import { Link as GLink } from "gatsby"
 import { urls } from "../globals/data"
 import ak_logo_white from "src/lib/media/ak_white.svg"
 import { AiFillGithub, BiEnvelope } from "react-icons/all"
-
-export const Container = ({ children, ...props }) => {
-  const theme = useTheme()
-
-  return (
-    <Box
-      mx="auto"
-      maxW={["full", "full", ...theme.breakpoints.slice(1)]}
-      w="100%"
-      {...props}
-    >
-      {children}
-    </Box>
-  )
-}
 
 export function Centered(props) {
   return <div align={"center"}>{props.children}</div>
