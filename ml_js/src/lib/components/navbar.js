@@ -8,6 +8,7 @@ import {
   useColorMode,
   Icon,
   useColorModeValue,
+  Container,
 } from "@chakra-ui/react"
 import { Link as GLink } from "gatsby"
 import {
@@ -18,7 +19,7 @@ import {
   IoMdMoon,
   IoMdSunny,
 } from "react-icons/all"
-import { Container, SolidLink } from "./commons"
+import { SolidLink } from "./commons"
 
 const NavLink = ({ href, icon, ...props }) => {
   const color = useColorModeValue("brand.500", "gray.400")

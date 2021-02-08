@@ -1,7 +1,6 @@
 import React from "react"
 import {
   Box,
-  Divider,
   Link,
   Text,
   Flex,

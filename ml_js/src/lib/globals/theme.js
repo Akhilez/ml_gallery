@@ -1,8 +1,13 @@
 import { extendTheme } from "@chakra-ui/react"
 import { createBreakpoints } from "@chakra-ui/theme-tools"
 
-export default extendTheme({
+const theme = extendTheme({
   components: {
+    Container: {
+      baseStyle: {
+        maxW: { lg: "1024px", md: "768px", sm: "640px", xl: "1280px" },
+      },
+    },
     Flex: {
       baseStyle: { backgroundColor: "transparent" },
       variants: {
@@ -86,3 +91,5 @@ export default extendTheme({
   },
   shadows: { outline: "none" },
 })
+
+export default theme
