@@ -1,6 +1,5 @@
 import React from "react"
 import { ProjectWrapper } from "src/lib/components/ProjectWrapper"
-import { Centered } from "../../components/commons"
 import NeuronGraphLearnCurve from "./neuron_graph_learn_curve"
 import Graph from "./sketch_learn_curve"
 import {
@@ -50,68 +49,66 @@ export class LearnCurve extends React.Component {
 
   render() {
     return (
-      <ProjectWrapper project={this.project}>
-        <Centered>
-          <NeuronGraphLearnCurve ref={this.neuronRef} tf={this.tf} />
+      <ProjectWrapper project={this.project} align="center">
+        <NeuronGraphLearnCurve ref={this.neuronRef} tf={this.tf} />
 
-          {!this.state.isTraining && (
-            <Button
-              colorScheme="brand"
-              borderRadius="lg"
-              m={1}
-              isLoading={this.state.isTraining}
-              loadingText="Training"
-              onClick={() => this.startTraining()}
-            >
-              TRAIN
-            </Button>
-          )}
-          {this.state.isTraining && (
-            <Button
-              m={1}
-              variant="outline"
-              colorScheme="brand"
-              borderRadius="lg"
-              onClick={() => this.stopTraining()}
-            >
-              STOP
-            </Button>
-          )}
-          {!this.state.isTraining && (
-            <Button
-              m={1}
-              variant="outline"
-              colorScheme="brand"
-              borderRadius="lg"
-              onClick={() => this.clearData()}
-            >
-              CLEAR
-            </Button>
-          )}
+        {!this.state.isTraining && (
+          <Button
+            colorScheme="brand"
+            borderRadius="lg"
+            m={1}
+            isLoading={this.state.isTraining}
+            loadingText="Training"
+            onClick={() => this.startTraining()}
+          >
+            TRAIN
+          </Button>
+        )}
+        {this.state.isTraining && (
+          <Button
+            m={1}
+            variant="outline"
+            colorScheme="brand"
+            borderRadius="lg"
+            onClick={() => this.stopTraining()}
+          >
+            STOP
+          </Button>
+        )}
+        {!this.state.isTraining && (
+          <Button
+            m={1}
+            variant="outline"
+            colorScheme="brand"
+            borderRadius="lg"
+            onClick={() => this.clearData()}
+          >
+            CLEAR
+          </Button>
+        )}
 
-          {this.state.warningMessage && (
-            <Alert status="warning" mt={4} w="md">
-              <AlertIcon />
-              {this.state.warningMessage}
-              <CloseButton
-                position="absolute"
-                right="8px"
-                top="8px"
-                onClick={() => this.setState({ warningMessage: null })}
-              />
-            </Alert>
-          )}
+        {this.state.warningMessage && (
+          <Alert status="warning" mt={4} w="md">
+            <AlertIcon />
+            {this.state.warningMessage}
+            <CloseButton
+              position="absolute"
+              right="8px"
+              top="8px"
+              onClick={() => this.setState({ warningMessage: null })}
+            />
+          </Alert>
+        )}
 
-          {this.getComplexityModifier()}
+        {this.getComplexityModifier()}
 
-          <br />
-          <Graph
-            ref={this.graphRef}
-            tf={this.tf}
-            new_point_classback={(x, y) => this.tf.addNewPoint(x, y)}
-          />
-          {this.getLossGraph()}
-        </Centered>
+        <br />
+        <Graph
+          ref={this.graphRef}
+          tf={this.tf}
+          new_point_classback={(x, y) => this.tf.addNewPoint(x, y)}
+        />
+        {this.getLossGraph()}
       </ProjectWrapper>
     )
   }

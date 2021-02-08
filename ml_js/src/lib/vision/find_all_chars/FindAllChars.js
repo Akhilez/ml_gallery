@@ -1,7 +1,6 @@
 import React from "react"
 import { projects } from "../../globals/data"
 import { ProjectWrapper } from "../../components/ProjectWrapper"
-import { Centered } from "../../components/commons"
 import { IconButton } from "@chakra-ui/react"
 import { FindAllCharsCanvas } from "./FindAllCharsCanvas"
 import { MdRefresh } from "react-icons/all"
@@ -20,20 +19,18 @@ export class FindAllChars extends React.Component {
 
   render() {
     return (
-      <ProjectWrapper project={this.project}>
-        <Centered>
-          <FindAllCharsCanvas ref={this.canvasRef} parent={this} />
-          <IconButton
-            aria-label="icon"
-            icon={<MdRefresh />}
-            isRound
-            variant="outline"
-            colorScheme="red"
-            size="sm"
-            mt={4}
-            onClick={() => this.canvasRef.current.clearCanvas()}
-          />
-        </Centered>
+      <ProjectWrapper project={this.project} align="center">
+        <FindAllCharsCanvas ref={this.canvasRef} parent={this} />
+        <IconButton
+          aria-label="icon"
+          icon={<MdRefresh />}
+          isRound
+          variant="outline"
+          colorScheme="red"
+          size="sm"
+          mt={4}
+          onClick={() => this.canvasRef.current.clearCanvas()}
+        />
       </ProjectWrapper>
     )
   }

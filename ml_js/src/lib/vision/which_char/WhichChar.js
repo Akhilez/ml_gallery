@@ -2,7 +2,6 @@ import React from "react"
 import { ProjectWrapper } from "../../components/ProjectWrapper"
 import { projects } from "../../globals/data"
 import MnistClassifier from "./classifier"
-import { Centered } from "../../components/commons"
 import { MdRefresh } from "react-icons/all"
 import NumberPaintCanvas from "./paint_canvas"
 import { Box, Button, Flex, IconButton, Text } from "@chakra-ui/react"
@@ -46,61 +45,55 @@ export class WhichChar extends React.Component {
 
   render() {
     return (
-      <ProjectWrapper project={this.project}>
-        <Centered>
-          {!this.state.modelLoaded && "Loading model..."}
+      <ProjectWrapper project={this.project} align="center">
+        {!this.state.modelLoaded && "Loading model..."}
 
-          {this.state.modelLoaded && (
-            <>
-              <NumberPaintCanvas
-                ref={this.paintCanvasRef}
-                parent={this}
-                mt={6}
-              />
-              <IconButton
-                aria-label="icon"
-                icon={<MdRefresh />}
-                isRound
-                variant="outline"
-                colorScheme="red"
-                size="sm"
-                mt={4}
-                onClick={() => this.paintCanvasRef.current.clearCanvas()}
-              />
-              {this.state.predicted && (
-                <Text my={2}>Predicted: {this.state.predicted}</Text>
-              )}
-              {this.state.confidences && <this.PredictionChart />}
-              <Flex justifyContent="center" mt={4}>
+        {this.state.modelLoaded && (
+          <>
+            <NumberPaintCanvas ref={this.paintCanvasRef} parent={this} mt={6} />
+            <IconButton
+              aria-label="icon"
+              icon={<MdRefresh />}
+              isRound
+              variant="outline"
+              colorScheme="red"
+              size="sm"
+              mt={4}
+              onClick={() => this.paintCanvasRef.current.clearCanvas()}
+            />
+            {this.state.predicted && (
+              <Text my={2}>Predicted: {this.state.predicted}</Text>
+            )}
+            {this.state.confidences && <this.PredictionChart />}
+            <Flex justifyContent="center" mt={4}>
+              <Button
+                colorScheme="brand"
+                borderRadius="lg"
+                m={1}
+                isLoading={this.state.isTraining || !this.state.dataLoaded}
+                loadingText={
+                  this.state.isTraining ? "Training" : "Loading Data"
+                }
+                onClick={() => this.startTraining()}
+              >
+                TRAIN
+              </Button>
+              {this.state.isTraining && (
                 <Button
+                  m={1}
+                  variant="outline"
                   colorScheme="brand"
                   borderRadius="lg"
-                  m={1}
-                  isLoading={this.state.isTraining || !this.state.dataLoaded}
-                  loadingText={
-                    this.state.isTraining ? "Training" : "Loading Data"
-                  }
-                  onClick={() => this.startTraining()}
+                  onClick={() => this.stopTraining()}
                 >
-                  TRAIN
+                  STOP
                 </Button>
-                {this.state.isTraining && (
-                  <Button
-                    m={1}
-                    variant="outline"
-                    colorScheme="brand"
-                    borderRadius="lg"
-                    onClick={() => this.stopTraining()}
-                  >
-                    STOP
-                  </Button>
-                )}
-              </Flex>
-            </>
-          )}
-          <this.Samples />
-          <this.LossGraph />
-        </Centered>
+              )}
+            </Flex>
+          </>
+        )}
+        <this.Samples />
+        <this.LossGraph />
       </ProjectWrapper>
     )
   }

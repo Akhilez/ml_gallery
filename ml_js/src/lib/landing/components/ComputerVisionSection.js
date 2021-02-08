@@ -11,7 +11,6 @@ import {
   Flex,
 } from "@chakra-ui/react"
 import { Link as GLink } from "gatsby"
-import { Centered } from "../../components/commons"
 import SwiperCore, { Navigation, Pagination, Autoplay } from "swiper"
 import { Swiper, SwiperSlide } from "swiper/react"
 import {
@@ -65,42 +64,40 @@ export const ComputerVisionSection = () => {
     project => project.status !== projectStatus.toDo
   )
   return (
-    <Container mt={12} py={8}>
-      <Centered>
-        <Heading variant="dynamicColorMode">Computer Vision</Heading>
-        <Text variant="dynamicColorMode" mt={2}>
-          {categoriesMap.vision.desc}
-        </Text>
-        <Flex my={2} justify="center">
-          <Tag mx={1}>Classification</Tag>
-          <Tag mx={1}>Detection</Tag>
-          <Tag mx={1}>Captioning</Tag>
-          <Tag mx={1}>GANs</Tag>
-        </Flex>
-        <Button
-          colorScheme="secondary"
-          size="sm"
-          mt={4}
-          as={GLink}
-          to={allProjects.which_char.links.app}
-        >
-          Start here
-        </Button>
-        <Swiper
-          spaceBetween={50}
-          slidesPerView={1}
-          navigation
-          pagination={{ clickable: true }}
-          className="vision_carousal"
-          autoplay={{ delay: 1000, disableOnInteraction: true }}
-        >
-          {projects.map(project => (
-            <SwiperSlide key={project.id}>
-              <ProjectSlide project={project} />
-            </SwiperSlide>
-          ))}
-        </Swiper>
-      </Centered>
+    <Container mt={12} py={8} align="center">
+      <Heading variant="dynamicColorMode">Computer Vision</Heading>
+      <Text variant="dynamicColorMode" mt={2}>
+        {categoriesMap.vision.desc}
+      </Text>
+      <Flex my={2} justify="center">
+        <Tag mx={1}>Classification</Tag>
+        <Tag mx={1}>Detection</Tag>
+        <Tag mx={1}>Captioning</Tag>
+        <Tag mx={1}>GANs</Tag>
+      </Flex>
+      <Button
+        colorScheme="secondary"
+        size="sm"
+        mt={4}
+        as={GLink}
+        to={allProjects.which_char.links.app}
+      >
+        Start here
+      </Button>
+      <Swiper
+        spaceBetween={50}
+        slidesPerView={1}
+        navigation
+        pagination={{ clickable: true }}
+        className="vision_carousal"
+        autoplay={{ delay: 1000, disableOnInteraction: true }}
+      >
+        {projects.map(project => (
+          <SwiperSlide key={project.id}>
+            <ProjectSlide project={project} />
+          </SwiperSlide>
+        ))}
+      </Swiper>
     </Container>
   )
 }

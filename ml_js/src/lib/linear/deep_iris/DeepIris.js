@@ -15,7 +15,6 @@ import {
   XAxis,
   YAxis,
 } from "recharts"
-import { Centered } from "../../components/commons"
 import {
   Box,
   Button,
@@ -49,53 +48,51 @@ export class DeepIris extends React.Component {
   }
   render() {
     return (
-      <ProjectWrapper project={this.project}>
-        <Centered>
-          <Flex
-            justifyContent={{ md: "center" }}
-            alignItems="center"
-            overflow="auto"
-          >
-            <this.Sliders />
-            <NeuralGraph
-              ref={this.graphRef}
-              state={this.state}
-              actions={{
-                updateNeurons: (layerNumber, change) =>
-                  this.updateNeurons(layerNumber, change),
-              }}
-            />
-            <this.PredictionChart />
-          </Flex>
+      <ProjectWrapper project={this.project} align="center">
+        <Flex
+          justifyContent={{ md: "center" }}
+          alignItems="center"
+          overflow="auto"
+        >
+          <this.Sliders />
+          <NeuralGraph
+            ref={this.graphRef}
+            state={this.state}
+            actions={{
+              updateNeurons: (layerNumber, change) =>
+                this.updateNeurons(layerNumber, change),
+            }}
+          />
+          <this.PredictionChart />
+        </Flex>
 
-          {this.UpdateLayersButtons()}
+        {this.UpdateLayersButtons()}
 
+        <Button
+          colorScheme="brand"
+          borderRadius="lg"
+          m={1}
+          isLoading={this.state.isTraining}
+          loadingText="Training"
+          onClick={() => this.startTraining()}
+        >
+          TRAIN
+        </Button>
+        {this.state.isTraining && (
           <Button
+            m={1}
+            variant="outline"
             colorScheme="brand"
             borderRadius="lg"
-            m={1}
-            isLoading={this.state.isTraining}
-            loadingText="Training"
-            onClick={() => this.startTraining()}
+            onClick={() => this.stopTraining()}
           >
-            TRAIN
+            STOP
           </Button>
-          {this.state.isTraining && (
-            <Button
-              m={1}
-              variant="outline"
-              colorScheme="brand"
-              borderRadius="lg"
-              onClick={() => this.stopTraining()}
-            >
-              STOP
-            </Button>
-          )}
+        )}
 
-          <this.Samples />
+        <this.Samples />
 
-          {this.getLossGraph()}
-        </Centered>
+        {this.getLossGraph()}
       </ProjectWrapper>
     )
   }

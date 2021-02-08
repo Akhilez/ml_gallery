@@ -1,4 +1,3 @@
-import { Centered } from "../../components/commons"
 import { ProjectWrapper } from "../../components/ProjectWrapper"
 import React from "react"
 import { Link, Text } from "@chakra-ui/react"
@@ -13,15 +12,13 @@ export class AlphaNine extends React.Component {
 
   render() {
     return (
-      <ProjectWrapper project={this.project}>
-        <Centered>
-          <Text>
-            This is a 2 player game. AI player coming soon. Built using my own 9
-            Men's Morris{" "}
-            <Link to="https://github.com/Akhilez/gyms">environment</Link>
-          </Text>
-          <AlphaNineCanvas />
-        </Centered>
+      <ProjectWrapper project={this.project} align="center">
+        <Text>
+          This is a 2 player game. AI player coming soon. Built using my own 9
+          Men's Morris{" "}
+          <Link to="https://github.com/Akhilez/gyms">environment</Link>
+        </Text>
+        <AlphaNineCanvas />
       </ProjectWrapper>
     )
   }

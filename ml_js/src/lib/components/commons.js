@@ -15,18 +15,13 @@ import { urls } from "../globals/data"
 import ak_logo_white from "src/lib/media/ak_white.svg"
 import { AiFillGithub, BiEnvelope } from "react-icons/all"
 
-export function Centered(props) {
-  return <div align={"center"}>{props.children}</div>
-}
-
-const ContactIcon = ({ icon: Icon, url }) => (
-  <IconButton as={Link} mx={2} isRound size="sm" href={url} isExternal>
-    <Icon />
-  </IconButton>
-)
-
 export function Footer() {
   const bg = useColorModeValue("gray.600", "gray.900")
+  const ContactIcon = ({ icon: Icon, url }) => (
+    <IconButton as={Link} mx={2} isRound size="sm" href={url} isExternal>
+      <Icon />
+    </IconButton>
+  )
   return (
     <Box backgroundColor={bg} minH="10vh">
       <Container py={8} pl={4}>
