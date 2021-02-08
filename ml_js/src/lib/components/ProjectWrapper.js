@@ -4,19 +4,28 @@ import {
   Heading,
   Image,
   Link as CLink,
+  Box,
   Text,
+  IconButton,
+  Container,
+  SimpleGrid,
+  Wrap,
+  useDisclosure,
+  DrawerOverlay,
+  DrawerContent,
+  DrawerCloseButton,
+  Drawer,
 } from "@chakra-ui/react"
 import colabImage from "../landing/images/colab.png"
-import { Container } from "./commons"
 import { BreadCrumb } from "./BreadCrumb"
-import { ProjectsNavigatorFrame } from "./SideNav"
+import { CollapsibleSideNav, ProjectsNavigatorFrame, SideNav } from "./SideNav"
 import { ProjectPaginator } from "./ProjectPaginator"
 import React from "react"
 import { MetaTags } from "./MetaTags"
 
 function ActionButtons({ project }) {
   return (
-    <Flex>
+    <Flex my={2}>
       <Button
         as={CLink}
         href="#how_it_works"
@@ -43,7 +52,7 @@ function ActionButtons({ project }) {
   )
 }
 
-export function ProjectWrapper({ project, children, ...props }) {
+export function ProjectWrapperOld({ project, children, ...props }) {
   return (
     <Container minH="90vh">
       <MetaTags title={`${project.title} | ML Gallery`} />
@@ -66,5 +75,22 @@ export function ProjectWrapper({ project, children, ...props }) {
         <ProjectPaginator project={project} />
       </ProjectsNavigatorFrame>
     </Container>
+  )
+}
+
+export function ProjectWrapper({ project, children, ...props }) {
+  return (
+    <>
+      <Container minH="90vh" {...props}>
+        <MetaTags title={`${project.title} | ML Gallery`} />
+        <Wrap justify="space-between">
+          <BreadCrumb project={project} ml={{ base: 6, md: 0 }} />
+          <ActionButtons project={project} />
+        </Wrap>
+        <Heading mt={4}>{project.title}</Heading>
+        {children}
+      </Container>
+      <CollapsibleSideNav project={project} />
+    </>
   )
 }
