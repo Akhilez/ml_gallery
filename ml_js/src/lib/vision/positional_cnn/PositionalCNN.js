@@ -2,9 +2,9 @@ import React from "react"
 import { projects } from "../../globals/data"
 import { ProjectWrapper } from "../../components/ProjectWrapper"
 import NumberPaintCanvas from "./paint_canvas"
-import { mlgApi } from "../../api"
-import { Flex, FormLabel, IconButton, Switch, Text } from "@chakra-ui/react"
+import { IconButton, Text } from "@chakra-ui/react"
 import { MdRefresh } from "react-icons/all"
+import { mlgApi } from "../../api"
 
 export class PositionalCNN extends React.Component {
   constructor(props) {
@@ -58,9 +58,7 @@ export class PositionalCNN extends React.Component {
   }
 
   predict = image => {
-    console.log(image)
     mlgApi.positionalCnn(image).then(result => {
-      console.log(result)
       this.setState({ predClass: result.class, predPosition: result.position })
     })
   }

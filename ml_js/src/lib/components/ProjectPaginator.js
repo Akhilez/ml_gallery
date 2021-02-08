@@ -1,7 +1,9 @@
 import React from "react"
-import { Flex, Box, Text, Divider } from "@chakra-ui/react"
-import { SolidLink } from "./commons"
+import { Flex, Box, Text, Divider, Link } from "@chakra-ui/react"
 import { projectCategories, projectStatus } from "../globals/data"
+import { Link as GLink } from "gatsby"
+import { BiChevronLeft, BiChevronRight } from "react-icons/all"
+import { SadStates } from "./SadStates"
 
 export class ProjectPaginator extends React.Component {
   constructor(props) {
@@ -18,25 +20,51 @@ export class ProjectPaginator extends React.Component {
     this.prevProject = this.orderedProjects[this.projectIndex - 1]
     this.nextProject = this.orderedProjects[this.projectIndex + 1]
   }
+
+  ArrowLink = ({ href, ...props }) => (
+    <Link
+      as={GLink}
+      to={href}
+      m={2}
+      p={5}
+      w="50%"
+      href={href}
+      _hover={{ textDecoration: "none" }}
+      {...props}
+    >
+      {props.children}
+    </Link>
+  )
+
   render() {
     return (
       <>
         <Divider mt="50px" />
-        <Flex justifyContent="center" alignItems="center">
-          {this.prevProject && (
-            <SolidLink href={this.prevProject?.links?.app} m={2} p={5} w="50%">
-              <Box textAlign="right">
-                <Text fontSize="sm">Previous</Text>
-                <Text>{this.prevProject?.title}</Text>
-              </Box>
-            </SolidLink>
-          )}
-          {this.nextProject && (
-            <SolidLink href={this.nextProject?.links?.app} m={2} p={5} w="50%">
-              <Box fontSize="sm">Next</Box>
-              <Text>{this.nextProject?.title}</Text>
-            </SolidLink>
-          )}
+        <Flex justifyContent="center" alignItems="center" w="100%">
+          <SadStates
+            states={[{ when: !this.prevProject, render: <Box w="50%" /> }]}
+          >
+            <this.ArrowLink href={this.prevProject?.links?.app} align="left">
+              <Text variant="dynamicColorMode" fontSize="sm">
+                Previous
+              </Text>
+              <Text fontSize="lg" fontWeight="bold" color="brand.300">
+                {"<"} {this.prevProject?.title}
+              </Text>
+            </this.ArrowLink>
+          </SadStates>
+          <SadStates
+            states={[{ when: !this.nextProject, render: <Box w="50%" /> }]}
+          >
+            <this.ArrowLink href={this.nextProject?.links?.app} align="right">
+              <Text variant="dynamicColorMode" fontSize="sm">
+                Next
+              </Text>
+              <Text fontSize="lg" fontWeight="bold" color="brand.300">
+                {this.nextProject?.title} >
+              </Text>
+            </this.ArrowLink>
+          </SadStates>
         </Flex>
       </>
     )

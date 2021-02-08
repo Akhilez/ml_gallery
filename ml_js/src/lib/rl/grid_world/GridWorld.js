@@ -1,14 +1,6 @@
 import { ProjectWrapper } from "../../components/ProjectWrapper"
 import React from "react"
-import {
-  Link,
-  Text,
-  Tabs,
-  TabList,
-  TabPanels,
-  Tab,
-  TabPanel,
-} from "@chakra-ui/react"
+import { Tabs, TabList, TabPanels, Tab, TabPanel } from "@chakra-ui/react"
 import { projects } from "src/lib/globals/data"
 import { GridWorldCanvas } from "./GridWorldCanvas"
 
@@ -24,7 +16,7 @@ export class GridWorld extends React.Component {
         <GridWorldCanvas />
         <Tabs colorScheme="brand">
           <TabList>
-            <Tab>Policy Gradients</Tab>
+            <Tab>Policy Grad</Tab>
             <Tab>Deep Q</Tab>
             <Tab>MCTS</Tab>
             <Tab>AlphaZero</Tab>

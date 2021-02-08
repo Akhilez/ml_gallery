@@ -63,8 +63,6 @@ export class Graph extends React.Component {
   handleInput(p5) {
     if (!isCursorInScope(p5, this.height, this.width)) return
 
-    console.log(p5.mouseX, p5.mouseY)
-
     let label = 1
     if (p5.keyIsDown(p5.SHIFT)) label = 0
     let x = p5.mouseX / this.width

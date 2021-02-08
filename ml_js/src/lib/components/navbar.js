@@ -22,7 +22,7 @@ import {
 import { SolidLink } from "./commons"
 
 const NavLink = ({ href, icon, ...props }) => {
-  const color = useColorModeValue("brand.500", "gray.400")
+  const color = useColorModeValue("brand.400", "gray.400")
   return (
     <SolidLink href={href} color={color} mx={1} {...props}>
       <Icon as={icon} fontSize="lg" />
@@ -33,7 +33,7 @@ const NavLink = ({ href, icon, ...props }) => {
 const DarkModeButton = () => {
   const { colorMode, toggleColorMode } = useColorMode()
   const isLight = colorMode === "light"
-  const color = useColorModeValue("brand.500", "gray.400")
+  const color = useColorModeValue("brand.400", "gray.400")
   return (
     <SolidLink as={Box} mx={1} color={color} onClick={toggleColorMode}>
       <Icon fontSize="lg" as={isLight ? IoMdMoon : IoMdSunny} />
@@ -86,7 +86,7 @@ export const StaticNavbar = () => {
       <Container>
         <Flex as="nav" alignItems="center" justify="space-between" wrap="wrap">
           <GLink to={urls.profile} className="navbar-brand logo">
-            <Image src={ak_logo} height="30px" alt="ak_logo" ml={1} mt={1} />
+            <Image src={ak_logo} height="30px" alt="ak_logo" mt={1} />
           </GLink>
           <Box width="auto" />
           <Flex>

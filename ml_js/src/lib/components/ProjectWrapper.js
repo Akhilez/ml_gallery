@@ -52,7 +52,9 @@ export function ProjectWrapper({ project, children, ...props }) {
           <BreadCrumb project={project} ml={{ base: 6, md: 0 }} />
           <ActionButtons project={project} />
         </Wrap>
-        <Heading mt={4}>{project.title}</Heading>
+        <Heading variant="dynamicColorMode" mt={4}>
+          {project.title}
+        </Heading>
         {children}
         <ProjectPaginator project={project} />
       </Container>

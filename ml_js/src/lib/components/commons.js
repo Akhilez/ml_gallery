@@ -42,26 +42,23 @@ export function Footer() {
   )
 }
 
-export function SolidLink({ href, ...props }) {
-  const theme = useTheme()
-  return (
-    <Link
-      as={GLink}
-      to={href}
-      py={2}
-      px={3}
-      href={href}
-      display="block"
-      borderRadius="lg"
-      _hover={{
-        color: "white",
-        textDecoration: "none",
-        backgroundColor: theme.colors.brand["500"],
-        transitionDuration: "0.4s",
-      }}
-      {...props}
-    >
-      {props.children}
-    </Link>
-  )
-}
+export const SolidLink = ({ href, ...props }) => (
+  <Link
+    as={GLink}
+    to={href}
+    py={2}
+    px={3}
+    href={href}
+    display="block"
+    borderRadius="lg"
+    _hover={{
+      color: "white",
+      textDecoration: "none",
+      backgroundColor: "brand.500",
+      transitionDuration: "0.4s",
+    }}
+    {...props}
+  >
+    {props.children}
+  </Link>
+)

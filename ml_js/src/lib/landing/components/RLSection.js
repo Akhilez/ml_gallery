@@ -31,7 +31,11 @@ const RLTag = ({ name }) => (
 
 const LeftSection = () => (
   <Flex w={{ base: "100%", md: "50%" }} justify="flex-end" mr={8}>
-    <Box w={{ base: "full", md: "md", "2xl": "2xl" }} p={4} pl={16}>
+    <Box
+      w={{ base: "full", md: "md", lg: "lg", xl: "xl", "2xl": "2xl" }}
+      p={4}
+      pl={16}
+    >
       <Heading variant="dynamicColorMode">Reinforcement Learning</Heading>
       <Text variant="dynamicColorMode" mt={2} mb={4}>
         Learn how models are trained to play games from basic to

@@ -139,8 +139,6 @@ export class AlphaNineCanvas extends React.Component {
   }
 
   kill = (pos, reward) => {
-    console.log(pos)
-    console.log(this.posMap)
     const piece = pos.piece
 
     this.killed[this.getOpponent()] += 1
@@ -198,8 +196,6 @@ export class AlphaNineCanvas extends React.Component {
     this.setState(this.state)
 
     pos.piece = piece
-    console.log(pos)
-    console.log(this.posMap)
   }
 
   postDone = status => {

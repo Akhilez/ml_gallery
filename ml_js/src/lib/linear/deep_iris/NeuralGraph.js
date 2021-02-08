@@ -2,7 +2,6 @@ import React from "react"
 import loadable from "@loadable/component"
 import petal_png from "./images/petal.png"
 import sepal_png from "./images/sepal.png"
-import { Box } from "@chakra-ui/react"
 
 const Sketch = loadable(() => import("react-p5"))
 

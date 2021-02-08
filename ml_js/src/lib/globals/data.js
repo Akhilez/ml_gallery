@@ -308,7 +308,7 @@ const projectsRaw = {
     },
   },
 }
-Object.keys(projectsRaw).map(key => {
+Object.keys(projectsRaw).forEach(key => {
   projectsRaw[key].id = key
 })
 export const projects = projectsRaw

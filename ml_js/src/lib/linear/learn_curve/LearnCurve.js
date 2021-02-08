@@ -13,14 +13,7 @@ import {
   ResponsiveContainer,
 } from "recharts"
 import { projects } from "../../globals/data"
-import {
-  Button,
-  Flex,
-  Alert,
-  AlertIcon,
-  CloseButton,
-  Box,
-} from "@chakra-ui/react"
+import { Button, Alert, AlertIcon, CloseButton, Box } from "@chakra-ui/react"
 import { LearnCurveTF } from "./LearnCurveTF"
 
 export class LearnCurve extends React.Component {
@@ -114,7 +107,11 @@ export class LearnCurve extends React.Component {
   }
 
   getComplexityModifier() {
-    let terms = [<Box whiteSpace="nowrap">y =&nbsp;</Box>]
+    let terms = [
+      <Box key="y" whiteSpace="nowrap">
+        y =&nbsp;
+      </Box>,
+    ]
 
     for (let i = 1; i <= this.state.order; i++) {
       terms.push(
@@ -123,7 +120,7 @@ export class LearnCurve extends React.Component {
         </Box>
       )
     }
-    terms.push(<>b</>)
+    terms.push(<React.Fragment key="b">b</React.Fragment>)
 
     return (
       <Box fontSize="20" mt={10}>

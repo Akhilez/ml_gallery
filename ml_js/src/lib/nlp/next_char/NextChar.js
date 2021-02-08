@@ -33,7 +33,7 @@ export class NextChar extends React.Component {
 
   render() {
     return (
-      <ProjectWrapper project={this.project} align="center">
+      <ProjectWrapper project={this.project}>
         <Box
           width={{ base: "sm", md: "2xl", lg: "4xl" }}
           height={{ base: "75px", md: "120px" }}
