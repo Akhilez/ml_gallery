@@ -1,11 +1,13 @@
+from typing import Tuple
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from pydantic.main import BaseModel
 
-from base import GridWorldBase
+from base import GridWorldBase, GridWorldRandom
 from constants import AlgorithmTypes, grid_size
 from gym_grid_world.envs import GridWorldEnv
 from pg import GridWorldPG
-from random import GridWorldRandom
 
 app = FastAPI()
 
@@ -23,6 +25,18 @@ models = {
 }
 
 
+class PositionsData(BaseModel):
+    player: Tuple[int, int]
+    wall: Tuple[int, int]
+    pit: Tuple[int, int]
+    win: Tuple[int, int]
+
+
+class StepData(BaseModel):
+    positions: PositionsData
+    action: int
+
+
 @app.get('/init')
 def index(algo: str):
     env = GridWorldEnv(grid_size, mode='random')
@@ -35,5 +49,11 @@ def index(algo: str):
 
 
 @app.post('/step')
-def step():
-    pass
+def step(algo: str, data: StepData):
+    env = GridWorldEnv(grid_size, mode='random')
+    env.reset()
+    env.state = dict(data.positions)
+    state, reward, done, info = env.step(data.action)
+    model = models[algo]
+    predictions = model.predict(env)
+    return {'state': state.tolist(), 'reward': reward, 'done': done, 'info': info, 'predictions': predictions}

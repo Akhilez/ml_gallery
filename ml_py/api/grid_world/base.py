@@ -17,3 +17,10 @@ class GridWorldBase (ABC):
         for s in state:
             pos.append(np.array(np.nonzero(s == 1)).flatten().tolist())
         return pos
+
+
+class GridWorldRandom(GridWorldBase):
+
+    def predict(self, env):
+        return {'move': np.random.randint(0, 4, 1)}
+

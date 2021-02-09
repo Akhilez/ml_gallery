@@ -7,5 +7,5 @@ class GridWorldPG(GridWorldBase):
 
     def predict(self, env):
         # TODO: Implement
-        return {'move': np.random.randint(0, 4, 1)}
+        return {'move': int(np.random.randint(0, 4, 1))}
 
