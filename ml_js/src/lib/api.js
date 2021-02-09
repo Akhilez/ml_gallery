@@ -20,11 +20,17 @@ export const mlgApi = {
       }),
   },
   gridWorld: {
-    init: () => fetch(`${apiHost(projects.grid_world)}/init`),
-    step: (grid, method, action) =>
-      fetchPost(`${apiHost(projects.grid_world)}/${method}`, { action, grid }),
+    init: algo =>
+      fetch(`${apiHost(projects.grid_world)}/init?algo=${algo}`).then(res =>
+        res.json()
+      ),
+    step: ({ positions, algo, action }) =>
+      fetchPost(`${apiHost(projects.grid_world)}/step?algo=${algo}`, {
+        action,
+        positions,
+      }),
   },
 }
 
-export const useGridWorldInitQuery = () =>
-  useQuery("gridWorldInit", () => mlgApi.gridWorld.init())
+export const useGridWorldInitQuery = algo =>
+  useQuery("gridWorldInit", () => mlgApi.gridWorld.init(algo))

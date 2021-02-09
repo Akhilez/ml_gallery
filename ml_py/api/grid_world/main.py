@@ -56,4 +56,6 @@ def step(algo: str, data: StepData):
     state, reward, done, info = env.step(data.action)
     model = models[algo]
     predictions = model.predict(env)
-    return {'state': state.tolist(), 'reward': reward, 'done': done, 'info': info, 'predictions': predictions}
+    player, win, pit, wall = GridWorldBase.get_item_positions(state)
+    return {'reward': reward, 'done': done, 'info': info, 'predictions': predictions,
+            "positions": {"player": player, "wall": wall, "win": win, "pit": pit}}
