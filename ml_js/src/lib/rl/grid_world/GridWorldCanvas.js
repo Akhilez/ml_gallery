@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react"
-import { Box, Progress, Button, Text, Flex, SimpleGrid } from "@chakra-ui/react"
-import { mlgApi, useGridWorldInitQuery } from "../../api"
+import { Box, Progress, Button, Text, Flex } from "@chakra-ui/react"
+import { mlgApi } from "../../api"
 import { SadStates } from "../../components/SadStates"
 import { Grid, Pit, Player, Wall, Win } from "./elements"
+import { motion } from "framer-motion"
 
 const algos = {
   pg: "pg",
@@ -26,6 +27,7 @@ export const GridWorldCanvas = () => {
   const [data, setData] = useState(null)
   const [algo, setAlgo] = useState(algos.pg)
   const [error, setError] = useState("")
+  const [isWaiting, setIsWaiting] = useState(false)
 
   useEffect(() => {
     mlgApi.gridWorld
@@ -37,8 +39,15 @@ export const GridWorldCanvas = () => {
   const takeAction = action => {
     mlgApi.gridWorld
       .step({ positions: data.positions, algo, action: action.value })
-      .then(data => setData(data))
-      .catch(err => setError(err))
+      .then(data => {
+        setData(data)
+        setIsWaiting(false)
+      })
+      .catch(err => {
+        setError(err)
+        setIsWaiting(false)
+      })
+    setIsWaiting(true)
   }
 
   const Loader = () => (
@@ -52,7 +61,9 @@ export const GridWorldCanvas = () => {
   )
 
   const ActionButton = ({ action }) => (
-    <Button onClick={() => takeAction(action)}>{action.label}</Button>
+    <Button onClick={() => takeAction(action)} isDisabled={isWaiting}>
+      {action.label}
+    </Button>
   )
 
   const ActionButtons = () => (
@@ -98,6 +109,7 @@ export const GridWorldCanvas = () => {
               </svg>
             </Box>
             <ActionButtons />
+            {isWaiting && <Loader />}
           </Box>
         )}
       </SadStates>
