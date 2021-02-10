@@ -3,6 +3,7 @@ import { Box, Progress, Button, Text, Flex } from "@chakra-ui/react"
 import { mlgApi } from "../../api"
 import { SadStates } from "../../components/SadStates"
 import { Grid, Pit, Player, Wall, Win } from "./elements"
+import { MotionBox } from "src/lib/components/MotionBox"
 
 const algos = {
   pg: "pg",
@@ -14,10 +15,10 @@ const algos = {
 }
 
 const actions = {
-  left: { value: 1, label: "Left" },
-  up: { value: 0, label: "Up" },
-  right: { value: 3, label: "Right" },
-  down: { value: 2, label: "Down" },
+  left: { value: 0, label: "Left" },
+  up: { value: 1, label: "Up" },
+  right: { value: 2, label: "Right" },
+  down: { value: 3, label: "Down" },
 }
 
 export const GridWorldCanvas = () => {
@@ -59,11 +60,31 @@ export const GridWorldCanvas = () => {
     />
   )
 
-  const ActionButton = ({ action }) => (
-    <Button onClick={() => takeAction(action)} isDisabled={isWaiting}>
-      {action.label}
-    </Button>
-  )
+  const ActionButton = ({ action }) => {
+    const animationDict = {
+      animate: { opacity: 0.5 },
+      opacity: 1,
+      transition: {
+        repeat: Infinity,
+        duration: 0.7,
+        repeatType: "mirror",
+        repeatDelay: 0.5,
+      },
+    }
+    const animationProps =
+      action.value === data?.predictions?.move ? animationDict : {}
+
+    return (
+      <MotionBox
+        as={Button}
+        onClick={() => takeAction(action)}
+        isDisabled={isWaiting}
+        {...animationProps}
+      >
+        {action.label}
+      </MotionBox>
+    )
+  }
 
   const ActionButtons = () => (
     <Box w="100px">

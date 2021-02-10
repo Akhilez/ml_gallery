@@ -8,7 +8,6 @@ export const Grid = () => (
         id="smallGrid"
         width="10"
         height="10"
-        height="10"
         patternUnits="userSpaceOnUse"
       >
         <path
@@ -36,8 +35,8 @@ export const Player = ({ x, y }) => (
   <motion.rect
     width="10"
     height="10"
-    x={x * 10}
-    y={y * 10}
+    y={x * 10}
+    x={y * 10}
     fill="blue"
     animate={{ opacity: 0.5 }}
     opacity={1}
@@ -50,11 +49,11 @@ export const Player = ({ x, y }) => (
   />
 )
 export const Pit = ({ x, y }) => (
-  <rect width="10" height="10" x={x * 10} y={y * 10} fill="red" />
+  <rect width="10" height="10" y={x * 10} x={y * 10} fill="red" />
 )
 export const Wall = ({ x, y }) => (
-  <rect width="10" height="10" x={x * 10} y={y * 10} fill="gray" />
+  <rect width="10" height="10" y={x * 10} x={y * 10} fill="gray" />
 )
 export const Win = ({ x, y }) => (
-  <rect width="10" height="10" x={x * 10} y={y * 10} fill="green" />
+  <rect width="10" height="10" y={x * 10} x={y * 10} fill="green" />
 )
