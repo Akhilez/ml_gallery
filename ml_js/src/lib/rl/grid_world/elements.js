@@ -35,8 +35,8 @@ export const Player = ({ x, y }) => (
   <motion.rect
     width="10"
     height="10"
-    y={x * 10}
-    x={y * 10}
+    y={x * 5}
+    x={y * 5}
     fill="blue"
     animate={{ opacity: 0.5 }}
     opacity={1}
