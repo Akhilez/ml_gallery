@@ -110,6 +110,21 @@ export const GridWorldCanvas = () => {
             </Box>
             <ActionButtons />
             {isWaiting && <Loader />}
+
+            <motion.div
+              animate={{ opacity: 0.5 }}
+              transition={{
+                repeat: Infinity,
+                duration: 0.7,
+                repeatType: "mirror",
+                repeatDelay: 0.7,
+              }}
+              style={{
+                height: "200px",
+                width: "200px",
+                backgroundColor: "red",
+              }}
+            />
           </Box>
         )}
       </SadStates>
