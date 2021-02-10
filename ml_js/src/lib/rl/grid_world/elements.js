@@ -1,4 +1,5 @@
 import React from "react"
+import { motion } from "framer-motion"
 
 export const Grid = () => (
   <>
@@ -32,7 +33,21 @@ export const Grid = () => (
 )
 
 export const Player = ({ x, y }) => (
-  <rect width="10" height="10" x={x * 10} y={y * 10} fill="blue" />
+  <motion.rect
+    width="10"
+    height="10"
+    x={x * 10}
+    y={y * 10}
+    fill="blue"
+    animate={{ opacity: 0.5 }}
+    opacity={1}
+    transition={{
+      repeat: Infinity,
+      duration: 0.7,
+      repeatType: "mirror",
+      repeatDelay: 0.5,
+    }}
+  />
 )
 export const Pit = ({ x, y }) => (
   <rect width="10" height="10" x={x * 10} y={y * 10} fill="red" />

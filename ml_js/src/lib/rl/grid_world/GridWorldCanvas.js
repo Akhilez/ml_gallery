@@ -3,7 +3,6 @@ import { Box, Progress, Button, Text, Flex } from "@chakra-ui/react"
 import { mlgApi } from "../../api"
 import { SadStates } from "../../components/SadStates"
 import { Grid, Pit, Player, Wall, Win } from "./elements"
-import { motion } from "framer-motion"
 
 const algos = {
   pg: "pg",
@@ -110,21 +109,6 @@ export const GridWorldCanvas = () => {
             </Box>
             <ActionButtons />
             {isWaiting && <Loader />}
-
-            <motion.div
-              animate={{ opacity: 0.5 }}
-              transition={{
-                repeat: Infinity,
-                duration: 0.7,
-                repeatType: "mirror",
-                repeatDelay: 0.7,
-              }}
-              style={{
-                height: "200px",
-                width: "200px",
-                backgroundColor: "red",
-              }}
-            />
           </Box>
         )}
       </SadStates>
