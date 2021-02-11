@@ -2,7 +2,6 @@ import React from "react"
 import { Flex, Box, Text, Divider, Link } from "@chakra-ui/react"
 import { projectCategories, projectStatus } from "../globals/data"
 import { Link as GLink } from "gatsby"
-import { BiChevronLeft, BiChevronRight } from "react-icons/all"
 import { SadStates } from "./SadStates"
 
 export class ProjectPaginator extends React.Component {
