@@ -4,7 +4,6 @@ import { mlgApi } from "../../api"
 import { SadStates } from "../../components/SadStates"
 import { Grid, Pit, Player, Wall, Win } from "./elements"
 import { MotionBox } from "src/lib/components/MotionBox"
-import { motion, useMotionValue } from "framer-motion"
 
 const algos = {
   pg: "pg",
@@ -50,8 +49,6 @@ export const GridWorldCanvas = () => {
       })
     setIsWaiting(true)
   }
-
-  const viewBox = useMotionValue(`0 0 100.5 100.5`)
 
   const Loader = () => (
     <Progress
@@ -108,7 +105,7 @@ export const GridWorldCanvas = () => {
         states={[
           {
             when: error,
-            render: <Text>Error! Please try again later :(</Text>,
+            render: <Text>Error! Please try again later :( {error}</Text>,
           },
           {
             when: data == null,
@@ -119,7 +116,7 @@ export const GridWorldCanvas = () => {
         {data != null && (
           <Box>
             <Box w="300px" h="300px">
-              <motion.svg viewBox={viewBox}>
+              <svg viewBox="0 0 100.5 100.5">
                 <Grid />
                 <rect />
                 <Player
@@ -129,7 +126,7 @@ export const GridWorldCanvas = () => {
                 <Win x={data.positions.win[0]} y={data.positions.win[1]} />
                 <Wall x={data.positions.wall[0]} y={data.positions.wall[1]} />
                 <Pit x={data.positions.pit[0]} y={data.positions.pit[1]} />
-              </motion.svg>
+              </svg>
             </Box>
             <ActionButtons />
             {isWaiting && <Loader />}
