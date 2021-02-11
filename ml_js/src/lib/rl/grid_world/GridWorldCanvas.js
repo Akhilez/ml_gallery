@@ -28,6 +28,8 @@ export const GridWorldCanvas = () => {
   const [algo, setAlgo] = useState(algos.pg)
   const [error, setError] = useState("")
   const [isWaiting, setIsWaiting] = useState(false)
+  const [isDone, setIsDone] = useState(false)
+  const [reward, setReward] = useState(0)
 
   useEffect(() => {
     mlgApi.gridWorld
@@ -42,12 +44,23 @@ export const GridWorldCanvas = () => {
       .then(data => {
         setData(data)
         setIsWaiting(false)
+        setIsDone(data.done)
+        setReward(data.reward)
       })
       .catch(err => {
         setError(err)
         setIsWaiting(false)
       })
     setIsWaiting(true)
+  }
+
+  const resetGame = () => {
+    setIsDone(false)
+    setReward(0)
+    mlgApi.gridWorld
+      .init(algos.pg)
+      .then(data => setData(data))
+      .catch(err => setError(err))
   }
 
   const Loader = () => (
@@ -73,12 +86,11 @@ export const GridWorldCanvas = () => {
     }
     const animationProps =
       action.value === data?.predictions?.move ? animationDict : {}
-
     return (
       <MotionBox
         as={Button}
         onClick={() => takeAction(action)}
-        isDisabled={isWaiting}
+        isDisabled={isWaiting || isDone}
         {...animationProps}
       >
         {action.label}
@@ -130,6 +142,14 @@ export const GridWorldCanvas = () => {
             </Box>
             <ActionButtons />
             {isWaiting && <Loader />}
+            {isDone && (
+              <Box>
+                <Text>Game Over!</Text>
+                <Text>{reward === -10 && "You Lost!"}</Text>
+                <Text>{reward === 10 && "You Won!"}</Text>
+                <Button onClick={() => resetGame()}>Play Again</Button>
+              </Box>
+            )}
           </Box>
         )}
       </SadStates>
