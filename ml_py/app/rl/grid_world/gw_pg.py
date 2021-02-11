@@ -13,6 +13,8 @@ from torch.utils.tensorboard import SummaryWriter
 from gym_grid_world.envs import GridWorldEnv
 from settings import BASE_DIR, device
 
+CWD = f'{BASE_DIR}/app/rl/grid_world'
+
 
 class GWPgModel(nn.Module):
     def __init__(self, size: int, units: List[int]):
@@ -54,10 +56,11 @@ class GWPolicyGradTrainer:
         self.model = GWPgModel(self.cfg.grid_size, [self.cfg.units for _ in range(self.cfg.depth)]).double().to(device)
         self.optim = torch.optim.Adam(self.model.parameters(), lr=self.cfg.lr)
         self.writer = SummaryWriter(
-            f'{BASE_DIR}/app/rl/grid_world/runs/gw_policy_grad_LR{str(self.cfg.lr)[:7]}_{self.cfg.depth}x{self.cfg.units}_{int(datetime.now().timestamp())}')
+            f'{CWD}/runs/gw_policy_grad_LR{str(self.cfg.lr)[:7]}_{self.cfg.depth}x{self.cfg.units}_{int(datetime.now().timestamp())}')
         self.envs = [GridWorldEnv(size=self.cfg.grid_size, mode=self.cfg.env_mode) for _ in range(self.cfg.n_env)]
         self.stats_e = []
         self.won = []
+        self.current_episode = 1
 
         self.reset_episode()
         self.writer.add_graph(self.model, GWPgModel.convert_inputs(self.envs))
@@ -87,7 +90,7 @@ class GWPolicyGradTrainer:
 
     def sample_action(self, probs):
         # Softmax
-        tau = max((1 / (np.log(self.cfg.current_episode) * 5 + 0.0001)), 0.7)
+        tau = max((1 / (np.log(self.current_episode) * 5 + 0.0001)), 0.7)
         probs = F.gumbel_softmax(probs, tau=tau, dim=0)
         # probs = F.softmax(probs, dim=0)
 
@@ -139,8 +142,8 @@ class GWPolicyGradTrainer:
         loss.backward()
         self.optim.step()
         # print(f"loss: {loss}")
-        self.writer.add_scalar('Training loss', loss.item(), global_step=self.cfg.current_episode)
-        self.writer.add_scalar('Mean Rewards', np.mean(rewards_list), global_step=self.cfg.current_episode)
+        self.writer.add_scalar('Training loss', loss.item(), global_step=self.current_episode)
+        self.writer.add_scalar('Mean Rewards', np.mean(rewards_list), global_step=self.current_episode)
 
         # losses.append(loss.item())
 
@@ -164,6 +167,13 @@ class GWPolicyGradTrainer:
                     self.stats_e[i].append({'reward': -10, 'prob': torch.tensor(0)})
 
         self.learn()
+
+    @staticmethod
+    def save_model(model, cwd, name):
+        timestamp = int(datetime.now().timestamp())
+        path = f'{cwd}/models/{name}_{timestamp}.pt'
+        torch.save(model.state_dict(), path)
+    # save_model(model, message='test')
 
 
 """
@@ -207,16 +217,16 @@ def get_final_reward(trainer):
 
 
 def run_trainer(cfg: DictConfig, trail: optuna.Trial) -> float:
-    cfg.lr = trail.suggest_loguniform('lr', 0.00001, 0.1)
-    cfg.depth = trail.suggest_int('depth', 1, 4)
-    cfg.units = trail.suggest_int('units', 5, 500)
+    # cfg.lr = trail.suggest_loguniform('lr', 0.00001, 0.1)
+    # cfg.depth = trail.suggest_int('depth', 1, 4)
+    # cfg.units = trail.suggest_int('units', 5, 500)
 
     trainer = GWPolicyGradTrainer(**dict(cfg))
 
-    while trainer.cfg.current_episode <= cfg.total_episodes:
+    while trainer.current_episode <= cfg.total_episodes:
         trainer.run_episode()
         print('.', end='')
-        trainer.cfg.current_episode += 1
+        trainer.current_episode += 1
 
     final_reward = get_final_reward(trainer)
     hparams = {key: cfg[key] for key in ['lr', 'depth', 'units']}
@@ -228,7 +238,7 @@ def run_trainer(cfg: DictConfig, trail: optuna.Trial) -> float:
     return final_reward
 
 
-@hydra.main(config_name="config")
+@hydra.main(config_name="config/pg")
 def main(cfg: DictConfig) -> None:
     study = optuna.create_study(direction='maximize')
     study.optimize(lambda trail: run_trainer(cfg, trail), n_trials=10)
