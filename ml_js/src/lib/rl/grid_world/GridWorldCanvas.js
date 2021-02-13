@@ -117,7 +117,7 @@ export const GridWorldCanvas = () => {
         states={[
           {
             when: error,
-            render: <Text>Error! Please try again later :( {error}</Text>,
+            render: <Text>Error! Please try again later :( </Text>,
           },
           {
             when: data == null,

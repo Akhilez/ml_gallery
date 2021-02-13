@@ -5,7 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic.main import BaseModel
 
 from base import GridWorldBase, GridWorldRandom
-from constants import AlgorithmTypes, grid_size
+from utils import AlgorithmTypes, grid_size
 from gym_grid_world.envs import GridWorldEnv
 from pg import GridWorldPG
 

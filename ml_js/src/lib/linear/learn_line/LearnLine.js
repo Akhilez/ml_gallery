@@ -5,7 +5,6 @@ import MLHelper from "src/lib/linear/learn_line/neural_net"
 import ReactMarkdown from "react-markdown"
 import gfm from "remark-gfm"
 import ChakraUIRenderer from "chakra-ui-markdown-renderer"
-import textMdx from "src/lib/linear/learn_line/textMDX.mdx"
 import {
   Flex,
   Button,
@@ -54,7 +53,6 @@ export class LearnLine extends React.Component {
   render() {
     return (
       <ProjectWrapper project={this.project}>
-        {textMdx}
         <ReactMarkdown
           plugins={[gfm]}
           renderers={ChakraUIRenderer()}

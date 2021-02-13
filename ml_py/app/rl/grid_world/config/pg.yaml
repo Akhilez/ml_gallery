@@ -8,10 +8,8 @@ units: 50
 
 gamma_returns: 0.80
 gamma_credits: 0.95
-total_episodes: 50
-n_env: 50
-max_steps: 500
+total_episodes: 5
+n_env: 5
+max_steps: 100
 grid_size: 10
 env_mode: static
-
-model_save_path: ./models/

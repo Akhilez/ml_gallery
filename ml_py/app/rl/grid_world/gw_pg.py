@@ -11,6 +11,7 @@ from torch.nn import functional as F
 from torch.utils.tensorboard import SummaryWriter
 
 from gym_grid_world.envs import GridWorldEnv
+from lib.nn_utils import save_model
 from settings import BASE_DIR, device
 
 CWD = f'{BASE_DIR}/app/rl/grid_world'
@@ -168,13 +169,6 @@ class GWPolicyGradTrainer:
 
         self.learn()
 
-    @staticmethod
-    def save_model(model, cwd, name):
-        timestamp = int(datetime.now().timestamp())
-        path = f'{cwd}/models/{name}_{timestamp}.pt'
-        torch.save(model.state_dict(), path)
-    # save_model(model, message='test')
-
 
 """
 Log the following:
@@ -235,13 +229,15 @@ def run_trainer(cfg: DictConfig, trail: optuna.Trial) -> float:
 
     # play(trainer.model, cfg)
 
+    save_model(trainer.model, CWD, 'grid_world_pg')
+
     return final_reward
 
 
 @hydra.main(config_name="config/pg")
 def main(cfg: DictConfig) -> None:
     study = optuna.create_study(direction='maximize')
-    study.optimize(lambda trail: run_trainer(cfg, trail), n_trials=10)
+    study.optimize(lambda trail: run_trainer(cfg, trail), n_trials=1)
     print(f'{study.best_params=}')
     print(f'{study.best_value=}')
 
