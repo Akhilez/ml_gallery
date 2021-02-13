@@ -5,10 +5,10 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic.main import BaseModel
 
 from base import GridWorldBase, GridWorldRandom
-from q import GridWorldQ
-from utils import AlgorithmTypes, grid_size
 from gym_grid_world.envs import GridWorldEnv
 from pg import GridWorldPG
+from q import GridWorldQ
+from utils import AlgorithmTypes, grid_size
 
 app = FastAPI()
 
@@ -40,7 +40,7 @@ class StepData(BaseModel):
 
 
 @app.get('/init')
-def index(algo: str):
+async def index(algo: str):
     env = GridWorldEnv(grid_size, mode='random')
     env.reset()
     player, win, pit, wall = GridWorldBase.get_item_positions(env.state)
@@ -51,7 +51,7 @@ def index(algo: str):
 
 
 @app.post('/step')
-def step(algo: str, data: StepData):
+async def step(algo: str, data: StepData):
     env = GridWorldEnv(grid_size, mode='random')
     env.reset()
     env.state = dict(data.positions)

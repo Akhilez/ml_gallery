@@ -3,36 +3,25 @@ import React from "react"
 import { Tabs, TabList, TabPanels, Tab, TabPanel } from "@chakra-ui/react"
 import { projects } from "src/lib/globals/data"
 import { GridWorldCanvas } from "./GridWorldCanvas"
+import { algosList, useGridWorldStore } from "./state"
 
-export const GridWorld = () => (
-  <ProjectWrapper project={projects.grid_world}>
-    <GridWorldCanvas />
-    <Tabs colorScheme="brand">
-      <TabList>
-        <Tab>Policy Grad</Tab>
-        <Tab>Deep Q</Tab>
-        <Tab>MCTS</Tab>
-        <Tab>AlphaZero</Tab>
-        <Tab>MuZero</Tab>
-      </TabList>
-
-      <TabPanels>
-        <TabPanel>
-          <p>one!</p>
-        </TabPanel>
-        <TabPanel>
-          <p>two!</p>
-        </TabPanel>
-        <TabPanel>
-          <p>three!</p>
-        </TabPanel>
-        <TabPanel>
-          <p>three!</p>
-        </TabPanel>
-        <TabPanel>
-          <p>three!</p>
-        </TabPanel>
-      </TabPanels>
-    </Tabs>
-  </ProjectWrapper>
-)
+export const GridWorld = () => {
+  const setAlgo = useGridWorldStore(state => state.setAlgo)
+  return (
+    <ProjectWrapper project={projects.grid_world}>
+      <GridWorldCanvas />
+      <Tabs colorScheme="brand" onChange={idx => setAlgo(algosList[idx])}>
+        <TabList>
+          {algosList.map(algo => (
+            <Tab key={algo.id}>{algo.title}</Tab>
+          ))}
+        </TabList>
+        <TabPanels>
+          {algosList.map(algo => (
+            <TabPanel key={algo.id}>{algo.component}</TabPanel>
+          ))}
+        </TabPanels>
+      </Tabs>
+    </ProjectWrapper>
+  )
+}

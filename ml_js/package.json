@@ -41,7 +41,8 @@
     "recharts": "^1.8.5",
     "remark-gfm": "^1.0.0",
     "swiper": "^6.4.8",
-    "typeface-roboto-condensed": "^1.1.13"
+    "typeface-roboto-condensed": "^1.1.13",
+    "zustand": "^3.3.1"
   },
   "devDependencies": {
     "@chakra-ui/theme-tools": "^1.0.3",

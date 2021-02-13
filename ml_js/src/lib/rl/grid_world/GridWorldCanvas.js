@@ -1,57 +1,42 @@
 import React, { useEffect, useState } from "react"
-import { Box, Progress, Button, Text, Flex } from "@chakra-ui/react"
+import { Box, Button, Flex, Progress, Text } from "@chakra-ui/react"
 import { mlgApi } from "../../api"
 import { SadStates } from "../../components/SadStates"
 import { Grid, Pit, Player, Wall, Win } from "./elements"
 import { MotionBox } from "src/lib/components/MotionBox"
-
-const algos = {
-  pg: "pg",
-  random: "random",
-  q: "q",
-  mcts: "mcts",
-  alphaZero: "alphaZero",
-  muZero: "muZero",
-}
-
-const actions = {
-  left: { value: 0, label: "Left" },
-  up: { value: 1, label: "Up" },
-  right: { value: 2, label: "Right" },
-  down: { value: 3, label: "Down" },
-}
+import { algos, actions, useGridWorldStore } from "./state"
 
 export const GridWorldCanvas = () => {
-  const size = 10
-
   const [data, setData] = useState(null)
-  const [algo, setAlgo] = useState(algos.q) // TODO: Use zustand because this is a global state
   const [error, setError] = useState("")
   const [isWaiting, setIsWaiting] = useState(false)
   const [isDone, setIsDone] = useState(false)
   const [reward, setReward] = useState(0)
+  const algo = useGridWorldStore(state => state.algo)
 
   useEffect(() => {
     mlgApi.gridWorld
-      .init(algos.pg)
+      .init(algos.pg.id)
       .then(data => setData(data))
       .catch(err => setError(err))
   }, [])
 
-  const takeAction = action => {
-    mlgApi.gridWorld
-      .step({ positions: data.positions, algo, action: action.value })
-      .then(data => {
-        setData(data)
-        setIsWaiting(false)
-        setIsDone(data.done)
-        setReward(data.reward)
-      })
-      .catch(err => {
-        setError(err)
-        setIsWaiting(false)
-      })
+  const takeAction = async action => {
     setIsWaiting(true)
+    try {
+      const data = await mlgApi.gridWorld.step({
+        positions: data.positions,
+        algo: algo.id,
+        action: action.value,
+      })
+      setData(data)
+      setIsDone(data.done)
+      setReward(data.reward)
+    } catch (error) {
+      setError(error)
+    } finally {
+      setIsWaiting(false)
+    }
   }
 
   const resetGame = () => {
