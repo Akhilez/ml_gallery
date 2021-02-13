@@ -35,7 +35,7 @@ const ProjectSlide = ({ project }) => {
         backgroundColor={bg}
         ml={14}
         mx={12}
-        boxShadow="xl"
+        boxShadow="base"
         p={4}
         borderRadius="15px"
       >
@@ -90,7 +90,7 @@ export const ComputerVisionSection = () => {
         navigation
         pagination={{ clickable: true }}
         className="vision_carousal"
-        autoplay={{ delay: 1000, disableOnInteraction: true }}
+        autoplay={{ delay: 3000, disableOnInteraction: true }}
       >
         {projects.map(project => (
           <SwiperSlide key={project.id}>

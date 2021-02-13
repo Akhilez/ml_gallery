@@ -18,9 +18,8 @@ const Paper = ({ paper }) => (
   <DynamicColorBox
     h="280px"
     m={4}
-    boxShadow="xl"
-    borderLeftRadius="8px"
-    borderRightRadius={{ base: "8px", md: 0 }}
+    boxShadow="base"
+    borderRadius="8px"
     direction="row"
   >
     <Box w={{ base: "xs", md: "sm" }} p={4}>
@@ -49,7 +48,6 @@ const Paper = ({ paper }) => (
         src={require("../images/" + paper.image)}
         alt={paper.title + "Image"}
         h="100%"
-        borderRightRadius="8px"
         w="150px"
       />
     </Box>

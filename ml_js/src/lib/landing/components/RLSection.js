@@ -104,7 +104,7 @@ const RightSection = () => {
         className="vision_carousal"
         direction="vertical"
         style={{ marginLeft: 0 }}
-        autoplay={{ delay: 1000, disableOnInteraction: true }}
+        autoplay={{ delay: 3000, disableOnInteraction: true }}
       >
         {projects.map(project => (
           <SwiperSlide key={project.id}>

@@ -25,7 +25,7 @@ const Project = ({ project }) => (
   <DynamicColorBox
     m={4}
     p={2}
-    boxShadow="xl"
+    boxShadow="base"
     borderRadius="10px"
     width="220px"
     minH="312px"
