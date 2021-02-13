@@ -25,7 +25,7 @@ export const GridWorldCanvas = () => {
   const size = 10
 
   const [data, setData] = useState(null)
-  const [algo, setAlgo] = useState(algos.pg)
+  const [algo, setAlgo] = useState(algos.q) // TODO: Use zustand because this is a global state
   const [error, setError] = useState("")
   const [isWaiting, setIsWaiting] = useState(false)
   const [isDone, setIsDone] = useState(false)

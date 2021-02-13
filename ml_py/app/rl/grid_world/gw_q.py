@@ -6,15 +6,18 @@ from torch.utils.tensorboard import SummaryWriter
 
 from app.rl.grid_world.gw_pg import GWPgModel
 from gym_grid_world.envs.grid_world_env import GridWorldEnv
+from lib.nn_utils import save_model
 from settings import BASE_DIR, device
 
-grid_size = 4
+grid_size = 10
 epsilon = 0.1
 gamma = 0.9
 
 lr = 0.01
 
 mode = 'random'
+
+CWD = f'{BASE_DIR}/app/rl/grid_world'
 
 
 def main():
@@ -23,9 +26,9 @@ def main():
     optim = torch.optim.Adam(model.parameters(), lr=lr)
 
     writer = SummaryWriter(
-        f'{BASE_DIR}/app/rl/grid_world/runs/gw_q_LR{str(lr)[:7]}_{mode}_{int(datetime.now().timestamp())}')
+        f'{CWD}/runs/gw_q_LR{str(lr)[:7]}_{mode}_{int(datetime.now().timestamp())}')
 
-    for epoch in range(2000):
+    for epoch in range(2):
         env.reset()
         step = 0
         losses = []
@@ -64,5 +67,8 @@ def main():
         writer.add_scalar('episode_len', len(losses), global_step=epoch)
         print('.', end='')
 
+    save_model(model, CWD, 'grid_world_q')
 
-main()
+
+if __name__ == '__main__':
+    main()

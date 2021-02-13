@@ -5,6 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic.main import BaseModel
 
 from base import GridWorldBase, GridWorldRandom
+from q import GridWorldQ
 from utils import AlgorithmTypes, grid_size
 from gym_grid_world.envs import GridWorldEnv
 from pg import GridWorldPG
@@ -21,7 +22,8 @@ app.add_middleware(
 
 models = {
     AlgorithmTypes.pg: GridWorldPG(),
-    AlgorithmTypes.random: GridWorldRandom()
+    AlgorithmTypes.random: GridWorldRandom(),
+    AlgorithmTypes.q: GridWorldQ()
 }
 
 
