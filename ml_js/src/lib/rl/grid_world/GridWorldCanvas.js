@@ -1,51 +1,46 @@
-import React, { useEffect, useState } from "react"
+import React, { useEffect } from "react"
 import { Box, Button, Flex, Progress, Text } from "@chakra-ui/react"
 import { mlgApi } from "../../api"
 import { SadStates } from "../../components/SadStates"
 import { Grid, Pit, Player, Wall, Win } from "./elements"
 import { MotionBox } from "src/lib/components/MotionBox"
-import { algos, actions, useGridWorldStore } from "./state"
+import { actions, useGridWorldStore } from "./state"
+import { useEnvState } from "../hooks"
 
 export const GridWorldCanvas = () => {
-  const [data, setData] = useState(null)
-  const [error, setError] = useState("")
-  const [isWaiting, setIsWaiting] = useState(false)
-  const [isDone, setIsDone] = useState(false)
-  const [reward, setReward] = useState(0)
+  const env = useEnvState()
   const algo = useGridWorldStore(state => state.algo)
 
-  useEffect(() => {
+  const init = () => {
     mlgApi.gridWorld
-      .init(algos.pg.id)
-      .then(data => setData(data))
-      .catch(err => setError(err))
+      .init(algo.id)
+      .then(data => env.setAll(data))
+      .catch(err => env.setError(err))
+  }
+
+  useEffect(() => {
+    init()
   }, [])
 
   const takeAction = async action => {
-    setIsWaiting(true)
+    env.setIsWaiting(true)
     try {
       const data = await mlgApi.gridWorld.step({
-        positions: data.positions,
+        positions: env.state,
         algo: algo.id,
         action: action.value,
       })
-      setData(data)
-      setIsDone(data.done)
-      setReward(data.reward)
+      env.setAll(data)
     } catch (error) {
-      setError(error)
+      env.setError(error)
     } finally {
-      setIsWaiting(false)
+      env.setIsWaiting(false)
     }
   }
 
   const resetGame = () => {
-    setIsDone(false)
-    setReward(0)
-    mlgApi.gridWorld
-      .init(algos.pg)
-      .then(data => setData(data))
-      .catch(err => setError(err))
+    env.reset()
+    init()
   }
 
   const Loader = () => (
@@ -70,12 +65,12 @@ export const GridWorldCanvas = () => {
       },
     }
     const animationProps =
-      action.value === data?.predictions?.move ? animationDict : {}
+      action.value === env.predictions?.move && !env.done ? animationDict : {}
     return (
       <MotionBox
         as={Button}
         onClick={() => takeAction(action)}
-        isDisabled={isWaiting || isDone}
+        isDisabled={env.isWaiting || env.done}
         {...animationProps}
       >
         {action.label}
@@ -101,37 +96,34 @@ export const GridWorldCanvas = () => {
       <SadStates
         states={[
           {
-            when: error,
+            when: env.error,
             render: <Text>Error! Please try again later :( </Text>,
           },
           {
-            when: data == null,
+            when: env.state == null,
             render: <Loader />,
           },
         ]}
       >
-        {data != null && (
+        {env.state != null && (
           <Box>
             <Box w="300px" h="300px">
               <svg viewBox="0 0 100.5 100.5">
                 <Grid />
                 <rect />
-                <Player
-                  x={data.positions.player[0]}
-                  y={data.positions.player[1]}
-                />
-                <Win x={data.positions.win[0]} y={data.positions.win[1]} />
-                <Wall x={data.positions.wall[0]} y={data.positions.wall[1]} />
-                <Pit x={data.positions.pit[0]} y={data.positions.pit[1]} />
+                <Player x={env.state.player[0]} y={env.state.player[1]} />
+                <Win x={env.state.win[0]} y={env.state.win[1]} />
+                <Wall x={env.state.wall[0]} y={env.state.wall[1]} />
+                <Pit x={env.state.pit[0]} y={env.state.pit[1]} />
               </svg>
             </Box>
             <ActionButtons />
-            {isWaiting && <Loader />}
-            {isDone && (
+            {env.isWaiting && <Loader />}
+            {env.done && (
               <Box>
                 <Text>Game Over!</Text>
-                <Text>{reward === -10 && "You Lost!"}</Text>
-                <Text>{reward === 10 && "You Won!"}</Text>
+                <Text>{env.reward === -10 && "You Lost!"}</Text>
+                <Text>{env.reward === 10 && "You Won!"}</Text>
                 <Button onClick={() => resetGame()}>Play Again</Button>
               </Box>
             )}

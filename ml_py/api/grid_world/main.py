@@ -46,7 +46,7 @@ async def index(algo: str):
     player, win, pit, wall = GridWorldBase.get_item_positions(env.state)
     model = models[algo]
     predictions = model.predict(env)
-    return {"positions": {"player": player, "wall": wall, "win": win, "pit": pit}, 'grid_size': grid_size,
+    return {"state": {"player": player, "wall": wall, "win": win, "pit": pit}, 'grid_size': grid_size,
             'predictions': predictions}
 
 
@@ -60,4 +60,4 @@ async def step(algo: str, data: StepData):
     predictions = model.predict(env)
     player, win, pit, wall = GridWorldBase.get_item_positions(state)
     return {'reward': reward, 'done': done, 'info': info, 'predictions': predictions,
-            "positions": {"player": player, "wall": wall, "win": win, "pit": pit}}
+            'state': {"player": player, "wall": wall, "win": win, "pit": pit}}
