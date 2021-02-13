@@ -17,7 +17,7 @@ class AlgorithmTypes:
     mu_zero = 'mu_zero'
 
 
-def load_model(cwd: str, model: torch.nn.Module, name: str = None, latest: bool = True):
+def load_model(cwd: str, model: torch.nn.Module, name: str = None, latest: bool = False):
     models_path = f'{cwd}/models'
 
     if latest:

@@ -1,9 +1,3 @@
-from typing import List
-
-import numpy as np
-import torch
-from torch import nn
-
 from base import GridWorldBase
 from pg import GWPgModel
 from utils import load_model, CWD, device
