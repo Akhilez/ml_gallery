@@ -50,7 +50,7 @@ const ProjectSlide = ({ project }) => {
             <Heading variant="dynamicGray" fontSize="2xl" my={2}>
               {project.title}
             </Heading>
-            <Text variant="dynamicColorMode">{project.desc}</Text>
+            <Text>{project.desc}</Text>
           </GLink>
           <IconLinks project={project} />
         </Box>
@@ -66,9 +66,7 @@ export const ComputerVisionSection = () => {
   return (
     <Container mt={12} py={8} align="center">
       <Heading variant="dynamicColorMode">Computer Vision</Heading>
-      <Text variant="dynamicColorMode" mt={2}>
-        {categoriesMap.vision.desc}
-      </Text>
+      <Text mt={2}>{categoriesMap.vision.desc}</Text>
       <Flex my={2} justify="center">
         <Tag mx={1}>Classification</Tag>
         <Tag mx={1}>Detection</Tag>

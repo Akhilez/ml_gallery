@@ -19,7 +19,7 @@ const ToDoSection = ({ category }) => (
     <UnorderedList spacing={1}>
       {category.toDoProjects.map(project => (
         <ListItem key={project.title}>
-          <Text variant="dynamicColorMode">{project.title}</Text>
+          <Text>{project.title}</Text>
         </ListItem>
       ))}
     </UnorderedList>

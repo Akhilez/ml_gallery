@@ -86,7 +86,7 @@ export const NLPSection = () => {
             loop={Infinity}
           />
         </Heading>
-        <Text variant="dynamicColorMode">{categoriesMap.nlp.desc}</Text>
+        <Text>{categoriesMap.nlp.desc}</Text>
         <Flex my={2}>
           <Tag mr={1}>RNNs</Tag>
           <Tag mx={1}>Embeddings</Tag>

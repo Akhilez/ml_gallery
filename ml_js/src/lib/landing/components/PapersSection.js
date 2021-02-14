@@ -26,7 +26,7 @@ const Paper = ({ paper }) => (
       <Heading variant="dynamicGray" fontSize="2xl" mb={4}>
         {paper.title}
       </Heading>
-      <Text variant="dynamicColorMode" noOfLines={5}>
+      <Text noOfLines={5}>
         <strong>Abstract: </strong>
         {paper.abstract}
       </Text>

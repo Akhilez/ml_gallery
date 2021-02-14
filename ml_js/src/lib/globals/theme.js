@@ -18,12 +18,9 @@ const theme = extendTheme({
       },
     },
     Text: {
-      baseStyle: { color: "gray.600" },
-      variants: {
-        dynamicColorMode: props => ({
-          color: props.colorMode === "dark" ? "gray.400" : "gray.600",
-        }),
-      },
+      baseStyle: props => ({
+        color: props.colorMode === "dark" ? "gray.400" : "gray.600",
+      }),
     },
     Heading: {
       baseStyle: { fontWeight: "500", color: "brand.500" },

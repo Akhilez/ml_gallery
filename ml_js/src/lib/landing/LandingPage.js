@@ -50,10 +50,10 @@ const IntroSection = () => (
         <Heading fontWeight="500" variant="dynamicColorMode">
           Machine Learning Gallery
         </Heading>
-        <Text fontSize="sm" fontWeight="bold" variant="dynamicColorMode" mt={2}>
+        <Text fontSize="sm" fontWeight="bold" mt={2}>
           Developed by <Link href={urls.profile}>Akhilez</Link>
         </Text>
-        <Text mt={2} variant="dynamicColorMode">
+        <Text mt={2}>
           This is a master project of some experiments with Neural Networks.
           Every project here is runnable, visualized and explained clearly.
         </Text>

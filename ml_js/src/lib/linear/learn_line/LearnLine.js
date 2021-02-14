@@ -2,13 +2,11 @@ import React from "react"
 import { projects } from "src/lib/globals/data"
 import { ProjectWrapper } from "src/lib/components/ProjectWrapper"
 import MLHelper from "src/lib/linear/learn_line/neural_net"
-import ReactMarkdown from "react-markdown"
-import gfm from "remark-gfm"
-import ChakraUIRenderer from "chakra-ui-markdown-renderer"
 import {
   Flex,
   Button,
   Box,
+  Divider,
   NumberInput,
   NumberInputField,
   NumberInputStepper,
@@ -26,7 +24,9 @@ import {
   YAxis,
 } from "recharts"
 import Neuron from "./neuron"
-import { explainer1, upperText } from "./textData"
+import { text } from "./textData"
+import { MD } from "../../components/MarkDown"
+import { BlockQuote } from "../../components/BlockQuote"
 
 export class LearnLine extends React.Component {
   constructor(props) {
@@ -53,12 +53,9 @@ export class LearnLine extends React.Component {
   render() {
     return (
       <ProjectWrapper project={this.project}>
-        <ReactMarkdown
-          plugins={[gfm]}
-          renderers={ChakraUIRenderer()}
-          escapeHtml={false}
-          source={upperText}
-        />
+        <MD source={text.description} />
+        <Divider my={4} />
+        <MD source={text.upperText} />
         <Box align="center">
           <Neuron ref={this.neuronRef} />
           {this.getEquationInput()}
@@ -78,12 +75,10 @@ export class LearnLine extends React.Component {
           {this.state.didTrainingStart && this.getParametersGraph()}
           {this.state.didTrainingStart && this.getLossGraph()}
         </Box>
-        <ReactMarkdown
-          plugins={[gfm]}
-          renderers={ChakraUIRenderer()}
-          escapeHtml={false}
-          source={explainer1}
-        />
+        <BlockQuote>
+          <MD source={text.preface} />
+        </BlockQuote>
+        <MD source={text.explainer1} />
       </ProjectWrapper>
     )
   }

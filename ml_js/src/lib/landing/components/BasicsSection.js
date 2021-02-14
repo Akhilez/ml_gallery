@@ -23,7 +23,7 @@ const RightSection = () => {
     >
       <Box>
         <Heading variant="dynamicColorMode">The Basics</Heading>
-        <Text variant="dynamicColorMode" my={2}>
+        <Text my={2}>
           Start your Deep Learning journey with simple problems
         </Text>
         <Flex my={2}>

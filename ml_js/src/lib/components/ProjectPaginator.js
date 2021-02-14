@@ -44,9 +44,7 @@ export class ProjectPaginator extends React.Component {
             states={[{ when: !this.prevProject, render: <Box w="50%" /> }]}
           >
             <this.ArrowLink href={this.prevProject?.links?.app} align="left">
-              <Text variant="dynamicColorMode" fontSize="sm">
-                Previous
-              </Text>
+              <Text fontSize="sm">Previous</Text>
               <Text fontSize="lg" fontWeight="bold" color="brand.300">
                 {"<"} {this.prevProject?.title}
               </Text>
@@ -56,9 +54,7 @@ export class ProjectPaginator extends React.Component {
             states={[{ when: !this.nextProject, render: <Box w="50%" /> }]}
           >
             <this.ArrowLink href={this.nextProject?.links?.app} align="right">
-              <Text variant="dynamicColorMode" fontSize="sm">
-                Next
-              </Text>
+              <Text fontSize="sm">Next</Text>
               <Text fontSize="lg" fontWeight="bold" color="brand.300">
                 {this.nextProject?.title} >
               </Text>

@@ -37,7 +37,7 @@ const LeftSection = () => (
       pl={16}
     >
       <Heading variant="dynamicColorMode">Reinforcement Learning</Heading>
-      <Text variant="dynamicColorMode" mt={2} mb={4}>
+      <Text mt={2} mb={4}>
         Learn how models are trained to play games from basic to
         state-of-the-art methods
       </Text>

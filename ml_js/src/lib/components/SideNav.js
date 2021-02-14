@@ -20,7 +20,7 @@ import { DynamicColorBox } from "./dynamicColorMode"
 
 export const SideNav = ({ project, ...props }) => (
   <Box w="250px" color="gray.400" mr={2} fontSize="sm" {...props}>
-    <Text variant="dynamicColorMode" fontSize="lg" mb={4} ml={4}>
+    <Text fontSize="lg" mb={4} ml={4}>
       Projects
     </Text>
     <Accordion allowMultiple>
@@ -28,7 +28,7 @@ export const SideNav = ({ project, ...props }) => (
         <AccordionItem key={category.title}>
           <AccordionButton border={0} backgroundColor="transparent">
             <Box flex="1" textAlign="left">
-              <Text variant="dynamicColorMode">{category.title}</Text>
+              <Text>{category.title}</Text>
             </Box>
             <AccordionIcon />
           </AccordionButton>
