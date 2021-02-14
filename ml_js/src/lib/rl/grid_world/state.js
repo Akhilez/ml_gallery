@@ -6,13 +6,24 @@ export const algos = {
   pg: { id: "pg", title: "Policy Grad", component: <Text>Policy grad</Text> },
   random: { id: "random", title: "Random", component: <Text>Random</Text> },
   q: { id: "q", title: "Deep Q", component: <Text>Q</Text> },
-  mcts: { id: "mcts", title: "MCTS", component: <Text>MCTS</Text> },
+  mcts: {
+    id: "mcts",
+    title: "MCTS",
+    component: <Text>MCTS</Text>,
+    disabled: true,
+  },
   alphaZero: {
     id: "alphaZero",
     title: "AlphaZero",
     component: <Text>Alpha Zero</Text>,
+    disabled: true,
   },
-  muZero: { id: "muZero", title: "MuZero", component: <Text>Mu Zero</Text> },
+  muZero: {
+    id: "muZero",
+    title: "MuZero",
+    component: <Text>Mu Zero</Text>,
+    disabled: true,
+  },
 }
 
 export const algosList = [

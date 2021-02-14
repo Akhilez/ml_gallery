@@ -13,7 +13,9 @@ export const GridWorld = () => {
       <Tabs colorScheme="brand" onChange={idx => setAlgo(algosList[idx])}>
         <TabList>
           {algosList.map(algo => (
-            <Tab key={algo.id}>{algo.title}</Tab>
+            <Tab key={algo.id} isDisabled={algo.disabled}>
+              {algo.title}
+            </Tab>
           ))}
         </TabList>
         <TabPanels>

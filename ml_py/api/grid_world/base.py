@@ -22,5 +22,5 @@ class GridWorldBase (ABC):
 class GridWorldRandom(GridWorldBase):
 
     def predict(self, env):
-        return {'move': np.random.randint(0, 4, 1)}
+        return {'move': int(np.random.randint(0, 4, 1))}
 
