@@ -19,17 +19,6 @@ function ActionButtons({ project }) {
     <Flex my={2}>
       <Button
         as={CLink}
-        href="#how_it_works"
-        colorScheme="brand"
-        variant="outline"
-        size="sm"
-        mr={2}
-        fontWeight="light"
-      >
-        How it works
-      </Button>
-      <Button
-        as={CLink}
         href={project.links.colab}
         size="sm"
         display={project.links.colab ? "block" : "none"}
