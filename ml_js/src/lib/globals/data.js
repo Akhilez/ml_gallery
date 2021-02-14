@@ -201,6 +201,16 @@ const projectsRaw = {
       source: "",
     },
   },
+  highlighter: {
+    title: "Segment Highlighter",
+    desc: "Highlight the most important segments of a sentence",
+    image: "under_construction2.png",
+    status: projectStatus.toDo,
+    links: {
+      app: "/coming_soon",
+      source: "",
+    },
+  },
   action_assistant: {
     title: "Action Assistant",
     desc: "Take actions by ordering in natural English language.",
@@ -346,6 +356,7 @@ const categoriesMap_ = {
     projects: [
       projects.next_char,
       projects.what_genre,
+      projects.highlighter,
       projects.action_assistant,
       projects.next_sentence,
     ],
