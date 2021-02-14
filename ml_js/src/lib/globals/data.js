@@ -398,7 +398,10 @@ export const papers = {
     abstract:
       "I tried to create a model that simulates the spread of a disease that does not have a medicine. I observed the effects of varying parameters, then introduced a concept of deflections which mimic social distancing and social gatherings. I finally made an attempt to evolve these deflections based on a performance metric.",
     image: "dis_cease.png",
-    link: "https://storage.googleapis.com/akhilez/papers/dis_cease.pdf",
+    links: {
+      paper: "https://storage.googleapis.com/akhilez/papers/dis_cease.pdf",
+      app: "https://discease.akhilez.com/",
+    },
     conference: "Complex Systems And Networks",
     association: "University of Cincinnati",
   },
@@ -407,7 +410,9 @@ export const papers = {
     abstract:
       "Deep Reinforcement Learning is a branch of machine learning techniques that is used to find out the best possible path given a situation. It is an interesting domain of algorithms ranging from basic multi-arm bandit problems to playing complex games like Dota 2. This paper surveys the research work on model-free approaches to deep reinforcement learning like Deep Q Learning, Policy Gradients, Actor-Critic methods and other recent advancements.",
     image: "rl_survey.png",
-    link: "https://storage.googleapis.com/akhilez/papers/rl_survey.pdf",
+    links: {
+      paper: "https://storage.googleapis.com/akhilez/papers/rl_survey.pdf",
+    },
   },
 }
 

@@ -5,6 +5,7 @@ import {
   Container,
   Text,
   Heading,
+  Flex,
   Link,
   Image,
   Wrap,
@@ -30,17 +31,33 @@ const Paper = ({ paper }) => (
         <strong>Abstract: </strong>
         {paper.abstract}
       </Text>
-      <Button
-        colorScheme="secondary"
-        size="sm"
-        mt={4}
-        rightIcon={<HiExternalLink />}
-        as={Link}
-        href={paper.link}
-        isExternal
-      >
-        Read
-      </Button>
+      <Flex>
+        <Button
+          colorScheme="secondary"
+          size="sm"
+          mt={4}
+          rightIcon={<HiExternalLink />}
+          as={Link}
+          href={paper.links.paper}
+          isExternal
+        >
+          Read
+        </Button>
+        {paper.links.app && (
+          <Button
+            size="sm"
+            mt={4}
+            ml={4}
+            rightIcon={<HiExternalLink />}
+            fontWeight="normal"
+            as={Link}
+            href={paper.links.app}
+            isExternal
+          >
+            Run
+          </Button>
+        )}
+      </Flex>
     </Box>
     <Box>
       <Image
