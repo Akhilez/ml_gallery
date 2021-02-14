@@ -138,6 +138,9 @@ def learn():
         qh.append(stats_e[i][-1]['q'])
         q_next_.append(q_next[i])
 
+    if len(qh) == 0:
+        return
+
     qh = torch.stack(qh)
     reward = torch.tensor(reward)
     q_next = torch.stack(q_next_)
@@ -221,7 +224,7 @@ def run_trainer(cfg: DictConfig, trail: optuna.Trial) -> float:
         current_episode += 1
 
     final_reward = get_final_reward()
-    hparams = {key: cfg[key] for key in ['lr', 'depth', 'units']}
+    hparams = {key: cfg[key] for key in ['lr', 'gamma']}
     writer.add_hparams(hparams, {'final_reward': final_reward})
     writer.close()
 
@@ -245,3 +248,4 @@ if __name__ == "__main__":
     main()
 
 # python gw_q.py --multirun lr=0.0001,0.001,0.01,0.1
+# TODO: Bring Prioritized experience replay here
