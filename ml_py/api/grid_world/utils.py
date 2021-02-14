@@ -1,7 +1,7 @@
 import torch
 import os
 
-grid_size = 10
+grid_size = 4
 mode = 'random'
 
 device = 'cuda' if torch.cuda.is_available() else 'cpu'

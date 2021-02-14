@@ -13,7 +13,7 @@ grid_size = 4
 epsilon = 0.1
 gamma = 0.9
 
-n_episodes = 400
+n_episodes = 10000
 n_env = 50
 max_steps = 50
 
@@ -65,6 +65,8 @@ def main():
             optim.zero_grad()
             loss.backward()
             optim.step()
+
+            step += 1
 
         writer.add_scalar('loss', np.mean(losses), global_step=epoch)
         writer.add_scalar('reward', np.mean(rewards), global_step=epoch)
