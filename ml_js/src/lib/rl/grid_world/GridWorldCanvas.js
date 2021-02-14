@@ -108,9 +108,8 @@ export const GridWorldCanvas = () => {
         {env.state != null && (
           <Box>
             <Box w="300px" h="300px">
-              <svg viewBox="0 0 100.5 100.5">
+              <svg viewBox="0 0 40.25 40.25">
                 <Grid />
-                <rect />
                 <Player x={env.state.player[0]} y={env.state.player[1]} />
                 <Win x={env.state.win[0]} y={env.state.win[1]} />
                 <Wall x={env.state.wall[0]} y={env.state.wall[1]} />

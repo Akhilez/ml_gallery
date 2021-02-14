@@ -43,7 +43,7 @@ class GWPgModel(nn.Module):
 class GridWorldPG(GridWorldBase):
 
     def __init__(self):
-        self.model = load_model(CWD, GWPgModel(10, [50, 50]).double().to(device), name='pg.pt')
+        self.model = load_model(CWD, GWPgModel(4, [50, 50]).double().to(device), name='pg.pt')
 
     def predict(self, env):
         y = self.model(GWPgModel.convert_inputs([env]))

@@ -9,9 +9,13 @@ from gym_grid_world.envs.grid_world_env import GridWorldEnv
 from lib.nn_utils import save_model
 from settings import BASE_DIR, device
 
-grid_size = 10
+grid_size = 4
 epsilon = 0.1
 gamma = 0.9
+
+n_episodes = 400
+n_env = 50
+max_steps = 50
 
 lr = 0.01
 
@@ -22,19 +26,19 @@ CWD = f'{BASE_DIR}/app/rl/grid_world'
 
 def main():
     env = GridWorldEnv(size=grid_size, mode=mode)
-    model = GWPgModel(size=grid_size, units=[50]).double().to(device)
+    model = GWPgModel(size=grid_size, units=[50, 50]).double().to(device)
     optim = torch.optim.Adam(model.parameters(), lr=lr)
 
     writer = SummaryWriter(
         f'{CWD}/runs/gw_q_LR{str(lr)[:7]}_{mode}_{int(datetime.now().timestamp())}')
 
-    for epoch in range(2):
+    for epoch in range(n_episodes):
         env.reset()
         step = 0
         losses = []
         rewards = []
 
-        while not env.done and step < 50:
+        while not env.done and step < max_steps:
             y = model(model.convert_inputs([env]))
 
             if torch.rand(1) < epsilon:
