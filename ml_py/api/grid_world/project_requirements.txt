@@ -1,0 +1,1 @@
+-e git+https://github.com/Akhilez/gyms.git/#egg=gym_grid_world&subdirectory=gym-grid-world

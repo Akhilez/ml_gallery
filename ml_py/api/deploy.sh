@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Example:
+# ./deploy.sh grid_world local
+
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 cd $DIR
 
