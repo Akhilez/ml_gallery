@@ -64,13 +64,16 @@ export const GridWorldCanvas = () => {
         repeatDelay: 0.5,
       },
     }
-    const animationProps =
-      action.value === env.predictions?.move && !env.done ? animationDict : {}
+    const isPredicted = action.value === env.predictions?.move && !env.done
+    const animationProps = isPredicted ? animationDict : {}
+    const color = isPredicted ? "green.200" : "gray.200"
     return (
       <MotionBox
         as={Button}
         onClick={() => takeAction(action)}
         isDisabled={env.isWaiting || env.done}
+        backgroundColor={color}
+        fontSize="md"
         {...animationProps}
       >
         {action.label}
@@ -79,7 +82,7 @@ export const GridWorldCanvas = () => {
   }
 
   const ActionButtons = () => (
-    <Box w="100px">
+    <Box w="100px" my={4}>
       <Flex justify="center">
         <ActionButton action={actions.up} />
       </Flex>

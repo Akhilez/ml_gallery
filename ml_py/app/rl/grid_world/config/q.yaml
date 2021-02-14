@@ -1,0 +1,12 @@
+depth: 2
+units: 25
+
+lr: 0.01
+gamma: 0.90
+
+total_episodes: 500
+n_env: 50
+max_steps: 40
+
+grid_size: 4
+env_mode: random

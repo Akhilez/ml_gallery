@@ -25,10 +25,10 @@ export const algosList = [
 ]
 
 export const actions = {
-  left: { value: 0, label: "Left" },
-  up: { value: 1, label: "Up" },
-  right: { value: 2, label: "Right" },
-  down: { value: 3, label: "Down" },
+  left: { value: 0, label: "←" },
+  up: { value: 1, label: "↑" },
+  right: { value: 2, label: "→" },
+  down: { value: 3, label: "↓" },
 }
 
 export const useGridWorldStore = create(set => ({
