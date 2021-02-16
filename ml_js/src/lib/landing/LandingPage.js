@@ -7,11 +7,13 @@ import {
   Text,
   Link,
   Heading,
+  Avatar,
   Flex,
 } from "@chakra-ui/react"
 import { Link as GLink } from "gatsby"
 import { MetaTags } from "../components/MetaTags"
 import mlg_logo from "../media/ml_logo/ml_logo.png"
+import avatarPhoto from "./images/smiling_akhil.jpeg"
 import { projects, urls } from "../globals/data"
 import { BasicsSection } from "./components/BasicsSection"
 import { ComputerVisionSection } from "./components/ComputerVisionSection"
@@ -50,9 +52,17 @@ const IntroSection = () => (
         <Heading fontWeight="500" variant="dynamicColorMode">
           Machine Learning Gallery
         </Heading>
-        <Text fontSize="sm" fontWeight="bold" mt={2}>
-          Developed by <Link href={urls.profile}>Akhilez</Link>
-        </Text>
+        <Flex my={2} fontSize="sm">
+          <Avatar name="Akhil Devarashetti" src={avatarPhoto} mr={4} />
+          <Box>
+            <Text fontWeight="bold" mt={2}>
+              Developed by Akhil Devarashetti
+            </Text>
+            <Text>
+              Deep Learning Engineer | <Link href={urls.profile}>akhil.ai</Link>
+            </Text>
+          </Box>
+        </Flex>
         <Text mt={2}>
           This is a master project of some experiments with Neural Networks.
           Every project here is runnable, visualized and explained clearly.
