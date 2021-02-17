@@ -11,8 +11,6 @@ import {
   Flex,
 } from "@chakra-ui/react"
 import { Link as GLink } from "gatsby"
-import SwiperCore, { Navigation, Pagination, Autoplay } from "swiper"
-import { Swiper, SwiperSlide } from "swiper/react"
 import {
   categoriesMap,
   projects as allProjects,
@@ -24,8 +22,14 @@ import "swiper/components/navigation/navigation.scss"
 import "swiper/components/pagination/pagination.scss"
 import "swiper/components/scrollbar/scrollbar.scss"
 import { IconLinks } from "./commons"
-
-SwiperCore.use([Navigation, Pagination, Autoplay])
+import {
+  ButtonBack,
+  ButtonNext,
+  CarouselProvider,
+  Slide,
+  Slider,
+} from "pure-react-carousel"
+import "pure-react-carousel/dist/react-carousel.es.css"
 
 const ProjectSlide = ({ project }) => {
   const bg = useColorModeValue("white", "gray.700")
@@ -82,20 +86,25 @@ export const ComputerVisionSection = () => {
       >
         Start here
       </Button>
-      <Swiper
-        spaceBetween={50}
-        slidesPerView={1}
-        navigation
-        pagination={{ clickable: true }}
-        className="vision_carousal"
-        autoplay={{ delay: 3000, disableOnInteraction: true }}
-      >
-        {projects.map(project => (
-          <SwiperSlide key={project.id}>
-            <ProjectSlide project={project} />
-          </SwiperSlide>
-        ))}
-      </Swiper>
+      <Box w="full" maxWidth="900px">
+        <CarouselProvider
+          visibleSlides={1}
+          totalSlides={6}
+          step={3}
+          naturalSlideWidth={400}
+          naturalSlideHeight={500}
+        >
+          <Slider>
+            {projects.map((project, idx) => (
+              <Slide index={idx} key={project.id}>
+                <ProjectSlide project={project} />
+              </Slide>
+            ))}
+          </Slider>
+          <ButtonBack>Back</ButtonBack>
+          <ButtonNext>Next</ButtonNext>
+        </CarouselProvider>
+      </Box>
     </Container>
   )
 }
