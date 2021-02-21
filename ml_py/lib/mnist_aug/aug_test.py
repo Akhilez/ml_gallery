@@ -34,7 +34,7 @@ aug.min_objects = 3
 
 x, y = aug.get_augmented(dm.x_test, dm.y_test, 1, get_captions=True)
 
-[print(yi['class']) for yi in y[0]]
+[print(yi["class"]) for yi in y[0]]
 
 for i in range(len(x)):
     DataManager.plot_num(x[i], y[i])

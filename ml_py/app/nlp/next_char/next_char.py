@@ -5,15 +5,15 @@ from mlg.settings import BASE_DIR
 from torch import nn
 import torch.nn.functional as F
 
-device = 'cuda' if torch.cuda.is_available() else 'cpu'
+device = "cuda" if torch.cuda.is_available() else "cpu"
 
-models_path = f'{BASE_DIR}/app/nlp/next_char/models'
-vocab_file_path = f'{models_path}/char_vocab.pt'
+models_path = f"{BASE_DIR}/app/nlp/next_char/models"
+vocab_file_path = f"{models_path}/char_vocab.pt"
 
-pad_tkn = '~'
-unk_tkn = '*'
-eos_tkn = '\n'
-init_tkn = '>'
+pad_tkn = "~"
+unk_tkn = "*"
+eos_tkn = "\n"
+init_tkn = ">"
 
 
 class NextCharModel(nn.Module):
@@ -24,8 +24,7 @@ class NextCharModel(nn.Module):
         self.hidden_size = hidden_size
 
         self.embed = nn.Embedding(
-            num_embeddings=vocab_size,
-            embedding_dim=self.embed_size
+            num_embeddings=vocab_size, embedding_dim=self.embed_size
         )
 
         self.rnn = nn.LSTM(
@@ -43,7 +42,6 @@ class NextCharModel(nn.Module):
 
 
 class NextChar:
-
     def __init__(self):
         self.vocab = torch.load(vocab_file_path)
         self.vocab_size = len(self.vocab.itos)
@@ -51,14 +49,20 @@ class NextChar:
 
     def predict(self, sentence):
         length = len(sentence)
-        terminal_chars = [eos_tkn, '\n', pad_tkn]
+        terminal_chars = [eos_tkn, "\n", pad_tkn]
         max_len = 50
         next_char = 0
         self.model.eval()
         with torch.no_grad():
             while next_char not in terminal_chars and len(sentence) < max_len:
-                seq = torch.tensor([self.vocab[s] or self.vocab[unk_tkn] for s in list(sentence.lower())],
-                                   device=device, dtype=torch.long).view((-1, 1))
+                seq = torch.tensor(
+                    [
+                        self.vocab[s] or self.vocab[unk_tkn]
+                        for s in list(sentence.lower())
+                    ],
+                    device=device,
+                    dtype=torch.long,
+                ).view((-1, 1))
                 preds = self.model(seq)
                 m = int(preds[-1][0].argmax())
                 next_char = self.vocab.itos[m]
@@ -70,8 +74,10 @@ class NextChar:
         try:
             if latest:
                 name = max(os.listdir(models_path))
-            model.load_state_dict(torch.load(f'{models_path}/{name}', map_location=torch.device(device)))
-            print(f'Loading model {name}')
+            model.load_state_dict(
+                torch.load(f"{models_path}/{name}", map_location=torch.device(device))
+            )
+            print(f"Loading model {name}")
         except Exception as e:
             print(e)
         return model

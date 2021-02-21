@@ -7,12 +7,24 @@ import torchvision
 data_path = "../../../data/mnist/"
 
 train_loader = torch.utils.data.DataLoader(
-    torchvision.datasets.MNIST(data_path, train=True, download=True,
-                               transform=torchvision.transforms.ToTensor()), shuffle=True)
+    torchvision.datasets.MNIST(
+        data_path,
+        train=True,
+        download=True,
+        transform=torchvision.transforms.ToTensor(),
+    ),
+    shuffle=True,
+)
 
 test_loader = torch.utils.data.DataLoader(
-    torchvision.datasets.MNIST(data_path, train=False, download=True,
-                               transform=torchvision.transforms.ToTensor()), shuffle=True)
+    torchvision.datasets.MNIST(
+        data_path,
+        train=False,
+        download=True,
+        transform=torchvision.transforms.ToTensor(),
+    ),
+    shuffle=True,
+)
 
 
 x_train = []

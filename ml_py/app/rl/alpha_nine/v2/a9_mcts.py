@@ -15,7 +15,9 @@ class MctsNode:
         self.n = 0
         self.wins = 0
         self.turn = -1 if parent is None else -parent.turn
-        self.state = copy.deepcopy(parent.state) if parent is not None else env.get_empty_state()
+        self.state = (
+            copy.deepcopy(parent.state) if parent is not None else env.get_empty_state()
+        )
         self.illegal = False
         self.is_terminal = False
         if action is not None:
@@ -28,7 +30,7 @@ class MctsNode:
                 self.state, _, self.is_terminal, _ = env_.step(action)
 
     def __str__(self):
-        return f'({self.wins}/{self.n})'
+        return f"({self.wins}/{self.n})"
 
     def __repr__(self):
         return str(self)
@@ -80,7 +82,9 @@ def expand(node):
     if env.is_done(node.state):
         return node
     if node.children is None:
-        flattened_actions = env.flatten_actions(env.get_legal_actions_(node.state, node.turn))
+        flattened_actions = env.flatten_actions(
+            env.get_legal_actions_(node.state, node.turn)
+        )
         node.children = [MctsNode(node, action) for action in flattened_actions]
     return np.random.choice(node.children)
 
@@ -111,18 +115,20 @@ def iter_mcts():
     node = expand(node)
     win = rollout(copy.deepcopy(node.state), -node.turn)
     backprop(node, win)
-    print('`', end='')
+    print("`", end="")
 
 
 def mcts_player(env):
     global tree
     # if all(tree.state != env.state):
-        # tree = find_state_node(tree.state)
-        # pass
+    # tree = find_state_node(tree.state)
+    # pass
 
     [iter_mcts() for _ in range(8)]
 
-    probs = torch.tensor([0 if child.n == 0 else child.wins / child.n for child in tree.children])
+    probs = torch.tensor(
+        [0 if child.n == 0 else child.wins / child.n for child in tree.children]
+    )
     print(tree, probs)
     probs = torch.softmax(probs, 0)
     return tree.children[probs.argmax(0)].action
@@ -158,5 +164,5 @@ def play(mcts_p, other_p, mcts_turn=1, render=False):
 
 if __name__ == "__main__":
     print(play(mcts_player, random_player, -1, True))
-    print('----')
+    print("----")
     print(play(mcts_player, random_player, 1, True))

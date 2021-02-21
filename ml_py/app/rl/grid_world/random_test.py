@@ -3,7 +3,7 @@ import numpy as np
 
 
 def play(player):
-    env = GridWorldEnv(size=4, mode='random')
+    env = GridWorldEnv(size=4, mode="random")
     env.reset()
     max_episode_len = 100
 
@@ -13,7 +13,7 @@ def play(player):
         env.render()
         step += 1
 
-    print(f'Won = {env.won}')
+    print(f"Won = {env.won}")
 
 
 def random_player(env):

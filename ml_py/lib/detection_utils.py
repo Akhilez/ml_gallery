@@ -10,10 +10,10 @@ def labels_to_tensor(labels, H, W):
 
     for i in range(len(labels)):
         coordinates = [
-            labels[i]['cx'] / W,
-            labels[i]['cy'] / H,
-            labels[i]['width'] / W,
-            labels[i]['height'] / H,
+            labels[i]["cx"] / W,
+            labels[i]["cy"] / H,
+            labels[i]["width"] / W,
+            labels[i]["height"] / H,
         ]
         tensor[i] = torch.FloatTensor(coordinates)
 
@@ -27,18 +27,22 @@ def tensor_to_labels(tensor, H=1, W=1):
     """
     return [
         {
-            'x1': tensor[0, i] * W,
-            'y1': tensor[1, i] * H,
-            'x2': tensor[2, i] * W,
-            'y2': tensor[3, i] * H
+            "x1": tensor[0, i] * W,
+            "y1": tensor[1, i] * H,
+            "x2": tensor[2, i] * W,
+            "y2": tensor[3, i] * H,
         }
         for i in range(tensor.shape[1])
     ]
 
 
 def get_shapes_from_sizes_ratios(sizes, ratios):
-    sizes_ = torch.tensor(sizes, dtype=torch.float32).repeat_interleave(len(ratios))  # [1, 2, 3] => [1, 1, 2, 2, 3, 3]
-    ratios_sqrt = torch.sqrt(torch.tensor(ratios, dtype=torch.float32)).repeat(len(sizes))
+    sizes_ = torch.tensor(sizes, dtype=torch.float32).repeat_interleave(
+        len(ratios)
+    )  # [1, 2, 3] => [1, 1, 2, 2, 3, 3]
+    ratios_sqrt = torch.sqrt(torch.tensor(ratios, dtype=torch.float32)).repeat(
+        len(sizes)
+    )
 
     w = sizes_ / ratios_sqrt
     h = sizes_ * ratios_sqrt
@@ -47,10 +51,12 @@ def get_shapes_from_sizes_ratios(sizes, ratios):
 
 
 def get_anchor_centers(W, H):
-    hs = torch.arange(1 / H / 2, 1, 1 / H).view((H, 1)).expand(
-        (H, W))  # [0, 0.5, 1] => [(0,0,0), (0.5,0.5,0.5), (1,1,1)]
-    ws = torch.arange(1 / W / 2, 1, 1 / W).view((1, W)).expand(
-        (H, W))  # [0, 0.5, 1] => [(0,0.5,1), (0,0.5,1), (0,0.5,1)]
+    hs = (
+        torch.arange(1 / H / 2, 1, 1 / H).view((H, 1)).expand((H, W))
+    )  # [0, 0.5, 1] => [(0,0,0), (0.5,0.5,0.5), (1,1,1)]
+    ws = (
+        torch.arange(1 / W / 2, 1, 1 / W).view((1, W)).expand((H, W))
+    )  # [0, 0.5, 1] => [(0,0.5,1), (0,0.5,1), (0,0.5,1)]
 
     return ws, hs  # 2 channels
 
@@ -77,7 +83,9 @@ def get_iou_map(boxes1, boxes2):
     n1 = boxes1.shape[1]
     n2 = boxes2.shape[1]
 
-    boxes1 = boxes1.repeat_interleave(n2).reshape((4, n1 * n2))  # [1, 2] => [1, 1, 2, 2]
+    boxes1 = boxes1.repeat_interleave(n2).reshape(
+        (4, n1 * n2)
+    )  # [1, 2] => [1, 1, 2, 2]
     boxes2 = boxes2.repeat((1, n1))  # [1, 2] => [1, 2, 1, 2]
 
     wb = boxes1[2]
@@ -183,7 +191,9 @@ def get_diffs(bboxes, anchors, max_iou, argmax_iou, k, H, W) -> torch.Tensor:
     diffs = torch.stack((tx, ty, tw, th))  # Shape: (4, n_anchors)
 
     len_invalid = len(invalid_indices)
-    diffs[:, invalid_indices] = torch.tensor([float('nan') for _ in range(4 * len_invalid)]).view((4, len_invalid))
+    diffs[:, invalid_indices] = torch.tensor(
+        [float("nan") for _ in range(4 * len_invalid)]
+    ).view((4, len_invalid))
 
     return diffs.view((4, k, H, W))
 
@@ -208,7 +218,9 @@ def get_confidences(max_iou, confidence_threshold: float, shape) -> torch.Tensor
     return max_iou.view(shape)
 
 
-def sample_pn_indices(confidences: torch.Tensor, threshold_p: float, threshold_n: float, b_samples: int):
+def sample_pn_indices(
+    confidences: torch.Tensor, threshold_p: float, threshold_n: float, b_samples: int
+):
     """
     Parameters
     ----------
@@ -226,11 +238,15 @@ def sample_pn_indices(confidences: torch.Tensor, threshold_p: float, threshold_n
     negative_indices = torch.nonzero(confidences <= threshold_n).flatten(0)
 
     bp = min(len(positive_indices), b_samples // 2)
-    sampled_indices = [] if bp <= 0 else torch.multinomial(torch.ones(len(positive_indices)), bp)  # Sampled
+    sampled_indices = (
+        [] if bp <= 0 else torch.multinomial(torch.ones(len(positive_indices)), bp)
+    )  # Sampled
     positive_indices = positive_indices[sampled_indices]
 
     bn = min(len(negative_indices), b_samples - bp)
-    sampled_indices = torch.multinomial(torch.ones(len(negative_indices)), bn)  # Sampled
+    sampled_indices = torch.multinomial(
+        torch.ones(len(negative_indices)), bn
+    )  # Sampled
     negative_indices = negative_indices[sampled_indices]
 
     return positive_indices, negative_indices
@@ -338,155 +354,185 @@ def main():
 
     y = [
         [
-            {'id': 0,
-             'class': 9,
-             'class_one_hot': [0., 0., 0., 0., 0., 0., 0., 0., 0., 1.],
-             'x1': 40,
-             'y1': 26,
-             'x2': 70,
-             'y2': 56,
-             'cx': 55.0,
-             'cy': 41.0,
-             'height': 30,
-             'width': 30},
-            {'id': 1,
-             'class': 3,
-             'class_one_hot': [0., 0., 0., 1., 0., 0., 0., 0., 0., 0.],
-             'x1': 13,
-             'y1': 78,
-             'x2': 50,
-             'y2': 112,
-             'cx': 31.5,
-             'cy': 95.0,
-             'height': 34,
-             'width': 37,
-             'type': 'number'},
-            {'id': 2,
-             'class': 6,
-             'class_one_hot': [0., 0., 0., 0., 0., 0., 1., 0., 0., 0.],
-             'x1': 78,
-             'y1': 35,
-             'x2': 112,
-             'y2': 70,
-             'cx': 95.0,
-             'cy': 52.5,
-             'height': 35,
-             'width': 34,
-             'type': 'number'},
-            {'id': 3,
-             'class': 1,
-             'class_one_hot': [0., 1., 0., 0., 0., 0., 0., 0., 0., 0.],
-             'x1': 35,
-             'y1': 46,
-             'x2': 84,
-             'y2': 95,
-             'cx': 59.5,
-             'cy': 70.5,
-             'height': 49,
-             'width': 49,
-             'type': 'number'},
-            {'id': 4,
-             'class': 2,
-             'class_one_hot': [0., 0., 1., 0., 0., 0., 0., 0., 0., 0.],
-             'x1': 20,
-             'y1': 55,
-             'x2': 42,
-             'y2': 77,
-             'cx': 31.0,
-             'cy': 66.0,
-             'height': 22,
-             'width': 22,
-             'type': 'number'},
-            {'id': 5,
-             'class': 1,
-             'class_one_hot': [0., 1., 0., 0., 0., 0., 0., 0., 0., 0.],
-             'x1': 60,
-             'y1': 11,
-             'x2': 95,
-             'y2': 46,
-             'cx': 77.5,
-             'cy': 28.5,
-             'height': 35,
-             'width': 35,
-             'type': 'number'},
-            {'id': 6,
-             'class': 1,
-             'class_one_hot': [0., 1., 0., 0., 0., 0., 0., 0., 0., 0.],
-             'x1': 60,
-             'y1': 79,
-             'x2': 102,
-             'y2': 112,
-             'cx': 81.0,
-             'cy': 95.5,
-             'height': 33,
-             'width': 42,
-             'type': 'number'},
-            {'id': 7,
-             'class': 8,
-             'class_one_hot': [0., 0., 0., 0., 0., 0., 0., 0., 1., 0.],
-             'x1': 4,
-             'y1': 14,
-             'x2': 51,
-             'y2': 61,
-             'cx': 27.5,
-             'cy': 37.5,
-             'height': 47,
-             'width': 47,
-             'type': 'number'}],
+            {
+                "id": 0,
+                "class": 9,
+                "class_one_hot": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0],
+                "x1": 40,
+                "y1": 26,
+                "x2": 70,
+                "y2": 56,
+                "cx": 55.0,
+                "cy": 41.0,
+                "height": 30,
+                "width": 30,
+            },
+            {
+                "id": 1,
+                "class": 3,
+                "class_one_hot": [0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+                "x1": 13,
+                "y1": 78,
+                "x2": 50,
+                "y2": 112,
+                "cx": 31.5,
+                "cy": 95.0,
+                "height": 34,
+                "width": 37,
+                "type": "number",
+            },
+            {
+                "id": 2,
+                "class": 6,
+                "class_one_hot": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0],
+                "x1": 78,
+                "y1": 35,
+                "x2": 112,
+                "y2": 70,
+                "cx": 95.0,
+                "cy": 52.5,
+                "height": 35,
+                "width": 34,
+                "type": "number",
+            },
+            {
+                "id": 3,
+                "class": 1,
+                "class_one_hot": [0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+                "x1": 35,
+                "y1": 46,
+                "x2": 84,
+                "y2": 95,
+                "cx": 59.5,
+                "cy": 70.5,
+                "height": 49,
+                "width": 49,
+                "type": "number",
+            },
+            {
+                "id": 4,
+                "class": 2,
+                "class_one_hot": [0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+                "x1": 20,
+                "y1": 55,
+                "x2": 42,
+                "y2": 77,
+                "cx": 31.0,
+                "cy": 66.0,
+                "height": 22,
+                "width": 22,
+                "type": "number",
+            },
+            {
+                "id": 5,
+                "class": 1,
+                "class_one_hot": [0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+                "x1": 60,
+                "y1": 11,
+                "x2": 95,
+                "y2": 46,
+                "cx": 77.5,
+                "cy": 28.5,
+                "height": 35,
+                "width": 35,
+                "type": "number",
+            },
+            {
+                "id": 6,
+                "class": 1,
+                "class_one_hot": [0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+                "x1": 60,
+                "y1": 79,
+                "x2": 102,
+                "y2": 112,
+                "cx": 81.0,
+                "cy": 95.5,
+                "height": 33,
+                "width": 42,
+                "type": "number",
+            },
+            {
+                "id": 7,
+                "class": 8,
+                "class_one_hot": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0],
+                "x1": 4,
+                "y1": 14,
+                "x2": 51,
+                "y2": 61,
+                "cx": 27.5,
+                "cy": 37.5,
+                "height": 47,
+                "width": 47,
+                "type": "number",
+            },
+        ],
         [
-            {'id': 0,
-             'class': 4,
-             'class_one_hot': [0., 0., 0., 0., 1., 0., 0., 0., 0., 0.],
-             'x1': 33,
-             'y1': 28,
-             'x2': 87,
-             'y2': 82,
-             'cx': 60.0,
-             'cy': 55.0,
-             'height': 54,
-             'width': 54,
-             'type': 'number'},
-            {'id': 1,
-             'class': 0,
-             'class_one_hot': [1., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
-             'x1': 68,
-             'y1': 69,
-             'x2': 103,
-             'y2': 104,
-             'cx': 85.5,
-             'cy': 86.5,
-             'height': 35,
-             'width': 35,
-             'type': 'number'},
-            {'id': 2,
-             'class': 1,
-             'class_one_hot': [0., 1., 0., 0., 0., 0., 0., 0., 0., 0.],
-             'x1': 62,
-             'y1': 0,
-             'x2': 95,
-             'y2': 33,
-             'cx': 78.5,
-             'cy': 16.5,
-             'height': 33,
-             'width': 33,
-             'type': 'number'},
-            {'id': 3,
-             'class': 1,
-             'class_one_hot': [0., 1., 0., 0., 0., 0., 0., 0., 0., 0.],
-             'x1': 16,
-             'y1': 88,
-             'x2': 48,
-             'y2': 112,
-             'cx': 32.0,
-             'cy': 100.0,
-             'height': 24,
-             'width': 32,
-             'type': 'number'}]]
+            {
+                "id": 0,
+                "class": 4,
+                "class_one_hot": [0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+                "x1": 33,
+                "y1": 28,
+                "x2": 87,
+                "y2": 82,
+                "cx": 60.0,
+                "cy": 55.0,
+                "height": 54,
+                "width": 54,
+                "type": "number",
+            },
+            {
+                "id": 1,
+                "class": 0,
+                "class_one_hot": [1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+                "x1": 68,
+                "y1": 69,
+                "x2": 103,
+                "y2": 104,
+                "cx": 85.5,
+                "cy": 86.5,
+                "height": 35,
+                "width": 35,
+                "type": "number",
+            },
+            {
+                "id": 2,
+                "class": 1,
+                "class_one_hot": [0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+                "x1": 62,
+                "y1": 0,
+                "x2": 95,
+                "y2": 33,
+                "cx": 78.5,
+                "cy": 16.5,
+                "height": 33,
+                "width": 33,
+                "type": "number",
+            },
+            {
+                "id": 3,
+                "class": 1,
+                "class_one_hot": [0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+                "x1": 16,
+                "y1": 88,
+                "x2": 48,
+                "y2": 112,
+                "cx": 32.0,
+                "cy": 100.0,
+                "height": 24,
+                "width": 32,
+                "type": "number",
+            },
+        ],
+    ]
     DataManager.plot_num(torch.ones((H, W)), y[1])
 
-    y_ = labels_to_tensor(y[1], H, W)  # Tensor of shape (4, n) -> (cx, cy, w, h) normalized
-    anchors_tensor = generate_anchors(shape=(Wp, Hp), sizes=(.15, .45, .75),
-                                      ratios=(0.5, 1, 2))  # Tensor of shape (4, k*H*W) -> cy, cy, w, h
+    y_ = labels_to_tensor(
+        y[1], H, W
+    )  # Tensor of shape (4, n) -> (cx, cy, w, h) normalized
+    anchors_tensor = generate_anchors(
+        shape=(Wp, Hp), sizes=(0.15, 0.45, 0.75), ratios=(0.5, 1, 2)
+    )  # Tensor of shape (4, k*H*W) -> cy, cy, w, h
 
     # Looped
     i = 0
@@ -500,10 +546,12 @@ def main():
     idx_p, idx_n = sample_pn_indices(iou_max, threshold_p, threshold_n, b_regions)
 
     diffs_pred = diffs
-    pred_bbox_p, pred_bbox_n = get_pred_boxes(diffs_pred, anchors_tensor, idx_p, idx_n)  # (4, n) (cx, cy, w, h)
+    pred_bbox_p, pred_bbox_n = get_pred_boxes(
+        diffs_pred, anchors_tensor, idx_p, idx_n
+    )  # (4, n) (cx, cy, w, h)
     pred_bbox_p = centers_to_diag(pred_bbox_p)
     pred_bbox_n = centers_to_diag(pred_bbox_n)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

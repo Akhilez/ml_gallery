@@ -4,7 +4,7 @@ import torch
 from torch import nn
 from torch.nn import functional as F
 
-device = 'cuda' if torch.cuda.is_available() else 'cpu'
+device = "cuda" if torch.cuda.is_available() else "cpu"
 
 
 def convert_inputs(state, me):
@@ -49,7 +49,9 @@ class T3Model(nn.Module):
 
         self.squeeze = nn.Linear(2 * embed_dim, embed_dim)
 
-        self.attentions = nn.ModuleList([SelfAttention(embed_dim) for _ in range(attentions_depth)])
+        self.attentions = nn.ModuleList(
+            [SelfAttention(embed_dim) for _ in range(attentions_depth)]
+        )
 
         self.out = nn.Linear(9 * embed_dim, 9)
 

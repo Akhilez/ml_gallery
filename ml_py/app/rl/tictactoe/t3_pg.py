@@ -6,7 +6,7 @@ import torch
 from torch import nn
 from torch.nn import functional as F
 
-device = 'cuda' if torch.cuda.is_available() else 'cpu'
+device = "cuda" if torch.cuda.is_available() else "cpu"
 
 
 def convert_inputs(state, me):
@@ -51,7 +51,9 @@ class T3Model(nn.Module):
 
         self.squeeze = nn.Linear(2 * embed_dim, embed_dim)
 
-        self.attentions = nn.ModuleList([SelfAttention(embed_dim) for _ in range(attentions_depth)])
+        self.attentions = nn.ModuleList(
+            [SelfAttention(embed_dim) for _ in range(attentions_depth)]
+        )
 
         self.out = nn.Linear(9 * embed_dim, 9)
 
@@ -115,8 +117,8 @@ class CustomPreSampler:
         # probs = probs + noise
 
         # if episode_number % 145 == 0:
-            # print('-------- LEGAL PROBS: ')
-            # print(probs)
+        # print('-------- LEGAL PROBS: ')
+        # print(probs)
 
         return probs
 
@@ -163,14 +165,16 @@ def play(player_1, player_2, render=False):
         if render:
             env.render()
 
-    winner = info.get('winner')
+    winner = info.get("winner")
     if winner:
         return 1 if winner == player_p.string else 2
     return 0
 
 
 def random_player(env, legal_actions=None):
-    legal_actions = legal_actions if legal_actions is not None else env.get_legal_actions()
+    legal_actions = (
+        legal_actions if legal_actions is not None else env.get_legal_actions()
+    )
     if len(legal_actions) == 0:
         env.swap_players()
         return default_action
@@ -184,7 +188,9 @@ class AIPlayer:
         self.model = model
 
     def __call__(self, env, legal_actions=None):
-        legal_actions = legal_actions if legal_actions is not None else env.get_legal_actions()
+        legal_actions = (
+            legal_actions if legal_actions is not None else env.get_legal_actions()
+        )
         if len(legal_actions) == 0:
             env.swap_players()
             return default_action
@@ -200,7 +206,9 @@ class AIPlayer:
         if was_train:
             self.model.train()
 
-        action, _ = sample_action(all_actions=all_actions, legal_action_idx=legal_actions, probs=probs[0])
+        action, _ = sample_action(
+            all_actions=all_actions, legal_action_idx=legal_actions, probs=probs[0]
+        )
 
         return action
 
@@ -284,7 +292,7 @@ class EpisodicStat:
 def plot_interval(stats, episode_number, plot=False):
     losses = [stat.loss for stat in stats]
 
-    print(f'{episode_number}: {np.mean(losses)}', end='\t')
+    print(f"{episode_number}: {np.mean(losses)}", end="\t")
 
     wins, loses, plays = 0, 0, 0
     for stat_ep in stats:
@@ -295,7 +303,7 @@ def plot_interval(stats, episode_number, plot=False):
             elif not stat_t.has_drawn:
                 loses += 1
 
-    print(f'W: {wins / plays * 100} L: {loses / plays * 100} P: {plays}')
+    print(f"W: {wins / plays * 100} L: {loses / plays * 100} P: {plays}")
 
     if plot:
         plt.plot(losses)
@@ -310,8 +318,8 @@ def run_time_step(stats, opponent, sampler, episode_num):
         yh_op = opponent.model(xs)
 
     # if episode_num % 145 == 0:
-        # print("All probs ------------------------")
-        # print(yh[:5])
+    # print("All probs ------------------------")
+    # print(yh[:5])
 
     for i in range(len(stats)):
         if not stats[i].env.is_done:
@@ -334,8 +342,8 @@ def run_time_step(stats, opponent, sampler, episode_num):
                 _, _, is_done, info = env.step(action)
 
             if is_done:
-                stats[i].has_won = stats[i].player.string == info.get('winner')
-                stats[i].has_drawn = info.get('winner') is None
+                stats[i].has_won = stats[i].player.string == info.get("winner")
+                stats[i].has_drawn = info.get("winner") is None
 
 
 def train():
@@ -369,7 +377,7 @@ def train():
         stat_ep.loss = loss.item()
         episodic_stats.append(stat_ep)
         sampler.episodes += 1
-        print('.', end='')
+        print(".", end="")
 
         if (episode + 1) % reset_length == 0:
             plot_interval(episodic_stats, episode)
@@ -399,4 +407,3 @@ print(draws, wins, loses)
 
 play(random_player, AIPlayer(model), render=True)
 play(AIPlayer(model), random_player, render=True)
-

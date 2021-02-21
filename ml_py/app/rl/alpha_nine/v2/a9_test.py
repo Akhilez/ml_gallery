@@ -9,7 +9,7 @@ def play(p1, p2, render=False):
     while not env.done:
         p = p1 if env.turn == 1 else p2
         action = p(env)
-        print(f'Action: {action}')
+        print(f"Action: {action}")
         state, reward, done, info = env.step(action)
         print(reward, done, info)
         if render:

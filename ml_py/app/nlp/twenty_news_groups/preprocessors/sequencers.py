@@ -4,24 +4,23 @@ from pytorch_pretrained_bert import BertTokenizer
 from abc import ABC, abstractmethod
 
 
-class Sequencer (ABC):
-
+class Sequencer(ABC):
     @abstractmethod
     def make_sequences(self, sentences):
         pass
 
     @staticmethod
     def clean(sentence):
-        sentence = Sequencer.remove_before_word(sentence, '@')
-        sentence = sentence.replace("\\n", ' ')
-        sentence = sentence.replace("\\", '')
+        sentence = Sequencer.remove_before_word(sentence, "@")
+        sentence = sentence.replace("\\n", " ")
+        sentence = sentence.replace("\\", "")
         return sentence
 
     @staticmethod
     def remove_before_word(sentence, word):
         try:
             subject_index = sentence.index(word)
-            sentence = sentence[subject_index + len(word):]
+            sentence = sentence[subject_index + len(word) :]
         except:
             # print(f"HEY! No word '{word}' in {sentence[:30]}...")
             pass
@@ -29,7 +28,6 @@ class Sequencer (ABC):
 
 
 class CustomSequencer(Sequencer):
-
     def __init__(self):
         self.oov_token = "<OOV>"
         self.vocab_size = 10000
@@ -44,27 +42,42 @@ class CustomSequencer(Sequencer):
     def make_sequences(self, sentences):
         clean_texts = [self.clean(text) for text in sentences]
         sequences = self.tokenizer.texts_to_sequences(clean_texts)
-        sequences = pad_sequences(sequences, self.sequence_length, padding='post', truncating='post', dtype="int")
+        sequences = pad_sequences(
+            sequences,
+            self.sequence_length,
+            padding="post",
+            truncating="post",
+            dtype="int",
+        )
         return sequences
 
     def save_tokenizer(self, path):
-        with open(path, 'w') as tokenizer_file:
+        with open(path, "w") as tokenizer_file:
             tokenizer_file.write(self.tokenizer.to_json())
 
     @staticmethod
     def load_tokenizer(path):
-        with open(path, 'r') as tokenizer_file:
+        with open(path, "r") as tokenizer_file:
             return tokenizer_from_json(tokenizer_file.read())
 
 
 class BertSequencer(Sequencer):
     def __init__(self):
         self.sequence_length = 510
-        self.tokenizer = BertTokenizer.from_pretrained('bert-base-uncased', do_lower_case=True)
+        self.tokenizer = BertTokenizer.from_pretrained(
+            "bert-base-uncased", do_lower_case=True
+        )
 
     def make_sequences(self, sentences):
         clean_texts = [self.clean(text) for text in sentences]
-        test_tokens = list(map(lambda t: ['[CLS]'] + self.tokenizer.tokenize(t)[:510] + ['[SEP]'], clean_texts))
+        test_tokens = list(
+            map(
+                lambda t: ["[CLS]"] + self.tokenizer.tokenize(t)[:510] + ["[SEP]"],
+                clean_texts,
+            )
+        )
         sequences = list(map(self.tokenizer.convert_tokens_to_ids, test_tokens))
-        sequences = pad_sequences(sequences, maxlen=512, truncating='post', padding='post', dtype="int")
+        sequences = pad_sequences(
+            sequences, maxlen=512, truncating="post", padding="post", dtype="int"
+        )
         return sequences

@@ -30,7 +30,9 @@ class PolyRegConsumer(WebsocketConsumer):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.trainer = PolyRegTrainer()
-        self.job_handler = JobHandler(self.trainer, 'learn_curve', self.scope['session'], self.send_callback)
+        self.job_handler = JobHandler(
+            self.trainer, "learn_curve", self.scope["session"], self.send_callback
+        )
 
     def connect(self):
         self.accept()
@@ -48,8 +50,5 @@ class PolyRegConsumer(WebsocketConsumer):
         self.send(text_data=json.dumps(data))
 
     def send_update_status(self, data):
-        data = {
-            'action': 'status_update',
-            'data': data
-        }
+        data = {"action": "status_update", "data": data}
         self.send(text_data=json.dumps(data))

@@ -2,7 +2,7 @@ from django.http import HttpResponse
 from lib.job_handler import JobHandler, all_jobs
 import json
 
-project_id = 'find_char'
+project_id = "find_char"
 
 
 def receive(request):
@@ -11,10 +11,10 @@ def receive(request):
         trainer = None
 
         job_handler = None
-        if body.get('job_id') is not None:
-            job_handler = all_jobs.get(body.get('job_id'))
+        if body.get("job_id") is not None:
+            job_handler = all_jobs.get(body.get("job_id"))
         if job_handler is None:
-            job_handler = JobHandler(trainer, 'learn_curve', send_callback=send)
+            job_handler = JobHandler(trainer, "learn_curve", send_callback=send)
 
         return job_handler.receive(body)
     return send({})
@@ -22,4 +22,3 @@ def receive(request):
 
 def send(data):
     return HttpResponse(json.dumps(data))
-

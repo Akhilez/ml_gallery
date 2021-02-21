@@ -14,7 +14,7 @@ app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=['*'],
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -23,7 +23,7 @@ app.add_middleware(
 models = {
     AlgorithmTypes.pg: GridWorldPG(),
     AlgorithmTypes.random: GridWorldRandom(),
-    AlgorithmTypes.q: GridWorldQ()
+    AlgorithmTypes.q: GridWorldQ(),
 }
 
 
@@ -39,25 +39,33 @@ class StepData(BaseModel):
     action: int
 
 
-@app.get('/init')
+@app.get("/init")
 async def index(algo: str):
-    env = GridWorldEnv(grid_size, mode='random')
+    env = GridWorldEnv(grid_size, mode="random")
     env.reset()
     player, win, pit, wall = GridWorldBase.get_item_positions(env.state)
     model = models[algo]
     predictions = model.predict(env)
-    return {"state": {"player": player, "wall": wall, "win": win, "pit": pit}, 'grid_size': grid_size,
-            'predictions': predictions}
+    return {
+        "state": {"player": player, "wall": wall, "win": win, "pit": pit},
+        "grid_size": grid_size,
+        "predictions": predictions,
+    }
 
 
-@app.post('/step')
+@app.post("/step")
 async def step(algo: str, data: StepData):
-    env = GridWorldEnv(grid_size, mode='random')
+    env = GridWorldEnv(grid_size, mode="random")
     env.reset()
     env.state = dict(data.positions)
     state, reward, done, info = env.step(data.action)
     model = models[algo]
     predictions = model.predict(env)
     player, win, pit, wall = GridWorldBase.get_item_positions(state)
-    return {'reward': reward, 'done': done, 'info': info, 'predictions': predictions,
-            'state': {"player": player, "wall": wall, "win": win, "pit": pit}}
+    return {
+        "reward": reward,
+        "done": done,
+        "info": info,
+        "predictions": predictions,
+        "state": {"player": player, "wall": wall, "win": win, "pit": pit},
+    }

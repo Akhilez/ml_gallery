@@ -6,9 +6,9 @@ from mlg.settings import BASE_DIR
 from torch import nn
 import torch.nn.functional as F
 
-device = 'cuda' if torch.cuda.is_available() else 'cpu'
+device = "cuda" if torch.cuda.is_available() else "cpu"
 
-models_path = f'{BASE_DIR}/app/vision/positional_mnist/models'
+models_path = f"{BASE_DIR}/app/vision/positional_mnist/models"
 
 
 class PositionalEncoder2D(nn.Module):
@@ -31,18 +31,16 @@ class PositionalClassifier(nn.Module):
             nn.Conv2d(8, 8, 3),
             nn.LeakyReLU(),
             nn.MaxPool2d(2, 2),
-
             nn.Conv2d(8, 16, 3),
             nn.LeakyReLU(),
             nn.Conv2d(16, 16, 3),
             nn.LeakyReLU(),
             nn.MaxPool2d(2, 2),
-
             nn.Conv2d(16, 32, 3),
             nn.LeakyReLU(),
             nn.Conv2d(32, 32, 3),
             nn.LeakyReLU(),
-            nn.MaxPool2d(2, 2)
+            nn.MaxPool2d(2, 2),
         )
         self.pos_enc = PositionalEncoder2D(10, 10, 10)
         self.positional_compression = nn.Sequential(
@@ -51,23 +49,14 @@ class PositionalClassifier(nn.Module):
             nn.Conv2d(64, 64, 3),
             nn.LeakyReLU(),
             nn.MaxPool2d(2, 2),
-
             nn.Conv2d(64, 128, 3),
-            nn.LeakyReLU()
+            nn.LeakyReLU(),
         )
         self.classifier = nn.Sequential(
-            nn.Linear(128, 64),
-            nn.LeakyReLU(),
-
-            nn.Linear(64, 10),
-            nn.Softmax()
+            nn.Linear(128, 64), nn.LeakyReLU(), nn.Linear(64, 10), nn.Softmax()
         )
         self.position_classifier = nn.Sequential(
-            nn.Linear(128, 64),
-            nn.LeakyReLU(),
-
-            nn.Linear(64, 9),
-            nn.Softmax()
+            nn.Linear(128, 64), nn.LeakyReLU(), nn.Linear(64, 9), nn.Softmax()
         )
 
     def forward(self, x):
@@ -81,7 +70,6 @@ class PositionalClassifier(nn.Module):
 
 
 class PositionalCNN:
-
     def __init__(self):
         self.model = self.load_model()
 
@@ -104,8 +92,10 @@ class PositionalCNN:
         try:
             if latest:
                 name = max(os.listdir(models_path))
-            model.load_state_dict(torch.load(f'{models_path}/{name}', map_location=torch.device(device)))
-            print(f'Loading model {name}')
+            model.load_state_dict(
+                torch.load(f"{models_path}/{name}", map_location=torch.device(device))
+            )
+            print(f"Loading model {name}")
         except Exception as e:
             print(e)
         return model

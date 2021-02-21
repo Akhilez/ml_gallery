@@ -7,14 +7,14 @@ import matplotlib.pyplot as plt
 from trainers.metrics import Metrics
 from trainers import Trainer
 
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 
 class BertEmailClassifier(nn.Module):
     def __init__(self, dropout=0.1):
         super(BertEmailClassifier, self).__init__()
 
-        self.bert = BertModel.from_pretrained('bert-base-uncased')
+        self.bert = BertModel.from_pretrained("bert-base-uncased")
         self.dropout = nn.Dropout(dropout)
         self.linear = nn.Linear(768, 20)
 
@@ -45,10 +45,12 @@ class BertTrainer(Trainer):
         train_steps = self.train_size / self.train_batch_size
         test_steps = self.test_size / self.test_batch_size
 
-        train_gen = BatchGenerator(data_path='../data/train_bert.csv',
-                                   batch_size=self.train_batch_size).get_batch_gen()
-        test_gen = BatchGenerator(data_path='../data/test_bert.csv',
-                                  batch_size=self.test_batch_size).get_batch_gen()
+        train_gen = BatchGenerator(
+            data_path="../data/train_bert.csv", batch_size=self.train_batch_size
+        ).get_batch_gen()
+        test_gen = BatchGenerator(
+            data_path="../data/test_bert.csv", batch_size=self.test_batch_size
+        ).get_batch_gen()
 
         optim = torch.optim.Adam(self.model.parameters(), lr=3e-6)
 
@@ -57,19 +59,18 @@ class BertTrainer(Trainer):
                 data_gen=train_gen,
                 steps=train_steps,
                 optim=optim,
-                metrics=train_metrics
+                metrics=train_metrics,
             )
 
             self.run_epoch(
-                data_gen=test_gen,
-                steps=test_steps,
-                train=False,
-                metrics=test_metrics
+                data_gen=test_gen, steps=test_steps, train=False, metrics=test_metrics
             )
 
             self.print_progress(epoch, train_metrics, test_metrics)
 
-    def run_epoch(self, steps=None, data_gen=None, train=True, optim=None, metrics=None):
+    def run_epoch(
+        self, steps=None, data_gen=None, train=True, optim=None, metrics=None
+    ):
 
         if train:
             self.model.train()
@@ -94,10 +95,14 @@ class BertTrainer(Trainer):
                 loss.backward()
                 optim.step()
 
-            metrics.record_batch(loss.item(), y_hat.detach().numpy(), y_batch.detach().numpy())
+            metrics.record_batch(
+                loss.item(), y_hat.detach().numpy(), y_batch.detach().numpy()
+            )
 
             if train and (batch_i + 1) % (int(steps / 5) + 1) == 0:
-                print(f'Epoch: {metrics.n_epochs}\tBatch:{batch_i}\tLoss: {loss.item()}')
+                print(
+                    f"Epoch: {metrics.n_epochs}\tBatch:{batch_i}\tLoss: {loss.item()}"
+                )
 
         metrics.record_epoch()
 
@@ -105,22 +110,22 @@ class BertTrainer(Trainer):
         masks = self.create_masks(data)
         data = torch.tensor(data).to(device)
         with torch.no_grad():
-            return self.model(data, masks).to('cpu')
+            return self.model(data, masks).to("cpu")
 
     def save(self, path):
         torch.save(self.model, path)
 
     @staticmethod
     def print_progress(epoch, train_metrics, test_metrics):
-        print(f'Epoch: {epoch + 1}', end="\t")
+        print(f"Epoch: {epoch + 1}", end="\t")
         if train_metrics:
-            print(f'train_loss={train_metrics.losses[-1]}', end="\t")
-            print(f'train_accuracy={train_metrics.accuracies[-1]}', end="\t")
-            print(f'train_f1={train_metrics.f1macros[-1]}', end="\t")
+            print(f"train_loss={train_metrics.losses[-1]}", end="\t")
+            print(f"train_accuracy={train_metrics.accuracies[-1]}", end="\t")
+            print(f"train_f1={train_metrics.f1macros[-1]}", end="\t")
         if test_metrics:
-            print(f'val_loss={test_metrics.losses[-1]}', end="\t")
-            print(f'val_accuracy={test_metrics.accuracies[-1]}', end="\t")
-            print(f'val_f1={test_metrics.f1macros[-1]}', end="\t")
+            print(f"val_loss={test_metrics.losses[-1]}", end="\t")
+            print(f"val_accuracy={test_metrics.accuracies[-1]}", end="\t")
+            print(f"val_f1={test_metrics.f1macros[-1]}", end="\t")
         print()
 
     @staticmethod
@@ -129,37 +134,37 @@ class BertTrainer(Trainer):
 
     @staticmethod
     def clear_gpu_cache():
-        if device == 'cuda':
-            print(str(torch.cuda.memory_allocated(device) / 1000000) + 'M')
+        if device == "cuda":
+            print(str(torch.cuda.memory_allocated(device) / 1000000) + "M")
             torch.cuda.empty_cache()
-            print(str(torch.cuda.memory_allocated(device) / 1000000) + 'M')
+            print(str(torch.cuda.memory_allocated(device) / 1000000) + "M")
 
     @staticmethod
     def plot_graphs(train_metrics, test_metrics):
         plt.plot(train_metrics.accuracies)
         plt.plot(test_metrics.accuracies)
         plt.xlabel("Epochs")
-        plt.ylabel('accuracy')
-        plt.legend(['accuracy', 'val_accuracy'])
+        plt.ylabel("accuracy")
+        plt.legend(["accuracy", "val_accuracy"])
         plt.show()
 
         plt.plot(train_metrics.losses)
         plt.plot(test_metrics.losses)
         plt.xlabel("Epochs")
-        plt.ylabel('loss')
-        plt.legend(['loss', 'val_loss'])
+        plt.ylabel("loss")
+        plt.legend(["loss", "val_loss"])
         plt.show()
 
         plt.plot(train_metrics.f1macros)
         plt.plot(test_metrics.f1macros)
         plt.xlabel("Epochs")
-        plt.ylabel('loss')
-        plt.legend(['f1 macro', 'val f1 macro'])
+        plt.ylabel("loss")
+        plt.legend(["f1 macro", "val f1 macro"])
         plt.show()
 
 
 if __name__ == "__main__":
-    model_path = 'models/bert_clf.pt'
+    model_path = "models/bert_clf.pt"
     trainer = BertTrainer()  # load_path=model_path)
 
     train_metric = Metrics()

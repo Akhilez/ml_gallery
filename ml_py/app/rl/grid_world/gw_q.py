@@ -23,19 +23,23 @@ losses = []
 rewards = []
 current_episode = 1
 
-CWD = f'{BASE_DIR}/app/rl/grid_world'
+CWD = f"{BASE_DIR}/app/rl/grid_world"
 
 
 def init():
     global config, current_episode, writer, model, optim, envs
 
     writer = SummaryWriter(
-        f'{CWD}/runs/gw_q_LR{str(config.lr)[:7]}_{config.env_mode}_{int(datetime.now().timestamp())}')
+        f"{CWD}/runs/gw_q_LR{str(config.lr)[:7]}_{config.env_mode}_{int(datetime.now().timestamp())}"
+    )
 
     units = [int(config.units) for _ in range(int(config.depth))]
     model = GWPgModel(size=config.grid_size, units=units).double().to(device)
     optim = torch.optim.Adam(model.parameters(), lr=config.lr)
-    envs = [GridWorldEnv(size=config.grid_size, mode=config.env_mode) for _ in range(config.n_env)]
+    envs = [
+        GridWorldEnv(size=config.grid_size, mode=config.env_mode)
+        for _ in range(config.n_env)
+    ]
     [env.reset() for env in envs]
 
     writer.add_graph(model, GWPgModel.convert_inputs(envs))
@@ -52,7 +56,7 @@ def main_single_batch():
 
     lr = 0.01
 
-    mode = 'random'
+    mode = "random"
 
     env = GridWorldEnv(size=grid_size, mode=mode)
     optim = torch.optim.Adam(model.parameters(), lr=lr)
@@ -93,12 +97,12 @@ def main_single_batch():
 
             step += 1
 
-        writer.add_scalar('loss', np.mean(losses), global_step=epoch)
-        writer.add_scalar('reward', np.mean(rewards), global_step=epoch)
-        writer.add_scalar('episode_len', len(losses), global_step=epoch)
-        print('.', end='')
+        writer.add_scalar("loss", np.mean(losses), global_step=epoch)
+        writer.add_scalar("reward", np.mean(rewards), global_step=epoch)
+        writer.add_scalar("episode_len", len(losses), global_step=epoch)
+        print(".", end="")
 
-    save_model(model, CWD, 'grid_world_q')
+    save_model(model, CWD, "grid_world_q")
 
 
 def calculate_epsilon():
@@ -113,7 +117,9 @@ def calculate_epsilon():
 
 def sample_action(yi):
     epsilon = calculate_epsilon()
-    action = torch.randint(0, 4, (1,)) if torch.rand(1) < epsilon else torch.argmax(yi, 0)
+    action = (
+        torch.randint(0, 4, (1,)) if torch.rand(1) < epsilon else torch.argmax(yi, 0)
+    )
     q = yi[action]
     return action, q.view(1)
 
@@ -134,8 +140,8 @@ def learn():
     for i in range(config.n_env):
         if envs[i].done:
             continue
-        reward.append(stats_e[i][-1]['reward'])
-        qh.append(stats_e[i][-1]['q'])
+        reward.append(stats_e[i][-1]["reward"])
+        qh.append(stats_e[i][-1]["q"])
         q_next_.append(q_next[i])
 
     if len(qh) == 0:
@@ -166,7 +172,7 @@ def run_time_step(yh):
         _, reward, done, _ = envs[i].step(action)
         # envs[i].render()
 
-        stats_e[i].append({'reward': reward, 'q': q})
+        stats_e[i].append({"reward": reward, "q": q})
 
     learn()
 
@@ -197,11 +203,11 @@ def run_episode():
     if step == config.max_steps:
         for i in range(config.n_env):
             if not envs[i].done:
-                stats_e[i].append({'reward': -10, 'prob': torch.tensor(0)})
+                stats_e[i].append({"reward": -10, "prob": torch.tensor(0)})
 
-    writer.add_scalar('loss', np.mean(losses), global_step=current_episode)
-    writer.add_scalar('reward', np.mean(rewards), global_step=current_episode)
-    writer.add_scalar('episode_len', len(losses), global_step=current_episode)
+    writer.add_scalar("loss", np.mean(losses), global_step=current_episode)
+    writer.add_scalar("reward", np.mean(rewards), global_step=current_episode)
+    writer.add_scalar("episode_len", len(losses), global_step=current_episode)
 
 
 def get_final_reward() -> float:
@@ -220,17 +226,17 @@ def run_trainer(cfg: DictConfig, trail: optuna.Trial) -> float:
 
     while current_episode <= cfg.total_episodes:
         run_episode()
-        print('.', end='')
+        print(".", end="")
         current_episode += 1
 
     final_reward = get_final_reward()
-    hparams = {key: cfg[key] for key in ['lr', 'gamma']}
-    writer.add_hparams(hparams, {'final_reward': final_reward})
+    hparams = {key: cfg[key] for key in ["lr", "gamma"]}
+    writer.add_hparams(hparams, {"final_reward": final_reward})
     writer.close()
 
     # play(trainer.model, cfg)
 
-    save_model(model, CWD, 'grid_world_pg')
+    save_model(model, CWD, "grid_world_pg")
 
     return final_reward
 
@@ -238,10 +244,10 @@ def run_trainer(cfg: DictConfig, trail: optuna.Trial) -> float:
 @hydra.main(config_name="config/q")
 def main(cfg: DictConfig) -> None:
     run_trainer(cfg, None)
-    #study = optuna.create_study(direction='maximize')
-    #study.optimize(lambda trail: run_trainer(cfg, trail), n_trials=20)
-    #print(f'{study.best_params=}')
-    #print(f'{study.best_value=}')
+    # study = optuna.create_study(direction='maximize')
+    # study.optimize(lambda trail: run_trainer(cfg, trail), n_trials=20)
+    # print(f'{study.best_params=}')
+    # print(f'{study.best_value=}')
 
 
 if __name__ == "__main__":

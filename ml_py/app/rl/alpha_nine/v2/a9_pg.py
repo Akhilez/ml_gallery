@@ -8,7 +8,7 @@ from gym_nine_mens_morris.envs.nmm_v2 import NineMensMorrisEnvV2
 from datetime import datetime
 from torch.utils.tensorboard import SummaryWriter
 
-device = 'cuda' if torch.cuda.is_available() else 'cpu'
+device = "cuda" if torch.cuda.is_available() else "cpu"
 
 
 class A9PgModel(nn.Module):
@@ -17,20 +17,22 @@ class A9PgModel(nn.Module):
     2. ...
     3. 24: pos1, 24: pos2, 24 left, 24 up, 24 right, 24 left, 24 kill = 7 * 24 = 168
     """
+
     def __init__(self, units: List[int]):
         super().__init__()
 
         self.first = nn.Sequential(
-            nn.Linear(24 * 3, units[0]),
-            nn.ReLU(),
-            nn.Dropout(0.3)
+            nn.Linear(24 * 3, units[0]), nn.ReLU(), nn.Dropout(0.3)
         )
 
-        self.hidden = nn.ModuleList([nn.Sequential(
-            nn.Linear(units[i], units[i + 1]),
-            nn.ReLU(),
-            nn.Dropout(0.3)
-        ) for i in range(len(units) - 1)])
+        self.hidden = nn.ModuleList(
+            [
+                nn.Sequential(
+                    nn.Linear(units[i], units[i + 1]), nn.ReLU(), nn.Dropout(0.3)
+                )
+                for i in range(len(units) - 1)
+            ]
+        )
 
         self.out = nn.Linear(units[-1], 7 * 24)
 
@@ -64,7 +66,7 @@ class A9PgModel(nn.Module):
         # output: tuple((n, 24), (n, 24), (n, 4, 24), (n, 24))
         pos1 = op[:, 0]
         pos2 = op[:, 1]
-        moves = op[:, 2: 6]
+        moves = op[:, 2:6]
         kill = op[:, -1]
 
         return pos1, pos2, moves, kill
@@ -88,7 +90,7 @@ current_episode = 1
 
 model = A9PgModel([units for _ in range(depth)]).double().to(device)
 optim = torch.optim.Adam(model.parameters(), lr=lr)
-writer = SummaryWriter(f'./runs/9mm_policy_grad__{int(datetime.now().timestamp())}')
+writer = SummaryWriter(f"./runs/9mm_policy_grad__{int(datetime.now().timestamp())}")
 envs = [NineMensMorrisEnvV2() for i in range(n_env)]
 prev_models = [copy.deepcopy(model)]
 prev_model = prev_models[0]
@@ -208,19 +210,30 @@ def sample_action(yh, env):
     if len(legal_actions[0]) == 0:
         return (0, None, None), torch.tensor(0)
 
-    pos, move, kill, (pos_prob, move_prob, kill_prob) = None, None, None, torch.tensor([0, 0, 0])
+    pos, move, kill, (pos_prob, move_prob, kill_prob) = (
+        None,
+        None,
+        None,
+        torch.tensor([0, 0, 0]),
+    )
 
     if is_phase_1:
-        pos, pos_prob, pos_idx = sample_from_probs(yh[0], [action[0] for action in legal_actions[0]])
+        pos, pos_prob, pos_idx = sample_from_probs(
+            yh[0], [action[0] for action in legal_actions[0]]
+        )
 
         if legal_actions[0][pos_idx][2]:
             kill, kill_prob, kill_idx = sample_from_probs(yh[-1], legal_actions[1])
 
         return (pos, None, kill), sum((pos_prob, move_prob, kill_prob)) / 3
 
-    pos, pos_prob, pos_idx = sample_from_probs(yh[1], [action[0] for action in legal_actions[0]])
+    pos, pos_prob, pos_idx = sample_from_probs(
+        yh[1], [action[0] for action in legal_actions[0]]
+    )
 
-    move, move_prob, move_idx = sample_from_probs(yh[2:6].T[pos_idx], legal_actions[0][pos_idx][1])
+    move, move_prob, move_idx = sample_from_probs(
+        yh[2:6].T[pos_idx], legal_actions[0][pos_idx][1]
+    )
 
     if legal_actions[0][pos_idx][2][move_idx]:
         kill, kill_prob, kill_idx = sample_from_probs(yh[-1], legal_actions[1])
@@ -241,7 +254,7 @@ def run_time_step(yh, yo):
         # envs[i].render()
 
         if is_learners_turn:
-            stats_e[i].append({'reward': reward, 'prob': prob})
+            stats_e[i].append({"reward": reward, "prob": prob})
 
         if done and envs[i].winner is not None:
             won[i] = envs[i].winner == learners[i]
@@ -250,11 +263,11 @@ def run_time_step(yh, yo):
 def learn():
     loss = torch.tensor(0).double().to(device)
     for i in range(n_env):
-        probs = [stat['prob'] for stat in stats_e[i]]
+        probs = [stat["prob"] for stat in stats_e[i]]
         if len(probs) == 0:
             continue
         probs = torch.stack(probs)
-        rewards = [stat['reward'] for stat in stats_e[i]]
+        rewards = [stat["reward"] for stat in stats_e[i]]
         returns = get_returns(rewards)
         credits = get_credits(len(rewards))
 
@@ -266,7 +279,7 @@ def learn():
     loss.backward()
     optim.step()
     print(f"loss: {loss}")
-    writer.add_scalar('Training loss', loss.item(), global_step=current_episode)
+    writer.add_scalar("Training loss", loss.item(), global_step=current_episode)
 
     # losses.append(loss.item())
 
@@ -291,6 +304,5 @@ def run_episode():
 
 while current_episode <= total_episodes:
     run_episode()
-    print('.', end='')
+    print(".", end="")
     current_episode += 1
-

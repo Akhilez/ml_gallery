@@ -5,7 +5,6 @@ from mlg.settings import logger
 
 
 class PolyRegTrainer(torch.nn.Module):
-
     def __init__(self, consumer=None):
         super().__init__()
         self.order = 5
@@ -68,14 +67,16 @@ class PolyRegTrainer(torch.nn.Module):
 
     def update_consumer(self):
         if self.consumer is not None:
-            threading.Thread(target=self.consumer.send_update_status, args=(self.get_status_data(),)).start()
+            threading.Thread(
+                target=self.consumer.send_update_status, args=(self.get_status_data(),)
+            ).start()
 
     def get_status_data(self):
         return {
-            'epoch': self.epoch,
-            'train_error': float(self.loss),
-            'weights': self.get_float_parameters(),
-            'is_training': self.must_train,
+            "epoch": self.epoch,
+            "train_error": float(self.loss),
+            "weights": self.get_float_parameters(),
+            "is_training": self.must_train,
         }
 
     def change_order(self, new_order):

@@ -5,8 +5,7 @@ import numpy as np
 from gym_grid_world.envs import GridWorldEnv
 
 
-class GridWorldBase (ABC):
-
+class GridWorldBase(ABC):
     @abstractmethod
     def predict(self, env: GridWorldEnv) -> dict:
         pass
@@ -20,7 +19,5 @@ class GridWorldBase (ABC):
 
 
 class GridWorldRandom(GridWorldBase):
-
     def predict(self, env):
-        return {'move': int(np.random.randint(0, 4, 1))}
-
+        return {"move": int(np.random.randint(0, 4, 1))}

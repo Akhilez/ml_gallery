@@ -10,10 +10,10 @@ def receive(request):
         trainer = PolyRegTrainer()
 
         job_handler = None
-        if body.get('job_id') is not None:
-            job_handler = all_jobs.get(body.get('job_id'))
+        if body.get("job_id") is not None:
+            job_handler = all_jobs.get(body.get("job_id"))
         if job_handler is None:
-            job_handler = JobHandler(trainer, 'learn_curve', send_callback=send)
+            job_handler = JobHandler(trainer, "learn_curve", send_callback=send)
 
         return job_handler.receive(body)
     return send({})
@@ -21,4 +21,3 @@ def receive(request):
 
 def send(data):
     return HttpResponse(json.dumps(data))
-

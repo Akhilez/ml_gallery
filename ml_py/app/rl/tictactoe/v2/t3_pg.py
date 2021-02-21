@@ -7,7 +7,7 @@ from torch import nn
 from torch.nn import functional as F
 from gym_tic_tac_toe.envs import TicTacToeEnvV2
 
-device = 'cuda' if torch.cuda.is_available() else 'cpu'
+device = "cuda" if torch.cuda.is_available() else "cpu"
 
 
 class T3LinearModel(nn.Module):
@@ -15,16 +15,17 @@ class T3LinearModel(nn.Module):
         super().__init__()
 
         self.first = nn.Sequential(
-            nn.Linear(9 * 3, units[0]),
-            nn.ReLU(),
-            nn.Dropout(0.3)
+            nn.Linear(9 * 3, units[0]), nn.ReLU(), nn.Dropout(0.3)
         )
 
-        self.hidden = nn.ModuleList([nn.Sequential(
-            nn.Linear(units[i], units[i + 1]),
-            nn.ReLU(),
-            nn.Dropout(0.3)
-        ) for i in range(len(units) - 1)])
+        self.hidden = nn.ModuleList(
+            [
+                nn.Sequential(
+                    nn.Linear(units[i], units[i + 1]), nn.ReLU(), nn.Dropout(0.3)
+                )
+                for i in range(len(units) - 1)
+            ]
+        )
 
         self.out = nn.Linear(units[-1], 9)
 
@@ -143,7 +144,7 @@ def log_stats():
 
     loss = np.mean(losses)
 
-    print(f'Ep: {current_episode}\tLoss: {loss}\tW: {wins}\tL: {loses}\tD: {draws}')
+    print(f"Ep: {current_episode}\tLoss: {loss}\tW: {wins}\tL: {loses}\tD: {draws}")
 
 
 def reset_buffer():
@@ -161,9 +162,9 @@ def reset_buffer():
 def learn():
     loss = torch.tensor(0).double().to(device)
     for i in range(n_env):
-        rewards = [stat['reward'] for stat in stats_e[i]]
+        rewards = [stat["reward"] for stat in stats_e[i]]
         returns = get_returns(rewards)
-        probs = torch.stack([stat['prob'] for stat in stats_e[i]])
+        probs = torch.stack([stat["prob"] for stat in stats_e[i]])
         credits = get_credits(len(rewards))
 
         loss += torch.sum(probs * credits * returns)
@@ -191,7 +192,7 @@ def run_time_step(yh, yo):
         _, reward, done, _ = envs[i].step(action)
 
         if is_learners_turn:
-            stats_e[i].append({'reward': reward, 'prob': prob})
+            stats_e[i].append({"reward": reward, "prob": prob})
 
         if done and envs[i].winner is not None:
             won[i] = envs[i].winner == learners[i]
@@ -216,7 +217,7 @@ def run_episode():
 
 while current_episode <= total_episodes:
     run_episode()
-    print('.', end='')
+    print(".", end="")
     if current_episode % buffer_reset_size == 0:
         log_stats()
         reset_buffer()
@@ -257,7 +258,7 @@ def play_out(p1, p2, plays):
     p2 = sum([1 for r in results if r == -1])
     d = sum([1 for r in results if r is None])
 
-    return p1/plays, p2/plays, d/plays
+    return p1 / plays, p2 / plays, d / plays
 
 
 print(play_out(random_player, AIPlayer, 100))

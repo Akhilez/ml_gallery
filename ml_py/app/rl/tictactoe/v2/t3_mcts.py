@@ -24,7 +24,7 @@ class MctsNode:
                 self.state[action] = self.turn
 
     def __str__(self):
-        return f'({self.wins}/{self.n})'
+        return f"({self.wins}/{self.n})"
 
     def __repr__(self):
         return str(self)
@@ -133,7 +133,9 @@ def mcts_player(env):
 
     [iter_mcts() for _ in range(800)]
 
-    probs = torch.tensor([0 if child.n == 0 else child.wins / child.n for child in tree.children])
+    probs = torch.tensor(
+        [0 if child.n == 0 else child.wins / child.n for child in tree.children]
+    )
     print(tree, probs)
     legal_actions = env.get_legal_actions()
     probs = probs[legal_actions]
@@ -177,5 +179,5 @@ def play(mcts_p, other_p, mcts_turn=1, render=False):
 
 
 print(play(mcts_player, random_player, -1, True))
-print('----')
+print("----")
 print(play(mcts_player, random_player, 1, True))

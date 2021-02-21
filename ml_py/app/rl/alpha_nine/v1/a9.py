@@ -6,7 +6,7 @@ from torch.nn import functional as F
 import copy
 import matplotlib.pyplot as plt
 
-device = 'cuda' if torch.cuda.is_available() else 'cpu'
+device = "cuda" if torch.cuda.is_available() else "cpu"
 
 
 def convert_inputs(state, me):
@@ -51,9 +51,15 @@ class A9Model(nn.Module):
 
         self.squeeze = nn.Linear(2 * embed_dim, embed_dim)
 
-        self.features = nn.ModuleList([SelfAttention(embed_dim) for _ in range(feature_depth)])
-        self.phase_1 = nn.ModuleList([SelfAttention(embed_dim) for _ in range(phase_1_depth)])
-        self.phase_2 = nn.ModuleList([SelfAttention(embed_dim) for _ in range(phase_2_depth)])
+        self.features = nn.ModuleList(
+            [SelfAttention(embed_dim) for _ in range(feature_depth)]
+        )
+        self.phase_1 = nn.ModuleList(
+            [SelfAttention(embed_dim) for _ in range(phase_1_depth)]
+        )
+        self.phase_2 = nn.ModuleList(
+            [SelfAttention(embed_dim) for _ in range(phase_2_depth)]
+        )
 
         self.phase_1_pos = nn.Linear(3 * 2 * 4 * embed_dim, 3 * 2 * 4)
         self.phase_2_pos = nn.Linear(3 * 2 * 4 * embed_dim, 3 * 2 * 4)
@@ -134,30 +140,54 @@ def subsample_legal_positions(probs, legal_pos):
 def sample_action(legal_actions, pos1, pos2, move, kill, is_phase_1, argmax=False):
     probs = []
 
-    legal_pos = list(set([action[0] for action in legal_actions]))  # [(3, 2, 4), (3, 2, 4), ... ]
+    legal_pos = list(
+        set([action[0] for action in legal_actions])
+    )  # [(3, 2, 4), (3, 2, 4), ... ]
     pos_probs_ = pos1 if is_phase_1 else pos2
     # subsample pos_probs with legal actions
     pos_probs = subsample_legal_positions(pos_probs_, legal_pos)
-    pos_idx = int(pos_probs.argmax()) if argmax else int(torch.multinomial(pos_probs, 1).squeeze())  # 24
+    pos_idx = (
+        int(pos_probs.argmax())
+        if argmax
+        else int(torch.multinomial(pos_probs, 1).squeeze())
+    )  # 24
     pos = legal_pos[pos_idx]  # (3, 2, 4)
     probs.append(pos_probs[pos_idx])
 
     # [0, 1, 2, 3]
     legal_moves = list(
-        set([action[1] for action in legal_actions if tuple(action[0]) == tuple(pos) and action[1] is not None]))
+        set(
+            [
+                action[1]
+                for action in legal_actions
+                if tuple(action[0]) == tuple(pos) and action[1] is not None
+            ]
+        )
+    )
     if len(legal_moves) != 0:
         move = move[legal_moves]
-        move_idx = int(move.argmax()) if argmax else int(torch.multinomial(move, 1).squeeze())  # 4
+        move_idx = (
+            int(move.argmax()) if argmax else int(torch.multinomial(move, 1).squeeze())
+        )  # 4
         move_ = legal_moves[move_idx]  # 4
         probs.append(move[move_idx])
     else:
         move_ = None
 
     legal_kills = list(
-        set([tuple(action[2]) for action in legal_actions if tuple(action[0]) == tuple(pos) and action[2] is not None]))
+        set(
+            [
+                tuple(action[2])
+                for action in legal_actions
+                if tuple(action[0]) == tuple(pos) and action[2] is not None
+            ]
+        )
+    )
     if len(legal_kills) != 0:
         kill = subsample_legal_positions(kill, legal_kills)
-        kill_idx = int(kill.argmax()) if argmax else int(torch.multinomial(kill, 1).squeeze())
+        kill_idx = (
+            int(kill.argmax()) if argmax else int(torch.multinomial(kill, 1).squeeze())
+        )
         kill_ = legal_kills[kill_idx]  # (3, 2, 4)
         probs.append(kill[kill_idx])
     else:
@@ -188,14 +218,16 @@ def play(player_1, player_2, render=False):
         if render:
             env.render()
 
-    winner = info.get('winner')
+    winner = info.get("winner")
     if winner:
         return 1 if winner == Pix.W.string else 2
     return 0
 
 
 def random_player(env, legal_actions=None):
-    legal_actions = legal_actions if legal_actions is not None else env.get_legal_actions()
+    legal_actions = (
+        legal_actions if legal_actions is not None else env.get_legal_actions()
+    )
     if len(legal_actions) == 0:
         env.swap_players()
         return (0, 0, 0), None, None
@@ -209,7 +241,9 @@ class AIPlayer:
         self.model = model
 
     def __call__(self, env, legal_actions=None):
-        legal_actions = legal_actions if legal_actions is not None else env.get_legal_actions()
+        legal_actions = (
+            legal_actions if legal_actions is not None else env.get_legal_actions()
+        )
         if len(legal_actions) == 0:
             env.swap_players()
             return (0, 0, 0), None, None
@@ -220,13 +254,22 @@ class AIPlayer:
 
         self.model.eval()
         with torch.no_grad():
-            yh_pos_1, yh_pos_2, yh_move, yh_kill = self.model(xs)  # yh shape: (batch, 9)
+            yh_pos_1, yh_pos_2, yh_move, yh_kill = self.model(
+                xs
+            )  # yh shape: (batch, 9)
 
         if was_train:
             self.model.train()
 
-        action, _ = sample_action(legal_actions, yh_pos_1[0], yh_pos_2[0], yh_move[0], yh_kill[0],
-                                  env.is_phase_1(), argmax=False)
+        action, _ = sample_action(
+            legal_actions,
+            yh_pos_1[0],
+            yh_pos_2[0],
+            yh_move[0],
+            yh_kill[0],
+            env.is_phase_1(),
+            argmax=False,
+        )
 
         return action
 
@@ -310,7 +353,7 @@ class EpisodicStat:
 def plot_interval(stats, episode_number):
     losses = [stat.loss for stat in stats]
 
-    print(f'{episode_number}: {np.mean(losses)}', end='\t')
+    print(f"{episode_number}: {np.mean(losses)}", end="\t")
 
     wins, loses, plays = 0, 0, 0
     for stat_ep in stats:
@@ -321,7 +364,7 @@ def plot_interval(stats, episode_number):
             else:
                 loses += 1
 
-    print(f'W: {wins / plays * 100} L: {loses / plays * 100} P: {plays}')
+    print(f"W: {wins / plays * 100} L: {loses / plays * 100} P: {plays}")
 
     plt.plot(losses)
     plt.show()
@@ -346,18 +389,31 @@ def run_time_step(stat_ep, opponent):
 
             # Is current player AI or other?
             if env.player == stats[i].player:
-                action, prob = sample_action(legal_actions, yh[0][i], yh[1][i], yh[2][i], yh[3][i], env.is_phase_1())
+                action, prob = sample_action(
+                    legal_actions,
+                    yh[0][i],
+                    yh[1][i],
+                    yh[2][i],
+                    yh[3][i],
+                    env.is_phase_1(),
+                )
                 state, reward, is_done, info = env.step(action)
 
                 stats[i].probs.append(prob)
                 stats[i].rewards.append(reward)
             else:
-                action, _ = sample_action(legal_actions, yh_op[0][i], yh_op[1][i], yh_op[2][i], yh_op[3][i],
-                                          env.is_phase_1())
+                action, _ = sample_action(
+                    legal_actions,
+                    yh_op[0][i],
+                    yh_op[1][i],
+                    yh_op[2][i],
+                    yh_op[3][i],
+                    env.is_phase_1(),
+                )
                 _, _, is_done, info = env.step(action)
 
             if is_done:
-                stats[i].has_won = stats[i].player.string == info.get('winner')
+                stats[i].has_won = stats[i].player.string == info.get("winner")
 
     stat_ep.time_step += 1
 

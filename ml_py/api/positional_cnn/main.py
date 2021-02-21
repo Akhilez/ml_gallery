@@ -10,7 +10,7 @@ app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=['*'],
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -23,7 +23,7 @@ class ImageData(BaseModel):
     image: List[List[List[List[float]]]]
 
 
-@app.post('/')
+@app.post("/")
 async def index(data: ImageData):
     cls, pos = positional_cnn.predict(data.image)
-    return {'class': cls, 'position': pos}
+    return {"class": cls, "position": pos}

@@ -53,8 +53,8 @@ class Metrics:
                     fn[i_real] += value
                     fp[i_pred] += value
 
-        fn[fn == 0] = 1.e-06
-        fp[fp == 0] = 1.e-06
+        fn[fn == 0] = 1.0e-06
+        fp[fp == 0] = 1.0e-06
 
         recall = tp / (tp + fn)
         precision = tp / (tp + fp)
@@ -103,7 +103,7 @@ class MetricsCallback(Callback):
 
 
 class MetricsWrapper(metrics.Metric):
-    def __init__(self, metrics_object, name='f1_macro', **kwargs):
+    def __init__(self, metrics_object, name="f1_macro", **kwargs):
         super(MetricsWrapper, self).__init__(name=name, **kwargs)
         self.obj = metrics_object
 

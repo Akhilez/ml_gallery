@@ -8,7 +8,7 @@ BATCH_LEN = 32
 
 
 model: SentenceTransformer = None
-device = 'cuda' if torch.cuda.is_available() else 'cpu'
+device = "cuda" if torch.cuda.is_available() else "cpu"
 
 
 def get_bmi(job, resume):
@@ -50,7 +50,13 @@ def get_bmi(job, resume):
 
 
 def get_token_embeddings(tokens):
-    return model.encode(tokens, batch_size=BATCH_LEN, output_value='token_embeddings', is_pretokenized=True, device=device)
+    return model.encode(
+        tokens,
+        batch_size=BATCH_LEN,
+        output_value="token_embeddings",
+        is_pretokenized=True,
+        device=device,
+    )
 
 
 def get_sentence_embeddings(token_embeddings):
@@ -63,7 +69,7 @@ def get_sentence_embeddings(token_embeddings):
 
 
 def calculate_bmi(scores):
-    scores = [score['match'] for score in scores]
+    scores = [score["match"] for score in scores]
     top_n = 5
     top_n = top_n if len(scores) >= top_n else len(scores)
 
@@ -77,15 +83,17 @@ def get_scores_map(cos_scores, job, resume):
     scores = []
 
     for job_i in range(len(job)):
-        scores.append({
-            'job': job[job_i],
-            'resume': resume[int(max_args[job_i])],
-            'match': float(cos[job_i]),
-            'job_idx': job_i,
-            'resume_idx': max_args[job_i]
-        })
+        scores.append(
+            {
+                "job": job[job_i],
+                "resume": resume[int(max_args[job_i])],
+                "match": float(cos[job_i]),
+                "job_idx": job_i,
+                "resume_idx": max_args[job_i],
+            }
+        )
 
-    return sorted(scores, key=lambda s: -s['match'])
+    return sorted(scores, key=lambda s: -s["match"])
 
 
 def get_cos_scores(job_embeddings, resume_embeddings):
@@ -104,7 +112,7 @@ def init_model():
         # These will be downloaded from https://sbert.net/models/<model_name>.zip
         # The model will be cached in ~/.cache/torch/sentence_transformers/sbert.net_models_<model_name>
 
-        model_name = 'distilbert-base-nli-stsb-mean-tokens'  # small <250 MB RAM
+        model_name = "distilbert-base-nli-stsb-mean-tokens"  # small <250 MB RAM
         # model_name = 'roberta-base-nli-stsb-mean-tokens'      # medium
         # model_name = 'roberta-large-nli-stsb-mean-tokens'  # Large 1.3 GB RAM
 
@@ -114,7 +122,7 @@ def init_model():
 def remove_before_word(sentence, word):
     try:
         subject_index = sentence.index(word)
-        sentence = sentence[subject_index + len(word):]
+        sentence = sentence[subject_index + len(word) :]
     except:
         # print(f"HEY! No word '{word}' in {sentence[:30]}...")
         pass
@@ -124,7 +132,7 @@ def remove_before_word(sentence, word):
 def is_valid_sentence(sentence):
     if len(sentence) < MIN_SENTENCE_LEN:
         return False
-    if ' ' not in sentence:
+    if " " not in sentence:
         return False
     return True
 
@@ -132,10 +140,10 @@ def is_valid_sentence(sentence):
 def clean_and_split_resume(resume):
     resume = basic_cleanup(resume)
 
-    resume = remove_before_word(resume, 'SUMMARY:')
-    resume = remove_before_word(resume, '{{END_DOCUMENT_DATESTAMP}}')
+    resume = remove_before_word(resume, "SUMMARY:")
+    resume = remove_before_word(resume, "{{END_DOCUMENT_DATESTAMP}}")
 
-    sentences = re.split(r'[\n\.]', resume)
+    sentences = re.split(r"[\n\.]", resume)
 
     sentences = [sentence for sentence in sentences if is_valid_sentence(sentence)]
 
@@ -145,7 +153,7 @@ def clean_and_split_resume(resume):
 def clean_and_split_job(job):
     job = basic_cleanup(job)
 
-    sentences = re.split(r'[\n\.]', job)
+    sentences = re.split(r"[\n\.]", job)
 
     sentences = [sentence for sentence in sentences if is_valid_sentence(sentence)]
 
@@ -153,13 +161,17 @@ def clean_and_split_job(job):
 
 
 def basic_cleanup(text):
-    text = re.sub(r'<br[ ]*/>', '\n', text)  # Replace <br/> with \n
-    text = re.sub(r'<[a-z_\-,;#0-9"\'\\=: A-Z]+>', '', text)  # Remove opening HTML tag
-    text = re.sub(r'</[a-z]+>', '. ', text)  # Replace closing HTML tag with a period and space.
-    text = re.sub(r'\.[ ]*\.', '.', text)  # Remove additional periods caused by above step
-    text = re.sub(r'&nbsp;', ' ', text)  # Remove nbsp
-    text = re.sub(r'&rsquo;', "", text)  # Remove nbsp
-    text = re.sub(r'[ ]+', ' ', text)  # Remove whitespaces
+    text = re.sub(r"<br[ ]*/>", "\n", text)  # Replace <br/> with \n
+    text = re.sub(r'<[a-z_\-,;#0-9"\'\\=: A-Z]+>', "", text)  # Remove opening HTML tag
+    text = re.sub(
+        r"</[a-z]+>", ". ", text
+    )  # Replace closing HTML tag with a period and space.
+    text = re.sub(
+        r"\.[ ]*\.", ".", text
+    )  # Remove additional periods caused by above step
+    text = re.sub(r"&nbsp;", " ", text)  # Remove nbsp
+    text = re.sub(r"&rsquo;", "", text)  # Remove nbsp
+    text = re.sub(r"[ ]+", " ", text)  # Remove whitespaces
 
     return text
 
@@ -178,7 +190,7 @@ def clean_texts(job, resume):
             raise Exception("Job or resume is too short")
         return job, resume
     except Exception as e:
-        print(f'Exception in cleaning texts: {e}')
+        print(f"Exception in cleaning texts: {e}")
 
 
 def main():
@@ -191,5 +203,5 @@ def main():
     print(bmi)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

@@ -19,13 +19,16 @@ i = 0
 
 y_ = utils.labels_to_tensor(y[i], 112, 112)
 
-anchors_tensor = utils.generate_anchors(shape=(W, H), sizes=(.15, .45, .75), ratios=(0.5, 1, 2))
+anchors_tensor = utils.generate_anchors(
+    shape=(W, H), sizes=(0.15, 0.45, 0.75), ratios=(0.5, 1, 2)
+)
 
 DataManager.plot_num(torch.ones((112, 112)), y[i])
 
 iou = utils.get_iou_map(y_[i], anchors_tensor)
 
-confidences, diffs = utils.get_labels(iou, y_[i], anchors_tensor, k, H, W, confidence_threshold=0.7)
+confidences, diffs = utils.get_labels(
+    iou, y_[i], anchors_tensor, k, H, W, confidence_threshold=0.7
+)
 
 confidences[confidences > 0.7]
-

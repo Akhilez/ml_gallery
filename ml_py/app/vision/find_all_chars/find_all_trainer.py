@@ -10,40 +10,50 @@ from app.vision.find_all_chars.model import MnistDetector
 from lib import detection_utils as utils
 from lib.mnist_aug.mnist_augmenter import DataManager, MNISTAug
 
-device = 'cuda' if torch.cuda.is_available() else 'cpu'
+device = "cuda" if torch.cuda.is_available() else "cpu"
 
 
 def get_labels(model, detector_out, x_batch, y_boxes):
     # Shape: (batch, k, H, W) | ones and zeros tensor.
     confidences_labels = utils.get_confidences(
-        torch.stack(detector_out.iou_max) if len(detector_out.iou_max) > 0 else torch.empty([]),
+        torch.stack(detector_out.iou_max)
+        if len(detector_out.iou_max) > 0
+        else torch.empty([]),
         model.threshold_p,
-        (len(x_batch), model.k, model.Hp, model.Wp)
+        (len(x_batch), model.k, model.Hp, model.Wp),
     )
 
-    diffs_labels = torch.stack([
-        utils.get_diffs(
-            y_boxes[j_batch],
-            model.anchors_tensor,
-            detector_out.iou_max[j_batch],
-            detector_out.matched_bboxes[j_batch],
-            model.k,
-            model.Hp,
-            model.Wp
-        )  # Shape: (4, k, H, W)
-        for j_batch in range(len(x_batch))
-    ])
+    diffs_labels = torch.stack(
+        [
+            utils.get_diffs(
+                y_boxes[j_batch],
+                model.anchors_tensor,
+                detector_out.iou_max[j_batch],
+                detector_out.matched_bboxes[j_batch],
+                model.k,
+                model.Hp,
+                model.Wp,
+            )  # Shape: (4, k, H, W)
+            for j_batch in range(len(x_batch))
+        ]
+    )
 
     return confidences_labels, diffs_labels
 
 
 def get_loss(detector_out, confidences_labels, diffs_labels, get_all=False):
-    confidences_loss = F.binary_cross_entropy(detector_out.confidences, confidences_labels)
+    confidences_loss = F.binary_cross_entropy(
+        detector_out.confidences, confidences_labels
+    )
 
     diffs_loss = []
 
     for i_batch in range(len(detector_out.diffs)):
-        idx = torch.cat((detector_out.idx_p[i_batch], detector_out.idx_n[i_batch])) if len(detector_out.idx_n) > 0 else detector_out.idx_p[i_batch]
+        idx = (
+            torch.cat((detector_out.idx_p[i_batch], detector_out.idx_n[i_batch]))
+            if len(detector_out.idx_n) > 0
+            else detector_out.idx_p[i_batch]
+        )
         not_nan_idx = diffs_labels[i_batch].flatten(0)[idx].isnan() == False
 
         diffs_pred = detector_out.diffs[i_batch].flatten(0)[idx][not_nan_idx]
@@ -61,25 +71,31 @@ def get_loss(detector_out, confidences_labels, diffs_labels, get_all=False):
 
 
 def train(model, train_set, epochs, batch_size, test_set=None):
-    train_loader = DataLoader(train_set, shuffle=True, batch_size=batch_size, collate_fn=lambda x: x)
+    train_loader = DataLoader(
+        train_set, shuffle=True, batch_size=batch_size, collate_fn=lambda x: x
+    )
 
     model.train()
     optimizer = Adam(model.parameters())
     # optimizer = RMSprop(model.parameters(), lr=1e-4)
 
     for epoch in range(epochs):
-        print(f'\nEpoch: {epoch}\n')
+        print(f"\nEpoch: {epoch}\n")
         for i_batch, batch in enumerate(train_loader):
 
-            x_batch = torch.stack([xi['x'] for xi in batch])
-            y_batch = [yi['y'] for yi in batch]
+            x_batch = torch.stack([xi["x"] for xi in batch])
+            y_batch = [yi["y"] for yi in batch]
 
             y_boxes = [utils.labels_to_tensor(yi, model.H, model.W) for yi in y_batch]
             detector_out = model(x_batch, y_boxes)
 
-            confidences_labels, diffs_labels = get_labels(model, detector_out, x_batch, y_boxes)
+            confidences_labels, diffs_labels = get_labels(
+                model, detector_out, x_batch, y_boxes
+            )
 
-            confidence_loss, diff_loss = get_loss(detector_out, confidences_labels, diffs_labels, get_all=True)
+            confidence_loss, diff_loss = get_loss(
+                detector_out, confidences_labels, diffs_labels, get_all=True
+            )
             loss = confidence_loss + diff_loss
 
             print(confidence_loss.item(), diff_loss.item())
@@ -94,20 +110,24 @@ def test(model, dataset):
 
     batch_size = 10
 
-    test_loader = DataLoader(dataset, shuffle=True, batch_size=batch_size, collate_fn=lambda x: x)
+    test_loader = DataLoader(
+        dataset, shuffle=True, batch_size=batch_size, collate_fn=lambda x: x
+    )
 
     model.eval()
 
     with torch.no_grad():
 
         for i_batch, batch in enumerate(test_loader):
-            x_batch = torch.stack([xi['x'] for xi in batch])
-            y_batch = [yi['y'] for yi in batch]
+            x_batch = torch.stack([xi["x"] for xi in batch])
+            y_batch = [yi["y"] for yi in batch]
 
             y_boxes = [utils.labels_to_tensor(yi, model.H, model.W) for yi in y_batch]
             detector_out = model(x_batch, y_boxes)
 
-            confidences_labels, diffs_labels = get_labels(model, detector_out, x_batch, y_boxes)
+            confidences_labels, diffs_labels = get_labels(
+                model, detector_out, x_batch, y_boxes
+            )
 
             loss = get_loss(detector_out, confidences_labels, diffs_labels)
 
@@ -124,8 +144,12 @@ def test(model, dataset):
                 # confidences_batch = torch.cat((confidences_batch_n, confidences_batch_p))
 
                 # De-Normalize to the feature map size
-                multiplier = torch.tensor([model.W, model.H, model.W, model.H]).view((4, 1))
-                pred_boxes = (pred_boxes * multiplier).round()  # .type(torch.int32)  # shape (4, p) (x1y1x2y2)
+                multiplier = torch.tensor([model.W, model.H, model.W, model.H]).view(
+                    (4, 1)
+                )
+                pred_boxes = (
+                    pred_boxes * multiplier
+                ).round()  # .type(torch.int32)  # shape (4, p) (x1y1x2y2)
 
                 # remove small boxes
                 pred_boxes = model.remove_tiny_boxes(pred_boxes, min_side=5)
@@ -136,7 +160,9 @@ def test(model, dataset):
                 print(nms_boxes_i.shape)
                 nms_boxes.append(utils.tensor_to_labels(nms_boxes_i))
 
-                DataManager.plot_num(x_batch[j_batch].view((model.H, model.W)), nms_boxes[j_batch])
+                DataManager.plot_num(
+                    x_batch[j_batch].view((model.H, model.W)), nms_boxes[j_batch]
+                )
 
 
 def main():
@@ -157,5 +183,5 @@ def main():
     test(model, test_set)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

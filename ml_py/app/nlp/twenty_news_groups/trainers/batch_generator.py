@@ -3,7 +3,6 @@ import numpy as np
 
 
 class BatchGenerator:
-
     def __init__(self, data_path, batch_size):
         self.batch_size = batch_size
         self.data_path = data_path
@@ -14,7 +13,11 @@ class BatchGenerator:
             with open(self.data_path) as data_file:
                 reader = csv.reader(data_file)
                 batch = []
-                for row in reader:  # TODO: Can the next batch be fetched asynchronously? With asyncio?
+                for (
+                    row
+                ) in (
+                    reader
+                ):  # TODO: Can the next batch be fetched asynchronously? With asyncio?
                     batch.append(row)
                     if len(batch) >= self.batch_size:
                         batch = self._split_batch(batch)
@@ -27,6 +30,6 @@ class BatchGenerator:
 
     def _split_batch(self, batch):
         batch = np.array(batch, dtype=int)
-        x = batch[:, :len(batch[0]) - self.n_labels]
-        y = batch[:, len(batch[0]) - self.n_labels:]
+        x = batch[:, : len(batch[0]) - self.n_labels]
+        y = batch[:, len(batch[0]) - self.n_labels :]
         return x, y

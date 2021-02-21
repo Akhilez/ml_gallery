@@ -25,27 +25,37 @@ class CustomTrainer(Trainer):
         train_steps = self.train_size / self.train_batch_size
         test_steps = self.test_size / self.test_batch_size
 
-        train_gen = BatchGenerator(data_path='../data/train_custom.csv',
-                                   batch_size=self.train_batch_size).get_batch_gen()
-        test_gen = BatchGenerator(data_path='../data/test_custom.csv',
-                                  batch_size=self.test_batch_size).get_batch_gen()
+        train_gen = BatchGenerator(
+            data_path="../data/train_custom.csv", batch_size=self.train_batch_size
+        ).get_batch_gen()
+        test_gen = BatchGenerator(
+            data_path="../data/test_custom.csv", batch_size=self.test_batch_size
+        ).get_batch_gen()
 
         return self.model.fit(
-            train_gen, steps_per_epoch=train_steps, epochs=epochs,
-            validation_data=test_gen, validation_steps=test_steps,
-            callbacks=[MetricsCallback(self.metrics, test_gen, test_steps)])
+            train_gen,
+            steps_per_epoch=train_steps,
+            epochs=epochs,
+            validation_data=test_gen,
+            validation_steps=test_steps,
+            callbacks=[MetricsCallback(self.metrics, test_gen, test_steps)],
+        )
 
     def _get_model(self, load_path):
         if load_path:
             return tf.keras.models.load_model(load_path)
 
-        model = tf.keras.Sequential([
-            Embedding(self.vocab_size, self.embed_size, input_length=150),
-            GlobalAveragePooling1D(),
-            Dense(128, activation='relu'),
-            Dense(20, activation='softmax')
-        ])
-        model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
+        model = tf.keras.Sequential(
+            [
+                Embedding(self.vocab_size, self.embed_size, input_length=150),
+                GlobalAveragePooling1D(),
+                Dense(128, activation="relu"),
+                Dense(20, activation="softmax"),
+            ]
+        )
+        model.compile(
+            loss="categorical_crossentropy", optimizer="adam", metrics=["accuracy"]
+        )
         return model
 
     def predict(self, data):
@@ -61,12 +71,12 @@ class CustomTrainer(Trainer):
 
     @staticmethod
     def _plot_graphs(history, string, metrics=None):
-        legend = [string, 'val_' + string]
+        legend = [string, "val_" + string]
         plt.plot(history.history[string])
-        plt.plot(history.history['val_' + string])
-        if string == 'accuracy':
+        plt.plot(history.history["val_" + string])
+        if string == "accuracy":
             plt.plot(metrics.f1macros)
-            legend.append('f1_macro')
+            legend.append("f1_macro")
         plt.xlabel("Epochs")
         plt.ylabel(string)
         plt.legend(legend)
@@ -74,7 +84,7 @@ class CustomTrainer(Trainer):
 
 
 if __name__ == "__main__":
-    model_path = 'models/base.h5'
+    model_path = "models/base.h5"
     trainer = CustomTrainer()  # load_path=model_path)
 
     # trainer.train_size = 500

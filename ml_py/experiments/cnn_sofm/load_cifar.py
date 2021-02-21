@@ -18,7 +18,7 @@ batches contain exactly 5000 images from each class.
 """
 
 
-def load_batch(f_path, label_key='labels'):
+def load_batch(f_path, label_key="labels"):
     """Internal utility for parsing CIFAR data.
 
     # Arguments
@@ -29,17 +29,17 @@ def load_batch(f_path, label_key='labels'):
     # Returns
         A tuple `(data, labels)`.
     """
-    with open(f_path, 'rb') as f:
+    with open(f_path, "rb") as f:
         if sys.version_info < (3,):
             d = pickle.load(f)
         else:
-            d = pickle.load(f, encoding='bytes')
+            d = pickle.load(f, encoding="bytes")
             # decode utf8
             d_decoded = {}
             for k, v in d.items():
-                d_decoded[k.decode('utf8')] = v
+                d_decoded[k.decode("utf8")] = v
             d = d_decoded
-    data = d['data']
+    data = d["data"]
     labels = d[label_key]
 
     data = data.reshape(data.shape[0], 3, 32, 32)
@@ -55,15 +55,17 @@ def load_data(path, negatives=False):
 
     num_train_samples = 50000
 
-    x_train_local = np.empty((num_train_samples, 3, 32, 32), dtype='uint8')
-    y_train_local = np.empty((num_train_samples,), dtype='uint8')
+    x_train_local = np.empty((num_train_samples, 3, 32, 32), dtype="uint8")
+    y_train_local = np.empty((num_train_samples,), dtype="uint8")
 
     for i in range(1, 6):
-        fpath = os.path.join(path, 'data_batch_' + str(i))
-        (x_train_local[(i - 1) * 10000: i * 10000, :, :, :],
-         y_train_local[(i - 1) * 10000: i * 10000]) = load_batch(fpath)
+        fpath = os.path.join(path, "data_batch_" + str(i))
+        (
+            x_train_local[(i - 1) * 10000 : i * 10000, :, :, :],
+            y_train_local[(i - 1) * 10000 : i * 10000],
+        ) = load_batch(fpath)
 
-    fpath = os.path.join(path, 'test_batch')
+    fpath = os.path.join(path, "test_batch")
     x_test_local, y_test_local = load_batch(fpath)
 
     y_train_local = np.reshape(y_train_local, (len(y_train_local), 1))
@@ -82,7 +84,7 @@ def load_data(path, negatives=False):
 if __name__ == "__main__":
     """show it works"""
 
-    cifar_10_dir = '../../data/cifar10'
+    cifar_10_dir = "../../data/cifar10"
 
     (x_train, y_train), (x_test, y_test) = load_data(cifar_10_dir)
 

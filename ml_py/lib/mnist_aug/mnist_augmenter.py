@@ -24,10 +24,18 @@ class MNISTAug:
 
         self.closeness_fraction = 0  # more = only close ones have relationship
 
-    def get_augmented(self, x: np.ndarray, y: np.ndarray, n_out: int, noisy: bool = False,
-                      get_class_captions: bool = False, get_relationships: bool = False,
-                      get_positional_labels: bool = False, get_positional_relationships: bool = False,
-                      get_relationship_captions: bool = False):
+    def get_augmented(
+        self,
+        x: np.ndarray,
+        y: np.ndarray,
+        n_out: int,
+        noisy: bool = False,
+        get_class_captions: bool = False,
+        get_relationships: bool = False,
+        get_positional_labels: bool = False,
+        get_positional_relationships: bool = False,
+        get_relationship_captions: bool = False,
+    ):
         """
 
         Parameters
@@ -76,11 +84,16 @@ class MNISTAug:
             j = 0
             while j < n_objects:
                 rand_i = random.randrange(0, len(x))
-                x_in = int(max(0, np.random.normal(self.scaling_mean, self.scaling_sd, 1)) * x.shape[1])
+                x_in = int(
+                    max(0, np.random.normal(self.scaling_mean, self.scaling_sd, 1))
+                    * x.shape[1]
+                )
                 # x_in = int(random.uniform(self.min_resize, self.max_resize) * x.shape[1])
 
                 try:
-                    resized_object = resize(x[rand_i], (x_in, x_in))  # TODO: Find the root cause of this error
+                    resized_object = resize(
+                        x[rand_i], (x_in, x_in)
+                    )  # TODO: Find the root cause of this error
                 except Exception as e:
                     print(e)
                     continue
@@ -91,10 +104,16 @@ class MNISTAug:
                     # rand_x, rand_y are the coordinates of object
                     # rand_x = random * (x_out - (x_in * (1-overflow)))
                     # TODO: This does not take into account the overlap on left and top edge.
-                    rand_x = int(random.random() * (x_out - (x_in * (1 - self.overflow))))
-                    rand_y = int(random.random() * (x_out - (x_in * (1 - self.overflow))))
+                    rand_x = int(
+                        random.random() * (x_out - (x_in * (1 - self.overflow)))
+                    )
+                    rand_y = int(
+                        random.random() * (x_out - (x_in * (1 - self.overflow)))
+                    )
 
-                    if len(centers) == 0 or not self.is_overlapping(rand_x, rand_y, x_in, centers, widths):
+                    if len(centers) == 0 or not self.is_overlapping(
+                        rand_x, rand_y, x_in, centers, widths
+                    ):
                         break
                 else:
                     j += 1
@@ -108,22 +127,26 @@ class MNISTAug:
                 localized_dim_y = min(x_out - rand_y, x_in)
                 localized_xi = resized_object[:localized_dim_x, :localized_dim_y]
 
-                aug_x[i][rand_x:rand_x + localized_dim_x, rand_y:rand_y + localized_dim_y] += localized_xi
+                aug_x[i][
+                    rand_x : rand_x + localized_dim_x, rand_y : rand_y + localized_dim_y
+                ] += localized_xi
 
-                aug_yi.append({
-                    'id': j,
-                    'class': int(np.argmax(y[rand_i])),
-                    'class_one_hot': y[rand_i],
-                    'x1': rand_x,
-                    'y1': rand_y,
-                    'x2': rand_x + localized_dim_x,
-                    'y2': rand_y + localized_dim_y,
-                    'cx': rand_x + localized_dim_x / 2,
-                    'cy': rand_y + localized_dim_y / 2,
-                    'height': localized_dim_y,
-                    'width': localized_dim_x,
-                    'type': 'number'
-                })
+                aug_yi.append(
+                    {
+                        "id": j,
+                        "class": int(np.argmax(y[rand_i])),
+                        "class_one_hot": y[rand_i],
+                        "x1": rand_x,
+                        "y1": rand_y,
+                        "x2": rand_x + localized_dim_x,
+                        "y2": rand_y + localized_dim_y,
+                        "cx": rand_x + localized_dim_x / 2,
+                        "cy": rand_y + localized_dim_y / 2,
+                        "height": localized_dim_y,
+                        "width": localized_dim_x,
+                        "type": "number",
+                    }
+                )
 
                 j += 1
 
@@ -171,8 +194,10 @@ class MNISTAug:
         """
 
         for box in boxes:
-            box['position'] = MNISTAug.get_number_position(box['x1'], box['y1'], box['x2'], box['y2'])
-            box['position_one_hot'] = DataManager.to_one_hot([box['position']], 9)
+            box["position"] = MNISTAug.get_number_position(
+                box["x1"], box["y1"], box["x2"], box["y2"]
+            )
+            box["position_one_hot"] = DataManager.to_one_hot([box["position"]], 9)
 
         return boxes
 
@@ -186,10 +211,10 @@ class MNISTAug:
         return boxes
         """
         for box in boxes:
-            grid_box_name = np.random.choice(caption_rules.grid_names[box['position']])
-            number_name = np.random.choice(caption_rules.class_names[box['class']])
+            grid_box_name = np.random.choice(caption_rules.grid_names[box["position"]])
+            number_name = np.random.choice(caption_rules.class_names[box["class"]])
             caption = np.random.choice(caption_rules.positional_captions)
-            box['caption'] = caption.format(a=number_name, p=grid_box_name)
+            box["caption"] = caption.format(a=number_name, p=grid_box_name)
 
         return boxes
 
@@ -203,7 +228,9 @@ class MNISTAug:
         """
 
         for box in boxes:
-            box['class'] = np.random.choice(caption_rules.number_captions).format(a=box['class'])
+            box["class"] = np.random.choice(caption_rules.number_captions).format(
+                a=box["class"]
+            )
 
         return boxes
 
@@ -232,11 +259,21 @@ class MNISTAug:
                     done = True
                     break
 
-                c1 = np.array((boxes[i]['cx'], boxes[i]['cy'],))
-                c2 = np.array((boxes[j]['cx'], boxes[j]['cy'],))
+                c1 = np.array(
+                    (
+                        boxes[i]["cx"],
+                        boxes[i]["cy"],
+                    )
+                )
+                c2 = np.array(
+                    (
+                        boxes[j]["cx"],
+                        boxes[j]["cy"],
+                    )
+                )
 
                 distance = np.linalg.norm(c2 - c1)
-                side = boxes[i]['width'] + boxes[j]['width']
+                side = boxes[i]["width"] + boxes[j]["width"]
 
                 distance_factor = (side - distance) / side
                 if distance_factor < self.closeness_fraction:
@@ -251,10 +288,14 @@ class MNISTAug:
             if distance_factors[arg_min] == 9999:
                 continue
 
-            done_pairs.append({'box1': i, 'box2': arg_min, 'dist': distance_factors[arg_min]})
+            done_pairs.append(
+                {"box1": i, "box2": arg_min, "dist": distance_factors[arg_min]}
+            )
 
-            relationship_box = MNISTAug.get_relationship_bounding_box(boxes[i], boxes[arg_min])
-            relationship_box['id'] = box_id
+            relationship_box = MNISTAug.get_relationship_bounding_box(
+                boxes[i], boxes[arg_min]
+            )
+            relationship_box["id"] = box_id
             box_id += 1
 
             relationship_boxes.append(relationship_box)
@@ -290,11 +331,17 @@ class MNISTAug:
             add it to the boxes
         """
         for box in boxes:
-            number1_name = np.random.choice(caption_rules.class_names[box['box1']['class']])
-            number2_name = np.random.choice(caption_rules.class_names[box['box2']['class']])
+            number1_name = np.random.choice(
+                caption_rules.class_names[box["box1"]["class"]]
+            )
+            number2_name = np.random.choice(
+                caption_rules.class_names[box["box2"]["class"]]
+            )
 
-            caption = np.random.choice(caption_rules.relationship_captions).format(a=number1_name, b=number2_name)
-            box['caption'] = caption
+            caption = np.random.choice(caption_rules.relationship_captions).format(
+                a=number1_name, b=number2_name
+            )
+            box["caption"] = caption
 
         return boxes
 
@@ -303,10 +350,12 @@ class MNISTAug:
 
         areas = []
         for grid_box in caption_rules.grid_boxes:
-            if x2a < grid_box[0] \
-                    or x1a > grid_box[2] \
-                    or y1a > grid_box[3] \
-                    or y2a < grid_box[1]:
+            if (
+                x2a < grid_box[0]
+                or x1a > grid_box[2]
+                or y1a > grid_box[3]
+                or y2a < grid_box[1]
+            ):
                 areas.append(0)
                 continue
 
@@ -323,10 +372,10 @@ class MNISTAug:
 
     @staticmethod
     def get_relationship_bounding_box(box1, box2):
-        x1 = min(box1['x1'], box2['x1'])
-        y1 = min(box1['y1'], box2['y1'])
-        x2 = max(box1['x2'], box2['x2'])
-        y2 = max(box1['y2'], box2['y2'])
+        x1 = min(box1["x1"], box2["x1"])
+        y1 = min(box1["y1"], box2["y1"])
+        x2 = max(box1["x2"], box2["x2"])
+        y2 = max(box1["y2"], box2["y2"])
 
         cx = (x1 + x2) / 2
         cy = (y1 + y2) / 2
@@ -335,26 +384,26 @@ class MNISTAug:
         h = y2 - y1
 
         return {
-            'classes': [box1['class'], box2['class']],
-            'x1': x1,
-            'y1': y1,
-            'x2': x2,
-            'y2': y2,
-            'cx': cx,
-            'cy': cy,
-            'height': h,
-            'width': w,
-            'type': 'relationship',
-            'box1': box1,
-            'box2': box2
+            "classes": [box1["class"], box2["class"]],
+            "x1": x1,
+            "y1": y1,
+            "x2": x2,
+            "y2": y2,
+            "cx": cx,
+            "cy": cy,
+            "height": h,
+            "width": w,
+            "type": "relationship",
+            "box1": box1,
+            "box2": box2,
         }
 
     @staticmethod
     def is_pair_done(i, j, done_pairs):
         for pair in done_pairs:
-            if pair['box1'] == i and pair['box2'] == j:
+            if pair["box1"] == i and pair["box2"] == j:
                 return True
-            if pair['box1'] == j and pair['box2'] == i:
+            if pair["box1"] == j and pair["box2"] == i:
                 return True
         return False
 
@@ -362,7 +411,8 @@ class MNISTAug:
 class DataManager:
     def __init__(self):
         from mlg.settings import BASE_DIR
-        self.dir = f'{BASE_DIR}/data/mnist/numbers'
+
+        self.dir = f"{BASE_DIR}/data/mnist/numbers"
 
         self.x_train, self.y_train, self.x_test, self.y_test = None, None, None, None
 
@@ -371,25 +421,32 @@ class DataManager:
         self.load_test()
 
     def load_train(self):
-        if os.path.exists(self.dir + '/x_train.npy'):
-            self.x_train = np.load(f'{self.dir}/x_train.npy')
-            self.y_train = np.load(f'{self.dir}/y_train.npy')
+        if os.path.exists(self.dir + "/x_train.npy"):
+            self.x_train = np.load(f"{self.dir}/x_train.npy")
+            self.y_train = np.load(f"{self.dir}/y_train.npy")
         else:
             self.load_train_from_torch()
 
     def load_test(self):
-        if os.path.exists(self.dir + '/x_test.npy'):
-            self.x_test = np.load(f'{self.dir}/x_test.npy')
-            self.y_test = np.load(f'{self.dir}/y_test.npy')
+        if os.path.exists(self.dir + "/x_test.npy"):
+            self.x_test = np.load(f"{self.dir}/x_test.npy")
+            self.y_test = np.load(f"{self.dir}/y_test.npy")
         else:
             self.load_test_from_torch()
 
     def load_train_from_torch(self):
         import torch
         import torchvision
+
         train_loader = torch.utils.data.DataLoader(
-            torchvision.datasets.MNIST(self.dir, train=True, download=True,
-                                       transform=torchvision.transforms.ToTensor()), shuffle=True)
+            torchvision.datasets.MNIST(
+                self.dir,
+                train=True,
+                download=True,
+                transform=torchvision.transforms.ToTensor(),
+            ),
+            shuffle=True,
+        )
         x_train = []
         y_train = []
 
@@ -403,9 +460,16 @@ class DataManager:
     def load_test_from_torch(self):
         import torch
         import torchvision
+
         test_loader = torch.utils.data.DataLoader(
-            torchvision.datasets.MNIST(self.dir, train=False, download=True,
-                                       transform=torchvision.transforms.ToTensor()), shuffle=True)
+            torchvision.datasets.MNIST(
+                self.dir,
+                train=False,
+                download=True,
+                transform=torchvision.transforms.ToTensor(),
+            ),
+            shuffle=True,
+        )
         x_test = []
         y_test = []
 
@@ -423,22 +487,36 @@ class DataManager:
         fig = plt.figure()
         ax = fig.add_subplot(1, 1, 1)
 
-        ax.imshow(x, cmap='gray')
+        ax.imshow(x, cmap="gray")
 
         if bounding_boxes is not None:
             import matplotlib.patches as patches
 
             for i in range(len(bounding_boxes)):
-                x1 = bounding_boxes[i]['x1']
-                y1 = bounding_boxes[i]['y1']
-                x2 = bounding_boxes[i]['x2']
-                y2 = bounding_boxes[i]['y2']
-                rect = patches.Rectangle((y1, x1), y2 - y1, x2 - x1, linewidth=1, edgecolor='r', facecolor='none')
+                x1 = bounding_boxes[i]["x1"]
+                y1 = bounding_boxes[i]["y1"]
+                x2 = bounding_boxes[i]["x2"]
+                y2 = bounding_boxes[i]["y2"]
+                rect = patches.Rectangle(
+                    (y1, x1),
+                    y2 - y1,
+                    x2 - x1,
+                    linewidth=1,
+                    edgecolor="r",
+                    facecolor="none",
+                )
                 ax.add_patch(rect)
 
-                if 'class' in bounding_boxes[i]:
-                    ax.text(y1, x1, bounding_boxes[i]['class'], size=8, ha="left", va="top",
-                            bbox=dict(boxstyle="square", fc=(1., 0.8, 0.8)))
+                if "class" in bounding_boxes[i]:
+                    ax.text(
+                        y1,
+                        x1,
+                        bounding_boxes[i]["class"],
+                        size=8,
+                        ha="left",
+                        va="top",
+                        bbox=dict(boxstyle="square", fc=(1.0, 0.8, 0.8)),
+                    )
 
         fig.show()
 

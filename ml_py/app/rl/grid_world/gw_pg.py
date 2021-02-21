@@ -14,7 +14,7 @@ from gym_grid_world.envs import GridWorldEnv
 from lib.nn_utils import save_model
 from settings import BASE_DIR, device
 
-CWD = f'{BASE_DIR}/app/rl/grid_world'
+CWD = f"{BASE_DIR}/app/rl/grid_world"
 
 
 class GWPgModel(nn.Module):
@@ -23,16 +23,19 @@ class GWPgModel(nn.Module):
         self.size = size
 
         self.first = nn.Sequential(
-            nn.Conv2d(4, units[0], kernel_size=3, padding=1),
-            nn.ReLU(),
-            nn.Dropout(0.3)
+            nn.Conv2d(4, units[0], kernel_size=3, padding=1), nn.ReLU(), nn.Dropout(0.3)
         )
 
-        self.hidden = nn.ModuleList([nn.Sequential(
-            nn.Conv2d(units[i], units[i + 1], kernel_size=3, padding=1),
-            nn.ReLU(),
-            nn.Dropout(0.3)
-        ) for i in range(len(units) - 1)])
+        self.hidden = nn.ModuleList(
+            [
+                nn.Sequential(
+                    nn.Conv2d(units[i], units[i + 1], kernel_size=3, padding=1),
+                    nn.ReLU(),
+                    nn.Dropout(0.3),
+                )
+                for i in range(len(units) - 1)
+            ]
+        )
 
         self.out = nn.Linear(self.size * self.size * units[-1], 4)
 
@@ -50,15 +53,24 @@ class GWPgModel(nn.Module):
 
 
 class GWPolicyGradTrainer:
-
     def __init__(self, **config):
         self.cfg = OmegaConf.create(config)
 
-        self.model = GWPgModel(self.cfg.grid_size, [self.cfg.units for _ in range(self.cfg.depth)]).double().to(device)
+        self.model = (
+            GWPgModel(
+                self.cfg.grid_size, [self.cfg.units for _ in range(self.cfg.depth)]
+            )
+            .double()
+            .to(device)
+        )
         self.optim = torch.optim.Adam(self.model.parameters(), lr=self.cfg.lr)
         self.writer = SummaryWriter(
-            f'{CWD}/runs/gw_policy_grad_LR{str(self.cfg.lr)[:7]}_{self.cfg.depth}x{self.cfg.units}_{int(datetime.now().timestamp())}')
-        self.envs = [GridWorldEnv(size=self.cfg.grid_size, mode=self.cfg.env_mode) for _ in range(self.cfg.n_env)]
+            f"{CWD}/runs/gw_policy_grad_LR{str(self.cfg.lr)[:7]}_{self.cfg.depth}x{self.cfg.units}_{int(datetime.now().timestamp())}"
+        )
+        self.envs = [
+            GridWorldEnv(size=self.cfg.grid_size, mode=self.cfg.env_mode)
+            for _ in range(self.cfg.n_env)
+        ]
         self.stats_e = []
         self.won = []
         self.current_episode = 1
@@ -79,7 +91,9 @@ class GWPolicyGradTrainer:
         returns = []
         prev_return = 0
         for t in range(total_t):
-            prev_return = rewards[total_t - t - 1] + (self.cfg.gamma_returns * prev_return)
+            prev_return = rewards[total_t - t - 1] + (
+                self.cfg.gamma_returns * prev_return
+            )
             returns.append(prev_return)
         return torch.tensor(list(reversed(returns))).double().to(device)
 
@@ -119,18 +133,18 @@ class GWPolicyGradTrainer:
             _, reward, done, _ = self.envs[i].step(action)
             # envs[i].render()
 
-            self.stats_e[i].append({'reward': reward, 'prob': prob})
+            self.stats_e[i].append({"reward": reward, "prob": prob})
             self.won[i] = done and self.envs[i].won
 
     def learn(self):
         loss = torch.tensor(0).double().to(device)
         rewards_list = []
         for i in range(self.cfg.n_env):
-            probs = [stat['prob'] for stat in self.stats_e[i]]
+            probs = [stat["prob"] for stat in self.stats_e[i]]
             if len(probs) == 0:
                 continue
             probs = torch.stack(probs)
-            rewards = [stat['reward'] for stat in self.stats_e[i]]
+            rewards = [stat["reward"] for stat in self.stats_e[i]]
             returns = self.get_returns(rewards)
             credits = self.get_credits(len(rewards))
 
@@ -143,8 +157,12 @@ class GWPolicyGradTrainer:
         loss.backward()
         self.optim.step()
         # print(f"loss: {loss}")
-        self.writer.add_scalar('Training loss', loss.item(), global_step=self.current_episode)
-        self.writer.add_scalar('Mean Rewards', np.mean(rewards_list), global_step=self.current_episode)
+        self.writer.add_scalar(
+            "Training loss", loss.item(), global_step=self.current_episode
+        )
+        self.writer.add_scalar(
+            "Mean Rewards", np.mean(rewards_list), global_step=self.current_episode
+        )
 
         # losses.append(loss.item())
 
@@ -165,7 +183,7 @@ class GWPolicyGradTrainer:
         if step == self.cfg.max_steps:
             for i in range(self.cfg.n_env):
                 if not self.envs[i].done:
-                    self.stats_e[i].append({'reward': -10, 'prob': torch.tensor(0)})
+                    self.stats_e[i].append({"reward": -10, "prob": torch.tensor(0)})
 
         self.learn()
 
@@ -205,7 +223,7 @@ def get_final_reward(trainer):
     reward = 0
     n = 0
     for stat in trainer.stats_e:
-        reward += stat[-1]['reward']
+        reward += stat[-1]["reward"]
         n += 1
     return reward / (n + 0.00001)
 
@@ -219,27 +237,27 @@ def run_trainer(cfg: DictConfig, trail: optuna.Trial) -> float:
 
     while trainer.current_episode <= cfg.total_episodes:
         trainer.run_episode()
-        print('.', end='')
+        print(".", end="")
         trainer.current_episode += 1
 
     final_reward = get_final_reward(trainer)
-    hparams = {key: cfg[key] for key in ['lr', 'depth', 'units']}
-    trainer.writer.add_hparams(hparams, {'final_reward': final_reward})
+    hparams = {key: cfg[key] for key in ["lr", "depth", "units"]}
+    trainer.writer.add_hparams(hparams, {"final_reward": final_reward})
     trainer.writer.close()
 
     # play(trainer.model, cfg)
 
-    save_model(trainer.model, CWD, 'grid_world_pg')
+    save_model(trainer.model, CWD, "grid_world_pg")
 
     return final_reward
 
 
 @hydra.main(config_name="config/pg")
 def main(cfg: DictConfig) -> None:
-    study = optuna.create_study(direction='maximize')
+    study = optuna.create_study(direction="maximize")
     study.optimize(lambda trail: run_trainer(cfg, trail), n_trials=1)
-    print(f'{study.best_params=}')
-    print(f'{study.best_value=}')
+    print(f"{study.best_params=}")
+    print(f"{study.best_value=}")
 
 
 if __name__ == "__main__":

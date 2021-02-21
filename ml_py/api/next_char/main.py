@@ -7,7 +7,7 @@ app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=['*'],
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -16,6 +16,6 @@ app.add_middleware(
 next_char = NextChar()
 
 
-@app.get('/')
+@app.get("/")
 async def index(text: str):
     return {"pred": next_char.predict(text)}

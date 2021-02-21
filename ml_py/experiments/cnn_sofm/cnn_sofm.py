@@ -8,11 +8,7 @@
 import numpy as np
 from skimage.transform import resize
 
-data_path = 'data/cifar10'
-data = np.load(f'{data_path}/data_batch_1')
+data_path = "data/cifar10"
+data = np.load(f"{data_path}/data_batch_1")
 
 resize(images[rand_i], (224, 224))
-
-
-
-

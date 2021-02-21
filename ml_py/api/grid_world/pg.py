@@ -14,16 +14,19 @@ class GWPgModel(nn.Module):
         self.size = size
 
         self.first = nn.Sequential(
-            nn.Conv2d(4, units[0], kernel_size=3, padding=1),
-            nn.ReLU(),
-            nn.Dropout(0.3)
+            nn.Conv2d(4, units[0], kernel_size=3, padding=1), nn.ReLU(), nn.Dropout(0.3)
         )
 
-        self.hidden = nn.ModuleList([nn.Sequential(
-            nn.Conv2d(units[i], units[i + 1], kernel_size=3, padding=1),
-            nn.ReLU(),
-            nn.Dropout(0.3)
-        ) for i in range(len(units) - 1)])
+        self.hidden = nn.ModuleList(
+            [
+                nn.Sequential(
+                    nn.Conv2d(units[i], units[i + 1], kernel_size=3, padding=1),
+                    nn.ReLU(),
+                    nn.Dropout(0.3),
+                )
+                for i in range(len(units) - 1)
+            ]
+        )
 
         self.out = nn.Linear(self.size * self.size * units[-1], 4)
 
@@ -41,11 +44,12 @@ class GWPgModel(nn.Module):
 
 
 class GridWorldPG(GridWorldBase):
-
     def __init__(self):
-        self.model = load_model(CWD, GWPgModel(4, [25, 25]).double().to(device), name='pg.pt')
+        self.model = load_model(
+            CWD, GWPgModel(4, [25, 25]).double().to(device), name="pg.pt"
+        )
 
     def predict(self, env):
         y = self.model(GWPgModel.convert_inputs([env]))
         action = int(y[0].argmax(0))
-        return {'move': action}
+        return {"move": action}

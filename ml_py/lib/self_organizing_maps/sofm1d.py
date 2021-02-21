@@ -4,8 +4,8 @@ from lib.nn_utils import get_scaled_random_weights
 
 class SOFM1D(torch.nn.Module):
 
-    COSINE_OP = 'cosine'
-    DISTANCE_OP = 'distance'
+    COSINE_OP = "cosine"
+    DISTANCE_OP = "distance"
 
     def __init__(self, input_size, output_size, lr=0.1, operation=DISTANCE_OP):
         super().__init__()
@@ -33,4 +33,3 @@ class SOFM1D(torch.nn.Module):
 
     def backward(self):
         pass
-
