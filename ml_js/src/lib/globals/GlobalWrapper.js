@@ -13,7 +13,7 @@ const queryClient = new QueryClient({
 
 const GlobalWrapper = ({ children }) => (
   <QueryClientProvider client={queryClient}>
-    <ChakraProvider resetCSS theme={theme}>
+    <ChakraProvider theme={theme}>
       <StaticNavbar />
       {children}
       <Footer />
