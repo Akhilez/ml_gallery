@@ -98,6 +98,7 @@ class IrisImageDataset(Dataset):
             for file_name in files_list:
                 if file_name[-extension_len:] == file_ext:
                     file_list_.append(file_name[:-extension_len])
+            files_list = file_list_
         return files_list
 
 
