@@ -65,7 +65,7 @@ class IrisImageDataset(Dataset):
         self.masks_path = masks_path
         self.transform = transform
 
-        self.image_names = self.get_images_list(images_path, file_ext=".png")
+        self.image_names = self.get_images_list(masks_path, file_ext=".png")
 
     def __len__(self):
         return len(self.image_names)
@@ -104,10 +104,60 @@ class IrisImageDataset(Dataset):
 
 data_dir = f"{BASE_DIR}/data/pupil/L2"
 train_images_path = f"{data_dir}/training_set/images"
-training_labels_path = f"{data_dir}/training_set/ground_truth/"
-training_masks_path = f"{data_dir}/training_set/masks/"
+training_labels_path = f"{data_dir}/training_set/ground_truth"
+training_masks_path = f"{data_dir}/training_set/masks"
 
 dataset = IrisImageDataset(
     images_path=train_images_path, masks_path=training_masks_path, transform=transform
 )
 train_loader = DataLoader(dataset, batch_size=3, shuffle=True)
+
+
+class IrisUNet(nn.Module):
+    def __init__(self):
+        super(IrisUNet, self).__init__()
+
+        self.modules = [
+            nn.Conv2d(3, 8, kernel_size=3, stride=1, padding=1),
+            nn.Conv2d(8, 8, kernel_size=3, stride=2, padding=1),
+            nn.Conv2d(8, 16, kernel_size=3, stride=1, padding=1),
+            nn.Conv2d(16, 16, kernel_size=3, stride=2, padding=1),
+            nn.Conv2d(16, 32, kernel_size=3, stride=1, padding=1),
+            nn.Conv2d(32, 32, kernel_size=3, stride=2, padding=1),
+            nn.ConvTranspose2d(32, 32, kernel_size=3, stride=2, padding=1),  # 6
+            nn.Conv2d(32, 16, kernel_size=3, stride=1, padding=1),
+            nn.ConvTranspose2d(16, 16, kernel_size=3, stride=2, padding=1),
+            nn.Conv2d(16, 8, kernel_size=3, stride=1, padding=1),
+            nn.ConvTranspose2d(8, 8, kernel_size=3, stride=2, padding=1),
+            nn.Conv2d(8, 3, kernel_size=3, stride=1, padding=1),
+        ]
+        self.modules_list = nn.ModuleList(self.modules)
+
+    def forward(self, x):
+        input_shape = x.shape
+        compressions = []
+
+        for i in range(6):
+            x = self.modules[i](x)
+            x = torch.relu(x)
+            compressions.append(x)
+
+        x = self.modules[6](compressions.pop(), output_size=compressions[-2].shape)
+        x = self.modules[7](x + compressions.pop())
+
+        x = self.modules[8](x + compressions.pop(), output_size=compressions[-2].shape)
+        x = self.modules[9](x + compressions.pop())
+
+        x = self.modules[10](x + compressions.pop(), output_size=input_shape)
+        x = self.modules[11](x + compressions.pop())
+
+        return x
+
+
+model = IrisUNet()
+
+
+for images, masks in train_loader:
+    y = model(images)
+    break
+
