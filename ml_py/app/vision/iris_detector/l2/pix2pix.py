@@ -1,4 +1,5 @@
 import albumentations as A
+import cv2
 import matplotlib.pyplot as plt
 import numpy as np
 import torch
@@ -45,7 +46,7 @@ def plot_img(image, ellipses=None, show=False):
 transform = A.Compose(
     [
         A.Resize(height=height, width=width),
-        # A.RandomSizedCrop(min_max_height=(250, 250), height=300, width=400, p=0.5),
+        # A.RandomSizedCrop(min_max_height=(100, 150), height=height, width=width, p=0.5),
         # A.CenterCrop(height=200, width=200),
         # A.ToGray(p=0.2),
         # A.ChannelDropout(channel_drop_range=(1, 2), p=0.2),
@@ -119,7 +120,7 @@ dataset = IrisImageDataset(
 )
 len_dataset = len(dataset)
 test_dataset = IrisImageDataset(
-    images_path=test_images_path, masks_path=test_masks_path
+    images_path=test_images_path, masks_path=test_masks_path, transform=transform
 )
 
 
@@ -209,10 +210,8 @@ criterion_cross_entropy = nn.CrossEntropyLoss(reduction="none")
 
 
 def plot_one_hot_mask(mask):
-    mask = mask.argmax(1) / 2
-    print(mask.max())
-    print(mask.min())
-    plt.imshow(mask[0], cmap="gray")
+    mask = mask.argmax(0) / 2
+    plt.imshow(mask, cmap="gray")
     plt.show()
 
 
@@ -274,7 +273,7 @@ def train_critic(images, masks):
 
     # --- optimize ----
 
-    loss = loss_real + loss_fake
+    loss = 0.001 * (loss_real + loss_fake)
     loss.backward()
     optim_critic.step()
 
@@ -292,7 +291,7 @@ def train_gen(images, masks):
     loss_entropy = torch.mean(loss_entropy * get_weight_map(masks))
     loss_critic = F.binary_cross_entropy(critic_out, torch.ones((len(images),)))
 
-    loss = loss_entropy + loss_critic
+    loss = 0.01 * loss_entropy + loss_critic
     loss.backward()
     optim_critic.step()
 
@@ -320,8 +319,12 @@ def train(config):
             writer.add_scalar("loss_critic", loss_critic, global_step=global_step)
 
             print(".", end="")
-
         print()
+
+        _, (test_images, _) = next(enumerate(test_loader))
+        with torch.no_grad():
+            test_generated = model(test_images)
+        plot_one_hot_mask(test_generated[0])
 
         # y = model(images)
         #
