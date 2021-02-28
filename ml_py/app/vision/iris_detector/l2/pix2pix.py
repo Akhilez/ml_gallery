@@ -11,7 +11,8 @@ from torch.nn import functional as F
 from matplotlib.patches import Ellipse
 import os
 import hydra
-from omegaconf import OmegaConf, DictConfig
+from omegaconf import DictConfig
+import copy
 
 from settings import BASE_DIR
 
@@ -177,16 +178,52 @@ def plot_one_hot_mask(mask):
     plt.show()
 
 
+def get_class_weights():
+
+    loader = DataLoader(dataset, batch_size=10, shuffle=True)
+
+    n_bg = []
+    n_iris = []
+    n_pupil = []
+
+    for images, masks in loader:
+        n_bg.append(len(torch.nonzero((masks == 0).flatten())) / len(masks))
+        n_iris.append(len(torch.nonzero((masks == 2).flatten())) / len(masks))
+        n_pupil.append(len(torch.nonzero((masks == 1).flatten())) / len(masks))
+
+    n_bg = np.mean(n_bg)
+    n_iris = np.mean(n_iris)
+    n_pupil = np.mean(n_pupil)
+
+    cls = torch.tensor([n_bg, n_iris, n_pupil])
+
+    weights = 1 - (cls / torch.sum(cls))
+
+    return weights  # [0.1770, 0.8455, 0.9775]
+
+
+def get_weight_map(masks):
+    weights = [0.1770, 0.9775, 0.8455]
+    weight_map = copy.deepcopy(masks).type(torch.FloatTensor)
+    weight_map[weight_map == 0] = weights[0]
+    weight_map[weight_map == 1] = weights[1]
+    weight_map[weight_map == 2] = weights[2]
+    return weight_map
+
+
 def train(config):
 
     train_loader = DataLoader(dataset, batch_size=config.batch_size, shuffle=True)
+    criterion = nn.CrossEntropyLoss(reduction="none")
 
     for epoch in range(config.epochs):
         y = None
 
         for images, masks in train_loader:
+
             y = model(images)
-            loss = nn.CrossEntropyLoss()(y, masks.type(torch.LongTensor))
+            loss = criterion(y, masks.type(torch.LongTensor))
+            loss = torch.mean(loss * get_weight_map(masks))
 
             optim.zero_grad()
             loss.backward()
