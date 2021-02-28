@@ -1,5 +1,3 @@
-import json
-
 import albumentations as A
 import matplotlib.pyplot as plt
 import numpy as np
@@ -13,11 +11,15 @@ import os
 import hydra
 from omegaconf import DictConfig
 import copy
+from torch.utils.tensorboard import SummaryWriter
+from datetime import datetime
 
 from settings import BASE_DIR
 
 height = 160
 width = 224
+
+writer = SummaryWriter(f"./runs/iris_{int(datetime.now().timestamp())}")
 
 
 def plot_img(image, ellipses=None, show=False):
@@ -88,7 +90,7 @@ class IrisImageDataset(Dataset):
 
         # Covert from channels last to channels first
         image = np.moveaxis(image, -1, 0)
-        # mask = np.moveaxis(mask, -1, 0)
+        mask = np.array([mask])
 
         return image, mask
 
@@ -109,15 +111,21 @@ data_dir = f"{BASE_DIR}/data/pupil/L2"
 train_images_path = f"{data_dir}/training_set/images"
 training_labels_path = f"{data_dir}/training_set/ground_truth"
 training_masks_path = f"{data_dir}/training_set/masks"
+test_images_path = f"{data_dir}/testing_set/images"
+test_masks_path = f"{data_dir}/testing_set/masks"
 
 dataset = IrisImageDataset(
     images_path=train_images_path, masks_path=training_masks_path, transform=transform
 )
+len_dataset = len(dataset)
+test_dataset = IrisImageDataset(
+    images_path=test_images_path, masks_path=test_masks_path
+)
 
 
-class IrisUNet(nn.Module):
+class IrisGenerator(nn.Module):
     def __init__(self):
-        super(IrisUNet, self).__init__()
+        super(IrisGenerator, self).__init__()
 
         self.modules = [
             nn.Conv2d(3, 8, kernel_size=3, stride=1, padding=1),
@@ -165,9 +173,39 @@ class IrisUNet(nn.Module):
         return x
 
 
-model = IrisUNet()
+class IrisCritic(nn.Module):
+    def __init__(self):
+        super(IrisCritic, self).__init__()
+
+        self.critic = nn.Sequential(
+            nn.Conv2d(6, 8, kernel_size=3, stride=1, padding=1),
+            nn.ReLU(),
+            nn.Conv2d(8, 16, kernel_size=3, stride=1, padding=1),
+            nn.ReLU(),
+            nn.Conv2d(16, 16, kernel_size=3, stride=2, padding=1),
+            nn.ReLU(),
+            nn.Conv2d(16, 32, kernel_size=3, stride=1, padding=1),
+            nn.ReLU(),
+            nn.Conv2d(32, 32, kernel_size=3, stride=2, padding=1),
+            nn.ReLU(),
+            nn.Conv2d(32, 64, kernel_size=3, stride=1, padding=1),
+            nn.ReLU(),
+            nn.Conv2d(64, 64, kernel_size=3, stride=2, padding=1),
+            nn.ReLU(),
+            nn.Conv2d(64, 1, kernel_size=5, stride=5, padding=1),
+        )
+
+    def forward(self, x):
+        return torch.sigmoid(self.critic(x)).flatten(1).mean(1)
+
+
+model = IrisGenerator()
+critic = IrisCritic()
 
 optim = torch.optim.Adam(model.parameters())
+optim_critic = torch.optim.Adam(critic.parameters())
+
+criterion_cross_entropy = nn.CrossEntropyLoss(reduction="none")
 
 
 def plot_one_hot_mask(mask):
@@ -176,6 +214,15 @@ def plot_one_hot_mask(mask):
     print(mask.min())
     plt.imshow(mask[0], cmap="gray")
     plt.show()
+
+
+def get_one_hot_masks(masks):
+    batch_size, _, h, w = masks.shape
+    one_hot_masks = torch.zeros((batch_size, 3, h, w))
+    one_hot_masks[:, 0, :, :][masks[:, 0, :, :] == 0] = 1
+    one_hot_masks[:, 1, :, :][masks[:, 0, :, :] == 1] = 1
+    one_hot_masks[:, 2, :, :][masks[:, 0, :, :] == 2] = 1
+    return one_hot_masks
 
 
 def get_class_weights():
@@ -211,27 +258,83 @@ def get_weight_map(masks):
     return weight_map
 
 
+def train_critic(images, masks):
+    optim_critic.zero_grad()
+
+    # ---- Real labels ----
+    real_labels = torch.ones((len(images),))
+
+    critic_out = critic(torch.cat((images, get_one_hot_masks(masks)), 1))
+    loss_real = F.binary_cross_entropy(critic_out, real_labels)
+
+    # ---- Train with fakes ---
+    generated = model(images)
+    critic_out = critic(torch.cat((images, generated), 1))
+    loss_fake = F.binary_cross_entropy(critic_out, real_labels * 0)
+
+    # --- optimize ----
+
+    loss = loss_real + loss_fake
+    loss.backward()
+    optim_critic.step()
+
+    return torch.stack((loss_real, loss_fake)).tolist()
+
+
+def train_gen(images, masks):
+    optim.zero_grad()
+    generated = model(images)
+    critic_out = critic(torch.cat((images, generated), 1))
+
+    loss_entropy = criterion_cross_entropy(
+        generated, masks.type(torch.LongTensor).squeeze(1)
+    )
+    loss_entropy = torch.mean(loss_entropy * get_weight_map(masks))
+    loss_critic = F.binary_cross_entropy(critic_out, torch.ones((len(images),)))
+
+    loss = loss_entropy + loss_critic
+    loss.backward()
+    optim_critic.step()
+
+    return torch.stack((loss_entropy, loss_critic)).tolist()
+
+
 def train(config):
 
     train_loader = DataLoader(dataset, batch_size=config.batch_size, shuffle=True)
-    criterion = nn.CrossEntropyLoss(reduction="none")
+    test_loader = DataLoader(test_dataset, batch_size=config.batch_size)
+    global_step = 0
 
     for epoch in range(config.epochs):
-        y = None
 
-        for images, masks in train_loader:
+        for batch_i, (images, masks) in enumerate(train_loader):
 
-            y = model(images)
-            loss = criterion(y, masks.type(torch.LongTensor))
-            loss = torch.mean(loss * get_weight_map(masks))
+            loss_real, loss_fake = train_critic(images, masks)
+            loss_entropy, loss_critic = train_gen(images, masks)
 
-            optim.zero_grad()
-            loss.backward()
-            optim.step()
+            global_step += 1
 
-            print(loss.item())
+            writer.add_scalar("loss_real", loss_real, global_step=global_step)
+            writer.add_scalar("loss_fake", loss_fake, global_step=global_step)
+            writer.add_scalar("loss_entropy", loss_entropy, global_step=global_step)
+            writer.add_scalar("loss_critic", loss_critic, global_step=global_step)
 
-        plot_one_hot_mask(y)
+            print(".", end="")
+
+        print()
+
+        # y = model(images)
+        #
+        # loss = criterion(y, masks.type(torch.LongTensor))
+        # loss = torch.mean(loss * get_weight_map(masks))
+        #
+        # optim.zero_grad()
+        # loss.backward()
+        # optim.step()
+
+        # plot_one_hot_mask(y)
+
+    writer.close()
 
 
 @hydra.main(config_name="config")
@@ -240,4 +343,5 @@ def main(cfg: DictConfig) -> None:
 
 
 if __name__ == "__main__":
+    # main(DictConfig({"epochs": 1, "batch_size": 10}))
     main()
