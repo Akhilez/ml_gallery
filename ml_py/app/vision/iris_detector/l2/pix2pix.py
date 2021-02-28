@@ -201,8 +201,8 @@ class IrisCritic(nn.Module):
         return torch.sigmoid(self.critic(x)).flatten(1).mean(1)
 
 
-model = IrisGenerator()
-critic = IrisCritic()
+model: IrisGenerator = None
+critic: IrisCritic = None
 
 optim: torch.optim.Adam = None
 optim_critic: torch.optim.Adam = None
@@ -296,18 +296,18 @@ def train_gen(images, masks):
 
     loss = config.lr_entropy * loss_entropy + config.lr_gen * loss_gen
     loss.backward()
-    optim_critic.step()
+    optim.step()
 
     return torch.stack((loss_entropy, loss_gen)).tolist()
 
 
 def train(cfg, trail):
-    global optim, optim_critic, config, writer
+    global optim, optim_critic, config, writer, model, critic
 
-    cfg.lr_critic_real = trail.suggest_loguniform("lr_critic_real", 0.0001, 1)
-    cfg.lr_critic_fake = trail.suggest_loguniform("lr_critic_fake", 0.0001, 1)
-    cfg.lr_entropy = trail.suggest_loguniform("lr_entropy", 0.0001, 1)
-    cfg.lr_gen = trail.suggest_loguniform("lr_gen", 0.0001, 1)
+    # cfg.lr_critic_real = trail.suggest_loguniform("lr_critic_real", 0.0001, 1)
+    # cfg.lr_critic_fake = trail.suggest_loguniform("lr_critic_fake", 0.0001, 1)
+    # cfg.lr_entropy = trail.suggest_loguniform("lr_entropy", 0.0001, 1)
+    # cfg.lr_gen = trail.suggest_loguniform("lr_gen", 0.0001, 1)
 
     config = cfg
 
@@ -318,6 +318,9 @@ def train(cfg, trail):
     train_loader = DataLoader(dataset, batch_size=config.batch_size, shuffle=True)
     test_loader = DataLoader(test_dataset, batch_size=config.batch_size)
     global_step = 0
+
+    model = IrisGenerator()
+    critic = IrisCritic()
 
     optim = torch.optim.Adam(model.parameters())
     optim_critic = torch.optim.Adam(critic.parameters())
@@ -371,7 +374,7 @@ def train(cfg, trail):
 @hydra.main(config_name="config")
 def main(cfg: DictConfig) -> None:
     study = optuna.create_study(direction="minimize")
-    study.optimize(lambda trail: train(cfg, trail), n_trials=20)
+    study.optimize(lambda trail: train(cfg, trail), n_trials=1)
     print(f"{study.best_params=}")
     print(f"{study.best_value=}")
 
