@@ -10,6 +10,8 @@ from torch.utils.data import Dataset, DataLoader
 from torch.nn import functional as F
 from matplotlib.patches import Ellipse
 import os
+import hydra
+from omegaconf import OmegaConf, DictConfig
 
 from settings import BASE_DIR
 
@@ -102,12 +104,6 @@ class IrisImageDataset(Dataset):
         return files_list
 
 
-# Hyper params
-lr = None
-epochs = 10
-batch_size = 10
-
-
 data_dir = f"{BASE_DIR}/data/pupil/L2"
 train_images_path = f"{data_dir}/training_set/images"
 training_labels_path = f"{data_dir}/training_set/ground_truth"
@@ -116,7 +112,6 @@ training_masks_path = f"{data_dir}/training_set/masks"
 dataset = IrisImageDataset(
     images_path=train_images_path, masks_path=training_masks_path, transform=transform
 )
-train_loader = DataLoader(dataset, batch_size=batch_size, shuffle=True)
 
 
 class IrisUNet(nn.Module):
@@ -182,9 +177,11 @@ def plot_one_hot_mask(mask):
     plt.show()
 
 
-def train():
+def train(config):
 
-    for epoch in range(epochs):
+    train_loader = DataLoader(dataset, batch_size=config.batch_size, shuffle=True)
+
+    for epoch in range(config.epochs):
         y = None
 
         for images, masks in train_loader:
@@ -200,5 +197,10 @@ def train():
         plot_one_hot_mask(y)
 
 
+@hydra.main(config_name="config")
+def main(cfg: DictConfig) -> None:
+    train(cfg)
+
+
 if __name__ == "__main__":
-    train()
+    main()
