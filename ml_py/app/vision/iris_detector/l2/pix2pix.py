@@ -14,13 +14,14 @@ from omegaconf import DictConfig
 import copy
 from torch.utils.tensorboard import SummaryWriter
 from datetime import datetime
+import optuna
 
 from settings import BASE_DIR
 
 height = 160
 width = 224
 
-writer = SummaryWriter(f"./runs/iris_{int(datetime.now().timestamp())}")
+writer: SummaryWriter = None
 
 
 def plot_img(image, ellipses=None, show=False):
@@ -203,10 +204,12 @@ class IrisCritic(nn.Module):
 model = IrisGenerator()
 critic = IrisCritic()
 
-optim = torch.optim.Adam(model.parameters())
-optim_critic = torch.optim.Adam(critic.parameters())
+optim: torch.optim.Adam = None
+optim_critic: torch.optim.Adam = None
 
 criterion_cross_entropy = nn.CrossEntropyLoss(reduction="none")
+
+config: DictConfig = None
 
 
 def plot_one_hot_mask(mask):
@@ -273,7 +276,7 @@ def train_critic(images, masks):
 
     # --- optimize ----
 
-    loss = 0.001 * (loss_real + loss_fake)
+    loss = config.lr_critic_real * loss_real + config.lr_critic_fake * loss_fake
     loss.backward()
     optim_critic.step()
 
@@ -289,34 +292,50 @@ def train_gen(images, masks):
         generated, masks.type(torch.LongTensor).squeeze(1)
     )
     loss_entropy = torch.mean(loss_entropy * get_weight_map(masks))
-    loss_critic = F.binary_cross_entropy(critic_out, torch.ones((len(images),)))
+    loss_gen = F.binary_cross_entropy(critic_out, torch.ones((len(images),)))
 
-    loss = 0.01 * loss_entropy + loss_critic
+    loss = config.lr_entropy * loss_entropy + config.lr_gen * loss_gen
     loss.backward()
     optim_critic.step()
 
-    return torch.stack((loss_entropy, loss_critic)).tolist()
+    return torch.stack((loss_entropy, loss_gen)).tolist()
 
 
-def train(config):
+def train(cfg, trail):
+    global optim, optim_critic, config, writer
+
+    cfg.lr_critic_real = trail.suggest_loguniform("lr_critic_real", 0.0001, 1)
+    cfg.lr_critic_fake = trail.suggest_loguniform("lr_critic_fake", 0.0001, 1)
+    cfg.lr_entropy = trail.suggest_loguniform("lr_entropy", 0.0001, 1)
+    cfg.lr_gen = trail.suggest_loguniform("lr_gen", 0.0001, 1)
+
+    config = cfg
+
+    writer = SummaryWriter(
+        f"{BASE_DIR}/app/vision/iris_detector/L2/runs/iris_real_{cfg.lr_critic_real}_fake_{cfg.lr_critic_fake}_entropy_{cfg.lr_entropy}_gen_{cfg.lr_gen}_{int(datetime.now().timestamp())}"
+    )
 
     train_loader = DataLoader(dataset, batch_size=config.batch_size, shuffle=True)
     test_loader = DataLoader(test_dataset, batch_size=config.batch_size)
     global_step = 0
 
+    optim = torch.optim.Adam(model.parameters())
+    optim_critic = torch.optim.Adam(critic.parameters())
+
+    loss_entropy, loss_gen, loss_real, loss_fake = (0, 0, 0, 0)
+
     for epoch in range(config.epochs):
 
         for batch_i, (images, masks) in enumerate(train_loader):
-
-            loss_real, loss_fake = train_critic(images, masks)
-            loss_entropy, loss_critic = train_gen(images, masks)
-
             global_step += 1
+
+            loss_entropy, loss_gen = train_gen(images, masks)
+            loss_real, loss_fake = train_critic(images, masks)
 
             writer.add_scalar("loss_real", loss_real, global_step=global_step)
             writer.add_scalar("loss_fake", loss_fake, global_step=global_step)
             writer.add_scalar("loss_entropy", loss_entropy, global_step=global_step)
-            writer.add_scalar("loss_critic", loss_critic, global_step=global_step)
+            writer.add_scalar("loss_gen", loss_gen, global_step=global_step)
 
             print(".", end="")
         print()
@@ -338,11 +357,23 @@ def train(config):
         # plot_one_hot_mask(y)
 
     writer.close()
+    final_loss = float(np.mean([loss_entropy, loss_gen, loss_real, loss_fake]))
+    writer.add_hparams(
+        {
+            key: config[key]
+            for key in ["lr_critic_real", "lr_critic_fake", "lr_entropy", "lr_gen"]
+        },
+        {"final_loss": final_loss},
+    )
+    return final_loss
 
 
 @hydra.main(config_name="config")
 def main(cfg: DictConfig) -> None:
-    train(cfg)
+    study = optuna.create_study(direction="minimize")
+    study.optimize(lambda trail: train(cfg, trail), n_trials=20)
+    print(f"{study.best_params=}")
+    print(f"{study.best_value=}")
 
 
 if __name__ == "__main__":
