@@ -85,7 +85,7 @@ class IrisImageDataset(Dataset):
 
         # Covert from channels last to channels first
         image = np.moveaxis(image, -1, 0)
-        mask = np.moveaxis(mask, -1, 0)
+        # mask = np.moveaxis(mask, -1, 0)
 
         return image, mask
 
@@ -102,6 +102,12 @@ class IrisImageDataset(Dataset):
         return files_list
 
 
+# Hyper params
+lr = None
+epochs = 10
+batch_size = 10
+
+
 data_dir = f"{BASE_DIR}/data/pupil/L2"
 train_images_path = f"{data_dir}/training_set/images"
 training_labels_path = f"{data_dir}/training_set/ground_truth"
@@ -110,7 +116,7 @@ training_masks_path = f"{data_dir}/training_set/masks"
 dataset = IrisImageDataset(
     images_path=train_images_path, masks_path=training_masks_path, transform=transform
 )
-train_loader = DataLoader(dataset, batch_size=3, shuffle=True)
+train_loader = DataLoader(dataset, batch_size=batch_size, shuffle=True)
 
 
 class IrisUNet(nn.Module):
@@ -129,7 +135,9 @@ class IrisUNet(nn.Module):
             nn.ConvTranspose2d(16, 16, kernel_size=3, stride=2, padding=1),
             nn.Conv2d(16, 8, kernel_size=3, stride=1, padding=1),
             nn.ConvTranspose2d(8, 8, kernel_size=3, stride=2, padding=1),
-            nn.Conv2d(8, 3, kernel_size=3, stride=1, padding=1),
+            nn.Conv2d(8, 16, kernel_size=3, stride=1, padding=1),  # 11
+            nn.Conv2d(16, 32, kernel_size=3, stride=1, padding=1),
+            nn.Conv2d(32, 3, kernel_size=3, stride=1, padding=1),
         ]
         self.modules_list = nn.ModuleList(self.modules)
 
@@ -142,22 +150,55 @@ class IrisUNet(nn.Module):
             x = torch.relu(x)
             compressions.append(x)
 
-        x = self.modules[6](compressions.pop(), output_size=compressions[-2].shape)
-        x = self.modules[7](x + compressions.pop())
+        x = F.relu(
+            self.modules[6](compressions.pop(), output_size=compressions[-2].shape)
+        )
+        x = F.relu(self.modules[7](x + compressions.pop()))
 
-        x = self.modules[8](x + compressions.pop(), output_size=compressions[-2].shape)
-        x = self.modules[9](x + compressions.pop())
+        x = F.relu(
+            self.modules[8](x + compressions.pop(), output_size=compressions[-2].shape)
+        )
+        x = F.relu(self.modules[9](x + compressions.pop()))
 
-        x = self.modules[10](x + compressions.pop(), output_size=input_shape)
-        x = self.modules[11](x + compressions.pop())
+        x = F.relu(self.modules[10](x + compressions.pop(), output_size=input_shape))
+        x = F.relu(self.modules[11](x + compressions.pop()))
+
+        x = F.relu(self.modules[12](x))
+        x = self.modules[13](x)
 
         return x
 
 
 model = IrisUNet()
 
+optim = torch.optim.Adam(model.parameters())
 
-for images, masks in train_loader:
-    y = model(images)
-    break
 
+def plot_one_hot_mask(mask):
+    mask = mask.argmax(1) / 2
+    print(mask.max())
+    print(mask.min())
+    plt.imshow(mask[0], cmap="gray")
+    plt.show()
+
+
+def train():
+
+    for epoch in range(epochs):
+        y = None
+
+        for images, masks in train_loader:
+            y = model(images)
+            loss = nn.CrossEntropyLoss()(y, masks.type(torch.LongTensor))
+
+            optim.zero_grad()
+            loss.backward()
+            optim.step()
+
+            print(loss.item())
+
+        plot_one_hot_mask(y)
+
+
+if __name__ == "__main__":
+    train()
