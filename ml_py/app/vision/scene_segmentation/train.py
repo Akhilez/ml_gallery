@@ -8,7 +8,6 @@ from settings import BASE_DIR
 
 
 class MovieScenesDataset(Dataset):
-
     keys = [
         "place",
         "cast",
@@ -93,6 +92,14 @@ def collate_fn_chunks(batch):
 class SceneSegmenterModel(nn.Module):
     def __init__(self):
         super(SceneSegmenterModel, self).__init__()
+        self.place_embed = nn.Sequential(nn.Linear(2048, 128), nn.ReLU())
+        self.cast_embed = nn.Sequential(nn.Linear(512, 128), nn.ReLU())
+        self.action_embed = nn.Sequential(nn.Linear(512, 128), nn.ReLU())
+        self.audio_embed = nn.Sequential(nn.Linear(512, 128), nn.ReLU())
+
+        self.embed_e = nn.Sequential(nn.Linear(512, 128), nn.ReLU())
+
+        self.segment = nn.MultiheadAttention(embed_dim=512, num_heads=1)
 
     def forward(self, x):
         """
@@ -104,13 +111,34 @@ class SceneSegmenterModel(nn.Module):
         """
 
         # 1. Find the embeddings
-
-        # 1.1 Split 4 features
-        # 1.2 Find embeddings for each feature
-        # 1.3 Concatenate the features
-        # 1.4 Find the final embeddings
+        embeddings = self.forward_embeddins(x)
 
         # 2. Find the segment boundaries with attention
+        segments = self.forward_segmentation(embeddings)
+
+    def forward_embeddings(self, x):
+        # 1.1 Split 4 features
+        place = x[:, :, :2048]
+        cast = x[:, :, 2048 : 2048 + 512]
+        action = x[:, :, 2048 + 512 : 2048 + 512 + 512]
+        audio = x[:, :, 2048 + 512 + 512 :]
+
+        # 1.2 Find embeddings for each feature
+        place = self.place_embed(place)
+        cast = self.cast_embed(cast)
+        action = self.action_embed(action)
+        audio = self.audio_embed(audio)
+
+        # 1.3 Concatenate the features
+        features = torch.cat((place, cast, action, audio), 2)
+
+        # 1.4 Find the final embeddings
+        e = self.embed_e(features)
+
+        return e
+
+    def forward_segmentation(self, x):
+        pass
 
 
 def main():
