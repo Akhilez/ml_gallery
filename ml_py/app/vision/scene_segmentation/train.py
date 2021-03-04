@@ -2,6 +2,7 @@ import os
 import pickle
 import torch
 from torch.utils.data import Dataset, DataLoader
+from torch import nn
 
 from settings import BASE_DIR
 
@@ -89,21 +90,44 @@ def collate_fn_chunks(batch):
     return torch.cat(batch)
 
 
+class SceneSegmenterModel(nn.Module):
+    def __init__(self):
+        super(SceneSegmenterModel, self).__init__()
+
+    def forward(self, x):
+        """
+        x: tensor of shape (batch_size, chunk_size, 2048 + 512 + 512 + 512)
+        returns: tuple(
+            tensor(batch_size, chunk_size, 128): Embeddings of the shots
+            tensor(batch_size, chunk_size): 0-1 value for each shot. 1 if shot is the first shot of the scene.
+        )
+        """
+
+        # 1. Find the embeddings
+
+        # 1.1 Split 4 features
+        # 1.2 Find embeddings for each feature
+        # 1.3 Concatenate the features
+        # 1.4 Find the final embeddings
+
+        # 2. Find the segment boundaries with attention
+
+
 def main():
     data_path = f"{BASE_DIR}/data/scenes/data/"
     dataset = MovieScenesDataset(data_path, 16)
+
+    model = SceneSegmenterModel()
 
     loader = DataLoader(
         dataset=dataset, batch_size=2, shuffle=True, collate_fn=collate_fn_chunks
     )
 
     x = next(enumerate(loader))
-    print()
 
     """
     1. create e vectors of all shots
     2. For randomly selected negative scenes and positive scenes, find similarity loss
-    3. Create sequential batches for RNN
     """
 
 
