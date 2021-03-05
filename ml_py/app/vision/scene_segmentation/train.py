@@ -99,35 +99,41 @@ class SceneSegmenterModel(nn.Module):
 
         self.embed_e = nn.Sequential(nn.Linear(512, 128), nn.ReLU())
 
-        self.local_attention = nn.MultiheadAttention(embed_dim=512, num_heads=1)
+        # Initial attention
+        self.local_attention = nn.MultiheadAttention(embed_dim=128, num_heads=1)
 
         # Average out left and right, concatenate, then forward
-        self.boundary_embedding = nn.Linear(128 * 2, 128)
+        self.boundary_embedding = nn.Sequential(nn.Linear(128 * 2, 128), nn.ReLU())
 
-        # Final attention to predict boundary
-        self.boundary_predictor = nn.MultiheadAttention(embed_dim=128, num_heads=1)
+        # Final attention
+        self.boundary_attention = nn.MultiheadAttention(embed_dim=128, num_heads=1)
+
+        # Final predictor
+        self.boundary_predictor = nn.Sequential(nn.Linear(128, 1), nn.Sigmoid())
 
     def forward(self, x):
         """
         x: tensor of shape (batch_size, sequence_size, 2048 + 512 + 512 + 512)
         returns: tuple(
             tensor(batch_size, sequence_size, 128): Embeddings of the shots
-            tensor(batch_size, sequence_size): 0-1 value for each shot. 1 if shot is the first shot of the scene.
+            tensor(sequence_size - 1, batch_size): 0-1 value for each shot. 1 if shot is the first shot of the scene.
         )
         """
 
         # 1. Find the embeddings
-        embeddings = self.forward_embeddins(x)
+        embeddings = self.forward_embeddings(x)
 
         # 2. Find the segment boundaries with attention
-        segments = self.forward_segmentation(embeddings)
+        boundaries = self.forward_segmentation(embeddings)
+
+        return embeddings, boundaries
 
     def forward_embeddings(self, x):
         # 1.1 Split 4 features
         place = x[:, :, :2048]
         cast = x[:, :, 2048 : 2048 + 512]
         action = x[:, :, 2048 + 512 : 2048 + 512 + 512]
-        audio = x[:, :, 2048 + 512 + 512 :]
+        audio = x[:, :, 2048 + 512 + 512 : 2048 + 512 + 512 + 512]
 
         # 1.2 Find embeddings for each feature
         place = self.place_embed(place)
@@ -147,7 +153,28 @@ class SceneSegmenterModel(nn.Module):
         # transpose so that the shape is sequence first instead of batch first
         x = x.transpose(1, 0)
 
-        attn_output, attn_output_weights = self.local_attention(x, x, x)
+        x, _ = self.local_attention(x, x, x)
+
+        sequence_length = x.shape[0]
+
+        boundaries = []
+
+        for i in range(1, sequence_length):
+            left = x[:i].mean(0)
+            right = x[i:].mean(0)
+
+            concatenated = torch.cat((left, right), 1)
+
+            boundaries.append(concatenated)
+
+        boundaries = torch.stack(boundaries)
+
+        boundaries = self.boundary_embedding(boundaries)
+
+        boundaries, _ = self.boundary_attention(boundaries, boundaries, boundaries)
+        boundaries = self.boundary_predictor(boundaries).squeeze(2)
+
+        return boundaries
 
 
 def main():
@@ -160,7 +187,9 @@ def main():
         dataset=dataset, batch_size=2, shuffle=True, collate_fn=collate_fn_sequences
     )
 
-    x = next(enumerate(loader))
+    index, x = next(enumerate(loader))
+
+    model(x)
 
     """
     1. create e vectors of all shots
