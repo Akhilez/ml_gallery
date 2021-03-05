@@ -19,9 +19,9 @@ class MovieScenesDataset(Dataset):
     ]
     unused_keys = ["shot_end_frame", "scene_transition_boundary_prediction"]
 
-    def __init__(self, data_path: str, chunk_size: int):
+    def __init__(self, data_path: str, sequence_size: int):
         self.data_path = data_path
-        self.chunk_size = chunk_size
+        self.sequence_size = sequence_size
         self.files = os.listdir(data_path)
         self.files = [file_name for file_name in self.files if file_name[-4:] == ".pkl"]
 
@@ -51,20 +51,20 @@ class MovieScenesDataset(Dataset):
         for key in MovieScenesDataset.keys[-3:]:
             data[key] = data[key].view((-1, 1))
 
-        # Make chunks of a batch
+        # Make sequences of a batch
         """
         1. Stack all 7 layers into one.
-        2. Chop off excess shots that didn't fit into n_shot // chunk_size
-        3. Break these into (-1, chunk_size, *) tensors
+        2. Chop off excess shots that didn't fit into n_shot // sequence_size
+        3. Break these into (-1, sequence_size, *) tensors
         """
-        chunks = torch.cat([data[key] for key in MovieScenesDataset.keys], 1)
-        n_chunks = n_shots // self.chunk_size
-        chunks = chunks[: n_chunks * self.chunk_size]
-        chunks = chunks.view(
-            (n_chunks, self.chunk_size, sum([2048, 512, 512, 512, 1, 1, 1]))
+        sequences = torch.cat([data[key] for key in MovieScenesDataset.keys], 1)
+        n_sequences = n_shots // self.sequence_size
+        sequences = sequences[: n_sequences * self.sequence_size]
+        sequences = sequences.view(
+            (n_sequences, self.sequence_size, sum([2048, 512, 512, 512, 1, 1, 1]))
         )
 
-        return chunks
+        return sequences
 
     @staticmethod
     def get_scene_ids(segments):
@@ -85,7 +85,7 @@ def collate_fn_dict(batch):
     return collate_batch
 
 
-def collate_fn_chunks(batch):
+def collate_fn_sequences(batch):
     return torch.cat(batch)
 
 
@@ -99,14 +99,20 @@ class SceneSegmenterModel(nn.Module):
 
         self.embed_e = nn.Sequential(nn.Linear(512, 128), nn.ReLU())
 
-        self.segment = nn.MultiheadAttention(embed_dim=512, num_heads=1)
+        self.local_attention = nn.MultiheadAttention(embed_dim=512, num_heads=1)
+
+        # Average out left and right, concatenate, then forward
+        self.boundary_embedding = nn.Linear(128 * 2, 128)
+
+        # Final attention to predict boundary
+        self.boundary_predictor = nn.MultiheadAttention(embed_dim=128, num_heads=1)
 
     def forward(self, x):
         """
-        x: tensor of shape (batch_size, chunk_size, 2048 + 512 + 512 + 512)
+        x: tensor of shape (batch_size, sequence_size, 2048 + 512 + 512 + 512)
         returns: tuple(
-            tensor(batch_size, chunk_size, 128): Embeddings of the shots
-            tensor(batch_size, chunk_size): 0-1 value for each shot. 1 if shot is the first shot of the scene.
+            tensor(batch_size, sequence_size, 128): Embeddings of the shots
+            tensor(batch_size, sequence_size): 0-1 value for each shot. 1 if shot is the first shot of the scene.
         )
         """
 
@@ -138,7 +144,10 @@ class SceneSegmenterModel(nn.Module):
         return e
 
     def forward_segmentation(self, x):
-        pass
+        # transpose so that the shape is sequence first instead of batch first
+        x = x.transpose(1, 0)
+
+        attn_output, attn_output_weights = self.local_attention(x, x, x)
 
 
 def main():
@@ -148,7 +157,7 @@ def main():
     model = SceneSegmenterModel()
 
     loader = DataLoader(
-        dataset=dataset, batch_size=2, shuffle=True, collate_fn=collate_fn_chunks
+        dataset=dataset, batch_size=2, shuffle=True, collate_fn=collate_fn_sequences
     )
 
     x = next(enumerate(loader))
