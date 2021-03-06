@@ -3,6 +3,7 @@ import pickle
 import torch
 from torch.utils.data import Dataset, DataLoader
 from torch import nn
+from torch.nn import functional as F
 
 from settings import BASE_DIR
 
@@ -179,13 +180,80 @@ class SceneSegmenterModel(nn.Module):
 
 
 def find_sim_loss(e, x) -> torch.Tensor:
-    # For randomly selected negative scenes and positive scenes, find similarity loss
-    # TODO: Implement
-    return e
+    """
+    For randomly selected negative scenes and positive scenes, find similarity loss.backward()
+
+    Steps:
+    1. For each batch of sequence,
+        for each shot:
+            find an embedding of a shot from the same scene
+            find a random embedding that's not of the same scene
+
+        a. For each scene in the batch
+            1. create (# of shots) pairs of embeddings with a shot of same scene and randomly selected shot from batch
+
+
+    @param e: tensor of shape (sequence, batch, embedding)
+    @param x: tensor of shape (1)
+    """
+
+    seq_len = e.shape[0]
+    batch_len = e.shape[1]
+
+    batch_level_loss = torch.tensor(0)
+
+    for i in range(batch_len):
+
+        sequence_level_loss = torch.tensor(0)
+
+        for j in range(seq_len - 1):
+            scene_id_index = 2048 + 512 + 512 + 512
+            scene_id = x[i, j, scene_id_index]
+            current_shot = e[j, i]
+
+            # Pick one shot > j
+            end = j
+            for k in range(j, seq_len):
+                if scene_id != x[i, k, scene_id_index]:
+                    end = k
+                    break
+            # k = max_shot_index of the same scene
+            same_scene_shot = torch.randint(low=j, high=end, size=(1,))
+            same_scene_shot = e[same_scene_shot, i]
+
+            # Pick one random shot from the whole batch that is not from the same scene
+            random_shot = None
+            while True:
+                random_seq_idx = torch.randint(low=0, high=batch_len, size=(1,))
+                random_shot_idx = torch.randint(low=0, high=seq_len, size=(1,))
+
+                if scene_id != x[random_seq_idx, random_shot_idx, scene_id_index]:
+                    break
+
+                random_shot = e[random_shot_idx, random_seq_idx]
+
+            input1 = torch.stack((current_shot, current_shot))
+            input2 = torch.stack((same_scene_shot, random_shot))
+            labels = torch.tensor([1, -1])
+
+            loss_ = F.cosine_embedding_loss(input1, input2, labels)
+
+            sequence_level_loss += loss_
+        sequence_level_loss = sequence_level_loss / (seq_len - 1)
+        batch_level_loss = batch_level_loss + sequence_level_loss
+    batch_level_loss = batch_level_loss / batch_len
+    return batch_level_loss
 
 
 def find_logit_loss(bh, x) -> torch.Tensor:
+    """
+
+
+    @param bh: tensor(sequence_len, batch_len)
+    @param x: tensor(batch, sequence, 2048 + 512 + 512 + 512 + 3)
+    """
     # TODO: Implement
+
     return bh
 
 
