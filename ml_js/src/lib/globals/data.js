@@ -23,7 +23,7 @@ const projectsRaw = {
   learn_line: {
     title: "Learn a Line",
     desc: "Train a neuron to learn line equation",
-    image: "learn_line.jpg",
+    image: "learn_line.gif",
     status: projectStatus.done,
     links: {
       app: "/learn_line",
@@ -33,7 +33,7 @@ const projectsRaw = {
   linear_classifier: {
     title: "Linear Classifier",
     desc: "Train a neuron to classify data",
-    image: "linear_classifier.png",
+    image: "linear_classifier.gif",
     status: projectStatus.done,
     links: {
       app: "/linear_classifier",
@@ -43,7 +43,7 @@ const projectsRaw = {
   learn_curve: {
     title: "Learn A Curve",
     desc: "Train a neural net to predict curves",
-    image: "learn_curve.png",
+    image: "learn_curve.gif",
     status: projectStatus.done,
     links: {
       app: "/learn_curve",
@@ -53,7 +53,7 @@ const projectsRaw = {
   deep_iris: {
     title: "Deep Iris",
     desc: "Train a neural net to classify Iris dataset",
-    image: "deep_iris.png",
+    image: "deep_iris.gif",
     status: projectStatus.done,
     links: {
       app: "/deep_iris",
@@ -65,7 +65,7 @@ const projectsRaw = {
   which_char: {
     title: "Which Character?",
     desc: "Draw a number in the box and recognize what number it is",
-    image: "which_char.png",
+    image: "mnist_classifier.gif",
     status: projectStatus.done,
     links: {
       app: "/which_char",
@@ -99,7 +99,7 @@ const projectsRaw = {
   find_char: {
     title: "Find The Number",
     desc: "Draw a number in the box and find its location",
-    image: "find_number.png",
+    image: "find_the_number.gif",
     status: projectStatus.done,
     links: {
       app: "/find_char",
@@ -180,7 +180,7 @@ const projectsRaw = {
     title: "Next Char",
     desc:
       "Visualize how a Recurrent Neural Network predicts which letter comes next.",
-    image: "next_char.png",
+    image: "next_char.gif",
     status: projectStatus.done,
     links: {
       app: "/next_char",
