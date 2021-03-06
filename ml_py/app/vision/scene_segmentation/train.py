@@ -254,7 +254,10 @@ def find_logit_loss(bh, x) -> torch.Tensor:
     """
     # TODO: Implement
 
-    return bh
+    target = x[:, :, -1].squeeze(2)
+    loss = F.binary_cross_entropy_with_logits(bh.T, target)
+
+    return loss
 
 
 def find_loss(e, bh, x) -> torch.Tensor:
