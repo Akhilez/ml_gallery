@@ -178,11 +178,35 @@ class SceneSegmenterModel(nn.Module):
         return boundaries
 
 
+def find_sim_loss(e, x) -> torch.Tensor:
+    # For randomly selected negative scenes and positive scenes, find similarity loss
+    # TODO: Implement
+    return e
+
+
+def find_logit_loss(bh, x) -> torch.Tensor:
+    # TODO: Implement
+    return bh
+
+
+def find_loss(e, bh, x) -> torch.Tensor:
+    sim_loss = find_sim_loss(e, x)
+
+    # TODO: Class weighted loss
+    logit_loss = find_logit_loss(bh, x)
+
+    loss = sim_loss + logit_loss
+
+    return loss
+
+
 def main():
     data_path = f"{BASE_DIR}/data/scenes/data/"
     dataset = MovieScenesDataset(data_path, 16)
 
     model = SceneSegmenterModel()
+
+    optim = torch.optim.Adam(model.parameters())
 
     loader = DataLoader(
         dataset=dataset, batch_size=2, shuffle=True, collate_fn=collate_fn_sequences
@@ -192,10 +216,11 @@ def main():
 
     e, boundaries = model(x)
 
-    """
-    For randomly selected negative scenes and positive scenes, find similarity loss
-    
-    """
+    loss = find_loss(e, boundaries, x)
+
+    optim.zero_grad()
+    loss.backward()
+    optim.step()
 
 
 if __name__ == "__main__":
