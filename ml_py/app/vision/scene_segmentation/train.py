@@ -147,13 +147,14 @@ class SceneSegmenterModel(nn.Module):
         # 1.4 Find the final embeddings
         e = self.embed_e(features)
 
+        # transpose so that the shape is sequence first instead of batch first
+        e = e.transpose(1, 0)
+
+        e, _ = self.local_attention(e, e, e)
+
         return e
 
     def forward_segmentation(self, x):
-        # transpose so that the shape is sequence first instead of batch first
-        x = x.transpose(1, 0)
-
-        x, _ = self.local_attention(x, x, x)
 
         sequence_length = x.shape[0]
 
@@ -189,11 +190,11 @@ def main():
 
     index, x = next(enumerate(loader))
 
-    model(x)
+    e, boundaries = model(x)
 
     """
-    1. create e vectors of all shots
-    2. For randomly selected negative scenes and positive scenes, find similarity loss
+    For randomly selected negative scenes and positive scenes, find similarity loss
+    
     """
 
 
