@@ -271,6 +271,19 @@ def find_loss(e, bh, x) -> torch.Tensor:
     return loss
 
 
+def train(loader, model, optim):
+
+    index, x = next(enumerate(loader))
+
+    e, boundaries = model(x)
+
+    loss = find_loss(e, boundaries, x)
+
+    optim.zero_grad()
+    loss.backward()
+    optim.step()
+
+
 def main():
     data_path = f"{BASE_DIR}/data/scenes/data/"
     dataset = MovieScenesDataset(data_path, 16)
@@ -283,15 +296,7 @@ def main():
         dataset=dataset, batch_size=2, shuffle=True, collate_fn=collate_fn_sequences
     )
 
-    index, x = next(enumerate(loader))
-
-    e, boundaries = model(x)
-
-    loss = find_loss(e, boundaries, x)
-
-    optim.zero_grad()
-    loss.backward()
-    optim.step()
+    train(loader, model, optim)
 
 
 if __name__ == "__main__":
