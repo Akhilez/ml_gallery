@@ -252,7 +252,6 @@ def find_logit_loss(bh, x) -> torch.Tensor:
     @param bh: tensor(sequence_len, batch_len)
     @param x: tensor(batch, sequence, 2048 + 512 + 512 + 512 + 3)
     """
-    # TODO: Implement
 
     target = x[:, :, -1].squeeze(2)
     loss = F.binary_cross_entropy_with_logits(bh.T, target)
