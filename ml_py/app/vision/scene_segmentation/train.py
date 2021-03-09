@@ -200,11 +200,11 @@ def find_sim_loss(e, x) -> torch.Tensor:
     seq_len = e.shape[0]
     batch_len = e.shape[1]
 
-    batch_level_loss = torch.tensor(0)
+    batch_level_loss = torch.tensor(0.0)
 
     for i in range(batch_len):
 
-        sequence_level_loss = torch.tensor(0)
+        sequence_level_loss = torch.tensor(0.0)
 
         for j in range(seq_len - 1):
             scene_id_index = 2048 + 512 + 512 + 512
@@ -213,10 +213,15 @@ def find_sim_loss(e, x) -> torch.Tensor:
 
             # Pick one shot > j
             end = j
-            for k in range(j, seq_len):
-                if scene_id != x[i, k, scene_id_index]:
+            for k in range(j + 1, seq_len):
+                other_scene_id = x[i, k, scene_id_index]
+                if scene_id != other_scene_id:
                     end = k
                     break
+
+            if end == j:
+                continue
+
             # k = max_shot_index of the same scene
             same_scene_shot = torch.randint(low=j, high=end, size=(1,))
             same_scene_shot = e[same_scene_shot, i]
@@ -226,14 +231,13 @@ def find_sim_loss(e, x) -> torch.Tensor:
             while True:
                 random_seq_idx = torch.randint(low=0, high=batch_len, size=(1,))
                 random_shot_idx = torch.randint(low=0, high=seq_len, size=(1,))
+                random_shot = e[random_shot_idx, random_seq_idx]
 
                 if scene_id != x[random_seq_idx, random_shot_idx, scene_id_index]:
                     break
 
-                random_shot = e[random_shot_idx, random_seq_idx]
-
             input1 = torch.stack((current_shot, current_shot))
-            input2 = torch.stack((same_scene_shot, random_shot))
+            input2 = torch.stack((same_scene_shot, random_shot)).squeeze(1)
             labels = torch.tensor([1, -1])
 
             loss_ = F.cosine_embedding_loss(input1, input2, labels)
@@ -253,7 +257,7 @@ def find_logit_loss(bh, x) -> torch.Tensor:
     @param x: tensor(batch, sequence, 2048 + 512 + 512 + 512 + 3)
     """
 
-    target = x[:, :, -1].squeeze(2)
+    target = x[:, 1:, -1]
     loss = F.binary_cross_entropy_with_logits(bh.T, target)
 
     return loss
@@ -272,15 +276,16 @@ def find_loss(e, bh, x) -> torch.Tensor:
 
 def train(loader, model, optim):
 
-    index, x = next(enumerate(loader))
+    for i, x in enumerate(loader):
+        e, boundaries = model(x)
 
-    e, boundaries = model(x)
+        loss = find_loss(e, boundaries, x)
 
-    loss = find_loss(e, boundaries, x)
+        optim.zero_grad()
+        loss.backward()
+        optim.step()
 
-    optim.zero_grad()
-    loss.backward()
-    optim.step()
+        print(f"batch: {i}\tloss:{loss.item()}")
 
 
 def main():
