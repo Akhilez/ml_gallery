@@ -12,6 +12,8 @@ from app.rl.grid_world.gw_pg import GWPgModel
 from gym_grid_world.envs.grid_world_env import GridWorldEnv
 from lib.nn_utils import save_model
 from settings import BASE_DIR, device
+from queue import PriorityQueue
+
 
 config: DictConfig = None
 writer: SummaryWriter = None
@@ -19,11 +21,19 @@ model: torch.nn.Module = None
 optim: torch.optim.Adam = None
 envs: List = []
 stats_e = []
+replay = PriorityQueue()
 losses = []
 rewards = []
 current_episode = 1
 
 CWD = f"{BASE_DIR}/app/rl/grid_world"
+
+replay.put((1, "a"))
+replay.put((0, "0"))
+
+if replay.full():
+    replay.get()
+replay.put((loss, stuff))
 
 
 def init():
@@ -153,7 +163,7 @@ def learn():
 
     q = reward + config.gamma * q_next
 
-    loss = torch.sum((qh - q) ** 2)
+    loss = (qh - q) ** 2
 
     losses.append(loss.item())
     rewards.append(torch.sum(reward).item())
@@ -195,7 +205,9 @@ def run_episode():
         # Predict actions
 
         x = GWPgModel.convert_inputs(envs)
-        yh = model(x)
+        exp = gather_experiences()
+        xs = torch.cat(x, exp)
+        yh = model(xs)
 
         run_time_step(yh)
         step += 1
