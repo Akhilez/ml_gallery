@@ -1,3 +1,5 @@
+#%%
+
 from lib.mnist_aug.mnist_augmenter import DataManager, MNISTAug
 
 

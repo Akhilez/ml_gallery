@@ -410,7 +410,7 @@ class MNISTAug:
 
 class DataManager:
     def __init__(self):
-        from mlg.settings import BASE_DIR
+        from settings import BASE_DIR
 
         self.dir = f"{BASE_DIR}/data/mnist/numbers"
 
