@@ -139,7 +139,9 @@ def learn():
 
     with torch.no_grad():
         model.eval()
-        yh_next = model(model.convert_inputs(envs))
+        x_next = model.convert_inputs(envs)
+        x_next
+        yh_next = model()
         q_next, _ = torch.max(yh_next, dim=1)
         model.train()
 
