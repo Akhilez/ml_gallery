@@ -21,7 +21,7 @@ class PrioritizedReplay:
         self.queue = []
         self.max_size = max_size
 
-    def add(self, experiences: Tuple[float, Any]):
+    def put(self, experiences: Tuple[float, Any]):
         for experience in experiences:
             if len(self.queue) > self.max_size:
                 heappushpop(self.queue, experience)
