@@ -49,7 +49,7 @@ class GWPgModel(nn.Module):
     @staticmethod
     def convert_inputs(envs):
         """
-        Outputs a tensor of shape(batch, 24)
+        Outputs a tensor of shape(batch, 4,4,4)
         """
         inputs = np.array([env.state for env in envs])
         return torch.tensor(inputs).double().to(device)
