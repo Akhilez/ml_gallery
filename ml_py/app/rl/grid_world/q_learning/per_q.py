@@ -6,6 +6,7 @@ import numpy as np
 
 from app.rl.grid_world.PrioritizedReplay import PrioritizedReplay
 from app.rl.grid_world.gw_pg import GWPgModel
+from app.rl.grid_world.utils import state_to_dict
 from settings import BASE_DIR, device
 
 CWD = f"{BASE_DIR}/app/rl/grid_world/q_learning"
@@ -21,6 +22,7 @@ def main_single_batch():
     n_episodes = 10000
     max_steps = 150
     max_buffer_size = 10
+    replay_batch_size = 3
     lr = 0.01
     mode = "random"
     architecture = [10]
@@ -43,10 +45,25 @@ def main_single_batch():
         rewards = []
 
         while not env.done and step < max_steps:
+            # Store state for experience replay
             state = env.state
 
-            x = model.convert_inputs([env])
+            # =============== Collect experiences =================
+
+            envs = [env]
+
+            exp_samples = experiences.sample(replay_batch_size)
+            for exp in exp_samples:
+                new_env = GridWorldEnv(size=grid_size, mode=mode)
+                new_env.state = state_to_dict(exp[1])
+
+            x = model.convert_inputs(envs)
+
+            # =======================================================
+
             y = model(x)
+
+            # TODO: Initiate a for loop here
 
             # =========== Epsilon Probability ==============
 
