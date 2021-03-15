@@ -8,11 +8,11 @@ import torch
 from omegaconf import DictConfig
 from torch.utils.tensorboard import SummaryWriter
 
+from app.rl.grid_world.PrioritizedReplay import PrioritizedReplay
 from app.rl.grid_world.gw_pg import GWPgModel
 from gym_grid_world.envs.grid_world_env import GridWorldEnv
 from lib.nn_utils import save_model
 from settings import BASE_DIR, device
-from queue import PriorityQueue
 
 
 config: DictConfig = None
@@ -21,19 +21,12 @@ model: torch.nn.Module = None
 optim: torch.optim.Adam = None
 envs: List = []
 stats_e = []
-replay = PriorityQueue()
+replay = PrioritizedReplay(max_size=10)
 losses = []
 rewards = []
 current_episode = 1
 
 CWD = f"{BASE_DIR}/app/rl/grid_world"
-
-replay.put((1, "a"))
-replay.put((0, "0"))
-
-if replay.full():
-    replay.get()
-replay.put((loss, stuff))
 
 
 def init():
@@ -61,7 +54,6 @@ def main_single_batch():
     gamma = 0.9
 
     n_episodes = 10000
-    n_env = 50
     max_steps = 50
 
     lr = 0.01
@@ -207,9 +199,10 @@ def run_episode():
         # Predict actions
 
         x = GWPgModel.convert_inputs(envs)
-        exp = gather_experiences()
-        xs = torch.cat(x, exp)
-        yh = model(xs)
+        # TODO: Implement experience appending
+        # exp = gather_experiences()
+        # xs = torch.cat(x, exp)
+        yh = model(x)
 
         run_time_step(yh)
         step += 1
