@@ -23,13 +23,24 @@ class PrioritizedReplay:
 
     def put(self, experiences: List[Tuple[float, Any]]):
         for experience in experiences:
-            if len(self.queue) > self.max_size:
-                heappushpop(self.queue, experience)
-            else:
-                heappush(self.queue, experience)
+            try:
+                if len(self.queue) > self.max_size:
+                    heappushpop(self.queue, experience)
+                else:
+                    heappush(self.queue, experience)
+            except Exception as e:
+                print(e)
+                # TODO: Oh man, do not put duplicates!
 
     def sample(self, num_samples: int) -> List[Any]:
-        random_indices = np.random.choice(range(len(self.queue)), num_samples)
+        if len(self.queue) == 0:
+            return []
+        if num_samples >= len(self.queue):
+            return self.queue
+
+        random_indices = np.random.choice(
+            range(len(self.queue)), num_samples, replace=False
+        )
         random_samples = []
 
         for index in random_indices:
@@ -37,7 +48,7 @@ class PrioritizedReplay:
 
         if len(self.queue) == self.max_size:
             # Remove if q size == max
-            for i in random_indices:
+            for i in sorted(random_indices, reverse=True):
                 del self.queue[i]
 
         return random_samples

@@ -42,7 +42,7 @@ def main_single_batch():
         env.reset()
         step = 0
         losses = []
-        rewards = []
+        all_rewards = []
 
         while not env.done and step < max_steps:
             # Store state for experience replay
@@ -55,7 +55,9 @@ def main_single_batch():
             exp_samples = experiences.sample(replay_batch_size)
             for exp in exp_samples:
                 new_env = GridWorldEnv(size=grid_size, mode=mode)
+                new_env.reset()
                 new_env.state = state_to_dict(exp[1])
+                envs.append(new_env)
 
             x = model.convert_inputs(envs)
 
@@ -63,36 +65,43 @@ def main_single_batch():
 
             y = model(x)
 
-            # TODO: Initiate a for loop here
+            rewards = []
+            qhs = []
+            for i in range(len(envs)):
+                # =========== Epsilon Probability ==============
 
-            # =========== Epsilon Probability ==============
+                use_rand = torch.rand(1)[0] < epsilon
+                action = (
+                    torch.randint(0, 4, (1,))[0] if use_rand else torch.argmax(y[i], 0)
+                )
+                qh = y[i][action]
 
-            if torch.rand(1) < epsilon:
-                action = torch.randint(0, 4, (1,))
-                qh = y[0][action]
-            else:
-                action = torch.argmax(y, 1)
-                qh = y[0][action]
+                # ============ Observe the reward && predict value of next state ==============
 
-            # ============ Observe the reward && predict value of next state ==============
-
-            _, reward, _, _ = env.step(int(action))
+                _, reward, _, _ = envs[i].step(int(action))
+                rewards.append(reward)
+                qhs.append(qh)
+            rewards = torch.tensor(rewards).double().to(device)
+            qhs = torch.stack(qhs)
 
             with torch.no_grad():
                 model.eval()
-                q_next, _ = torch.max(model(model.convert_inputs([env]))[0], dim=0)
+                x_next = model.convert_inputs(envs)
+                y_next = model(x_next)
+                q_next, _ = torch.max(y_next, dim=1)
                 model.train()
 
-            q = reward + gamma * q_next
+            q = rewards + gamma * q_next
 
             # =========== LEARN ===============
 
-            loss = (qh - q) ** 2
+            loss = (qhs - q) ** 2
 
-            losses.append(loss.item())
-            rewards.append(reward)
-            experiences.put([(loss.item(), state)])
+            experiences.put([(loss[0].item(), state)])
+            losses.append(loss[0].item())
+            all_rewards.append(rewards[0])
 
+            loss = torch.mean(loss)
             optim.zero_grad()
             loss.backward()
             optim.step()
@@ -100,7 +109,7 @@ def main_single_batch():
             step += 1
 
         writer.add_scalar("loss", np.mean(losses), global_step=epoch)
-        writer.add_scalar("reward", np.mean(rewards), global_step=epoch)
+        writer.add_scalar("reward", np.mean(all_rewards), global_step=epoch)
         writer.add_scalar("episode_len", len(losses), global_step=epoch)
         print(".", end="")
 
