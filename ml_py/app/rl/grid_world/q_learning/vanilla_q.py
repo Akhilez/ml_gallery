@@ -30,7 +30,7 @@ def main_single_batch():
 
     env = GridWorldEnv(size=grid_size, mode=mode)
 
-    model = GWPgModel(size=4, units=[10]).double().to(device)
+    model = GWPgModel(size=grid_size, units=[10]).double().to(device)
     optim = torch.optim.Adam(model.parameters(), lr=lr)
 
     # ============== TRAINING LOOP ===========================
