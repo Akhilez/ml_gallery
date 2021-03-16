@@ -3,6 +3,7 @@ from gym_grid_world.envs import GridWorldEnv
 from torch.utils.tensorboard import SummaryWriter
 from datetime import datetime
 import numpy as np
+from copy import deepcopy
 
 from app.rl.grid_world.PrioritizedReplay import PrioritizedReplay
 from app.rl.grid_world.gw_pg import GWPgModel
@@ -29,13 +30,17 @@ def main_single_batch():
     architecture = [50]
 
     writer = SummaryWriter(
-        f"{CWD}/runs/gw_PER_q_LR{str(lr)[:7]}_{mode}_{int(datetime.now().timestamp())}"
+        f"{CWD}/runs/gw_target_network_q_LR{str(lr)[:7]}_{mode}_{int(datetime.now().timestamp())}"
     )
     env = GridWorldEnv(size=grid_size, mode=mode)
     experiences = PrioritizedReplay(max_size=max_buffer_size)
 
     model = GWPgModel(size=grid_size, units=architecture).double().to(device)
-    model2 = GWPgModel(size=grid_size, units=architecture).double().to(device)
+
+    model2 = deepcopy(model)
+    model2.load_state_dict(model.state_dict())
+    model2.eval()
+
     optim = torch.optim.Adam(model.parameters(), lr=lr)
 
     global_step = 0
@@ -90,11 +95,9 @@ def main_single_batch():
             qhs = torch.stack(qhs)
 
             with torch.no_grad():
-                model.eval()
-                x_next = model.convert_inputs(envs)
-                y_next = model(x_next)
+                x_next = model2.convert_inputs(envs)
+                y_next = model2(x_next)
                 q_next, _ = torch.max(y_next, dim=1)
-                model.train()
 
             q = rewards + gamma * q_next
 
@@ -103,13 +106,14 @@ def main_single_batch():
             loss = (qhs - q) ** 2
 
             experiences.put([(loss[0].item(), state)])
-            losses.append(loss[0].item())
-            all_rewards.append(rewards[0])
 
             loss = torch.mean(loss)
             optim.zero_grad()
             loss.backward()
             optim.step()
+
+            losses.append(loss.item())
+            all_rewards.append(rewards[0])
 
             step += 1
             global_step += 1
