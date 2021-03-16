@@ -18,14 +18,14 @@ def main_single_batch():
 
     grid_size = 4
     epsilon = 0.1
-    gamma = 0.9
+    gamma = 0.7
     n_episodes = 10000
-    max_steps = 150
-    max_buffer_size = 10
-    replay_batch_size = 3
+    max_steps = 50
+    replay_batch_size = 5
+    max_buffer_size = 20
     lr = 0.01
     mode = "random"
-    architecture = [10]
+    architecture = [50]
 
     writer = SummaryWriter(
         f"{CWD}/runs/gw_PER_q_LR{str(lr)[:7]}_{mode}_{int(datetime.now().timestamp())}"
@@ -60,6 +60,7 @@ def main_single_batch():
                 envs.append(new_env)
 
             x = model.convert_inputs(envs)
+            x = x + torch.rand_like(x) / 100
 
             # =======================================================
 
