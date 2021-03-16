@@ -19,10 +19,10 @@ def main_single_batch():
     grid_size = 4
     epsilon = 0.1
     gamma = 0.7
-    n_episodes = 10000
+    n_episodes = 5000
     max_steps = 50
-    replay_batch_size = 5
-    max_buffer_size = 20
+    replay_batch_size = 199
+    max_buffer_size = 1000
     lr = 0.01
     mode = "random"
     architecture = [50]
