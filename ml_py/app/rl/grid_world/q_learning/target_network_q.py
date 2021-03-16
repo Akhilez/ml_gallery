@@ -50,8 +50,6 @@ def main_single_batch():
     for epoch in range(n_episodes):
         env.reset()
         step = 0
-        losses = []
-        all_rewards = []
 
         while not env.done and step < max_steps:
             # Store state for experience replay
@@ -107,13 +105,14 @@ def main_single_batch():
 
             experiences.put([(loss[0].item(), state)])
 
+            # Hack for experiment
+            if rewards[0] > 0:
+                loss[0] = loss[0] * 10000
+
             loss = torch.mean(loss)
             optim.zero_grad()
             loss.backward()
             optim.step()
-
-            losses.append(loss.item())
-            all_rewards.append(rewards[0])
 
             step += 1
             global_step += 1
@@ -121,9 +120,9 @@ def main_single_batch():
             if global_step % sync_freq == 0:
                 model2.load_state_dict(model.state_dict())
 
-        writer.add_scalar("loss", np.mean(losses), global_step=epoch)
-        writer.add_scalar("reward", np.mean(all_rewards), global_step=epoch)
-        writer.add_scalar("episode_len", len(losses), global_step=epoch)
+            writer.add_scalar("loss", loss.item(), global_step=global_step)
+            writer.add_scalar("reward", rewards[0].item(), global_step=global_step)
+        # writer.add_scalar("episode_len", step, global_step=global_step)
         print(".", end="")
 
     # save_model(model, CWD, "grid_world_q")
