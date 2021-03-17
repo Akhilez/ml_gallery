@@ -2,7 +2,6 @@ import torch
 from gym_grid_world.envs import GridWorldEnv
 from torch.utils.tensorboard import SummaryWriter
 from datetime import datetime
-import numpy as np
 from copy import deepcopy
 
 from app.rl.grid_world.PrioritizedReplay import PrioritizedReplay
@@ -25,7 +24,7 @@ def main_single_batch():
     replay_batch_size = 199
     max_buffer_size = 1000
     sync_freq = 500  # NEW
-    lr = 0.01
+    lr = 0.00001
     mode = "random"
     architecture = [50]
 
@@ -51,7 +50,7 @@ def main_single_batch():
         env.reset()
         step = 0
 
-        while not env.done and step < max_steps:
+        while not env.done and step <= max_steps:
             # Store state for experience replay
             state = env.state
 
@@ -89,13 +88,17 @@ def main_single_batch():
                 _, reward, _, _ = envs[i].step(int(action))
                 rewards.append(reward)
                 qhs.append(qh)
+
+            if step >= max_steps:
+                rewards[0] = -10
+                env.done = True
             rewards = torch.tensor(rewards).double().to(device)
             qhs = torch.stack(qhs)
 
+            x_next = model2.convert_inputs(envs)
             with torch.no_grad():
-                x_next = model2.convert_inputs(envs)
                 y_next = model2(x_next)
-                q_next, _ = torch.max(y_next, dim=1)
+            q_next, _ = torch.max(y_next, dim=1)
 
             q = rewards + gamma * q_next
 
@@ -103,11 +106,14 @@ def main_single_batch():
 
             loss = (qhs - q) ** 2
 
-            experiences.put([(loss[0].item(), state)])
+            # # Hack for experiment
+            # if rewards[0] > 0:
+            #     loss[0] = loss[0] * 10000
 
-            # Hack for experiment
-            if rewards[0] > 0:
-                loss[0] = loss[0] * 10000
+            # loss[0] = loss[0] * (step + 1)
+
+            # if rewards[0] >= -1:
+            #     experiences.put([(loss[0].item(), state)])
 
             loss = torch.mean(loss)
             optim.zero_grad()
