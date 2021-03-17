@@ -65,7 +65,7 @@ const projectsRaw = {
   which_char: {
     title: "Which Character?",
     desc: "Draw a number in the box and recognize what number it is",
-    image: "mnist_classifier.gif",
+    image: "which_char.gif",
     status: projectStatus.done,
     links: {
       app: "/which_char",
@@ -99,7 +99,7 @@ const projectsRaw = {
   find_char: {
     title: "Find The Number",
     desc: "Draw a number in the box and find its location",
-    image: "find_the_number.gif",
+    image: "find_char.gif",
     status: projectStatus.done,
     links: {
       app: "/find_char",
