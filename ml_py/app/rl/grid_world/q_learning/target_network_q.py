@@ -18,13 +18,13 @@ def main_single_batch():
 
     grid_size = 4
     epsilon = 0.1
-    gamma = 0.7
-    n_episodes = 5000
+    gamma = 0.95
+    n_episodes = 10000
     max_steps = 50
     replay_batch_size = 199
     max_buffer_size = 1000
-    sync_freq = 500  # NEW
-    lr = 0.00001
+    sync_freq = 250  # NEW
+    lr = 0.001
     mode = "random"
     architecture = [50]
 
@@ -105,15 +105,6 @@ def main_single_batch():
             # =========== LEARN ===============
 
             loss = (qhs - q) ** 2
-
-            # # Hack for experiment
-            # if rewards[0] > 0:
-            #     loss[0] = loss[0] * 10000
-
-            # loss[0] = loss[0] * (step + 1)
-
-            # if rewards[0] >= -1:
-            #     experiences.put([(loss[0].item(), state)])
 
             loss = torch.mean(loss)
             optim.zero_grad()
