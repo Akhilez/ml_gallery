@@ -6,7 +6,7 @@ from utils import load_model, CWD, device
 class GridWorldQ(GridWorldBase):
     def __init__(self):
         self.model = load_model(
-            CWD, GWPgModel(4, [50, 50]).double().to(device), name="q.pt"
+            CWD, GWPgModel(4, [50]).double().to(device), name="q.pt"
         )
 
     def predict(self, env):

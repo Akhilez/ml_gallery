@@ -7,6 +7,7 @@ from copy import deepcopy
 from app.rl.grid_world.PrioritizedReplay import PrioritizedReplay
 from app.rl.grid_world.gw_pg import GWPgModel
 from app.rl.grid_world.utils import state_to_dict
+from lib.nn_utils import save_model
 from settings import BASE_DIR, device
 
 CWD = f"{BASE_DIR}/app/rl/grid_world/q_learning"
@@ -19,7 +20,7 @@ def main_single_batch():
     grid_size = 4
     epsilon = 0.1
     gamma = 0.95
-    n_episodes = 10000
+    n_episodes = 15000
     max_steps = 50
     replay_batch_size = 199
     max_buffer_size = 1000
@@ -122,7 +123,7 @@ def main_single_batch():
         # writer.add_scalar("episode_len", step, global_step=global_step)
         print(".", end="")
 
-    # save_model(model, CWD, "grid_world_q")
+    save_model(model, CWD + "/..", "grid_world_q")
 
 
 if __name__ == "__main__":
