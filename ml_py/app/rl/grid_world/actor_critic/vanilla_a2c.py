@@ -139,7 +139,7 @@ def get_final_reward():
 
 
 def main():
-    global current_episode
+    global current_episode, stats_e, won
     while current_episode <= total_episodes:
 
         # Reset envs
