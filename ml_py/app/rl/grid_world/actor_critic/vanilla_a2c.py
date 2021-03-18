@@ -14,7 +14,18 @@ from settings import BASE_DIR, device
 CWD = f"{BASE_DIR}/app/rl/grid_world/actor_critic"
 
 
-class GWPgModel(nn.Module):
+"""
+
+1. forward state to policy network and find action, state2, reward
+2. Forward the state to value network, get the value for state
+3. Store value and store probability for training
+4. To train policy network, use nth state's q value to calculate returns
+5. To train value network, use next state's q value as return which can be reused
+
+"""
+
+
+class GwAcModel(nn.Module):
     def __init__(self, size: int, units: List[int]):
         super().__init__()
         self.size = size
@@ -70,7 +81,7 @@ env_mode = "random"
 
 # -----------------------------------------------------
 
-model = GWPgModel(grid_size, [units for _ in range(depth)]).double().to(device)
+model = GwAcModel(grid_size, [units for _ in range(depth)]).double().to(device)
 optim = torch.optim.Adam(model.parameters(), lr=lr)
 
 envs = [GridWorldEnv(size=grid_size, mode=env_mode) for _ in range(n_env)]
@@ -84,7 +95,7 @@ writer = SummaryWriter(
 )
 
 envs[0].reset()
-writer.add_graph(model, GWPgModel.convert_inputs(envs[:1]))
+writer.add_graph(model, GwAcModel.convert_inputs(envs[:1]))
 
 # -----------------------------------------------------
 
@@ -152,7 +163,7 @@ def main():
         while not all([env.done for env in envs]) and step < max_steps:
             # Predict actions
 
-            x = GWPgModel.convert_inputs(envs)
+            x = GwAcModel.convert_inputs(envs)
             yh = model(x)
 
             for i in range(n_env):
