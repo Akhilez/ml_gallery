@@ -82,7 +82,9 @@ won = None
 writer = SummaryWriter(
     f"{CWD}/runs/gw_policy_grad_LR{str(lr)[:7]}_{depth}x{units}_{int(datetime.now().timestamp())}"
 )
-writer.add_graph(model, GWPgModel.convert_inputs(envs))
+
+envs[0].reset()
+writer.add_graph(model, GWPgModel.convert_inputs(envs[:1]))
 
 # -----------------------------------------------------
 
@@ -210,3 +212,7 @@ def main():
     # play(model, cfg)
 
     save_model(model, CWD, "grid_world_pg")
+
+
+if __name__ == "__main__":
+    main()
