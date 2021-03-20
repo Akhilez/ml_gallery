@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import List
+from typing import List, Dict, Any
 
 import numpy as np
 import torch
@@ -89,25 +89,31 @@ def main():
     for epoch in range(EPOCHS):
 
         [env.reset() for env in envs]
-        stats = [[] for _ in envs]
+        stats: List[List[Dict[str, Any[torch.Tensor, float]]]] = [[] for _ in envs]
 
         # -------------- Monte Carlo Loop ---------------------
         while True:
 
             # ----------- Predict policy and value -------------
             states = GwAcModel.convert_inputs(envs)
-            ph, vh = model(states)  # Shapes: ph: (batch, 4); vh: (batch, 1)
+            policy, value = model(states)  # Shapes: ph: (batch, 4); vh: (batch, 1)
 
             # ------------ Sample actions -----------------
             tau = max((1 / (np.log(epoch) * 5 + 0.0001)), 0.7)
-            ph = F.gumbel_softmax(ph, tau=tau, dim=1)
-            actions = torch.multinomial(ph, len(ph)).squeeze()  # shape: (batch)
+            policy = F.gumbel_softmax(policy, tau=tau, dim=1)
+            actions = torch.multinomial(policy, len(policy)).squeeze()  # shape: (batch)
 
             # ------------- Rewards from step ----------------
             for i in range(BATCH_SIZE):
                 if not envs[i].done:
                     _, reward, _, _ = envs[i].step(actions[i])
-                    stats[i].append({"reward": reward, "value": vh[i], "policy": ph[actions[i]]})
+                    stats[i].append(
+                        {
+                            "reward": reward,
+                            "value": value[i],
+                            "policy": policy[actions[i]],
+                        }
+                    )
 
             step += 1
 
@@ -121,15 +127,91 @@ def main():
                 # Set unfinished env's reward to -10
                 for i in range(BATCH_SIZE):
                     if not envs[i].done:
-                        stats[i][-1]['reward'] = -10
+                        stats[i][-1]["reward"] = -10
                 all_done = True
 
             if all_done or n_step_ended:
-                # TODO: Train
-                pass
+                # ----------- Add last state's value -------------
+                states = GwAcModel.convert_inputs(envs)
+
+                model.eval()
+                with torch.no_grad():
+                    _, value = model(states)
+                model.train()
+
+                for i in range(BATCH_SIZE):
+                    stats[i].append({"value": value[i]})
+
+                # -------------- LEARN -----------------
+                loss = naive_ac_loss(stats, GAMMA_RETURNS, GAMMA_CREDITS)
+
+                optim.zero_grad()
+                loss.backward()
+                optim.step()
 
             if all_done:
                 break
+
+
+def naive_ac_loss(
+    stats: List[List[Dict[str, Any[torch.Tensor, float]]]],
+    gamma_returns: float,
+    gamma_credits: float,
+) -> torch.Tensor:
+
+    loss = torch.Tensor(0).double().to(device)
+
+    for i in range(len(stats)):
+        probs = torch.log(
+            torch.stack([stat["policy"] for stat in stats[i] if "policy" in stat])
+        )
+        values = torch.stack([stat["value"] for stat in stats[i] if "value" in stat])
+        rewards = [stat["reward"] for stat in stats[i]]
+
+        # Last reward is value of the last state. Clip the last return which the value of last state
+        returns = get_returns(rewards + [values[-1]], gamma_returns)[:-1]
+        credits_ = get_credits(len(rewards), gamma_credits)
+
+        loss_v = F.mse_loss(values[:-1], returns)
+        loss_p = torch.mean(-credits_ * returns * probs)
+
+        loss = loss + loss_v + loss_p
+
+    return loss / len(stats)
+
+
+def advantage_ac_loss(
+    stats: List[List[Dict[str, Any[torch.Tensor, float]]]], gamma_returns: float
+) -> torch.Tensor:
+    loss = torch.Tensor(0).double().to(device)
+
+    for i in range(len(stats)):
+        probs = torch.log(
+            torch.stack([stat["policy"] for stat in stats[i] if "policy" in stat])
+        )
+        values = torch.stack([stat["value"] for stat in stats[i] if "value" in stat])
+        rewards = [stat["reward"] for stat in stats[i]]
+
+        # Last reward is value of the last state. Clip the last return which the value of last state
+        returns = get_returns(rewards + [values[-1]], gamma_returns)[:-1]
+
+        loss += torch.mean(-probs * (returns - values[:-1]))
+
+    return loss / len(stats)
+
+
+def get_returns(rewards, gamma_returns):
+    total_t = len(rewards)
+    returns = []
+    prev_return = 0
+    for t in range(total_t):
+        prev_return = rewards[total_t - t - 1] + (gamma_returns * prev_return)
+        returns.append(prev_return)
+    return torch.tensor(returns).flip(0).double().to(device)
+
+
+def get_credits(t: int, gamma_credits):
+    return torch.pow(gamma_credits, torch.arange(t).float()).flip(0).double().to(device)
 
 
 if __name__ == "__main__":
