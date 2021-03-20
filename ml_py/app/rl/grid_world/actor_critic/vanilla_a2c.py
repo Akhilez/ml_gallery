@@ -107,7 +107,7 @@ def main():
             for i in range(BATCH_SIZE):
                 if not envs[i].done:
                     _, reward, _, _ = envs[i].step(actions[i])
-                    stats[i].append({"reward": reward, "value": vh[i], "policy": ph[i]})
+                    stats[i].append({"reward": reward, "value": vh[i], "policy": ph[actions[i]]})
 
             step += 1
 
@@ -118,7 +118,10 @@ def main():
             n_step_ended = step % N_TRAIN_STEP == 0
 
             if has_timed_out:
-                # TODO: Set unfinished env's reward to -10
+                # Set unfinished env's reward to -10
+                for i in range(BATCH_SIZE):
+                    if not envs[i].done:
+                        stats[i][-1]['reward'] = -10
                 all_done = True
 
             if all_done or n_step_ended:
