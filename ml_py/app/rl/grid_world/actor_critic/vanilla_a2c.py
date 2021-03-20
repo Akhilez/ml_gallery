@@ -39,7 +39,7 @@ class GwAcModel(nn.Module):
         self.value = nn.Sequential(
             nn.Linear(self.size * self.size * units[-1], 50),
             nn.ReLU(),
-            nn.Linear(50, 4),
+            nn.Linear(50, 1),
         )
 
     def forward(self, x):
@@ -66,33 +66,48 @@ def main():
 
     # Env params
     GRID_SIZE = 4
-    ENV_MODE = "RANDOM"
+    ENV_MODE = "random"
 
     # TRAINING_PARAMS
     EPOCHS = 1
+    BATCH_SIZE = 2
     MAX_MONTE_CARLO_STEPS = 50
     N_TRAIN_STEP = 4
     ARCHITECTURE = [50, 50]
+    GAMMA_RETURNS = 0.80
+    GAMMA_CREDITS = 0.95
+    LEARNING_RATE = 1e-3
 
     # -------------- Setup other variables ----------------
 
     model = GwAcModel(GRID_SIZE, ARCHITECTURE).double().to(device)
-    envs = [GridWorldEnv(size=GRID_SIZE, mode=ENV_MODE)]
+    optim = torch.optim.Adam(model.parameters(), lr=LEARNING_RATE)
+    envs = [GridWorldEnv(size=GRID_SIZE, mode=ENV_MODE) for _ in range(BATCH_SIZE)]
     step = 0
-    epoch = 0
 
     # -------------- Training loop ----------------
     for epoch in range(EPOCHS):
 
         [env.reset() for env in envs]
+        stats = [[] for _ in envs]
 
         # -------------- Monte Carlo Loop ---------------------
         while True:
 
-            x = GwAcModel.convert_inputs(envs)
-            ph, vh = model(x)
+            # ----------- Predict policy and value -------------
+            states = GwAcModel.convert_inputs(envs)
+            ph, vh = model(states)  # Shapes: ph: (batch, 4); vh: (batch, 1)
 
-            print(ph, vh)
+            # ------------ Sample actions -----------------
+            tau = max((1 / (np.log(epoch) * 5 + 0.0001)), 0.7)
+            ph = F.gumbel_softmax(ph, tau=tau, dim=1)
+            actions = torch.multinomial(ph, len(ph)).squeeze()  # shape: (batch)
+
+            # ------------- Rewards from step ----------------
+            for i in range(BATCH_SIZE):
+                if not envs[i].done:
+                    _, reward, _, _ = envs[i].step(actions[i])
+                    stats[i].append({"reward": reward, "value": vh[i], "policy": ph[i]})
 
             step += 1
 
@@ -107,7 +122,7 @@ def main():
                 all_done = True
 
             if all_done or n_step_ended:
-                # TODO: Train?
+                # TODO: Train
                 pass
 
             if all_done:
