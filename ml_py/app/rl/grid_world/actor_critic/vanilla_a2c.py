@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import List, Dict, Any
+from typing import List, Dict, Union
 
 import numpy as np
 import torch
@@ -84,12 +84,19 @@ def main():
     optim = torch.optim.Adam(model.parameters(), lr=LEARNING_RATE)
     envs = [GridWorldEnv(size=GRID_SIZE, mode=ENV_MODE) for _ in range(BATCH_SIZE)]
     step = 0
+    global_step = 0
+    timestamp = int(datetime.now().timestamp())
+    writer = SummaryWriter(f"{CWD}/runs/gw_ac_LR{str(LEARNING_RATE)[:7]}_{timestamp}")
+
+    # Add model graph
+    envs[0].reset()
+    writer.add_graph(model, GwAcModel.convert_inputs(envs[:1]))
 
     # -------------- Training loop ----------------
     for epoch in range(EPOCHS):
 
         [env.reset() for env in envs]
-        stats: List[List[Dict[str, Any[torch.Tensor, float]]]] = [[] for _ in envs]
+        stats: List[List[Dict[str, Union[torch.Tensor, float]]]] = [[] for _ in envs]
 
         # -------------- Monte Carlo Loop ---------------------
         while True:
@@ -101,7 +108,7 @@ def main():
             # ------------ Sample actions -----------------
             tau = max((1 / (np.log(epoch) * 5 + 0.0001)), 0.7)
             policy = F.gumbel_softmax(policy, tau=tau, dim=1)
-            actions = torch.multinomial(policy, len(policy)).squeeze()  # shape: (batch)
+            actions = torch.multinomial(policy, 1).squeeze()  # shape: (batch)
 
             # ------------- Rewards from step ----------------
             for i in range(BATCH_SIZE):
@@ -110,8 +117,8 @@ def main():
                     stats[i].append(
                         {
                             "reward": reward,
-                            "value": value[i],
-                            "policy": policy[actions[i]],
+                            "value": value[i][0],
+                            "policy": policy[i][actions[i]],
                         }
                     )
 
@@ -120,7 +127,7 @@ def main():
             # -------------- Termination conditions ------------------
 
             all_done = all([env.done for env in envs])
-            has_timed_out = step < MAX_MONTE_CARLO_STEPS
+            has_timed_out = step >= MAX_MONTE_CARLO_STEPS
             n_step_ended = step % N_TRAIN_STEP == 0
 
             if has_timed_out:
@@ -140,7 +147,7 @@ def main():
                 model.train()
 
                 for i in range(BATCH_SIZE):
-                    stats[i].append({"value": value[i]})
+                    stats[i].append({"value": value[i][0]})
 
                 # -------------- LEARN -----------------
                 loss = naive_ac_loss(stats, GAMMA_RETURNS, GAMMA_CREDITS)
@@ -149,24 +156,43 @@ def main():
                 loss.backward()
                 optim.step()
 
+                # ------------ Logging ----------------
+                writer.add_scalar("Training loss", loss.item(), global_step=global_step)
+                mean_rewards = np.mean(
+                    [
+                        stat["reward"]
+                        for stats_i in stats
+                        for stat in stats_i
+                        if "reward" in stat
+                    ]
+                )
+                writer.add_scalar("Mean Rewards", mean_rewards, global_step=global_step)
+                global_step += 1
+                print(".", end="")
+
+                # Clean up
+                stats = [[] for _ in envs]
+
             if all_done:
                 break
 
+    save_model(model, CWD, "grid_world_ac")
+
 
 def naive_ac_loss(
-    stats: List[List[Dict[str, Any[torch.Tensor, float]]]],
+    stats: List[List[Dict[str, Union[torch.Tensor, float]]]],
     gamma_returns: float,
     gamma_credits: float,
 ) -> torch.Tensor:
 
-    loss = torch.Tensor(0).double().to(device)
+    loss = torch.tensor(0).double().to(device)
 
     for i in range(len(stats)):
-        probs = torch.log(
-            torch.stack([stat["policy"] for stat in stats[i] if "policy" in stat])
-        )
-        values = torch.stack([stat["value"] for stat in stats[i] if "value" in stat])
-        rewards = [stat["reward"] for stat in stats[i]]
+        # If n+1 state is actually the last state
+        if len(stats[i]) == 1:
+            continue
+
+        probs, values, rewards = lists_from_stats(stats[i])
 
         # Last reward is value of the last state. Clip the last return which the value of last state
         returns = get_returns(rewards + [values[-1]], gamma_returns)[:-1]
@@ -181,16 +207,16 @@ def naive_ac_loss(
 
 
 def advantage_ac_loss(
-    stats: List[List[Dict[str, Any[torch.Tensor, float]]]], gamma_returns: float
+    stats: List[List[Dict[str, Union[torch.Tensor, float]]]], gamma_returns: float
 ) -> torch.Tensor:
     loss = torch.Tensor(0).double().to(device)
 
     for i in range(len(stats)):
-        probs = torch.log(
-            torch.stack([stat["policy"] for stat in stats[i] if "policy" in stat])
-        )
-        values = torch.stack([stat["value"] for stat in stats[i] if "value" in stat])
-        rewards = [stat["reward"] for stat in stats[i]]
+        # If n+1 state is actually the last state
+        if len(stats[i]) == 1:
+            continue
+
+        probs, values, rewards = lists_from_stats(stats[i])
 
         # Last reward is value of the last state. Clip the last return which the value of last state
         returns = get_returns(rewards + [values[-1]], gamma_returns)[:-1]
@@ -198,6 +224,16 @@ def advantage_ac_loss(
         loss += torch.mean(-probs * (returns - values[:-1]))
 
     return loss / len(stats)
+
+
+def lists_from_stats(stats):
+    probs = torch.log(
+        torch.stack([stat["policy"] for stat in stats if "policy" in stat])
+    )
+    values = torch.stack([stat["value"] for stat in stats if "value" in stat])
+    rewards = [stat["reward"] for stat in stats if "reward" in stat]
+
+    return probs, values, rewards
 
 
 def get_returns(rewards, gamma_returns):
