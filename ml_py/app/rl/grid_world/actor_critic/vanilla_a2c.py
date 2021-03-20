@@ -121,13 +121,10 @@ def sample_action(probs):
     return action, probs[action]
 
 
-def get_credits(t):
-    credits = []
-    prev_credit = 1
-    for i in range(t):
-        credits.append(prev_credit)
-        prev_credit *= gamma_credits
-    return torch.tensor(list(reversed(credits))).double().to(device)
+def get_credits(t: int):
+    return (
+        reversed(torch.pow(gamma_credits, torch.arange(t).float())).double().to(device)
+    )
 
 
 def get_returns(rewards):
@@ -160,6 +157,7 @@ def main():
 
         step = 0
 
+        # ---------------- Monte carlo loop --------------------
         while not all([env.done for env in envs]) and step < max_steps:
             # Predict actions
 
@@ -180,18 +178,20 @@ def main():
 
             step += 1
 
+        # -------- Negative reward when max steps reached --------
         if step == max_steps:
             for i in range(n_env):
                 if not envs[i].done:
                     stats_e[i].append({"reward": -10, "prob": torch.tensor(0)})
 
+        # --------- Finding loss for each env -----------
         loss = torch.tensor(0).double().to(device)
         rewards_list = []
         for i in range(n_env):
             probs = [stat["prob"] for stat in stats_e[i]]
             if len(probs) == 0:
                 continue
-            probs = torch.stack(probs)
+            probs = torch.log(torch.stack(probs))
             rewards = [stat["reward"] for stat in stats_e[i]]
             returns = get_returns(rewards)
             credits = get_credits(len(rewards))
@@ -201,9 +201,12 @@ def main():
 
         loss = -1 * loss / n_env
 
+        # ----------- Optimization -----------
+
         optim.zero_grad()
         loss.backward()
         optim.step()
+
         # print(f"loss: {loss}")
         writer.add_scalar("Training loss", loss.item(), global_step=current_episode)
         writer.add_scalar(
