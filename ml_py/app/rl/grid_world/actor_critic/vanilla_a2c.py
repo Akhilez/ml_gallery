@@ -69,13 +69,13 @@ def main():
     ENV_MODE = "random"
 
     # TRAINING_PARAMS
-    EPOCHS = 1
-    BATCH_SIZE = 2
+    EPOCHS = 10000
+    BATCH_SIZE = 50
     MAX_MONTE_CARLO_STEPS = 50
     N_TRAIN_STEP = 4
     ARCHITECTURE = [50, 50]
-    GAMMA_RETURNS = 0.80
-    GAMMA_CREDITS = 0.95
+    GAMMA_RETURNS = 0.75
+    GAMMA_CREDITS = 0.75
     LEARNING_RATE = 1e-3
 
     # -------------- Setup other variables ----------------
@@ -83,7 +83,6 @@ def main():
     model = GwAcModel(GRID_SIZE, ARCHITECTURE).double().to(device)
     optim = torch.optim.Adam(model.parameters(), lr=LEARNING_RATE)
     envs = [GridWorldEnv(size=GRID_SIZE, mode=ENV_MODE) for _ in range(BATCH_SIZE)]
-    step = 0
     global_step = 0
     timestamp = int(datetime.now().timestamp())
     writer = SummaryWriter(f"{CWD}/runs/gw_ac_LR{str(LEARNING_RATE)[:7]}_{timestamp}")
@@ -97,6 +96,9 @@ def main():
 
         [env.reset() for env in envs]
         stats: List[List[Dict[str, Union[torch.Tensor, float]]]] = [[] for _ in envs]
+        step = 0
+
+        episode_rewards = []
 
         # -------------- Monte Carlo Loop ---------------------
         while True:
@@ -106,7 +108,8 @@ def main():
             policy, value = model(states)  # Shapes: ph: (batch, 4); vh: (batch, 1)
 
             # ------------ Sample actions -----------------
-            tau = max((1 / (np.log(epoch) * 5 + 0.0001)), 0.7)
+            tau = max((1 / (np.log(epoch) + 0.0001) * 5), 0.7)
+            writer.add_scalar("tau", tau, global_step=global_step)
             policy = F.gumbel_softmax(policy, tau=tau, dim=1)
             actions = torch.multinomial(policy, 1).squeeze()  # shape: (batch)
 
@@ -121,8 +124,7 @@ def main():
                             "policy": policy[i][actions[i]],
                         }
                     )
-
-            step += 1
+                    episode_rewards.append(reward)
 
             # -------------- Termination conditions ------------------
 
@@ -151,6 +153,7 @@ def main():
 
                 # -------------- LEARN -----------------
                 loss = naive_ac_loss(stats, GAMMA_RETURNS, GAMMA_CREDITS)
+                # loss = advantage_ac_loss(stats, GAMMA_RETURNS)
 
                 optim.zero_grad()
                 loss.backward()
@@ -158,23 +161,19 @@ def main():
 
                 # ------------ Logging ----------------
                 writer.add_scalar("Training loss", loss.item(), global_step=global_step)
-                mean_rewards = np.mean(
-                    [
-                        stat["reward"]
-                        for stats_i in stats
-                        for stat in stats_i
-                        if "reward" in stat
-                    ]
-                )
-                writer.add_scalar("Mean Rewards", mean_rewards, global_step=global_step)
                 global_step += 1
-                print(".", end="")
 
                 # Clean up
                 stats = [[] for _ in envs]
 
             if all_done:
                 break
+            writer.add_scalar(
+                "Mean Rewards", np.mean(episode_rewards), global_step=global_step
+            )
+            step += 1
+
+        print(".", end="")
 
     save_model(model, CWD, "grid_world_ac")
 
@@ -201,7 +200,7 @@ def naive_ac_loss(
         loss_v = F.mse_loss(values[:-1], returns)
         loss_p = torch.mean(-credits_ * returns * probs)
 
-        loss = loss + loss_v + loss_p
+        loss += +0.1 * loss_v + 1 * loss_p
 
     return loss / len(stats)
 
@@ -209,7 +208,7 @@ def naive_ac_loss(
 def advantage_ac_loss(
     stats: List[List[Dict[str, Union[torch.Tensor, float]]]], gamma_returns: float
 ) -> torch.Tensor:
-    loss = torch.Tensor(0).double().to(device)
+    loss = torch.tensor(0).double().to(device)
 
     for i in range(len(stats)):
         # If n+1 state is actually the last state
@@ -221,7 +220,10 @@ def advantage_ac_loss(
         # Last reward is value of the last state. Clip the last return which the value of last state
         returns = get_returns(rewards + [values[-1]], gamma_returns)[:-1]
 
-        loss += torch.mean(-probs * (returns - values[:-1]))
+        loss_v = F.mse_loss(values[:-1], returns)
+        loss_p = torch.mean(-probs * (returns - values[:-1]))
+
+        loss += 0.1 * loss_v + 1 * loss_p
 
     return loss / len(stats)
 
