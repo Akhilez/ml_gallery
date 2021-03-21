@@ -152,8 +152,8 @@ def main():
                     stats[i].append({"value": value[i][0]})
 
                 # -------------- LEARN -----------------
-                loss = naive_ac_loss(stats, GAMMA_RETURNS, GAMMA_CREDITS)
-                # loss = advantage_ac_loss(stats, GAMMA_RETURNS)
+                # loss = naive_ac_loss(stats, GAMMA_RETURNS, GAMMA_CREDITS)
+                loss = advantage_ac_loss(stats, GAMMA_RETURNS)
 
                 optim.zero_grad()
                 loss.backward()
