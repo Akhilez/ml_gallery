@@ -32,3 +32,4 @@ albumentations==0.5.2
 
 pettingzoo==1.7.0
 pettingzoo[classic]
+gym-super-mario-bros==7.3.2

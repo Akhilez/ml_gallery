@@ -101,6 +101,7 @@ def iter_mcts():
 
 
 def uct(node):
+    # sqrt(log(parent_visit) / child_visit)
     return np.sqrt(np.log(node.parent.n) / (node.n + 0.00001))
 
 
