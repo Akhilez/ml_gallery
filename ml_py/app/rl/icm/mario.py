@@ -37,6 +37,50 @@ class MarioModel(nn.Module):
         return self.model(x)
 
 
+class MarioICM(nn.Module):
+    def __init__(self):
+        super().__init__()
+
+        # (S1, S2) -> a
+        self.inverse_module = nn.Sequential(
+            nn.Linear(288 * 2, 100),
+            nn.ReLU(),
+            nn.Linear(100, 12),
+        )
+
+        # (S1, a) -> S2
+        self.forward_module = nn.Sequential(
+            nn.Linear(288 + 12, 1000),
+            nn.ReLU(),
+            nn.Linear(1000, 288),
+        )
+
+        # S1 -> S1~
+        self.embed_module = nn.Sequential(
+            nn.Conv2d(3, 32, kernel_size=3, stride=2, padding=1),
+            nn.ELU(),
+            nn.Conv2d(32, 32, kernel_size=3, stride=2, padding=1),
+            nn.ELU(),
+            nn.Conv2d(32, 32, kernel_size=3, stride=2, padding=1),
+            nn.ELU(),
+            nn.Conv2d(32, 32, kernel_size=3, stride=2, padding=1),
+            nn.Flatten(),
+            nn.Linear(288, 512),
+            nn.ELU(),
+            nn.Linear(512, 288),
+        )
+
+    def forward(self, state1, action, state2):
+
+        # 1. Encode the states from encoding module
+
+        # 2. Predict action from inverse module
+
+        # 3. Predict state2 from forward module
+
+        return
+
+
 class ExperienceReplay:
     def __init__(self, buffer_size: int = 500, batch_size: int = 100):
         self.buffer_size = buffer_size
@@ -86,10 +130,6 @@ class ExperienceReplay:
         return state1_batch, action_batch, reward_batch, state2_batch
 
 
-env = gym_super_mario_bros.make("SuperMarioBros-v0")
-env = JoypadSpace(env, COMPLEX_MOVEMENT)
-
-
 def downscale_obs(obs, new_size=(42, 42), to_gray=True):
     resized = resize(obs, new_size, anti_aliasing=True)
     if to_gray:
@@ -134,3 +174,30 @@ def sample_action(q_values, epsilon: Optional[float] = None):
         q_values = F.softmax(F.normalize(q_values))
         sampled_action = torch.multinomial(q_values, num_samples=1)
         return sampled_action
+
+
+def main():
+    env = gym_super_mario_bros.make("SuperMarioBros-v0")
+    env = JoypadSpace(env, COMPLEX_MOVEMENT)
+
+    dqn_model = MarioModel()
+    icm_model = MarioICM()
+
+    state = env.reset()
+
+    state = prepare_initial_state(state)
+
+    q_values = dqn_model(state)
+    action = int(torch.argmax(q_values[0]))
+
+    state2, reward, done, info = env.step(action)
+
+    state2 = prepare_initial_state(state2)
+
+    intrinsic_reward = icm_model(state, action, state2)
+
+    print(reward, intrinsic_reward)
+
+
+if __name__ == "__main__":
+    main()
