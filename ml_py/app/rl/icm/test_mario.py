@@ -1,10 +1,11 @@
 from unittest import TestCase
 
 import gym_super_mario_bros
+import torch
 from gym_super_mario_bros.actions import COMPLEX_MOVEMENT
 from nes_py.wrappers import JoypadSpace
 
-from app.rl.icm.mario import downscale_obs, prepare_state
+from app.rl.icm.mario import downscale_obs, prepare_state, to_onehot
 
 
 class TestMario(TestCase):
@@ -29,3 +30,14 @@ class TestMario(TestCase):
         # Prepared state = shape [1, 1, 42, 42]
         prepared_state = prepare_state(state)
         self.assertEqual(prepared_state.shape, (1, 1, 42, 42))
+
+    def test_onehot(self):
+        action = 4
+        action_one_hot = [0] * 12
+        action_one_hot[action] = 1
+        action_one_hot = torch.tensor(action_one_hot)
+
+        onehot_result = to_onehot([action], 12)
+
+        equals = action_one_hot.tolist() == onehot_result[0].tolist()
+        self.assertTrue(equals)

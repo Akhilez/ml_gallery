@@ -1,5 +1,5 @@
 from random import shuffle
-from typing import Optional
+from typing import Optional, Iterable
 
 import gym
 from nes_py.wrappers import JoypadSpace
@@ -56,7 +56,7 @@ class MarioICM(nn.Module):
         )
 
         # S1 -> S1~
-        self.embed_module = nn.Sequential(
+        self.encode_module = nn.Sequential(
             nn.Conv2d(3, 32, kernel_size=3, stride=2, padding=1),
             nn.ELU(),
             nn.Conv2d(32, 32, kernel_size=3, stride=2, padding=1),
@@ -73,12 +73,19 @@ class MarioICM(nn.Module):
     def forward(self, state1, action, state2):
 
         # 1. Encode the states from encoding module
+        state1 = self.encode_module(state1)
+        state2 = self.encode_module(state2)
 
         # 2. Predict action from inverse module
+        states = torch.cat((state1, state2), dim=1)
+        action_pred = self.inverse_module(states)
 
         # 3. Predict state2 from forward module
+        action_onehot = to_onehot(action, 12)
+        state_action = torch.cat((state1.detach(), action_onehot), dim=1)
+        state2_pred = self.forward_module(state_action)
 
-        return
+        return action_pred, state2, state2_pred
 
 
 class ExperienceReplay:
@@ -128,6 +135,12 @@ class ExperienceReplay:
         state2_batch = torch.stack([x[3].squeeze(dim=0) for x in batch], dim=0)
 
         return state1_batch, action_batch, reward_batch, state2_batch
+
+
+def to_onehot(x, num_classes=12):
+    b = np.zeros((len(x), num_classes), dtype=np.int32)
+    b[np.arange(len(x)), x] = 1
+    return torch.tensor(b)
 
 
 def downscale_obs(obs, new_size=(42, 42), to_gray=True):
@@ -194,7 +207,15 @@ def main():
 
     state2 = prepare_initial_state(state2)
 
-    intrinsic_reward = icm_model(state, action, state2)
+    action_pred, state2, state2_pred = icm_model(
+        state, torch.IntTensor([action]), state2
+    )
+
+    action_pred_argmax = F.softmax(action_pred).argmax(dim=1)[0]
+
+    print(action, action_pred_argmax)
+
+    intrinsic_reward = F.kl_div(state2_pred, state2)
 
     print(reward, intrinsic_reward)
 
