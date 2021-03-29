@@ -211,11 +211,11 @@ def main():
         state, torch.IntTensor([action]), state2
     )
 
-    action_pred_argmax = F.softmax(action_pred).argmax(dim=1)[0]
+    action_pred_argmax = F.softmax(action_pred, dim=1).argmax(dim=1)[0]
 
     print(action, action_pred_argmax)
 
-    intrinsic_reward = F.kl_div(state2_pred, state2)
+    intrinsic_reward = F.kl_div(state2_pred, state2, reduction="batchmean")
 
     print(reward, intrinsic_reward)
 
