@@ -256,6 +256,7 @@ def train():
             "max_episode_len": 1000,
             "min_progress": 15,
             "frames_per_state": 3,
+            "action_repeats": 6,
             "gamma_q": 0.85,
             "epsilon_random": 0.1,  # Sample random action with epsilon probability
             "epsilon_greedy_switch": 1000,
@@ -286,7 +287,6 @@ def train():
     global_step = 0
     current_step = 0
     cumulative_reward = 0
-    done = False
 
     ep_rewards = []
 
@@ -294,6 +294,7 @@ def train():
 
     for epoch in range(cfg.epochs):
         state = env.reset()
+        done = False
 
         # Monte Carlo loop
         while not done:
@@ -311,10 +312,18 @@ def train():
                 cfg.epsilon,
                 apply_epsilon=global_step > cfg.epsilon_greedy_switch,
             )
-            state2, reward, done, info = env.step(action)
-            state2 = prepare_multi_state(state, state2)
 
-            env.render()
+            action_count = 0
+            state2 = None
+            while True:
+                state2_, reward, done, info = env.step(action)
+                if state2 is None:
+                    state2 = state2_
+                env.render()
+                if action_count >= cfg.action_repeats or done:
+                    break
+                action_count += 1
+            state2 = prepare_multi_state(state, state2)
 
             # Add intrinsic reward
             intrinsic_reward = get_intrinsic_reward(state, action, state2, icm_model)
@@ -379,7 +388,6 @@ def train():
 
                 current_step = 0
                 current_episode += 1
-                done = False
 
             global_step += 1
             current_step += 1
@@ -389,5 +397,10 @@ if __name__ == "__main__":
     train()
 
 
-# Some todo items:
-# 1. Repeat action 6 times during training. idky
+"""
+
+late: -12
+3/13/21 00:00:00 DUE
+
+
+"""
