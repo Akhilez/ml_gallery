@@ -339,13 +339,18 @@ def train():
             done = done or max_episode_len_reached or no_progress
 
             if done:
-                # TODO: add scalar: 'episode len' current_step, current_episode
                 if max_episode_len_reached:
                     # TODO: Add scalar: 'max episode len reached' current_episode, auto
                     pass
                 elif no_progress:
                     # TODO: Add scalar: 'no progress' current_episode, auto
                     pass
+
+                # TODO: add scalar: 'episode len' current_step, current_episode
+                # TODO: Plot cumulative reward for each episode
+                # TODO: Plot the x_pos after the episode
+                # TODO: Plot total sum of rewards for each episode
+                # TODO: Every n episodes store save the video
 
                 current_step = -1
                 current_episode += 1
