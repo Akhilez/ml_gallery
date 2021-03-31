@@ -347,7 +347,7 @@ def train():
                     # TODO: Add scalar: 'no progress' current_episode, auto
                     pass
 
-                current_step = 0
+                current_step = -1
                 current_episode += 1
 
             global_step += 1
