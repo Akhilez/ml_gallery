@@ -202,6 +202,18 @@ def get_q_loss(q_pred, reward, model, state_next, gamma):
     return q_loss
 
 
+def get_intrinsic_reward(state1, action, state2, model):
+
+    with torch.no_grad():
+        action_pred, state2_encoded, state2_pred = model(
+            state1, torch.IntTensor([action]), state2
+        )
+
+    forward_loss = F.mse_loss(state2_pred, state2_encoded)
+
+    return forward_loss
+
+
 def main():
     env = gym_super_mario_bros.make("SuperMarioBros-v0")
     env = JoypadSpace(env, COMPLEX_MOVEMENT)
@@ -250,6 +262,8 @@ def train():
             "q_loss_weight": 0.01,
             "inverse_loss_weight": 0.5,
             "forward_loss_weight": 0.5,
+            "intrinsic_weight": 1.0,
+            "extrinsic_weight": 1.0,
         }
     )
 
@@ -300,6 +314,24 @@ def train():
             state2, reward, done, info = env.step(action)
             state2 = prepare_multi_state(state, state2)
 
+            env.render()
+
+            # Add intrinsic reward
+            intrinsic_reward = get_intrinsic_reward(state, action, state2, icm_model)
+            print("in reward", intrinsic_reward.item())
+            print("ex reward", reward)
+
+            if cfg.use_extrinsic:
+                reward = (cfg.intrinsic_weight * intrinsic_reward) + (
+                    cfg.extrinsic_weight * reward
+                )
+            else:
+                reward = intrinsic_reward
+
+            q_loss = get_q_loss(
+                q_values[0][action], reward, q_model, state2, cfg.gamma_q
+            )
+
             replay.add(state, action, reward, state2)
             state = state2
 
@@ -311,21 +343,16 @@ def train():
                 state1_batch, action_batch, state2_batch
             )
 
-            # ----------- Losses -----------
-
-            q_loss = get_q_loss(
-                q_values[0][action], reward, q_model, state2, cfg.gamma_q
-            )
             inverse_loss = F.cross_entropy(action_pred, action_batch)
             forward_loss = F.mse_loss(state2_pred, state2_encoded)
+
+            # ------------ Learning ------------
 
             final_loss = (
                 (cfg.q_loss_weight * q_loss)
                 + (cfg.inverse_loss_weight * inverse_loss)
                 + (cfg.forward_loss_weight * forward_loss)
             )
-
-            # ------------ Learning ------------
 
             optim.zero_grad()
             final_loss.backward()
@@ -334,7 +361,7 @@ def train():
             # ------------ updates --------------
 
             # TODO: add loss scalars
-            print(final_loss.item())
+            print("--------loss: ", final_loss.item())
 
             max_episode_len_reached = current_step >= cfg.max_episode_len
             no_progress = False  # TODO: Figure out the progress shit
