@@ -207,37 +207,6 @@ def get_intrinsic_reward(state1, action, state2, model):
     return forward_loss
 
 
-def main():
-    env = gym_super_mario_bros.make("SuperMarioBros-v0")
-    env = JoypadSpace(env, COMPLEX_MOVEMENT)
-
-    dqn_model = MarioModel(3)
-    icm_model = MarioICM(3)
-
-    state = env.reset()
-
-    state = prepare_initial_state(state)
-
-    q_values = dqn_model(state)
-    action = int(torch.argmax(q_values[0]))
-
-    state2, reward, done, info = env.step(action)
-
-    state2 = prepare_initial_state(state2)
-
-    action_pred, state2, state2_pred = icm_model(
-        state, torch.IntTensor([action]), state2
-    )
-
-    action_pred_argmax = action_pred.argmax(dim=1)[0]
-
-    print(action, action_pred_argmax)
-
-    intrinsic_reward = F.mse_loss(state2_pred, state2)
-
-    print(reward, intrinsic_reward)
-
-
 def train():
     # Hyper parameters
     cfg = DictConfig(
@@ -387,11 +356,3 @@ def train():
 
 if __name__ == "__main__":
     train()
-
-"""
-
-late: -12
-3/13/21 00:00:00 DUE
-
-
-"""
