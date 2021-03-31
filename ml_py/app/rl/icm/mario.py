@@ -7,6 +7,7 @@ import gym_super_mario_bros
 from gym_super_mario_bros.actions import SIMPLE_MOVEMENT, COMPLEX_MOVEMENT
 
 import matplotlib.pyplot as plt
+from omegaconf import DictConfig
 from skimage.transform import resize
 import numpy as np
 
@@ -17,10 +18,10 @@ from collections import deque
 
 
 class MarioModel(nn.Module):
-    def __init__(self):
+    def __init__(self, frames_per_state: int):
         super().__init__()
         self.model = nn.Sequential(
-            nn.Conv2d(3, 32, kernel_size=3, stride=2, padding=1),
+            nn.Conv2d(frames_per_state, 32, kernel_size=3, stride=2, padding=1),
             nn.ELU(),
             nn.Conv2d(32, 32, kernel_size=3, stride=2, padding=1),
             nn.ELU(),
@@ -38,7 +39,7 @@ class MarioModel(nn.Module):
 
 
 class MarioICM(nn.Module):
-    def __init__(self):
+    def __init__(self, frames_per_state: int):
         super().__init__()
 
         # (S1, S2) -> a
@@ -46,6 +47,7 @@ class MarioICM(nn.Module):
             nn.Linear(288 * 2, 100),
             nn.ReLU(),
             nn.Linear(100, 12),
+            nn.Softmax(dim=1),
         )
 
         # (S1, a) -> S2
@@ -57,7 +59,7 @@ class MarioICM(nn.Module):
 
         # S1 -> S1~
         self.encode_module = nn.Sequential(
-            nn.Conv2d(3, 32, kernel_size=3, stride=2, padding=1),
+            nn.Conv2d(frames_per_state, 32, kernel_size=3, stride=2, padding=1),
             nn.ELU(),
             nn.Conv2d(32, 32, kernel_size=3, stride=2, padding=1),
             nn.ELU(),
@@ -177,24 +179,35 @@ def prepare_initial_state(frame: np.ndarray):
     return state
 
 
-def sample_action(q_values, epsilon: Optional[float] = None):
-    if epsilon is not None:
+def sample_action(
+    q_values, epsilon: Optional[float] = None, apply_epsilon: bool = False
+) -> int:
+    if apply_epsilon and epsilon is not None:
         if torch.rand(1) < epsilon:
-            return torch.randint(low=0, high=len(q_values), size=(1,))
+            return int(torch.randint(low=0, high=len(q_values), size=(1,)))
         else:
-            return torch.argmax(q_values)
+            return int(torch.argmax(q_values))
     else:
         q_values = F.softmax(F.normalize(q_values))
         sampled_action = torch.multinomial(q_values, num_samples=1)
-        return sampled_action
+        return int(sampled_action)
+
+
+def get_q_loss(q_pred, reward, model, state_next, gamma):
+    with torch.no_grad():
+        q_next = torch.max(model(state_next), dim=1)[0]
+
+    target_q = reward + gamma * q_next
+    q_loss = F.mse_loss(q_pred, target_q)
+    return q_loss
 
 
 def main():
     env = gym_super_mario_bros.make("SuperMarioBros-v0")
     env = JoypadSpace(env, COMPLEX_MOVEMENT)
 
-    dqn_model = MarioModel()
-    icm_model = MarioICM()
+    dqn_model = MarioModel(3)
+    icm_model = MarioICM(3)
 
     state = env.reset()
 
@@ -211,14 +224,143 @@ def main():
         state, torch.IntTensor([action]), state2
     )
 
-    action_pred_argmax = F.softmax(action_pred, dim=1).argmax(dim=1)[0]
+    action_pred_argmax = action_pred.argmax(dim=1)[0]
 
     print(action, action_pred_argmax)
 
-    intrinsic_reward = F.kl_div(state2_pred, state2, reduction="batchmean")
+    intrinsic_reward = F.mse_loss(state2_pred, state2)
 
     print(reward, intrinsic_reward)
 
 
+def train():
+
+    # Hyper parameters
+    cfg = DictConfig(
+        {
+            "epochs": 1,
+            "lr": 1e-4,
+            "use_extrinsic": True,
+            "max_episode_len": 1000,
+            "min_progress": 15,
+            "frames_per_state": 3,
+            "gamma_q": 0.85,
+            "epsilon_random": 0.1,  # Sample random action with epsilon probability
+            "epsilon_greedy_switch": 1000,
+            "q_loss_weight": 0.01,
+            "inverse_loss_weight": 0.5,
+            "forward_loss_weight": 0.5,
+        }
+    )
+
+    # ---- setting up variables -----
+
+    q_model = MarioModel(cfg.frames_per_state)
+    icm_model = MarioICM(cfg.frames_per_state)
+
+    optim = torch.optim.Adam(
+        list(q_model.parameters()) + list(icm_model.parameters()), lr=cfg.lr
+    )
+
+    replay = ExperienceReplay(buffer_size=500, batch_size=100)
+    env = gym_super_mario_bros.make("SuperMarioBros-v0")
+    env = JoypadSpace(env, COMPLEX_MOVEMENT)
+
+    # Counters and stats
+    last_x_pos = 0
+    current_episode = 0
+    global_step = 0
+    current_step = 0
+    cumulative_reward = 0
+    done = False
+
+    ep_rewards = []
+
+    # ----- training loop ------
+
+    for epoch in range(cfg.epochs):
+        state = env.reset()
+
+        # Monte Carlo loop
+        while not done:
+
+            # ------------ Q Learning --------------
+
+            if current_step == 0:
+                state = prepare_initial_state(env.render("rgb_array"))
+            else:
+                state = prepare_multi_state(state, env.render("rgb_array"))
+
+            q_values = q_model(state)
+            action = sample_action(
+                q_values,
+                cfg.epsilon,
+                apply_epsilon=global_step > cfg.epsilon_greedy_switch,
+            )
+            state2, reward, done, info = env.step(action)
+            state2 = prepare_multi_state(state, state2)
+
+            replay.add(state, action, reward, state2)
+            state = state2
+
+            # ------------- ICM -------------------
+
+            state1_batch, action_batch, reward_batch, state2_batch = replay.get_batch()
+
+            action_pred, state2_encoded, state2_pred = icm_model(
+                state1_batch, action_batch, state2_batch
+            )
+
+            # ----------- Losses -----------
+
+            q_loss = get_q_loss(
+                q_values[0][action], reward, q_model, state2, cfg.gamma_q
+            )
+            inverse_loss = F.cross_entropy(action_pred, action_batch)
+            forward_loss = F.mse_loss(state2_pred, state2_encoded)
+
+            final_loss = (
+                (cfg.q_loss_weight * q_loss)
+                + (cfg.inverse_loss_weight * inverse_loss)
+                + (cfg.forward_loss_weight * forward_loss)
+            )
+
+            # ------------ Learning ------------
+
+            optim.zero_grad()
+            final_loss.backward()
+            optim.step()
+
+            # ------------ updates --------------
+
+            # TODO: add loss scalars
+            print(final_loss.item())
+
+            max_episode_len_reached = current_step >= cfg.max_episode_len
+            no_progress = False  # TODO: Figure out the progress shit
+
+            done = done or max_episode_len_reached or no_progress
+
+            if done:
+                # TODO: add scalar: 'episode len' current_step, current_episode
+                if max_episode_len_reached:
+                    # TODO: Add scalar: 'max episode len reached' current_episode, auto
+                    pass
+                elif no_progress:
+                    # TODO: Add scalar: 'no progress' current_episode, auto
+                    pass
+
+                current_step = 0
+                current_episode += 1
+                done = False
+
+            global_step += 1
+            current_step += 1
+
+
 if __name__ == "__main__":
-    main()
+    train()
+
+
+# Some todo items:
+# 1. Repeat action 6 times during training. idky
