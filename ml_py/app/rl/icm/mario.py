@@ -1,20 +1,15 @@
 from random import shuffle
-from typing import Optional, Iterable
+from typing import Optional
 
-import gym
-from nes_py.wrappers import JoypadSpace
 import gym_super_mario_bros
-from gym_super_mario_bros.actions import SIMPLE_MOVEMENT, COMPLEX_MOVEMENT
-
-import matplotlib.pyplot as plt
+import numpy as np
+import torch
+from gym_super_mario_bros.actions import COMPLEX_MOVEMENT
+from nes_py.wrappers import JoypadSpace
 from omegaconf import DictConfig
 from skimage.transform import resize
-import numpy as np
-
-import torch
-from torch import nn, optim
+from torch import nn
 from torch.nn import functional as F
-from collections import deque
 
 
 class MarioModel(nn.Module):
@@ -73,7 +68,6 @@ class MarioICM(nn.Module):
         )
 
     def forward(self, state1, action, state2):
-
         # 1. Encode the states from encoding module
         state1 = self.encode_module(state1)
         state2 = self.encode_module(state2)
@@ -203,7 +197,6 @@ def get_q_loss(q_pred, reward, model, state_next, gamma):
 
 
 def get_intrinsic_reward(state1, action, state2, model):
-
     with torch.no_grad():
         action_pred, state2_encoded, state2_pred = model(
             state1, torch.IntTensor([action]), state2
@@ -246,7 +239,6 @@ def main():
 
 
 def train():
-
     # Hyper parameters
     cfg = DictConfig(
         {
@@ -395,7 +387,6 @@ def train():
 
 if __name__ == "__main__":
     train()
-
 
 """
 
