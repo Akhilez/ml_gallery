@@ -10,6 +10,7 @@ from omegaconf import DictConfig
 from skimage.transform import resize
 from torch import nn
 from torch.nn import functional as F
+import imageio
 
 
 class MarioModel(nn.Module):
@@ -350,7 +351,7 @@ def train():
                 # TODO: Plot cumulative reward for each episode
                 # TODO: Plot the x_pos after the episode
                 # TODO: Plot total sum of rewards for each episode
-                # TODO: Every n episodes store save the video
+                # TODO: Every n episodes store save the video -> imageio.mimwrite('gameplay.mp4', renders: ndArray of frames, fps=30)
 
                 current_step = -1
                 current_episode += 1
