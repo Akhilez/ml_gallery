@@ -11,6 +11,7 @@ bundles/
 webpack-stats.json
 outputs/
 multirun/
+wandb/
 
 ### OSX ###
 .DS_Store
