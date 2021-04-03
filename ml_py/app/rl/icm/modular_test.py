@@ -1,8 +1,10 @@
+from typing import List, Union, Callable, Iterable
+
 from omegaconf import DictConfig
 
 
 class ProcessModule(DictConfig):
-    required_keys = ["name"]
+    required_keys = []
 
     def __init__(self, content=None, **kwargs):
         super().__init__(content or {}, **kwargs)
@@ -23,10 +25,57 @@ class ProcessModule(DictConfig):
 
     def merge_config(self, config):
         for key in config:
-            self[key] = config[key]
+            if key[0] != "_":
+                self[key] = config[key]
 
     def then(self, next_module):
         return next_module(self)
+
+
+class Compose(ProcessModule):
+    def __init__(self, *modules: ProcessModule):
+        super().__init__()
+        self._modules = modules
+
+    def run(self):
+        config = self
+        for module in self._modules:
+            config = module(config)
+        self.merge_config(config)
+
+
+class Loop(ProcessModule):
+    def __init__(
+        self,
+        modules: Iterable[ProcessModule],
+        termination_fn: Union[Callable[[], bool], None] = None,
+    ):
+        super().__init__()
+        self._modules = modules
+        self.termination_fn = termination_fn
+
+    def run(self):
+        # start infinite loop
+        while True:
+            # Go through all modules
+            config = self
+            for module in self._modules:
+                config = module(config)
+            self.merge_config(config)
+
+            # check if terminate
+            if self.terminate():
+                break
+
+    def terminate(self) -> bool:
+        if self.termination_fn:
+            return self.termination_fn()
+        return True
+
+
+class DataInit(ProcessModule):
+    def run(self):
+        pass
 
 
 class PrintModule(ProcessModule):
@@ -35,16 +84,6 @@ class PrintModule(ProcessModule):
     def run(self):
         print(self.name)
         print(self.boo)
-
-
-class Sequential:
-    def __init__(self, *args):
-        self.processes = args
-
-    def run(self):
-        context = None
-        for process in self.processes:
-            context = process(context)
 
 
 class WAndBModule(ProcessModule):
@@ -66,8 +105,8 @@ if __name__ == "__main__":
 
     initial_data = {"name": "akhil", "boo": 9}
 
-    Sequential(
+    Compose(
         PrintModule(initial_data),
         PrintModule(),
         PrintModule(),
-    ).run()
+    )()
