@@ -14,7 +14,13 @@ class ProcessModule(DictConfig):
 
     def validate_required_keys(self):
         for key in self.required_keys:
-            assert key in self
+            if isinstance(key, dict):
+                for dict_key in key:
+                    assert dict_key in self
+                    for item in key[dict_key]:
+                        assert item in self[dict_key]
+            else:
+                assert key in self
 
     def __call__(self, additional_config=None):
         if additional_config:
@@ -45,14 +51,9 @@ class Compose(ProcessModule):
 
 
 class Loop(ProcessModule):
-    def __init__(
-        self,
-        modules: Iterable[ProcessModule],
-        termination_fn: Union[Callable[[], bool], None] = None,
-    ):
+    def __init__(self, *modules: ProcessModule):
         super().__init__()
         self._modules = modules
-        self.termination_fn = termination_fn
 
     def run(self):
         # start infinite loop
@@ -68,8 +69,6 @@ class Loop(ProcessModule):
                 break
 
     def terminate(self) -> bool:
-        if self.termination_fn:
-            return self.termination_fn()
         return True
 
 

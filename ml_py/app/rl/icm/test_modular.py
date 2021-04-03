@@ -11,10 +11,10 @@ class AppenderModule(ProcessModule):
 
 
 class EpochsLoop(Loop):
-    required_keys = ["max_length"]
+    required_keys = [{"hp": ["max_length"]}]
 
     def terminate(self):
-        return len(self.array) >= self.max_length
+        return len(self.array) >= self.hp.max_length
 
 
 class TestModular(TestCase):
@@ -32,8 +32,8 @@ class TestModular(TestCase):
         graph = Compose(
             DataInit({"array": []}),
             AppenderModule(),
-            DataInit({"max_length": 10}),
-            EpochsLoop((AppenderModule(),)),
+            DataInit({"hp": {"max_length": 10}}),
+            EpochsLoop(AppenderModule()),
         )()
 
         self.assertEqual(graph.array, list(range(10)))
