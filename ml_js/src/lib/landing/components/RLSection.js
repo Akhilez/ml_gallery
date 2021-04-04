@@ -10,18 +10,19 @@ import {
   useColorModeValue,
   Wrap,
   WrapItem,
+  IconButton,
 } from "@chakra-ui/react"
 import { Link as GLink } from "gatsby"
 import { categoriesMap, projects, projectStatus } from "../../globals/data"
-import { Swiper, SwiperSlide } from "swiper/react"
-import SwiperCore, { Pagination, Autoplay } from "swiper"
-
-import "swiper/swiper.scss"
-import "swiper/components/navigation/navigation.scss"
-import "swiper/components/pagination/pagination.scss"
-import "swiper/components/scrollbar/scrollbar.scss"
-
-SwiperCore.use([Pagination, Autoplay])
+import {
+  ButtonBack,
+  ButtonNext,
+  CarouselProvider,
+  DotGroup,
+  Slide,
+  Slider,
+} from "pure-react-carousel"
+import { AiFillCaretLeft, AiFillCaretRight } from "react-icons/all"
 
 const RLTag = ({ name }) => (
   <WrapItem>
@@ -63,7 +64,7 @@ const LeftSection = () => (
 
 const RLProject = ({ project }) => (
   <Box width={{ base: "sm", md: "lg" }}>
-    <Box py={16} pl={16}>
+    <Box py={16}>
       <GLink to={project.links.app}>
         <Image
           src={require("../images/" + project.image)}
@@ -89,29 +90,34 @@ const RightSection = () => {
     "linear(to-br, brand.500, red.500)",
     "linear(to-br, brand.700, red.700)"
   )
+
   return (
     <Flex
       direction="column"
-      borderLeftRadius="40px"
       w={{ base: "100%", md: "50%" }}
-      maxH="500px"
+      h="500px"
       bgGradient={bg}
+      borderLeftRadius="40px"
     >
-      <Swiper
-        spaceBetween={50}
-        slidesPerView={1}
-        pagination={{ clickable: true }}
-        className="vision_carousal"
-        direction="vertical"
-        style={{ marginLeft: 0 }}
-        autoplay={{ delay: 3000, disableOnInteraction: true }}
-      >
-        {projects.map(project => (
-          <SwiperSlide key={project.id}>
-            <RLProject project={project} />
-          </SwiperSlide>
-        ))}
-      </Swiper>
+      <Box h="500px" align="center">
+        <CarouselProvider
+          visibleSlides={1}
+          totalSlides={projects.length}
+          naturalSlideWidth={400}
+          isIntrinsicHeight
+          isPlaying
+          interval={3000}
+        >
+          <Slider>
+            {projects.map((project, idx) => (
+              <Slide index={idx} key={project.id}>
+                <RLProject project={project} />
+              </Slide>
+            ))}
+          </Slider>
+          <CarouselControls projects={projects} />
+        </CarouselProvider>
+      </Box>
     </Flex>
   )
 }
@@ -129,3 +135,59 @@ export const RLSection = () => {
     </Flex>
   )
 }
+
+const Dots = ({ projects, ...props }) => (
+  <DotGroup
+    renderDots={({ currentSlide, carouselStore }) => (
+      <Flex justify="center" {...props}>
+        {projects.map((project, index) => (
+          <StyledDot
+            onClick={() => carouselStore.setStoreState({ currentSlide: index })}
+            active={currentSlide === index}
+          />
+        ))}
+      </Flex>
+    )}
+  />
+)
+
+const StyledDot = props => {
+  const bg_active = useColorModeValue("secondary.500", "secondary.200")
+
+  return (
+    <Box
+      w={3}
+      h={3}
+      m={1}
+      borderRadius="full"
+      backgroundColor={props.active ? bg_active : "blackAlpha.300"}
+      {...props}
+    />
+  )
+}
+
+const CarouselControls = ({ projects }) => (
+  <Flex align="center" justify="center">
+    <ButtonBack>
+      <IconButton
+        icon={<AiFillCaretLeft />}
+        size="sm"
+        variant="ghost"
+        isRound
+        mx={2}
+        colorScheme="secondary"
+      />
+    </ButtonBack>
+    <Dots projects={projects} />
+    <ButtonNext>
+      <IconButton
+        icon={<AiFillCaretRight />}
+        size="sm"
+        variant="ghost"
+        isRound
+        mx={2}
+        colorScheme="secondary"
+      />
+    </ButtonNext>
+  </Flex>
+)

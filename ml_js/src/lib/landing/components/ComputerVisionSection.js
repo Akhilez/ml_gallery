@@ -5,6 +5,7 @@ import {
   Heading,
   Text,
   Image,
+  IconButton,
   useColorModeValue,
   Button,
   Tag,
@@ -26,10 +27,13 @@ import {
   ButtonBack,
   ButtonNext,
   CarouselProvider,
+  CarouselContext,
   Slide,
   Slider,
 } from "pure-react-carousel"
 import "pure-react-carousel/dist/react-carousel.es.css"
+import { AiFillCaretLeft, AiFillCaretRight } from "react-icons/all"
+import { Dots, HCarouselControls } from "./common"
 
 const ProjectSlide = ({ project }) => {
   const bg = useColorModeValue("white", "gray.700")
@@ -89,10 +93,11 @@ export const ComputerVisionSection = () => {
       <Box w="full" maxWidth="900px">
         <CarouselProvider
           visibleSlides={1}
-          totalSlides={6}
-          step={3}
+          totalSlides={projects.length}
           naturalSlideWidth={400}
-          naturalSlideHeight={500}
+          isIntrinsicHeight
+          isPlaying
+          interval={3000}
         >
           <Slider>
             {projects.map((project, idx) => (
@@ -101,8 +106,7 @@ export const ComputerVisionSection = () => {
               </Slide>
             ))}
           </Slider>
-          <ButtonBack>Back</ButtonBack>
-          <ButtonNext>Next</ButtonNext>
+          <HCarouselControls projects={projects} />
         </CarouselProvider>
       </Box>
     </Container>
