@@ -39,7 +39,7 @@ export default class NeuronGraphLearnCurve extends React.Component {
   }
 
   draw(p5) {
-    p5.background(255)
+    p5.clear()
 
     this.drawOutput()
     this.drawInputs()

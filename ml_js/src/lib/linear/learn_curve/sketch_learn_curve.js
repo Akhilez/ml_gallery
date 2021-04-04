@@ -49,7 +49,7 @@ export default class Graph extends React.Component {
   }
 
   draw(p5) {
-    p5.background(255)
+    p5.clear()
     this.drawAxes()
 
     for (let i = 0; i < this.x.length; i++) {
