@@ -44,7 +44,7 @@ export class Graph extends React.Component {
   }
 
   draw(p5) {
-    p5.background(255)
+    p5.clear()
 
     this.chartist.drawPoints(this.neuron.getDataPoints())
     let params = this.neuron.getMC()

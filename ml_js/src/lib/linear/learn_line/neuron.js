@@ -43,7 +43,7 @@ export default class Neuron extends React.Component {
   }
 
   draw(p5) {
-    p5.background(255)
+    p5.clear()
     p5.textSize(18)
 
     // Weight
