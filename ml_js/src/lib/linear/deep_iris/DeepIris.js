@@ -27,6 +27,7 @@ import {
   Stack,
   Heading,
 } from "@chakra-ui/react"
+import { DynamicColorBox } from "../../components/dynamicColorMode"
 
 export class DeepIris extends React.Component {
   constructor(props) {
@@ -103,7 +104,7 @@ export class DeepIris extends React.Component {
         <Text mt={6} mb={4}>
           Click a sample class below to copy
         </Text>
-        <Flex justifyContent={{ md: "center" }} overflow="auto">
+        <Flex justifyContent={{ md: "center" }} overflow="auto" pb={8} px={4}>
           <this.SampleBox values={[20.24, 92.8, 9.24, 9.84]} cls="Satosa" />
           <this.SampleBox values={[57.44, 27, 65.2, 53.04]} cls="Versicolor" />
           <this.SampleBox
@@ -118,14 +119,14 @@ export class DeepIris extends React.Component {
   SampleBox = ({ values, cls }) => {
     const texts = ["Sepal Height", "Sepal Width", "Petal Height", "Petal Width"]
     return (
-      <Stack
+      <DynamicColorBox
         width="200px"
         minW="150px"
-        bg="white"
         p={4}
         borderRadius="15px"
         mx={2}
         className="ProjectContainer"
+        boxShadow="lg"
         onClick={() =>
           this.setState({
             sepalHeight: values[0],
@@ -134,14 +135,30 @@ export class DeepIris extends React.Component {
             petalWidth: values[3],
           })
         }
+        role="group"
+        _hover={{
+          backgroundColor: "secondary.500",
+          transitionDuration: "0.4s",
+          color: "white",
+        }}
       >
-        <Box className="project-text-block">
-          <Heading as="h2" fontSize="xl" mb={6}>
+        <Box>
+          <Heading
+            as="h2"
+            fontSize="xl"
+            mb={6}
+            _groupHover={{ color: "white", fontWeight: "bold" }}
+          >
             {cls}
           </Heading>
           {values.map((value, index) => (
             <Fragment key={index}>
-              <Text textAlign="left" fontSize="md" mt={4}>
+              <Text
+                textAlign="left"
+                fontSize="md"
+                mt={4}
+                _groupHover={{ color: "white" }}
+              >
                 {texts[index]}
               </Text>
               <Slider value={value} color="brand" isDisabled max={100} min={0}>
@@ -153,7 +170,7 @@ export class DeepIris extends React.Component {
           ))}
         </Box>
         {this?.props?.children}
-      </Stack>
+      </DynamicColorBox>
     )
   }
 
@@ -211,7 +228,7 @@ export class DeepIris extends React.Component {
 
   UpdateLayersButtons() {
     return (
-      <Box mb={4}>
+      <Box my={4}>
         Change Depth:
         <Button
           variant="outline"
