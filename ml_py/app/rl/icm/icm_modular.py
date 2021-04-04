@@ -66,5 +66,7 @@ class StepsLoop(Loop):
 graph = Compose(
     DataInit(hp),
     VarInit(),
-    StepsLoop(()),
+    StepsLoop(
+        DataInit(),
+    ),
 )
