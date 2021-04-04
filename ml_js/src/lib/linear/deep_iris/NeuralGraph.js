@@ -53,7 +53,7 @@ export default class NeuralGraphIris extends React.Component {
   }
 
   draw(p5) {
-    p5.background(255)
+    p5.clear()
 
     let x_start = this.flowerSide
 
