@@ -1,0 +1,5 @@
+
+# Training related
+steps: 100
+batch_size: 2
+
