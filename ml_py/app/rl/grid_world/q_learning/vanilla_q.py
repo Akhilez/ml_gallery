@@ -41,6 +41,7 @@ def main_single_batch():
         losses = []
         rewards = []
 
+        # Monte Carlo loop
         while not env.done and step < max_steps:
             x = model.convert_inputs([env])
             y = model(x)

@@ -7,6 +7,7 @@ def main():
     run = wandb.init(
         # name="",  # Name of the run
         project="sample-project",
+        config={},
         save_code=True,
         group=None,
         tags=None,  # List of string tags

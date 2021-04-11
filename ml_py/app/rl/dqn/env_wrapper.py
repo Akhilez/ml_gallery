@@ -1,15 +1,20 @@
 from abc import ABC, abstractmethod
-from typing import Optional
+from typing import Optional, Iterable, Tuple, Any
 
+import torch
 from gym import Env
 
 
 class EnvWrapper(ABC, Env):
     def __init__(self, env=None, *kwargs):
         self.env = env
+        self.state = None
+        self.reward = None
+        self.done = False
+        self.info = {}
 
     @abstractmethod
-    def step(self, action, **kwargs):
+    def step(self, action, **kwargs) -> Tuple[Any, Any, bool, dict]:
         pass
 
     @abstractmethod
@@ -17,7 +22,7 @@ class EnvWrapper(ABC, Env):
         pass
 
     @abstractmethod
-    def is_done(self):
+    def is_done(self) -> bool:
         pass
 
     @abstractmethod
@@ -29,6 +34,11 @@ class EnvWrapper(ABC, Env):
         pass
 
     def close(self):
+        pass
+
+    @staticmethod
+    @abstractmethod
+    def get_state_batch(envs: Iterable) -> torch.Tensor:
         pass
 
 
