@@ -52,9 +52,11 @@ class GymEnvWrapper(EnvWrapper, ABC):
 
     def step(self, action, **kwargs):
         self.state, self.reward, self.done, self.info = self.env.step(action)
+        return self.state, self.reward, self.done, self.info
 
     def reset(self):
-        return self.env.reset()
+        self.state = self.env.reset()
+        return self.state
 
     def is_done(self):
         return self.done

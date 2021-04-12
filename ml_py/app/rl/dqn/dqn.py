@@ -22,7 +22,6 @@ from torch import nn
 from torch.nn import functional as F
 from app.rl.dqn.env_wrapper import EnvWrapper
 from settings import BASE_DIR
-import numpy as np
 
 
 def train_dqn(env_class: Type[EnvWrapper], model: nn.Module, config: DictConfig):
@@ -38,6 +37,7 @@ def train_dqn(env_class: Type[EnvWrapper], model: nn.Module, config: DictConfig)
         notes=None,  # longer description of run
         dir=BASE_DIR,
     )
+    wandb.watch(model)
     cumulative_reward = 0
     cumulative_done = 0
 
@@ -50,23 +50,24 @@ def train_dqn(env_class: Type[EnvWrapper], model: nn.Module, config: DictConfig)
         states = env_class.get_state_batch(envs)
         q_pred = model(states)
 
-        actions = sample_actions(q_pred, epsilon=config.epsilon_exploration)
+        actions = sample_actions(q_pred, epsilon=config.epsilon_exploration).tolist()
 
         # ============ Observe the reward && predict value of next state ==============
 
         _, rewards, done_list, _ = step_environments(envs, actions)
-        rewards = torch.tensor(rewards)
+        rewards = torch.tensor(rewards).float()
         next_states = env_class.get_state_batch(envs)
         model.eval()
         with torch.no_grad():
             q_next = model(next_states)
         model.train()
 
-        value = rewards + config.gamma_discount * q_next
+        value = rewards + config.gamma_discount * torch.amax(q_next, 1)
+        q_actions = q_pred[:, actions]
 
         # =========== LEARN ===============
 
-        loss = F.mse_loss(q_pred, value)
+        loss = F.mse_loss(q_actions, value)
 
         optim.zero_grad()
         loss.backward()
@@ -79,16 +80,19 @@ def train_dqn(env_class: Type[EnvWrapper], model: nn.Module, config: DictConfig)
         cumulative_done += get_done_count(done_list)
         log.cumulative_done = cumulative_done
 
-        cumulative_reward += np.mean(rewards)
+        mean_reward = torch.mean(rewards, 0).item()
+        log.mean_reward = mean_reward
+
+        cumulative_reward += mean_reward
         log.cumulative_reward = cumulative_reward
 
         wandb.log(log)
 
 
 def sample_actions(q_values: torch.Tensor, epsilon: float):
-    batch_size = len(q_values)
+    batch_size, num_actions = q_values.shape
     exploit_actions = torch.argmax(q_values, 1)
-    explore_actions = torch.randint(low=0, high=batch_size, size=(batch_size,))
+    explore_actions = torch.randint(low=0, high=num_actions, size=(batch_size,))
     random_indices = torch.multinomial(
         torch.Tensor([epsilon, 1 - epsilon]), batch_size, replacement=True
     )
@@ -97,7 +101,9 @@ def sample_actions(q_values: torch.Tensor, epsilon: float):
     return exploit_actions
 
 
-def step_environments(envs: List[EnvWrapper], actions) -> Tuple[List, List, List, List]:
+def step_environments(
+    envs: List[EnvWrapper], actions: List
+) -> Tuple[List, List, List, List]:
     assert len(envs) > 0
     assert len(envs) == len(actions)
 
@@ -113,6 +119,9 @@ def step_environments(envs: List[EnvWrapper], actions) -> Tuple[List, List, List
         rewards.append(reward)
         dones.append(done)
         infos.append(info)
+
+        if done:
+            env.reset()
 
     return states, rewards, dones, infos
 

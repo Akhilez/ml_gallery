@@ -19,7 +19,7 @@ class GridWorldEnvWrapper(GymEnvWrapper):
 
     @staticmethod
     def get_state_batch(envs: Iterable) -> torch.Tensor:
-        return torch.tensor([env.state for env in envs])
+        return torch.tensor([env.state for env in envs]).float()
 
 
 class GWPgModel(nn.Module):
@@ -56,15 +56,16 @@ if __name__ == "__main__":
 
     hp = DictConfig({})
 
-    hp.steps = 1
-    hp.batch_size = 2
+    hp.steps = 10000
+    hp.batch_size = 1000
 
     hp.max_steps = 50
     hp.grid_size = 4
 
+    hp.lr = 1e-3
     hp.epsilon_exploration = 0.1
     hp.gamma_discount = 0.9
 
-    model = GWPgModel(size=hp.grid_size, units=[10]).double().to(device)
+    model = GWPgModel(size=hp.grid_size, units=[10]).float().to(device)
 
     train_dqn(GridWorldEnvWrapper, model, hp)
