@@ -22,6 +22,7 @@ from torch import nn
 from torch.nn import functional as F
 from app.rl.dqn.env_wrapper import EnvWrapper
 from settings import BASE_DIR
+import numpy as np
 
 
 def train_dqn(env_class: Type[EnvWrapper], model: nn.Module, config: DictConfig):
@@ -37,6 +38,8 @@ def train_dqn(env_class: Type[EnvWrapper], model: nn.Module, config: DictConfig)
         notes=None,  # longer description of run
         dir=BASE_DIR,
     )
+    cumulative_reward = 0
+    cumulative_done = 0
 
     optim = torch.optim.Adam(model.parameters(), lr=config.lr)
 
@@ -72,7 +75,12 @@ def train_dqn(env_class: Type[EnvWrapper], model: nn.Module, config: DictConfig)
         # ============ Logging =============
 
         log.loss = loss.item()
-        log.done_count = get_done_count(done_list)
+
+        cumulative_done += get_done_count(done_list)
+        log.cumulative_done = cumulative_done
+
+        cumulative_reward += np.mean(rewards)
+        log.cumulative_reward = cumulative_reward
 
         wandb.log(log)
 
