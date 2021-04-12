@@ -14,13 +14,12 @@ Questions:
 
 """
 
-from typing import Type
-
+from typing import Type, List, Tuple
 import torch
 import wandb
 from omegaconf import DictConfig
 from torch import nn
-
+from torch.nn import functional as F
 from app.rl.dqn.env_wrapper import EnvWrapper
 from settings import BASE_DIR
 
@@ -48,9 +47,33 @@ def train_dqn(env_class: Type[EnvWrapper], model: nn.Module, config: DictConfig)
         states = env_class.get_state_batch(envs)
         q_pred = model(states)
 
-        actions = sample_actions(q_pred, epsilon=config.epsilon)
+        actions = sample_actions(q_pred, epsilon=config.epsilon_exploration)
 
-        print(step)
+        # ============ Observe the reward && predict value of next state ==============
+
+        _, rewards, done_list, _ = step_environments(envs, actions)
+        rewards = torch.tensor(rewards)
+        next_states = env_class.get_state_batch(envs)
+        model.eval()
+        with torch.no_grad():
+            q_next = model(next_states)
+        model.train()
+
+        value = rewards + config.gamma_discount * q_next
+
+        # =========== LEARN ===============
+
+        loss = F.mse_loss(q_pred, value)
+
+        optim.zero_grad()
+        loss.backward()
+        optim.step()
+
+        # ============ Logging =============
+
+        log.loss = loss.item()
+        log.done_count = get_done_count(done_list)
+
         wandb.log(log)
 
 
@@ -64,3 +87,31 @@ def sample_actions(q_values: torch.Tensor, epsilon: float):
     explore_indices = random_indices == 0
     exploit_actions[explore_indices] = explore_actions[explore_indices]
     return exploit_actions
+
+
+def step_environments(envs: List[EnvWrapper], actions) -> Tuple[List, List, List, List]:
+    assert len(envs) > 0
+    assert len(envs) == len(actions)
+
+    states = []
+    rewards = []
+    dones = []
+    infos = []
+
+    for env, action in zip(envs, actions):
+        next_state, reward, done, info = env.step(action)
+
+        states.append(next_state)
+        rewards.append(reward)
+        dones.append(done)
+        infos.append(info)
+
+    return states, rewards, dones, infos
+
+
+def get_done_count(done_list: List[bool]):
+    count = 0
+    for done in done_list:
+        if done:
+            count += 1
+    return count

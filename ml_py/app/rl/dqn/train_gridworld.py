@@ -58,8 +58,12 @@ if __name__ == "__main__":
 
     hp.steps = 1
     hp.batch_size = 2
+
     hp.max_steps = 50
     hp.grid_size = 4
+
+    hp.epsilon_exploration = 0.1
+    hp.gamma_discount = 0.9
 
     model = GWPgModel(size=hp.grid_size, units=[10]).double().to(device)
 
