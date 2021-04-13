@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from typing import Optional, Iterable, Tuple, Any
-
+import itertools
 import torch
 from gym import Env
 
@@ -63,3 +63,14 @@ class GymEnvWrapper(EnvWrapper, ABC):
 
     def render(self, mode="human"):
         return self.env.render(mode)
+
+
+class GriddlyEnvWrapper(GymEnvWrapper, ABC):
+
+    def get_legal_actions(self):
+        available_actions = self.env.game.get_available_actions(1)
+        location = list(available_actions.keys())[0]
+        action = list(available_actions[location])
+        valid_actions = self.env.game.get_available_action_ids(location, action)
+        valid_actions = list(itertools.chain(*valid_actions.values()))
+        return valid_actions
