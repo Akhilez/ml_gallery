@@ -12,6 +12,8 @@ from torch import nn
 from torch.nn import functional as F
 import imageio
 
+from lib.nn_utils import to_onehot
+
 
 class MarioModel(nn.Module):
     def __init__(self, frames_per_state: int):
@@ -132,12 +134,6 @@ class ExperienceReplay:
         state2_batch = torch.stack([x[3].squeeze(dim=0) for x in batch], dim=0)
 
         return state1_batch, action_batch, reward_batch, state2_batch
-
-
-def to_onehot(x, num_classes=12):
-    b = np.zeros((len(x), num_classes), dtype=np.int32)
-    b[np.arange(len(x)), x] = 1
-    return torch.tensor(b)
 
 
 def downscale_obs(obs, new_size=(42, 42), to_gray=True):

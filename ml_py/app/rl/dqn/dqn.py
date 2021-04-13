@@ -24,12 +24,14 @@ from app.rl.dqn.env_wrapper import EnvWrapper
 from settings import BASE_DIR
 
 
-def train_dqn(env_class: Type[EnvWrapper], model: nn.Module, config: DictConfig):
+def train_dqn(
+    env_class: Type[EnvWrapper], model: nn.Module, config: DictConfig, name=None
+):
     envs = [env_class() for _ in range(config.batch_size)]
     [env.reset() for env in envs]
     wandb.init(
         # name="",  # Name of the run
-        project="testing_dqn",
+        project=name or "testing_dqn",
         config=config,
         save_code=True,
         group=None,
@@ -79,6 +81,9 @@ def train_dqn(env_class: Type[EnvWrapper], model: nn.Module, config: DictConfig)
 
         cumulative_done += get_done_count(done_list)
         log.cumulative_done = cumulative_done
+
+        max_reward = torch.amax(rewards, 0).item()
+        log.max_reward = max_reward
 
         mean_reward = torch.mean(rewards, 0).item()
         log.mean_reward = mean_reward
