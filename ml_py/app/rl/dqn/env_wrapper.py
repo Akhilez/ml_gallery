@@ -66,7 +66,6 @@ class GymEnvWrapper(EnvWrapper, ABC):
 
 
 class GriddlyEnvWrapper(GymEnvWrapper, ABC):
-
     def get_legal_actions(self):
         available_actions = self.env.game.get_available_actions(1)
         location = list(available_actions.keys())[0]
