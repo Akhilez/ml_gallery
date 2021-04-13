@@ -20,15 +20,15 @@ import wandb
 from omegaconf import DictConfig
 from torch import nn
 from torch.nn import functional as F
-from app.rl.dqn.env_wrapper import EnvWrapper
+from app.rl.dqn.env_wrapper import EnvWrapper, BatchEnvWrapper
 from settings import BASE_DIR
 
 
 def train_dqn(
     env_class: Type[EnvWrapper], model: nn.Module, config: DictConfig, name=None
 ):
-    envs = [env_class() for _ in range(config.batch_size)]
-    [env.reset() for env in envs]
+    batch = BatchEnvWrapper(env_class, config.batch_size)
+    batch.reset()
     wandb.init(
         # name="",  # Name of the run
         project=name or "testing_dqn",
@@ -49,16 +49,18 @@ def train_dqn(
         log = DictConfig({})
         log.step = step
 
-        states = env_class.get_state_batch(envs)
+        states = batch.get_state_batch()
         q_pred = model(states)
 
-        actions = sample_actions(q_pred, epsilon=config.epsilon_exploration).tolist()
+        actions = sample_actions(
+            q_pred, batch.get_legal_actions(), epsilon=config.epsilon_exploration
+        ).tolist()
 
         # ============ Observe the reward && predict value of next state ==============
 
-        _, rewards, done_list, _ = step_environments(envs, actions)
+        _, rewards, done_list, _ = batch.step(actions)
         rewards = torch.tensor(rewards).float()
-        next_states = env_class.get_state_batch(envs)
+        next_states = batch.get_state_batch()
         model.eval()
         with torch.no_grad():
             q_next = model(next_states)
@@ -94,7 +96,7 @@ def train_dqn(
         wandb.log(log)
 
 
-def sample_actions(q_values: torch.Tensor, epsilon: float):
+def sample_actions(q_values: torch.Tensor, valid_actions, epsilon: float):
     batch_size, num_actions = q_values.shape
     exploit_actions = torch.argmax(q_values, 1)
     explore_actions = torch.randint(low=0, high=num_actions, size=(batch_size,))
@@ -104,31 +106,6 @@ def sample_actions(q_values: torch.Tensor, epsilon: float):
     explore_indices = random_indices == 0
     exploit_actions[explore_indices] = explore_actions[explore_indices]
     return exploit_actions
-
-
-def step_environments(
-    envs: List[EnvWrapper], actions: List
-) -> Tuple[List, List, List, List]:
-    assert len(envs) > 0
-    assert len(envs) == len(actions)
-
-    states = []
-    rewards = []
-    dones = []
-    infos = []
-
-    for env, action in zip(envs, actions):
-        next_state, reward, done, info = env.step(action)
-
-        states.append(next_state)
-        rewards.append(reward)
-        dones.append(done)
-        infos.append(info)
-
-        if done:
-            env.reset()
-
-    return states, rewards, dones, infos
 
 
 def get_done_count(done_list: List[bool]):

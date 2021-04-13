@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Optional, Iterable, Tuple, Any
+from typing import Optional, Iterable, Tuple, Any, Type, List
 import itertools
 import torch
 from gym import Env
@@ -40,6 +40,51 @@ class EnvWrapper(ABC, Env):
     @abstractmethod
     def get_state_batch(envs: Iterable) -> torch.Tensor:
         pass
+
+
+class BatchEnvWrapper(EnvWrapper):
+    def __init__(self, env_class: Type[EnvWrapper], batch_size: int):
+        super(BatchEnvWrapper, self).__init__()
+        self.env_class = env_class
+        self.batch_size = batch_size
+        self.envs: List[EnvWrapper] = [env_class() for _ in range(batch_size)]
+
+    def step(self, actions, **kwargs) -> Tuple[List, List, List[bool], List[dict]]:
+        assert len(self.envs) > 0
+        assert len(self.envs) == len(actions)
+
+        states = []
+        rewards = []
+        dones = []
+        infos = []
+
+        for env, action in zip(self.envs, actions):
+            next_state, reward, done, info = env.step(action)
+
+            states.append(next_state)
+            rewards.append(reward)
+            dones.append(done)
+            infos.append(info)
+
+            if done:
+                env.reset()
+
+        return states, rewards, dones, infos
+
+    def reset(self):
+        return [env.reset() for env in self.envs]
+
+    def is_done(self) -> List[bool]:
+        return [env.is_done() for env in self.envs]
+
+    def render(self, **kwargs):
+        return [env.render(**kwargs) for env in self.envs]
+
+    def get_legal_actions(self):
+        return [env.get_legal_actions() for env in self.envs]
+
+    def get_state_batch(self) -> torch.Tensor:
+        return self.env_class.get_state_batch(self.envs)
 
 
 class GymEnvWrapper(EnvWrapper, ABC):
