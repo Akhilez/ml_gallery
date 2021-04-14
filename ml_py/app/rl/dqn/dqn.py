@@ -13,6 +13,7 @@ Questions:
 - How do we handle 2 player setup?
 
 """
+
 from copy import deepcopy
 from typing import Type, List, Tuple
 import torch
@@ -61,12 +62,14 @@ def train_dqn(
 
         _, rewards, done_list, _ = batch.step(actions)
 
-        current_episodic_steps += torch.tensor(done_list, dtype=torch.int8)
+        rewards = torch.tensor(rewards).float()
+        done_list = torch.tensor(done_list, dtype=torch.int8)
+
+        current_episodic_steps += done_list
         reset_envs_that_took_too_long(
             batch.envs, current_episodic_steps, config.max_steps
         )
 
-        rewards = torch.tensor(rewards).float()
         next_states = batch.get_state_batch()
         model.eval()
         with torch.no_grad():
@@ -88,7 +91,7 @@ def train_dqn(
 
         log.loss = loss.item()
 
-        cumulative_done += get_done_count(done_list)
+        cumulative_done += done_list.sum()  # number of dones
         log.cumulative_done = cumulative_done
 
         max_reward = torch.amax(rewards, 0).item()
@@ -127,14 +130,6 @@ def sample_action(
         action_index = q_values[valid_actions].argmax(0)
 
     return valid_actions[action_index]
-
-
-def get_done_count(done_list: List[bool]):
-    count = 0
-    for done in done_list:
-        if done:
-            count += 1
-    return count
 
 
 def reset_envs_that_took_too_long(
