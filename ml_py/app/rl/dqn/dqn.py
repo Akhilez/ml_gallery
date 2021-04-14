@@ -44,6 +44,7 @@ def train_dqn(
     cumulative_done = 0
 
     optim = torch.optim.Adam(model.parameters(), lr=config.lr)
+    current_episodic_steps = torch.zeros((config.batch_size,))
 
     for step in range(config.steps):
         log = DictConfig({})
@@ -59,6 +60,10 @@ def train_dqn(
         # ============ Observe the reward && predict value of next state ==============
 
         _, rewards, done_list, _ = batch.step(actions)
+
+        current_episodic_steps += torch.tensor(done_list, dtype=torch.int8)
+        reset_envs_that_took_too_long(batch.envs, current_episodic_steps, config.max_steps)
+
         rewards = torch.tensor(rewards).float()
         next_states = batch.get_state_batch()
         model.eval()
@@ -128,3 +133,9 @@ def get_done_count(done_list: List[bool]):
         if done:
             count += 1
     return count
+
+
+def reset_envs_that_took_too_long(envs: List[EnvWrapper], steps: torch.Tensor, max_steps: int):
+    env_indices = torch.nonzero(steps >= max_steps)
+    for index in env_indices:
+        envs[index].reset()
