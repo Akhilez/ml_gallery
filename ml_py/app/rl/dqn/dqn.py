@@ -62,7 +62,9 @@ def train_dqn(
         _, rewards, done_list, _ = batch.step(actions)
 
         current_episodic_steps += torch.tensor(done_list, dtype=torch.int8)
-        reset_envs_that_took_too_long(batch.envs, current_episodic_steps, config.max_steps)
+        reset_envs_that_took_too_long(
+            batch.envs, current_episodic_steps, config.max_steps
+        )
 
         rewards = torch.tensor(rewards).float()
         next_states = batch.get_state_batch()
@@ -135,7 +137,9 @@ def get_done_count(done_list: List[bool]):
     return count
 
 
-def reset_envs_that_took_too_long(envs: List[EnvWrapper], steps: torch.Tensor, max_steps: int):
+def reset_envs_that_took_too_long(
+    envs: List[EnvWrapper], steps: torch.Tensor, max_steps: int
+):
     env_indices = torch.nonzero(steps >= max_steps)
     for index in env_indices:
         envs[index].reset()

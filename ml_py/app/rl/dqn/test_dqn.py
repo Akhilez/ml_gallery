@@ -1,4 +1,5 @@
 from unittest import TestCase, mock
+from unittest.mock import patch, Mock
 
 import torch
 
@@ -28,3 +29,15 @@ class TestDqn(TestCase):
         sampled_action = dqn.sample_action(q_values, valid_actions, epsilon)
 
         self.assertEqual(sampled_action, expected_action)
+
+    def test_reset_envs_that_took_too_long(self):
+
+        env1 = Mock()
+        env2 = Mock()
+
+        dqn.reset_envs_that_took_too_long(
+            envs=[env1, env2], steps=torch.tensor([1, 3]), max_steps=3
+        )
+
+        env1.reset.assert_not_called()
+        env2.reset.assert_called_once()
