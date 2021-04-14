@@ -13,7 +13,7 @@ Questions:
 - How do we handle 2 player setup?
 
 """
-
+from copy import deepcopy
 from typing import Type, List, Tuple
 import torch
 import wandb
@@ -54,7 +54,7 @@ def train_dqn(
 
         actions = sample_actions(
             q_pred, batch.get_legal_actions(), epsilon=config.epsilon_exploration
-        ).tolist()
+        )
 
         # ============ Observe the reward && predict value of next state ==============
 
@@ -96,16 +96,30 @@ def train_dqn(
         wandb.log(log)
 
 
-def sample_actions(q_values: torch.Tensor, valid_actions, epsilon: float):
-    batch_size, num_actions = q_values.shape
-    exploit_actions = torch.argmax(q_values, 1)
-    explore_actions = torch.randint(low=0, high=num_actions, size=(batch_size,))
-    random_indices = torch.multinomial(
-        torch.Tensor([epsilon, 1 - epsilon]), batch_size, replacement=True
-    )
-    explore_indices = random_indices == 0
-    exploit_actions[explore_indices] = explore_actions[explore_indices]
-    return exploit_actions
+def sample_actions(
+    q_values: torch.Tensor, valid_actions: List[List[int]], epsilon: float
+) -> List[int]:
+    # q_values: tensor of shape (batch, num_actions)
+    # Valid_actions: tensor of shape (batch, any)
+    return [
+        sample_action(q_values[i], valid_actions[i], epsilon)
+        for i in range(len(q_values))
+    ]
+
+
+def sample_action(
+    q_values: torch.Tensor, valid_actions: List[int], epsilon: float
+) -> int:
+    # q_values of shape (num_actions)
+    # valid_actions of shape (any)
+
+    if torch.rand((1,)) < epsilon:
+        # explore
+        action_index = torch.randint(low=0, high=len(valid_actions), size=(1,))
+    else:
+        action_index = q_values[valid_actions].argmax(0)
+
+    return valid_actions[action_index]
 
 
 def get_done_count(done_list: List[bool]):
