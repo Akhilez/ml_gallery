@@ -92,7 +92,7 @@ def train_dqn(
         log.loss = loss.item()
 
         cumulative_done += done_list.sum()  # number of dones
-        log.cumulative_done = cumulative_done
+        log.cumulative_done = int(cumulative_done)
 
         max_reward = torch.amax(rewards, 0).item()
         log.max_reward = max_reward
