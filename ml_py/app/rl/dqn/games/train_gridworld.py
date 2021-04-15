@@ -12,7 +12,7 @@ from utils import device
 class GridWorldEnvWrapper(GymEnvWrapper, TensorStateMixin):
     def __init__(self):
         super().__init__()
-        self.env = GridWorldEnv(size=4, mode="random")
+        self.env = GridWorldEnv(size=4, mode="static")
 
     def get_legal_actions(self):
         return self.env.get_legal_actions()
@@ -54,6 +54,8 @@ if __name__ == "__main__":
 
     hp.steps = 1000
     hp.batch_size = 1000
+    hp.env_record_freq = 1000
+    hp.env_record_duration = 25
 
     hp.max_steps = 50
     hp.grid_size = 4

@@ -1,26 +1,11 @@
-"""
-
-What's desired?
-- Use yaml files for hyperparameters
-  - because it is easy to comment and add whatever notes you want in the yaml file
-- Use batches of envs
-  - Not all envs are meant to start at the same time and when one env is done,
-    it will be reset independent of other envs in the batch.
-- Run the algo in steps rather than epoch + batch
-- Use env wrapper
-
-Questions:
-- How do we handle 2 player setup?
-
-"""
-
-from copy import deepcopy
 from typing import Type, List, Tuple
 import torch
 import wandb
 from omegaconf import DictConfig
 from torch import nn
 from torch.nn import functional as F
+from datetime import datetime
+from app.rl.dqn.env_recorder import EnvRecorder
 from app.rl.dqn.env_wrapper import EnvWrapper, BatchEnvWrapper
 from settings import BASE_DIR
 
@@ -31,7 +16,7 @@ def train_dqn(
     batch = BatchEnvWrapper(env_class, config.batch_size)
     batch.reset()
     wandb.init(
-        # name="",  # Name of the run
+        name=f"{name}_{str(datetime.now().timestamp())[5:10]}",
         project=name or "testing_dqn",
         config=config,
         save_code=True,
@@ -41,6 +26,7 @@ def train_dqn(
         dir=BASE_DIR,
     )
     wandb.watch(model)
+    env_recorder = EnvRecorder(config.env_record_freq, config.env_record_duration)
     cumulative_reward = 0
     cumulative_done = 0
 
@@ -102,6 +88,8 @@ def train_dqn(
 
         cumulative_reward += mean_reward
         log.cumulative_reward = cumulative_reward
+
+        env_recorder.record(step, batch.envs, wandb)
 
         wandb.log(log)
 

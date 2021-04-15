@@ -36,3 +36,5 @@ gym-super-mario-bros==7.3.2
 gym-retro==0.8.0
 griddly==1.0.0
 wandb==0.10.24
+moviepy==1.0.3
+imageio
