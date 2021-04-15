@@ -33,5 +33,4 @@ class EnvRecorder:
     def _format_video(video):
         video = np.array(video)
         video = np.moveaxis(video, -1, 1)
-        print(video.shape)
         return video

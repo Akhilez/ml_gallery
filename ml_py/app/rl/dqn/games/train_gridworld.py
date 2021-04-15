@@ -66,4 +66,4 @@ if __name__ == "__main__":
 
     model = GWPgModel(size=hp.grid_size, units=[10]).float().to(device)
 
-    train_dqn(GridWorldEnvWrapper, model, hp)
+    train_dqn(GridWorldEnvWrapper, model, hp, name="SimpleGridWorld")
