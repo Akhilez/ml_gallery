@@ -3,23 +3,19 @@ import torch
 from torch import nn
 
 from app.rl.dqn.dqn import train_dqn
-from app.rl.dqn.env_wrapper import GymEnvWrapper
+from app.rl.dqn.env_wrapper import GymEnvWrapper, TensorStateMixin
 from gym_grid_world.envs import GridWorldEnv
 from omegaconf import DictConfig
 from utils import device
 
 
-class GridWorldEnvWrapper(GymEnvWrapper):
+class GridWorldEnvWrapper(GymEnvWrapper, TensorStateMixin):
     def __init__(self):
         super().__init__()
         self.env = GridWorldEnv(size=4, mode="random")
 
     def get_legal_actions(self):
         return self.env.get_legal_actions()
-
-    @staticmethod
-    def get_state_batch(envs: Iterable) -> torch.Tensor:
-        return torch.tensor([env.state for env in envs]).float()
 
 
 class GWPgModel(nn.Module):
@@ -56,7 +52,7 @@ if __name__ == "__main__":
 
     hp = DictConfig({})
 
-    hp.steps = 10000
+    hp.steps = 1000
     hp.batch_size = 1000
 
     hp.max_steps = 50

@@ -4,6 +4,8 @@ import itertools
 import torch
 from gym import Env
 
+from settings import device
+
 
 class EnvWrapper(ABC, Env):
     def __init__(self, env=None, *kwargs):
@@ -40,6 +42,12 @@ class EnvWrapper(ABC, Env):
     @abstractmethod
     def get_state_batch(envs: Iterable) -> torch.Tensor:
         pass
+
+
+class TensorStateMixin(EnvWrapper, ABC):
+    @staticmethod
+    def get_state_batch(envs: Iterable) -> torch.Tensor:
+        return torch.tensor([env.state for env in envs]).float().to(device)
 
 
 class BatchEnvWrapper(EnvWrapper):
