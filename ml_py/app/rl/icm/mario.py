@@ -10,7 +10,6 @@ from omegaconf import DictConfig
 from skimage.transform import resize
 from torch import nn
 from torch.nn import functional as F
-import imageio
 
 from lib.nn_utils import to_onehot
 

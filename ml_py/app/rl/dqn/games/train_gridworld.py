@@ -3,13 +3,13 @@ import torch
 from torch import nn
 
 from app.rl.dqn.dqn import train_dqn
-from app.rl.dqn.env_wrapper import GymEnvWrapper, TensorStateMixin
+from app.rl.dqn.env_wrapper import GymEnvWrapper, NumpyStateMixin
 from gym_grid_world.envs import GridWorldEnv
 from omegaconf import DictConfig
 from utils import device
 
 
-class GridWorldEnvWrapper(GymEnvWrapper, TensorStateMixin):
+class GridWorldEnvWrapper(GymEnvWrapper, NumpyStateMixin):
     def __init__(self):
         super().__init__()
         self.env = GridWorldEnv(size=4, mode="static")

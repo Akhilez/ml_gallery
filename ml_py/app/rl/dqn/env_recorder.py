@@ -1,7 +1,6 @@
+from copy import deepcopy
 from typing import List
-import matplotlib.pyplot as plt
 import numpy as np
-
 from app.rl.dqn.env_wrapper import EnvWrapper
 
 
@@ -16,7 +15,8 @@ class EnvRecorder:
     def record(self, step: int, envs: List[EnvWrapper], wandb_run):
         if self.frequency and step % self.frequency < self.duration:
             for i in range(self.n_envs):
-                self.buffer[i].append(envs[i].render("rgb_array"))
+                arr = envs[i].render("rgb_array")
+                self.buffer[i].append(deepcopy(arr))
             if len(self.buffer[0]) >= self.duration:
                 wandb_run.log(
                     {

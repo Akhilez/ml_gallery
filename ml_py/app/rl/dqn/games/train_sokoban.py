@@ -1,18 +1,14 @@
 from typing import List
-
 import gym
-import numpy as np
 from griddly import gd
-import matplotlib.pyplot as plt
 from omegaconf import DictConfig
 from torch import nn
-
 from app.rl.dqn.dqn import train_dqn
-from app.rl.dqn.env_wrapper import GriddlyEnvWrapper, TensorStateMixin
+from app.rl.dqn.env_wrapper import GriddlyEnvWrapper, NumpyStateMixin
 from settings import device
 
 
-class SokobanV2L0EnvWrapper(GriddlyEnvWrapper, TensorStateMixin):
+class SokobanV2L0EnvWrapper(GriddlyEnvWrapper, NumpyStateMixin):
     def __init__(self):
         super().__init__()
         self.env = gym.make(

@@ -44,10 +44,16 @@ class EnvWrapper(ABC, Env):
         pass
 
 
-class TensorStateMixin(EnvWrapper, ABC):
+class NumpyStateMixin(EnvWrapper, ABC):
     @staticmethod
     def get_state_batch(envs: Iterable) -> torch.Tensor:
         return torch.tensor([env.state for env in envs]).float().to(device)
+
+
+class TensorStateMixin(EnvWrapper, ABC):
+    @staticmethod
+    def get_state_batch(envs: Iterable) -> torch.Tensor:
+        return torch.stack([env.state for env in envs]).float().to(device)
 
 
 class BatchEnvWrapper(EnvWrapper):
