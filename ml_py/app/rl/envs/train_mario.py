@@ -7,10 +7,7 @@ from nes_py.wrappers import JoypadSpace
 from omegaconf import DictConfig
 from torch import nn
 from app.rl.dqn.dqn import train_dqn
-from app.rl.dqn.env_wrapper import (
-    TensorStateMixin,
-    GymEnvWrapper,
-)
+from app.rl.envs.env_wrapper import TensorStateMixin, GymEnvWrapper
 from skimage.transform import resize
 from settings import device
 

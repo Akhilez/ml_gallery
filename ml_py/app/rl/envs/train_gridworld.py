@@ -1,9 +1,7 @@
-from typing import Iterable, List
-import torch
+from typing import List
 from torch import nn
-
 from app.rl.dqn.dqn import train_dqn
-from app.rl.dqn.env_wrapper import GymEnvWrapper, NumpyStateMixin
+from app.rl.envs.env_wrapper import GymEnvWrapper, NumpyStateMixin
 from gym_grid_world.envs import GridWorldEnv
 from omegaconf import DictConfig
 from utils import device

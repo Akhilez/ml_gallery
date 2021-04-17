@@ -3,7 +3,7 @@ from typing import Iterable, List
 import torch
 from torch import nn
 from app.rl.dqn.dqn import train_dqn
-from app.rl.dqn.env_wrapper import GymEnvWrapper
+from app.rl.envs.env_wrapper import GymEnvWrapper
 from omegaconf import DictConfig
 from lib.nn_utils import to_onehot
 
