@@ -144,10 +144,9 @@ class PettingZooEnvWrapper(GymEnvWrapper, ABC):
         randomize_first: bool = True,
         is_learner_first: bool = False,
     ):
-        super(PettingZooEnvWrapper, self).__init__()
+        super(PettingZooEnvWrapper, self).__init__(env)
         self.randomize_first = randomize_first
         self.is_learner_first = is_learner_first
-        self.env = env
         self.opponent_policy = opponent_policy
         self.learner = None
         self.opponent = None
@@ -172,11 +171,11 @@ class PettingZooEnvWrapper(GymEnvWrapper, ABC):
     def step(self, action, **kwargs):
         self.env.step(action)
 
-        if not self.env.env_done:
+        if not any(self.env.dones.values()):
             self.env.step(self.opponent_policy(self.env))
 
         self.state = self.env.observe(self.env.agent_selection)["observation"]
-        self.done = self.env.env_done
+        self.done = any(self.env.dones.values())
         self.reward = self.env.rewards[self.learner]
         self.info = self.env.infos[self.learner]
 
