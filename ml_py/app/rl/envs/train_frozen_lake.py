@@ -1,11 +1,12 @@
 from gym.envs.toy_text.frozen_lake import FrozenLakeEnv
-from typing import Iterable, List
+from typing import Iterable
 import torch
-from torch import nn
 from app.rl.dqn.dqn import train_dqn
 from app.rl.envs.env_wrapper import GymEnvWrapper
 from omegaconf import DictConfig
+from app.rl.models import GenericLinearModel
 from lib.nn_utils import to_onehot
+from settings import device
 
 
 class FrozenLakeEnvWrapper(GymEnvWrapper):
@@ -19,33 +20,6 @@ class FrozenLakeEnvWrapper(GymEnvWrapper):
     @staticmethod
     def get_state_batch(envs: Iterable) -> torch.Tensor:
         return to_onehot([env.state for env in envs], 16).float()
-
-
-class FrozenLakeDqnModel(nn.Module):
-    def __init__(self, units: List[int]):
-        super().__init__()
-
-        self.first = nn.Sequential(nn.Linear(16, units[0]), nn.ReLU(), nn.Dropout(0.3))
-
-        self.hidden = nn.ModuleList(
-            [
-                nn.Sequential(
-                    nn.Linear(units[i], units[i + 1]),
-                    nn.ReLU(),
-                    nn.Dropout(0.3),
-                )
-                for i in range(len(units) - 1)
-            ]
-        )
-
-        self.out = nn.Linear(units[-1], 4)
-
-    def forward(self, x):
-        x = self.first(x)
-        for hidden in self.hidden:
-            x = hidden(x)
-        x = x.flatten(1)
-        return self.out(x)
 
 
 if __name__ == "__main__":
@@ -63,6 +37,6 @@ if __name__ == "__main__":
 
     hp.units = [10]
 
-    model = FrozenLakeDqnModel(units=hp.units)
+    model = GenericLinearModel(16, hp.units, 4).double().to(device)
 
     train_dqn(FrozenLakeEnvWrapper, model, hp, name="FrozenLake")
