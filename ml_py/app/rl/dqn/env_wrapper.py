@@ -1,9 +1,10 @@
 from abc import ABC, abstractmethod
-from typing import Optional, Iterable, Tuple, Any, Type, List
+from typing import Optional, Iterable, Tuple, Any, Type, List, Callable
 import itertools
+import numpy as np
 import torch
 from gym import Env
-
+from pettingzoo import AECEnv
 from settings import device
 
 
@@ -104,6 +105,7 @@ class BatchEnvWrapper(EnvWrapper):
 class GymEnvWrapper(EnvWrapper, ABC):
     def __init__(self, env: Optional[Env] = None):
         super().__init__(env)
+        self.metadata = env.metadata
         self.state = None
         self.reward = None
         self.done = False
@@ -132,3 +134,60 @@ class GriddlyEnvWrapper(GymEnvWrapper, ABC):
         valid_actions = self.env.game.get_available_action_ids(location, action)
         valid_actions = list(itertools.chain(*valid_actions.values()))
         return valid_actions
+
+
+class PettingZooEnvWrapper(GymEnvWrapper, ABC):
+    def __init__(
+        self,
+        env: AECEnv,
+        opponent_policy: Callable[[AECEnv], int],
+        randomize_first: bool = True,
+        is_learner_first: bool = False,
+    ):
+        super(PettingZooEnvWrapper, self).__init__()
+        self.randomize_first = randomize_first
+        self.is_learner_first = is_learner_first
+        self.env = env
+        self.opponent_policy = opponent_policy
+        self.learner = None
+        self.opponent = None
+        self.state = None
+        self.reward = None
+        self.done = None
+        self.info = {}
+
+    def reset(self):
+        self.env.reset()
+        is_opponent_first = not self.is_learner_first or (
+            self.randomize_first and np.random.random() > 0.5
+        )
+        self.opponent, self.learner = (
+            self.env.agents if is_opponent_first else reversed(self.env.agents)
+        )
+        if is_opponent_first:
+            self.env.step(self.opponent_policy(self.env))
+        self.state = self.env.observe(self.env.agent_selection)["observation"]
+        return self.state
+
+    def step(self, action, **kwargs):
+        self.env.step(action)
+
+        if not self.env.env_done:
+            self.env.step(self.opponent_policy(self.env))
+
+        self.state = self.env.observe(self.env.agent_selection)["observation"]
+        self.done = self.env.env_done
+        self.reward = self.env.rewards[self.learner]
+        self.info = self.env.infos[self.learner]
+
+        return self.state, self.done, self.reward, self.info
+
+    def get_legal_actions(self):
+        observation = self.env.observe(self.env.agent_selection)
+        return np.nonzero(observation["action_mask"])[0]
+
+
+def petting_zoo_random_player(env: AECEnv) -> int:
+    action_mask = env.observe(env.agent_selection)["action_mask"]
+    actions = np.nonzero(action_mask)[0]
+    return np.random.choice(actions)

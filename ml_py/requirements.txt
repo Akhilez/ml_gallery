@@ -30,7 +30,7 @@ hydra-core==1.0.6
 sentence-transformers==0.4.1.2
 albumentations==0.5.2
 
-pettingzoo==1.7.0
+pettingzoo==1.8.1
 pettingzoo[classic]
 gym-super-mario-bros==7.3.2
 gym-retro==0.8.0
