@@ -179,7 +179,7 @@ class PettingZooEnvWrapper(GymEnvWrapper, ABC):
         self.reward = self.env.rewards[self.learner]
         self.info = self.env.infos[self.learner]
 
-        return self.state, self.done, self.reward, self.info
+        return self.state, self.reward, self.done, self.info
 
     def get_legal_actions(self):
         observation = self.env.observe(self.env.agent_selection)
