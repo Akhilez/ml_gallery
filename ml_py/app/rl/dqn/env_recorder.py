@@ -2,6 +2,9 @@ from copy import deepcopy
 from typing import List
 import numpy as np
 from app.rl.dqn.env_wrapper import EnvWrapper
+import logging
+
+log = logging.getLogger(__name__)
 
 
 class EnvRecorder:
@@ -13,21 +16,26 @@ class EnvRecorder:
         self.buffer = [[] for _ in range(n_envs)]
 
     def record(self, step: int, envs: List[EnvWrapper], wandb_run):
-        if self.frequency and step % self.frequency < self.duration:
-            for i in range(self.n_envs):
-                arr = envs[i].render("rgb_array")
-                self.buffer[i].append(deepcopy(arr))
-            if len(self.buffer[0]) >= self.duration:
-                wandb_run.log(
-                    {
-                        f"video_{step}_{i}": wandb_run.Video(
-                            self._format_video(self.buffer[i]), fps=4, format="gif"
-                        )
-                        for i in range(self.n_envs)
-                    },
-                    commit=False,
-                )
-                self.buffer = [[] for _ in range(self.n_envs)]
+        try:
+            # if 'rgb_array' not in envs[0].metadata['render.modes']:
+            #     return
+            if self.frequency and step % self.frequency < self.duration:
+                for i in range(self.n_envs):
+                    arr = envs[i].render("rgb_array")
+                    self.buffer[i].append(deepcopy(arr))
+                if len(self.buffer[0]) >= self.duration:
+                    wandb_run.log(
+                        {
+                            f"video_{step}_{i}": wandb_run.Video(
+                                self._format_video(self.buffer[i]), fps=4, format="gif"
+                            )
+                            for i in range(self.n_envs)
+                        },
+                        commit=False,
+                    )
+                    self.buffer = [[] for _ in range(self.n_envs)]
+        except Exception as e:
+            log.exception(f"Exception while recording video: {e}")
 
     @staticmethod
     def _format_video(video):
