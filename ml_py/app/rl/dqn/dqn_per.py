@@ -1,4 +1,14 @@
+"""
+This file adds Prioritized Experience Replay feature to the vanilla dqn algorithm.
+How it works:
+1. Before training starts, envs are stepped once with random actions
+2. The info is stored in the memory with 0 as the loss (cuz idk)
+3.
+"""
+
+
 from typing import Type
+import numpy as np
 import torch
 import wandb
 from omegaconf import DictConfig
@@ -16,13 +26,17 @@ from app.rl.dqn.utils import sample_actions, reset_envs_that_took_too_long
 
 
 def train_dqn_per(
-    env_class: Type[EnvWrapper], model: nn.Module, config: DictConfig, name=None
+    env_class: Type[EnvWrapper],
+    model: nn.Module,
+    config: DictConfig,
+    project_name=None,
+    run_name=None,
 ):
     batch = BatchEnvWrapper(env_class, config.batch_size)
     batch.reset()
     wandb.init(
-        name=f"{name}_{str(datetime.now().timestamp())[5:10]}",
-        project=name or "testing_dqn",
+        name=f"{run_name}_{str(datetime.now().timestamp())[5:10]}",
+        project=project_name or "testing_dqn",
         config=config,
         save_code=True,
         group=None,
@@ -43,6 +57,8 @@ def train_dqn_per(
     optim = torch.optim.Adam(model.parameters(), lr=config.lr)
     current_episodic_steps = torch.zeros((config.batch_size,))
 
+    store_initial_replay(batch, replay)
+
     for step in range(config.steps):
         log = DictConfig({})
         log.step = step
@@ -60,12 +76,9 @@ def train_dqn_per(
 
         # ============ Observe the reward && predict value of next state ==============
 
-        _, rewards, done_list, _ = batch.step(actions_live)
+        rewards, dones = transform_step_data(*batch.step(actions_live))
 
-        rewards = torch.tensor(rewards).float()
-        done_list = torch.tensor(done_list, dtype=torch.int8)
-
-        current_episodic_steps += done_list
+        current_episodic_steps += dones
         reset_envs_that_took_too_long(
             batch.envs, current_episodic_steps, config.max_steps
         )
@@ -77,7 +90,7 @@ def train_dqn_per(
             q_next = model(next_states)
         model.train()
 
-        value_live = rewards + config.gamma_discount * torch.amax(
+        value_live = rewards[: config.batch_size] + config.gamma_discount * torch.amax(
             q_next[: config.batch_size], 1
         )
         value_replay = replay_batch[2] + config.gamma_discount * torch.amax(
@@ -85,11 +98,13 @@ def train_dqn_per(
         )
         value = torch.cat((value_live, value_replay), 0)
 
-        q_actions = q_pred[:, actions]
+        q_actions = q_pred[range(len(q_pred)), actions]
 
         # =========== LEARN ===============
 
-        loss = F.mse_loss(q_actions, value)
+        loss = F.mse_loss(q_actions, value, reduction="none")
+        replay.add_batch(loss, (states, actions, rewards, next_states))
+        loss = torch.mean(loss)
 
         optim.zero_grad()
         loss.backward()
@@ -106,7 +121,7 @@ def train_dqn_per(
         log.min_reward = min_reward
         log.mean_reward = mean_reward
 
-        cumulative_done += done_list.sum()  # number of dones
+        cumulative_done += dones.sum()  # number of dones
         log.cumulative_done = int(cumulative_done)
 
         cumulative_reward += mean_reward
@@ -115,3 +130,17 @@ def train_dqn_per(
         env_recorder.record(step, batch.envs, wandb)
 
         wandb.log(log)
+
+
+def store_initial_replay(batched_env, buffer):
+    legal_actions = batched_env.get_legal_actions()
+    actions = [np.random.choice(actions) for actions in legal_actions]
+    states1 = batched_env.state
+    states2, rewards, dones, infos = batched_env.step(actions)
+    buffer.add(np.zeros(len(states1)), (states1, actions, rewards, states2))
+
+
+def transform_step_data(state, rewards, dones, info):
+    rewards = torch.tensor(rewards).float()
+    dones = torch.tensor(dones, dtype=torch.int8)
+    return rewards, dones
