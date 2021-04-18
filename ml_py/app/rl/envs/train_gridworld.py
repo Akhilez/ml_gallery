@@ -1,6 +1,7 @@
 from typing import List
 from torch import nn
 from app.rl.dqn.dqn import train_dqn
+from app.rl.dqn.dqn_per import train_dqn_per
 from app.rl.envs.env_wrapper import GymEnvWrapper, NumpyStateMixin
 from gym_grid_world.envs import GridWorldEnv
 from omegaconf import DictConfig
@@ -9,8 +10,7 @@ from utils import device
 
 class GridWorldEnvWrapper(GymEnvWrapper, NumpyStateMixin):
     def __init__(self):
-        super().__init__()
-        self.env = GridWorldEnv(size=4, mode="static")
+        super().__init__(GridWorldEnv(size=4, mode="static"))
 
     def get_legal_actions(self):
         return self.env.get_legal_actions()
@@ -46,7 +46,7 @@ class GWPgModel(nn.Module):
         return self.out(x)
 
 
-if __name__ == "__main__":
+def dqn_gridworld():
 
     hp = DictConfig({})
 
@@ -64,4 +64,39 @@ if __name__ == "__main__":
 
     model = GWPgModel(size=hp.grid_size, units=[10]).float().to(device)
 
-    train_dqn(GridWorldEnvWrapper, model, hp, name="SimpleGridWorld")
+    train_dqn(
+        GridWorldEnvWrapper, model, hp, project_name="SimpleGridWorld", run_name="dqn"
+    )
+
+
+def dqn_per_gridworld():
+    hp = DictConfig({})
+
+    hp.steps = 100
+    hp.batch_size = 10
+    hp.replay_batch = 50
+    hp.replay_size = 5
+
+    hp.env_record_freq = 1000
+    hp.env_record_duration = 25
+
+    hp.max_steps = 50
+    hp.grid_size = 4
+
+    hp.lr = 1e-3
+    hp.epsilon_exploration = 0.1
+    hp.gamma_discount = 0.9
+
+    model = GWPgModel(size=hp.grid_size, units=[10]).float().to(device)
+
+    train_dqn_per(
+        GridWorldEnvWrapper,
+        model,
+        hp,
+        project_name="SimpleGridWorld",
+        run_name="dqn_per",
+    )
+
+
+if __name__ == "__main__":
+    dqn_per_gridworld()
