@@ -31,12 +31,18 @@ class PrioritizedReplay:
         else:
             heappushpop(self.memory, (loss, data))
 
+    def add_batch(self, losses, data: Tuple):
+        for i in range(len(losses)):
+            self.add(float(losses[i]), tuple([data[j][i] for j in range(len(data))]))
+
     def get_batch(self):
         batch_size = (
             len(self.memory) if len(self.memory) < self.batch_size else self.batch_size
         )
 
         if len(self.memory) < 1:
+            if self.transform:
+                return self.transform([])
             return torch.rand(0)
 
         self.memory, batch = delete_random(self.memory, batch_size)
@@ -56,8 +62,11 @@ def delete_random(array, size):
 
 
 def state_action_reward_state_2_transform(data: [List[Tuple[float, Tuple]]]) -> Tuple:
-    state1_batch = torch.stack([x[1][0].squeeze(dim=0) for x in data], dim=0)
+    if len(data) == 0:
+        empty = torch.rand(0)
+        return empty, empty, empty, empty
+    state1_batch = torch.tensor([x[1][0] for x in data])
     action_batch = torch.LongTensor([x[1][1] for x in data])
     reward_batch = torch.tensor([x[1][2] for x in data])
-    state2_batch = torch.stack([x[1][3].squeeze(dim=0) for x in data], dim=0)
+    state2_batch = torch.tensor([x[1][3] for x in data])
     return state1_batch, action_batch, reward_batch, state2_batch
