@@ -68,29 +68,31 @@ class BatchEnvWrapper(EnvWrapper):
         assert len(self.envs) > 0
         assert len(self.envs) == len(actions)
 
-        states = []
-        rewards = []
-        dones = []
-        infos = []
+        self.state = []
+        self.reward = []
+        self.done = []
+        self.info = []
 
         for env, action in zip(self.envs, actions):
             next_state, reward, done, info = env.step(action)
 
-            states.append(next_state)
-            rewards.append(reward)
-            dones.append(done)
-            infos.append(info)
+            self.state.append(next_state)
+            self.reward.append(reward)
+            self.done.append(done)
+            self.info.append(info)
 
             if done:
                 env.reset()
 
-        return states, rewards, dones, infos
+        return self.state, self.reward, self.done, self.info
 
     def reset(self):
-        return [env.reset() for env in self.envs]
+        self.state = [env.reset() for env in self.envs]
+        return self.state
 
     def is_done(self) -> List[bool]:
-        return [env.is_done() for env in self.envs]
+        self.done = [env.is_done() for env in self.envs]
+        return self.done
 
     def render(self, **kwargs):
         return [env.render(**kwargs) for env in self.envs]
@@ -105,7 +107,7 @@ class BatchEnvWrapper(EnvWrapper):
 class GymEnvWrapper(EnvWrapper, ABC):
     def __init__(self, env: Optional[Env] = None):
         super().__init__(env)
-        self.metadata = env.metadata
+        self.metadata = env.metadata if env else None
         self.state = None
         self.reward = None
         self.done = False
