@@ -12,13 +12,17 @@ from settings import BASE_DIR
 
 
 def train_dqn(
-    env_class: Type[EnvWrapper], model: nn.Module, config: DictConfig, name=None
+    env_class: Type[EnvWrapper],
+    model: nn.Module,
+    config: DictConfig,
+    project_name=None,
+    run_name=None,
 ):
     batch = BatchEnvWrapper(env_class, config.batch_size)
     batch.reset()
     wandb.init(
-        name=f"{name}_{str(datetime.now().timestamp())[5:10]}",
-        project=name or "testing_dqn",
+        name=f"{run_name}_{str(datetime.now().timestamp())[5:10]}",
+        project=project_name or "testing_dqn",
         config=config,
         save_code=True,
         group=None,
@@ -64,7 +68,7 @@ def train_dqn(
         model.train()
 
         value = rewards + config.gamma_discount * torch.amax(q_next, 1)
-        q_actions = q_pred[:, actions]
+        q_actions = q_pred[range(len(q_pred)), actions]
 
         # =========== LEARN ===============
 
