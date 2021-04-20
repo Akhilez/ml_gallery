@@ -35,7 +35,7 @@ def reset_envs_that_took_too_long(
     envs: List[EnvWrapper], steps: torch.Tensor, dones: torch.Tensor, max_steps: int
 ):
     """
-    Pseudo code:  # TODO: Write a test
+    Pseudo code:
 
     steps = [3, 2, 5]
     dones = [0, 0, 1]
@@ -64,8 +64,8 @@ def reset_envs_that_took_too_long(
     maxed_out = steps >= max_steps
     steps[maxed_out] = 0
 
-    maxed_indices = maxed_out.nonzero()
-    for index in maxed_indices:
+    reset_indices = torch.nonzero(steps == 0).flatten(0)
+    for index in reset_indices:
         envs[index].reset()
 
     return steps

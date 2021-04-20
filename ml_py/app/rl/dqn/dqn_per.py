@@ -1,9 +1,5 @@
 """
 This file adds Prioritized Experience Replay feature to the vanilla dqn algorithm.
-How it works:
-1. Before training starts, envs are stepped once with random actions
-2. The info is stored in the memory with 0 as the loss (cuz idk)
-3.
 """
 
 
@@ -142,7 +138,9 @@ def store_initial_replay(batched_env, buffer):
     legal_actions = batched_env.get_legal_actions()
     actions = [np.random.choice(actions) for actions in legal_actions]
     states1 = batched_env.get_state_batch()
+
     _, rewards, dones, infos = batched_env.step(actions)
+
     states2 = batched_env.get_state_batch()
     buffer.add_batch(np.zeros(len(states1)), (states1, actions, rewards, states2))
 
