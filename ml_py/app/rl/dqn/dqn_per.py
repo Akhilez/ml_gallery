@@ -1,5 +1,10 @@
 """
 This file adds Prioritized Experience Replay feature to the vanilla dqn algorithm.
+
+# TODO Items:
+- move max_steps logic to envWrapper mixin
+- Create a wrapping for env.step with replay items
+- what is current_env_steps for?
 """
 
 
@@ -18,7 +23,7 @@ from app.rl.prioritized_replay import (
     state_action_reward_state_2_transform,
 )
 from settings import BASE_DIR
-from app.rl.dqn.utils import sample_actions, reset_envs_that_took_too_long
+from app.rl.dqn.utils import sample_actions
 
 
 def train_dqn_per(
@@ -108,9 +113,9 @@ def train_dqn_per(
 
         # ---- resetting -----
 
-        current_env_steps = reset_envs_that_took_too_long(
-            env.envs, current_env_steps, dones_live, config.max_steps
-        )
+        current_env_steps = (
+            current_env_steps + torch.ones(config.batch_size)
+        ) * torch.logical_not(dones_live)
 
         # ============ Logging =============
 
