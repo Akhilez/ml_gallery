@@ -46,8 +46,8 @@ def train_dqn_per(
     )
     wandb.watch(model)
     replay = PrioritizedReplay(
-        config.replay_size,
-        config.replay_batch,
+        buffer_size=config.replay_size,
+        batch_size=config.replay_batch,
         transform=state_action_reward_state_2_transform,
     )
     env_recorder = EnvRecorder(config.env_record_freq, config.env_record_duration)
@@ -90,20 +90,21 @@ def train_dqn_per(
             q_next = model(next_states)
         model.train()
 
-        value_live = rewards[: config.batch_size] + config.gamma_discount * torch.amax(
+        value_live = rewards + config.gamma_discount * torch.amax(
             q_next[: config.batch_size], 1
         )
         value_replay = replay_batch[2] + config.gamma_discount * torch.amax(
             q_next[config.batch_size :], 1
         )
         value = torch.cat((value_live, value_replay), 0)
+        rewards_all = torch.cat((rewards, replay_batch[2]))
 
         q_actions = q_pred[range(len(q_pred)), actions]
 
         # =========== LEARN ===============
 
         loss = F.mse_loss(q_actions, value, reduction="none")
-        replay.add_batch(loss, (states, actions, rewards, next_states))
+        replay.add_batch(loss, (states, actions, rewards_all, next_states))
         loss = torch.mean(loss)
 
         optim.zero_grad()
@@ -135,9 +136,10 @@ def train_dqn_per(
 def store_initial_replay(batched_env, buffer):
     legal_actions = batched_env.get_legal_actions()
     actions = [np.random.choice(actions) for actions in legal_actions]
-    states1 = batched_env.state
-    states2, rewards, dones, infos = batched_env.step(actions)
-    buffer.add(np.zeros(len(states1)), (states1, actions, rewards, states2))
+    states1 = batched_env.get_state_batch()
+    _, rewards, dones, infos = batched_env.step(actions)
+    states2 = batched_env.get_state_batch()
+    buffer.add_batch(np.zeros(len(states1)), (states1, actions, rewards, states2))
 
 
 def transform_step_data(state, rewards, dones, info):

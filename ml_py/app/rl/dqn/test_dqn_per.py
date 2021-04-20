@@ -1,4 +1,7 @@
 from unittest import TestCase
+
+import numpy as np
+
 from app.rl.prioritized_replay import PrioritizedReplay
 
 
@@ -10,25 +13,32 @@ class TestPrioritizedReplay(TestCase):
 
         # expectation = [(0.1, (1, 1)), (0.2, (6, 3)), (0.3, (7, 4))]
 
-        self.assertIn((0.1, (1, 1)), buffer.memory)
-        self.assertIn((0.3, (7, 4)), buffer.memory)
-        self.assertIn((0.2, (6, 3)), buffer.memory)
+        self.assertIn((0.1, 1, (1, 1)), buffer.memory)
+        self.assertIn((0.2, 2, (6, 3)), buffer.memory)
+        self.assertIn((0.3, 3, (7, 4)), buffer.memory)
 
         buffer.add_batch([0.4, 0.5, 0.6], ([8, 9, 10], [5, 6, 7]))
 
-        self.assertNotIn((0.1, (1, 1)), buffer.memory)
+        self.assertNotIn((0.1, 1, (1, 1)), buffer.memory)
         self.assertEqual(len(buffer.memory), 5)
 
-        self.assertIn((0.2, (6, 3)), buffer.memory)
+        self.assertIn((0.2, 2, (6, 3)), buffer.memory)
         buffer.add(0.7, (11, 8))
-        self.assertNotIn((0.2, (6, 3)), buffer.memory)
+        self.assertNotIn((0.2, 2, (6, 3)), buffer.memory)
 
     def test_add_batch_more_than_limit(self):
         buffer = PrioritizedReplay(2, 1)
         buffer.add_batch([0.1, 0.2, 0.3], ([5, 6, 7], [2, 3, 4]))
 
-        self.assertNotIn((0.1, (5, 2)), buffer.memory)
+        self.assertNotIn((0.1, 1, (5, 2)), buffer.memory)
         self.assertEqual(len(buffer.memory), 2)
+
+    def test_add_duplicate_losses(self):
+        buffer = PrioritizedReplay(20, 1)
+        dummy = np.ones(10)
+        buffer.add_batch(np.zeros(10), (dummy, dummy, dummy, dummy))
+
+        self.assertEqual(len(buffer.memory), 10)
 
     def test_get_batch(self):
         buffer = PrioritizedReplay(3, 2)

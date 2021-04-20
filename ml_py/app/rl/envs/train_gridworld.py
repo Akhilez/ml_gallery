@@ -74,7 +74,7 @@ def dqn_per_gridworld():
 
     hp.steps = 100
     hp.batch_size = 10
-    hp.replay_batch = 50
+    hp.replay_batch = 2
     hp.replay_size = 5
 
     hp.env_record_freq = 1000
