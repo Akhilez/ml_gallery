@@ -32,8 +32,9 @@ def train_dqn_per(
     project_name=None,
     run_name=None,
 ):
-    batch = BatchEnvWrapper(env_class, config.batch_size)
-    batch.reset()
+    env = BatchEnvWrapper(env_class, config.batch_size)
+    env.reset()
+    optim = torch.optim.Adam(model.parameters(), lr=config.lr)
     wandb.init(
         name=f"{run_name}_{str(datetime.now().timestamp())[5:10]}",
         project=project_name or "testing_dqn",
@@ -51,65 +52,69 @@ def train_dqn_per(
         transform=state_action_reward_state_2_transform,
     )
     env_recorder = EnvRecorder(config.env_record_freq, config.env_record_duration)
+
     cumulative_reward = 0
     cumulative_done = 0
+    current_env_steps = torch.zeros((config.batch_size,))
 
-    optim = torch.optim.Adam(model.parameters(), lr=config.lr)
-    current_episodic_steps = torch.zeros((config.batch_size,))
+    # ======= Start training ==========
 
-    store_initial_replay(batch, replay)
+    # We need _some_ initial replay buffer to start with.
+    store_initial_replay(env, replay)
 
     for step in range(config.steps):
-        log = DictConfig({})
-        log.step = step
+        log = DictConfig({"step": step})
 
-        replay_batch = replay.get_batch()
-        states = torch.cat((batch.get_state_batch(), replay_batch[0]), 0)
+        (
+            states_replay,
+            actions_replay,
+            rewards_replay,
+            states2_replay,
+        ) = replay.get_batch()
+        states = _combine(env.get_state_batch(), states_replay)
 
         q_pred = model(states)
 
         actions_live = sample_actions(
-            q_pred[: config.batch_size],
-            batch.get_legal_actions(),
+            q_values=q_pred[: config.batch_size],
+            valid_actions=env.get_legal_actions(),
             epsilon=config.epsilon_exploration,
         )
 
         # ============ Observe the reward && predict value of next state ==============
 
-        rewards, dones = transform_step_data(*batch.step(actions_live))
+        rewards_live, dones_live = transform_step_data(*env.step(actions_live))
 
-        current_episodic_steps += dones
-        reset_envs_that_took_too_long(
-            batch.envs, current_episodic_steps, config.max_steps
-        )
+        states2 = _combine(env.get_state_batch(), states2_replay)
+        actions = _combine(actions_live, actions_replay)
+        rewards = _combine(rewards_live, rewards_replay)
 
-        next_states = torch.cat((batch.get_state_batch(), replay_batch[3]), 0)
-        actions = torch.cat((torch.tensor(actions_live), replay_batch[1]), 0)
         model.eval()
         with torch.no_grad():
-            q_next = model(next_states)
+            q_next = model(states2)
         model.train()
 
-        value_live = rewards + config.gamma_discount * torch.amax(
-            q_next[: config.batch_size], 1
-        )
-        value_replay = replay_batch[2] + config.gamma_discount * torch.amax(
-            q_next[config.batch_size :], 1
-        )
-        value = torch.cat((value_live, value_replay), 0)
-        rewards_all = torch.cat((rewards, replay_batch[2]))
+        # Bellman equation
+        value = rewards + config.gamma_discount * torch.amax(q_next, 1)
 
-        q_actions = q_pred[range(len(q_pred)), actions]
+        q_select_actions = q_pred[range(len(q_pred)), actions]
 
         # =========== LEARN ===============
 
-        loss = F.mse_loss(q_actions, value, reduction="none")
-        replay.add_batch(loss, (states, actions, rewards_all, next_states))
+        loss = F.mse_loss(q_select_actions, value, reduction="none")
+
+        replay.add_batch(loss, (states, actions, rewards, states2))
         loss = torch.mean(loss)
 
         optim.zero_grad()
         loss.backward()
         optim.step()
+
+        # ---- resetting -----
+
+        current_env_steps = reset_envs_that_took_too_long(
+            env.envs, current_env_steps, dones_live, config.max_steps
+        )
 
         # ============ Logging =============
 
@@ -122,13 +127,13 @@ def train_dqn_per(
         log.min_reward = min_reward
         log.mean_reward = mean_reward
 
-        cumulative_done += dones.sum()  # number of dones
+        cumulative_done += dones_live.sum()  # number of dones
         log.cumulative_done = int(cumulative_done)
 
         cumulative_reward += mean_reward
         log.cumulative_reward = cumulative_reward
 
-        env_recorder.record(step, batch.envs, wandb)
+        env_recorder.record(step, env.envs, wandb)
 
         wandb.log(log)
 
@@ -146,3 +151,7 @@ def transform_step_data(state, rewards, dones, info):
     rewards = torch.tensor(rewards).float()
     dones = torch.tensor(dones, dtype=torch.int8)
     return rewards, dones
+
+
+def _combine(live_data, replay_data):
+    return torch.cat((live_data, replay_data), 0)
