@@ -34,7 +34,7 @@ def train_dqn_per(
     wandb.init(
         name=f"{run_name}_{str(datetime.now().timestamp())[5:10]}",
         project=project_name or "testing_dqn",
-        config=config,
+        config=dict(config),
         save_code=True,
         group=None,
         tags=None,  # List of string tags
