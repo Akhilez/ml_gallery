@@ -9,12 +9,14 @@ class PrioritizedReplay:
         self,
         buffer_size: int,
         batch_size: int,
+        delete_freq: int = 500,
+        delete_percentage: float = 0.5,
         transform: Optional[Callable[[List[Tuple[float, Tuple]]], Tuple]] = None,
     ):
         self.buffer_size = buffer_size
         self.batch_size = batch_size
-        self.delete_freq = 500
-        self.delete_percentage = 0.5
+        self.delete_freq = delete_freq
+        self.delete_percentage = delete_percentage
         self.transform = transform
 
         self.memory = []

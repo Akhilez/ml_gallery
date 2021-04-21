@@ -58,8 +58,7 @@ def reset_envs_that_took_too_long(
 
     """
 
-    not_dones = torch.logical_not(dones)
-    steps = (steps + torch.ones(len(envs))) * not_dones
+    steps = (steps + torch.ones(len(envs))) * torch.logical_not(dones)
 
     maxed_out = steps >= max_steps
     steps[maxed_out] = 0

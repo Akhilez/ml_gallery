@@ -48,6 +48,8 @@ def train_dqn_per(
     replay = PrioritizedReplay(
         buffer_size=config.replay_size,
         batch_size=config.replay_batch,
+        delete_freq=config.delete_freq,
+        delete_percentage=config.delete_percentage,
         transform=state_action_reward_state_2_transform,
     )
     env_recorder = EnvRecorder(config.env_record_freq, config.env_record_duration)
