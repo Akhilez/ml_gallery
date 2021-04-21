@@ -5,10 +5,10 @@ from app.rl.envs.env_wrapper import EnvWrapper
 
 def sample_actions(
     q_values: torch.Tensor, valid_actions: List[List[int]], epsilon: float
-) -> torch.IntTensor:
+) -> torch.LongTensor:
     # q_values: tensor of shape (batch, num_actions)
     # Valid_actions: tensor of shape (batch, any)
-    return torch.IntTensor(
+    return torch.LongTensor(
         [
             sample_action(q_values[i], valid_actions[i], epsilon)
             for i in range(len(q_values))

@@ -5,7 +5,7 @@ from omegaconf import DictConfig
 from torch import nn
 from torch.nn import functional as F
 from datetime import datetime
-from app.rl.dqn.utils import sample_actions, reset_envs_that_took_too_long
+from app.rl.dqn.utils import sample_actions
 from app.rl.env_recorder import EnvRecorder
 from app.rl.envs.env_wrapper import EnvWrapper, BatchEnvWrapper
 from settings import BASE_DIR
@@ -18,8 +18,9 @@ def train_dqn(
     project_name=None,
     run_name=None,
 ):
-    batch = BatchEnvWrapper(env_class, config.batch_size)
-    batch.reset()
+    env = BatchEnvWrapper(env_class, config.batch_size)
+    env.reset()
+    optim = torch.optim.Adam(model.parameters(), lr=config.lr)
     wandb.init(
         name=f"{run_name}_{str(datetime.now().timestamp())[5:10]}",
         project=project_name or "testing_dqn",
@@ -32,43 +33,39 @@ def train_dqn(
     )
     wandb.watch(model)
     env_recorder = EnvRecorder(config.env_record_freq, config.env_record_duration)
+
     cumulative_reward = 0
     cumulative_done = 0
 
-    optim = torch.optim.Adam(model.parameters(), lr=config.lr)
-    current_episodic_steps = torch.zeros((config.batch_size,))
+    # ======= Start training ==========
 
     for step in range(config.steps):
-        log = DictConfig({})
-        log.step = step
+        log = DictConfig({"step": step})
 
-        states = batch.get_state_batch()
+        states = env.get_state_batch()
         q_pred = model(states)
 
         actions = sample_actions(
-            q_pred, batch.get_legal_actions(), epsilon=config.epsilon_exploration
+            q_values=q_pred,
+            valid_actions=env.get_legal_actions(),
+            epsilon=config.epsilon_exploration,
         )
 
         # ============ Observe the reward && predict value of next state ==============
 
-        _, rewards, done_list, _ = batch.step(actions)
+        _, rewards, done_list, _ = env.step(actions)
 
         rewards = torch.tensor(rewards).float()
         done_list = torch.tensor(done_list, dtype=torch.int8)
+        next_states = env.get_state_batch()
 
-        current_episodic_steps += done_list
-        reset_envs_that_took_too_long(
-            batch.envs, current_episodic_steps, config.max_steps
-        )
-
-        next_states = batch.get_state_batch()
         model.eval()
         with torch.no_grad():
             q_next = model(next_states)
         model.train()
 
         value = rewards + config.gamma_discount * torch.amax(q_next, 1)
-        q_actions = q_pred[range(len(q_pred)), actions]
+        q_actions = q_pred[range(config.batch_size), actions]
 
         # =========== LEARN ===============
 
@@ -95,6 +92,6 @@ def train_dqn(
         cumulative_reward += mean_reward
         log.cumulative_reward = cumulative_reward
 
-        env_recorder.record(step, batch.envs, wandb)
+        env_recorder.record(step, env.envs, wandb)
 
         wandb.log(log)

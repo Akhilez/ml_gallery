@@ -54,8 +54,8 @@ def dqn_gridworld():
     hp = DictConfig({})
 
     hp.steps = 1000
-    hp.batch_size = 1000
-    hp.env_record_freq = 1000
+    hp.batch_size = 600
+    hp.env_record_freq = 100
     hp.env_record_duration = 25
 
     hp.max_steps = 50
@@ -65,7 +65,7 @@ def dqn_gridworld():
     hp.epsilon_exploration = 0.1
     hp.gamma_discount = 0.9
 
-    model = GWPgModel(size=hp.grid_size, units=[10]).float().to(device)
+    model = GWPgModel(size=hp.grid_size, units=[50]).float().to(device)
 
     train_dqn(
         GridWorldEnvWrapper, model, hp, project_name="SimpleGridWorld", run_name="dqn"
@@ -91,7 +91,7 @@ def dqn_per_gridworld():
     hp.epsilon_exploration = 0.1
     hp.gamma_discount = 0.9
 
-    model = GWPgModel(size=hp.grid_size, units=[10]).float().to(device)
+    model = GWPgModel(size=hp.grid_size, units=[50]).float().to(device)
 
     train_dqn_per(
         GridWorldEnvWrapper,
