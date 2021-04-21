@@ -2,11 +2,7 @@ from typing import List
 from torch import nn
 from app.rl.dqn.dqn import train_dqn
 from app.rl.dqn.dqn_per import train_dqn_per
-from app.rl.envs.env_wrapper import (
-    GymEnvWrapper,
-    NumpyStateMixin,
-    TimeOutLostMixin
-)
+from app.rl.envs.env_wrapper import GymEnvWrapper, NumpyStateMixin, TimeOutLostMixin
 from gym_grid_world.envs import GridWorldEnv
 from omegaconf import DictConfig
 from utils import device

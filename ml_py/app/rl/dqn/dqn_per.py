@@ -2,9 +2,7 @@
 This file adds Prioritized Experience Replay feature to the vanilla dqn algorithm.
 
 # TODO Items:
-- move max_steps logic to envWrapper mixin
 - Create a wrapping for env.step with replay items
-- what is current_env_steps for?
 """
 
 
@@ -56,7 +54,6 @@ def train_dqn_per(
 
     cumulative_reward = 0
     cumulative_done = 0
-    current_env_steps = torch.zeros((config.batch_size,))
 
     # ======= Start training ==========
 
@@ -110,12 +107,6 @@ def train_dqn_per(
         optim.zero_grad()
         loss.backward()
         optim.step()
-
-        # ---- resetting -----
-
-        current_env_steps = (
-            current_env_steps + torch.ones(config.batch_size)
-        ) * torch.logical_not(dones_live)
 
         # ============ Logging =============
 
