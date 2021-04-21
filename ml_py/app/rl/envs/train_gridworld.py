@@ -2,13 +2,20 @@ from typing import List
 from torch import nn
 from app.rl.dqn.dqn import train_dqn
 from app.rl.dqn.dqn_per import train_dqn_per
-from app.rl.envs.env_wrapper import GymEnvWrapper, NumpyStateMixin
+from app.rl.envs.env_wrapper import (
+    GymEnvWrapper,
+    NumpyStateMixin,
+    TimeOutLostMixin
+)
 from gym_grid_world.envs import GridWorldEnv
 from omegaconf import DictConfig
 from utils import device
 
 
-class GridWorldEnvWrapper(GymEnvWrapper, NumpyStateMixin):
+class GridWorldEnvWrapper(TimeOutLostMixin, NumpyStateMixin, GymEnvWrapper):
+    reward_range = (-10, 10)
+    max_steps = 5
+
     def __init__(self):
         super().__init__(GridWorldEnv(size=4, mode="static"))
 
@@ -72,12 +79,13 @@ def dqn_gridworld():
 def dqn_per_gridworld():
     hp = DictConfig({})
 
-    hp.steps = 100
-    hp.batch_size = 10
-    hp.replay_batch = 2
-    hp.replay_size = 5
+    hp.steps = 1000
+    hp.batch_size = 100
+    hp.replay_batch = 50
+    hp.replay_size = 100
+    hp.delete_freq = 100 * (hp.batch_size + hp.replay_size)  # every 100 steps
 
-    hp.env_record_freq = 1000
+    hp.env_record_freq = 100
     hp.env_record_duration = 25
 
     hp.max_steps = 50

@@ -9,12 +9,17 @@ from settings import device
 
 
 class EnvWrapper(ABC, Env):
+    reward_range = (-np.inf, np.inf)
+    max_steps = np.inf
+
     def __init__(self, env=None, *kwargs):
         self.env = env
         self.state = None
         self.reward = None
         self.done = False
         self.info = {}
+
+        self.step_count = 0
 
     @abstractmethod
     def step(self, action, **kwargs) -> Tuple[Any, Any, bool, dict]:
@@ -55,6 +60,37 @@ class TensorStateMixin(EnvWrapper, ABC):
     @staticmethod
     def get_state_batch(envs: Iterable) -> torch.Tensor:
         return torch.stack([env.state for env in envs]).float().to(device)
+
+
+def step_incrementer(f):
+    def step_increment(self, action, *args, **kwargs):
+        state, reward, done, info = f(self, action, *args, **kwargs)
+        if done:
+            self.step_count = 0
+        else:
+            self.step_count += 1
+        return state, reward, done, info
+
+    return step_increment
+
+
+def timeout_lost(f):
+    def inner(self, action, *args, **kwargs):
+        assert self.step_count < self.max_steps
+        state, reward, done, info = f(self, action, *args, **kwargs)
+        if self.step_count >= self.max_steps:
+            done = True
+            reward = self.reward_range[0]
+        return state, reward, done, info
+
+    return inner
+
+
+class TimeOutLostMixin(EnvWrapper, ABC):
+    @timeout_lost
+    @step_incrementer
+    def step(self, *args, **kwargs):
+        return super().step(*args, **kwargs)
 
 
 class BatchEnvWrapper(EnvWrapper):
