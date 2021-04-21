@@ -1,8 +1,5 @@
 """
 This file adds Prioritized Experience Replay feature to the vanilla dqn algorithm.
-
-# TODO Items:
-- Create a wrapping for env.step with replay items
 """
 
 
@@ -83,11 +80,9 @@ def train_dqn_per(
 
         # ============ Observe the reward && predict value of next state ==============
 
-        rewards_live, dones_live = transform_step_data(*env.step(actions_live))
-
-        states2 = _combine(env.get_state_batch(), states2_replay)
-        actions = _combine(actions_live, actions_replay)
-        rewards = _combine(rewards_live, rewards_replay)
+        states2, actions, rewards, dones_live = step_with_replay(
+            env, actions_live, actions_replay, states2_replay, rewards_replay
+        )
 
         model.eval()
         with torch.no_grad():
@@ -141,6 +136,16 @@ def store_initial_replay(batched_env, buffer):
 
     states2 = batched_env.get_state_batch()
     buffer.add_batch(np.zeros(len(states1)), (states1, actions, rewards, states2))
+
+
+def step_with_replay(env, actions_live, actions_replay, states2_replay, rewards_replay):
+    rewards_live, dones_live = transform_step_data(*env.step(actions_live))
+
+    states2 = _combine(env.get_state_batch(), states2_replay)
+    actions = _combine(actions_live, actions_replay)
+    rewards = _combine(rewards_live, rewards_replay)
+
+    return states2, actions, rewards, dones_live
 
 
 def transform_step_data(state, rewards, dones, info):

@@ -74,6 +74,15 @@ def step_incrementer(f):
     return step_increment
 
 
+def reset_incrementer(f):
+    def inner(self, *args, **kwargs):
+        returned = f(self, *args, **kwargs)
+        self.step_count = 0
+        return returned
+
+    return inner
+
+
 def timeout_lost(f):
     def inner(self, action, *args, **kwargs):
         assert self.step_count < self.max_steps
@@ -81,6 +90,7 @@ def timeout_lost(f):
         if self.step_count >= self.max_steps:
             done = True
             reward = self.reward_range[0]
+            info["timed_out"] = True
         return state, reward, done, info
 
     return inner
@@ -91,6 +101,10 @@ class TimeOutLostMixin(EnvWrapper, ABC):
     @step_incrementer
     def step(self, *args, **kwargs):
         return super().step(*args, **kwargs)
+
+    @reset_incrementer
+    def reset(self):
+        return super().reset()
 
 
 class BatchEnvWrapper(EnvWrapper):

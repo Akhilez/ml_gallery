@@ -10,10 +10,10 @@ from utils import device
 
 class GridWorldEnvWrapper(TimeOutLostMixin, NumpyStateMixin, GymEnvWrapper):
     reward_range = (-10, 10)
-    max_steps = 5
+    max_steps = 50
 
     def __init__(self):
-        super().__init__(GridWorldEnv(size=4, mode="static"))
+        super().__init__(GridWorldEnv(size=4, mode="random"))
 
     def get_legal_actions(self):
         return self.env.get_legal_actions()
@@ -76,9 +76,9 @@ def dqn_per_gridworld():
     hp = DictConfig({})
 
     hp.steps = 1000
-    hp.batch_size = 100
-    hp.replay_batch = 50
-    hp.replay_size = 100
+    hp.batch_size = 500
+    hp.replay_batch = 100
+    hp.replay_size = 1000
     hp.delete_freq = 100 * (hp.batch_size + hp.replay_size)  # every 100 steps
 
     hp.env_record_freq = 100
