@@ -1,6 +1,7 @@
 from typing import List
 from torch import nn
 from app.rl.dqn.dqn import train_dqn
+from app.rl.dqn.dqn_double import train_dqn_double
 from app.rl.dqn.dqn_e_decay import train_dqn_e_decay
 from app.rl.dqn.dqn_per import train_dqn_per
 from app.rl.dqn.dqn_target import train_dqn_target
@@ -181,5 +182,44 @@ def dqn_target():
     )
 
 
+def dqn_double():
+    hp = DictConfig({})
+
+    hp.steps = 1000
+    hp.batch_size = 500
+
+    hp.replay_batch = 100
+    hp.replay_size = 1000
+
+    hp.delete_freq = 100 * (hp.batch_size + hp.replay_size)  # every 100 steps
+
+    hp.env_record_freq = 100
+    hp.env_record_duration = 25
+
+    hp.max_steps = 50
+    hp.grid_size = 4
+
+    hp.lr = 1e-3
+    hp.gamma_discount = 0.9
+
+    # hp.epsilon_exploration = 0.1
+    hp.epsilon_flatten_step = 700
+    hp.epsilon_start = 1
+    hp.epsilon_end = 0.001
+    hp.epsilon_decay_function = decay_functions.LINEAR
+
+    hp.target_model_sync_freq = 50
+
+    model = GWPgModel(size=hp.grid_size, units=[50]).float().to(device)
+
+    train_dqn_double(
+        GridWorldEnvWrapper,
+        model,
+        hp,
+        project_name="SimpleGridWorld",
+        run_name="dqn_target",
+    )
+
+
 if __name__ == "__main__":
-    dqn_target()
+    dqn_double()
