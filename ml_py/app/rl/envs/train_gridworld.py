@@ -1,5 +1,4 @@
-from typing import List
-from torch import nn
+from omegaconf import DictConfig
 from app.rl.dqn.dqn import train_dqn
 from app.rl.dqn.dqn_double import train_dqn_double
 from app.rl.dqn.dqn_e_decay import train_dqn_e_decay
@@ -7,8 +6,8 @@ from app.rl.dqn.dqn_per import train_dqn_per
 from app.rl.dqn.dqn_target import train_dqn_target
 from app.rl.envs import decay_functions
 from app.rl.envs.env_wrapper import GymEnvWrapper, NumpyStateMixin, TimeOutLostMixin
+from app.rl.models import GenericConvModel
 from gym_grid_world.envs import GridWorldEnv
-from omegaconf import DictConfig
 from utils import device
 
 
@@ -21,36 +20,6 @@ class GridWorldEnvWrapper(TimeOutLostMixin, NumpyStateMixin, GymEnvWrapper):
 
     def get_legal_actions(self):
         return self.env.get_legal_actions()
-
-
-class GWPgModel(nn.Module):
-    def __init__(self, size: int, units: List[int]):
-        super().__init__()
-        self.size = size
-
-        self.first = nn.Sequential(
-            nn.Conv2d(4, units[0], kernel_size=3, padding=1), nn.ReLU(), nn.Dropout(0.3)
-        )
-
-        self.hidden = nn.ModuleList(
-            [
-                nn.Sequential(
-                    nn.Conv2d(units[i], units[i + 1], kernel_size=3, padding=1),
-                    nn.ReLU(),
-                    nn.Dropout(0.3),
-                )
-                for i in range(len(units) - 1)
-            ]
-        )
-
-        self.out = nn.Linear(self.size * self.size * units[-1], 4)
-
-    def forward(self, x):
-        x = self.first(x)
-        for hidden in self.hidden:
-            x = hidden(x)
-        x = x.flatten(1)
-        return self.out(x)
 
 
 def dqn_gridworld():
@@ -69,7 +38,11 @@ def dqn_gridworld():
     hp.epsilon_exploration = 0.1
     hp.gamma_discount = 0.9
 
-    model = GWPgModel(size=hp.grid_size, units=[50]).float().to(device)
+    model = (
+        GenericConvModel(height=4, width=4, in_channels=4, channels=[50], out_size=4)
+        .float()
+        .to(device)
+    )
 
     train_dqn(
         GridWorldEnvWrapper, model, hp, project_name="SimpleGridWorld", run_name="dqn"
@@ -95,7 +68,11 @@ def dqn_per_gridworld():
     hp.epsilon_exploration = 0.1
     hp.gamma_discount = 0.9
 
-    model = GWPgModel(size=hp.grid_size, units=[50]).float().to(device)
+    model = (
+        GenericConvModel(height=4, width=4, in_channels=4, channels=[50], out_size=4)
+        .float()
+        .to(device)
+    )
 
     train_dqn_per(
         GridWorldEnvWrapper,
@@ -132,7 +109,11 @@ def dqn_e_decay_gw():
     hp.epsilon_end = 0.001
     hp.epsilon_decay_function = decay_functions.LINEAR
 
-    model = GWPgModel(size=hp.grid_size, units=[50]).float().to(device)
+    model = (
+        GenericConvModel(height=4, width=4, in_channels=4, channels=[50], out_size=4)
+        .float()
+        .to(device)
+    )
 
     train_dqn_e_decay(
         GridWorldEnvWrapper,
@@ -171,7 +152,11 @@ def dqn_target():
 
     hp.target_model_sync_freq = 50
 
-    model = GWPgModel(size=hp.grid_size, units=[50]).float().to(device)
+    model = (
+        GenericConvModel(height=4, width=4, in_channels=4, channels=[50], out_size=4)
+        .float()
+        .to(device)
+    )
 
     train_dqn_target(
         GridWorldEnvWrapper,
@@ -210,7 +195,11 @@ def dqn_double():
 
     hp.target_model_sync_freq = 50
 
-    model = GWPgModel(size=hp.grid_size, units=[50]).float().to(device)
+    model = (
+        GenericConvModel(height=4, width=4, in_channels=4, channels=[50], out_size=4)
+        .float()
+        .to(device)
+    )
 
     train_dqn_double(
         GridWorldEnvWrapper,
