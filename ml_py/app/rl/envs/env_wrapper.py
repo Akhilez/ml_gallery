@@ -140,8 +140,12 @@ class BatchEnvWrapper(EnvWrapper):
         self.state = [env.reset() for env in self.envs]
         return self.state
 
-    def is_done(self) -> List[bool]:
+    def is_done(self, reduction: Optional[str] = None):
         self.done = [env.is_done() for env in self.envs]
+        if reduction == "all":
+            return all(self.done)
+        if reduction == "any":
+            return any(self.done)
         return self.done
 
     def render(self, **kwargs):
