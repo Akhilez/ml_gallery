@@ -5,7 +5,8 @@ from omegaconf import DictConfig
 from torch import nn
 from torch.nn import functional as F
 from datetime import datetime
-from app.rl.dqn.utils import sample_actions
+
+from app.rl.dqn.action_sampler import EpsilonRandomActionSampler
 from app.rl.env_recorder import EnvRecorder
 from app.rl.envs.env_wrapper import EnvWrapper, BatchEnvWrapper
 from settings import BASE_DIR
@@ -33,6 +34,7 @@ def train_dqn(
     )
     wandb.watch(model)
     env_recorder = EnvRecorder(config.env_record_freq, config.env_record_duration)
+    sample_actions = EpsilonRandomActionSampler()
 
     cumulative_reward = 0
     cumulative_done = 0
@@ -46,8 +48,8 @@ def train_dqn(
         q_pred = model(states)
 
         actions = sample_actions(
-            q_values=q_pred,
             valid_actions=env.get_legal_actions(),
+            q_values=q_pred,
             epsilon=config.epsilon_exploration,
         )
 
