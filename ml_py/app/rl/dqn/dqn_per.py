@@ -18,7 +18,7 @@ from app.rl.prioritized_replay import (
     state_action_reward_state_2_transform,
 )
 from settings import BASE_DIR
-from app.rl.dqn.utils import sample_actions
+from app.rl.dqn.action_sampler import EpsilonRandomActionSampler
 
 
 def train_dqn_per(
@@ -50,6 +50,7 @@ def train_dqn_per(
         transform=state_action_reward_state_2_transform,
     )
     env_recorder = EnvRecorder(config.env_record_freq, config.env_record_duration)
+    sample_actions = EpsilonRandomActionSampler()
 
     cumulative_reward = 0
     cumulative_done = 0
@@ -73,8 +74,8 @@ def train_dqn_per(
         q_pred = model(states)
 
         actions_live = sample_actions(
-            q_values=q_pred[: config.batch_size],
             valid_actions=env.get_legal_actions(),
+            q_values=q_pred[: config.batch_size],
             epsilon=config.epsilon_exploration,
         )
 

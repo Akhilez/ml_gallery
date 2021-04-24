@@ -17,7 +17,7 @@ class ConnectXEnvWrapper(PettingZooEnvWrapper, NumpyStateMixin):
         )
 
 
-if __name__ == "__main__":
+def train_dqn_connect4():
 
     hp = DictConfig({})
 
@@ -31,3 +31,7 @@ if __name__ == "__main__":
     model = GenericLinearModel(2 * 6 * 7, [10], 7, flatten=True).float().to(device)
 
     train_dqn(ConnectXEnvWrapper, model, hp, name="Connect4")
+
+
+if __name__ == "__main__":
+    train_dqn_connect4()

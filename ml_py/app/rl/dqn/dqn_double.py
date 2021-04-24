@@ -15,6 +15,7 @@ from omegaconf import DictConfig
 from torch import nn
 from torch.nn import functional as F
 from datetime import datetime
+from app.rl.dqn.action_sampler import EpsilonRandomActionSampler
 from app.rl.env_recorder import EnvRecorder
 from app.rl.envs.decay_functions import decay_functions
 from app.rl.envs.env_wrapper import EnvWrapper, BatchEnvWrapper
@@ -23,7 +24,6 @@ from app.rl.prioritized_replay import (
     state_action_reward_state_2_transform,
 )
 from settings import BASE_DIR
-from app.rl.dqn.utils import sample_actions
 
 
 def train_dqn_double(
@@ -61,6 +61,7 @@ def train_dqn_double(
         transform=state_action_reward_state_2_transform,
     )
     env_recorder = EnvRecorder(config.env_record_freq, config.env_record_duration)
+    sample_actions = EpsilonRandomActionSampler()
 
     cumulative_reward = 0
     cumulative_done = 0
@@ -85,8 +86,8 @@ def train_dqn_double(
 
         epsilon_exploration = epsilon_scheduler(config, log)
         actions_live = sample_actions(
-            q_values=q_pred[: config.batch_size],
             valid_actions=env.get_legal_actions(),
+            q_values=q_pred[: config.batch_size],
             epsilon=epsilon_exploration,
         )
 
