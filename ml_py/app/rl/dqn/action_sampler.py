@@ -39,3 +39,20 @@ class EpsilonRandomActionSampler(ActionSampler):
             action_index = q_values[valid_actions].argmax(0)
 
         return valid_actions[action_index]
+
+
+class ProbabilityActionSampler(ActionSampler):
+    def __call__(self, valid_actions, probs, noise: float = 0):
+        """
+        valid actions = list of list of int
+        probs: tensor of shape (batch, num_actions). Probability distributions
+        """
+        final_actions = []
+        probs = probs + noise
+        for i in range(len(valid_actions)):
+            actions = valid_actions[i]
+            valid_probs = probs[i][actions]
+            action = torch.multinomial(valid_probs, 1)
+            final_actions.append(action)
+
+        return torch.stack(final_actions)

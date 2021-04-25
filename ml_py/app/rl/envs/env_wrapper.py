@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Optional, Iterable, Tuple, Any, Type, List, Callable
+from typing import Optional, Iterable, Tuple, Any, Type, List, Callable, Sequence, Union
 import itertools
 import numpy as np
 import torch
@@ -138,9 +138,12 @@ class BatchEnvWrapper(EnvWrapper):
 
     def reset(self):
         self.state = [env.reset() for env in self.envs]
+        self.reward = []
+        self.done = []
+        self.info = []
         return self.state
 
-    def is_done(self, reduction: Optional[str] = None):
+    def is_done(self, reduction: Optional[str] = None) -> Union[bool, Sequence[bool]]:
         self.done = [env.is_done() for env in self.envs]
         if reduction == "all":
             return all(self.done)
@@ -246,3 +249,29 @@ def petting_zoo_random_player(env: AECEnv) -> int:
     action_mask = env.observe(env.agent_selection)["action_mask"]
     actions = np.nonzero(action_mask)[0]
     return np.random.choice(actions)
+
+
+class DoneIgnoreBatchedEnvWrapper(BatchEnvWrapper):
+    def reset(self):
+        self.state = [env.reset() for env in self.envs]
+        self.reward = [None for _ in self.envs]
+        self.done = [False for _ in self.envs]
+        self.info = [{} for _ in self.envs]
+        return self.state
+
+    def step(self, actions, **kwargs) -> Tuple[List, List, List[bool], List[dict]]:
+        assert len(self.envs) > 0
+        assert len(self.envs) == len(actions)
+
+        for index, (env, action) in enumerate(zip(self.envs, actions)):
+            if env.is_done():
+                continue
+
+            next_state, reward, done, info = env.step(action)
+
+            self.state[index] = next_state
+            self.reward[index] = reward
+            self.done[index] = done
+            self.info[index] = info
+
+        return self.state, self.reward, self.done, self.info
