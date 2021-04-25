@@ -4,6 +4,7 @@ from app.rl.dqn.dqn_double import train_dqn_double
 from app.rl.dqn.dqn_e_decay import train_dqn_e_decay
 from app.rl.dqn.dqn_per import train_dqn_per
 from app.rl.dqn.dqn_target import train_dqn_target
+from app.rl.dqn.pg import train_pg
 from app.rl.envs import decay_functions
 from app.rl.envs.env_wrapper import GymEnvWrapper, NumpyStateMixin, TimeOutLostMixin
 from app.rl.models import GenericConvModel
@@ -210,5 +211,28 @@ def dqn_double():
     )
 
 
+def pg_gridworld():
+
+    hp = DictConfig({})
+
+    hp.episodes = 2
+    hp.batch_size = 2
+
+    hp.lr = 1e-3
+
+    hp.gamma_discount_credits = 0.9
+    hp.gamma_discount_returns = 0.9
+
+    model = (
+        GenericConvModel(height=4, width=4, in_channels=4, channels=[50], out_size=4)
+        .float()
+        .to(device)
+    )
+
+    train_pg(
+        GridWorldEnvWrapper, model, hp, project_name="SimpleGridWorld", run_name="pg"
+    )
+
+
 if __name__ == "__main__":
-    dqn_double()
+    pg_gridworld()

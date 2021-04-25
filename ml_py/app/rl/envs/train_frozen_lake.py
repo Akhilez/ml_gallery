@@ -10,6 +10,9 @@ from settings import device
 
 
 class FrozenLakeEnvWrapper(GymEnvWrapper):
+    max_steps = 50
+    reward_range = (-10, 10)
+
     def __init__(self):
         super().__init__()
         self.env = FrozenLakeEnv(map_name="4x4", is_slippery=True)

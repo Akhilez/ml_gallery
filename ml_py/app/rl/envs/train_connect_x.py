@@ -11,6 +11,9 @@ from settings import device
 
 
 class ConnectXEnvWrapper(PettingZooEnvWrapper, NumpyStateMixin):
+    max_steps = 42  # TODO: Fix this
+    reward_range = (-10, 10)  # TODO: Fix this
+
     def __init__(self):
         super(ConnectXEnvWrapper, self).__init__(
             env=connect_four_v3.env(), opponent_policy=petting_zoo_random_player

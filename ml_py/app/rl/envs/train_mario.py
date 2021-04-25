@@ -7,12 +7,22 @@ from nes_py.wrappers import JoypadSpace
 from omegaconf import DictConfig
 from torch import nn
 from app.rl.dqn.dqn import train_dqn
-from app.rl.envs.env_wrapper import TensorStateMixin, GymEnvWrapper
+from app.rl.envs.env_wrapper import (
+    TensorStateMixin,
+    GymEnvWrapper,
+    TimeOutLostMixin,
+    timeout_lost,
+    step_incrementer,
+    reset_incrementer,
+)
 from skimage.transform import resize
 from settings import device
 
 
 class MarioEnvWrapper(GymEnvWrapper, TensorStateMixin):
+    max_steps = 10  # TODO: Fix this
+    reward_range = (-100, 100)  # TODO: Fix this
+
     def __init__(self):
         super().__init__()
         self.env = gym_super_mario_bros.make("SuperMarioBros-v0")
@@ -20,6 +30,8 @@ class MarioEnvWrapper(GymEnvWrapper, TensorStateMixin):
         self.history_size = 3
         self.action_repeats = 6
 
+    @timeout_lost
+    @step_incrementer
     def step(self, action: int, **kwargs) -> Tuple[Any, Any, bool, dict]:
         for _ in range(self.action_repeats):
             frame, self.reward, self.done, self.info = self.env.step(action)
@@ -28,9 +40,11 @@ class MarioEnvWrapper(GymEnvWrapper, TensorStateMixin):
                 break
         return self.state, self.reward, self.done, self.info
 
+    @reset_incrementer
     def reset(self):
         frame = self.env.reset()
         self.state = prepare_initial_state(frame, self.history_size)
+        self.done = False
         return self.state
 
     def get_legal_actions(self):

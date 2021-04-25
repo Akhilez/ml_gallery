@@ -65,10 +65,7 @@ class TensorStateMixin(EnvWrapper, ABC):
 def step_incrementer(f):
     def step_increment(self, action, *args, **kwargs):
         state, reward, done, info = f(self, action, *args, **kwargs)
-        if done:
-            self.step_count = 0
-        else:
-            self.step_count += 1
+        self.step_count += 1
         return state, reward, done, info
 
     return step_increment
@@ -89,6 +86,7 @@ def timeout_lost(f):
         state, reward, done, info = f(self, action, *args, **kwargs)
         if self.step_count >= self.max_steps:
             done = True
+            self.done = True
             reward = self.reward_range[0]
             info["timed_out"] = True
         return state, reward, done, info
@@ -105,6 +103,9 @@ class TimeOutLostMixin(EnvWrapper, ABC):
     @reset_incrementer
     def reset(self):
         return super().reset()
+
+    def is_done(self):
+        return self.step_count >= self.max_steps or super().is_done()
 
 
 class BatchEnvWrapper(EnvWrapper):
@@ -138,9 +139,9 @@ class BatchEnvWrapper(EnvWrapper):
 
     def reset(self):
         self.state = [env.reset() for env in self.envs]
-        self.reward = []
-        self.done = []
-        self.info = []
+        self.reward = [None for _ in self.envs]
+        self.done = [False for _ in self.envs]
+        self.info = [{} for _ in self.envs]
         return self.state
 
     def is_done(self, reduction: Optional[str] = None) -> Union[bool, Sequence[bool]]:
@@ -168,7 +169,7 @@ class GymEnvWrapper(EnvWrapper, ABC):
         self.state = None
         self.reward = None
         self.done = False
-        self.info = None
+        self.info = {}
 
     def step(self, action, **kwargs):
         self.state, self.reward, self.done, self.info = self.env.step(action)
@@ -176,6 +177,9 @@ class GymEnvWrapper(EnvWrapper, ABC):
 
     def reset(self):
         self.state = self.env.reset()
+        self.done = False
+        self.reward = None
+        self.info = {}
         return self.state
 
     def is_done(self):
@@ -211,7 +215,7 @@ class PettingZooEnvWrapper(GymEnvWrapper, ABC):
         self.opponent = None
         self.state = None
         self.reward = None
-        self.done = None
+        self.done = False
         self.info = {}
 
     def reset(self):
@@ -225,6 +229,7 @@ class PettingZooEnvWrapper(GymEnvWrapper, ABC):
         if is_opponent_first:
             self.env.step(self.opponent_policy(self.env))
         self.state = self.env.observe(self.env.agent_selection)["observation"]
+        self.done = False
         return self.state
 
     def step(self, action, **kwargs):
@@ -252,13 +257,6 @@ def petting_zoo_random_player(env: AECEnv) -> int:
 
 
 class DoneIgnoreBatchedEnvWrapper(BatchEnvWrapper):
-    def reset(self):
-        self.state = [env.reset() for env in self.envs]
-        self.reward = [None for _ in self.envs]
-        self.done = [False for _ in self.envs]
-        self.info = [{} for _ in self.envs]
-        return self.state
-
     def step(self, actions, **kwargs) -> Tuple[List, List, List[bool], List[dict]]:
         assert len(self.envs) > 0
         assert len(self.envs) == len(actions)

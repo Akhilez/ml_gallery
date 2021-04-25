@@ -2,13 +2,16 @@ import gym
 from griddly import gd
 from omegaconf import DictConfig
 from app.rl.dqn.dqn import train_dqn
-from app.rl.envs.env_wrapper import GriddlyEnvWrapper, NumpyStateMixin
+from app.rl.envs.env_wrapper import GriddlyEnvWrapper, NumpyStateMixin, TimeOutLostMixin
 
 from app.rl.models import GenericLinearModel
 from settings import device
 
 
-class SokobanV2L0EnvWrapper(GriddlyEnvWrapper, NumpyStateMixin):
+class SokobanV2L0EnvWrapper(TimeOutLostMixin, GriddlyEnvWrapper, NumpyStateMixin):
+    max_steps = 500
+    reward_range = (-10, 10)  # TODO: Fix this
+
     def __init__(self):
         super().__init__()
         self.env = gym.make(
