@@ -72,3 +72,29 @@ class TestRuns(TestCase):
             )
 
             train_dqn(case["env"], model, hp)
+
+    @mock.patch("app.rl.dqn.pg.wandb")
+    def test_pg(self, *_):
+        from app.rl.dqn.pg import train_pg
+
+        hp = DictConfig({})
+
+        hp.episodes = 2
+        hp.batch_size = 2
+
+        hp.lr = 1e-3
+
+        hp.gamma_discount_returns = 0.9
+        hp.gamma_discount_credits = 0.9
+
+        for case in env_cases:
+            print(case["env"].__name__)
+
+            model = GenericLinearModel(
+                in_size=case["input"],
+                units=[10],
+                out_size=case["output"],
+                flatten=case.get("flatten", False),
+            )
+
+            train_pg(case["env"], model, hp)

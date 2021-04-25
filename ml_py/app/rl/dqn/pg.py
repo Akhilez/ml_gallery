@@ -25,28 +25,28 @@ class Stats:
         self.rewards: List[List[float]] = [[] for _ in range(self.batch_size)]
         self.probs: List[List[torch.Tensor]] = [[] for _ in range(self.batch_size)]
         self.dones: List[bool] = [False for _ in range(self.batch_size)]
-        self.end_steps = np.zeros(self.batch_size)
+        self.end_steps = np.zeros(self.batch_size, dtype=int)
 
     def record(self, rewards, actions, p_pred, done_list):
         for env_index, (reward, action, probs, done) in enumerate(
             zip(rewards, actions, p_pred, done_list)
         ):
-            prob = 0 if self.dones[env_index] else probs[action]
+            prob = torch.tensor(0) if self.dones[env_index] else probs[action]
 
             self.rewards[env_index].append(reward)
             self.probs[env_index].append(prob)
 
-            if done:
+            if done and not self.dones[env_index]:
                 self.end_steps[env_index] = len(self.rewards[env_index])
                 self.dones[env_index] = True
 
     def get_returns(self, gamma: float):
-        returns = np.zeros_like(self.rewards)
+        returns = torch.tensor(np.zeros_like(self.rewards), dtype=torch.float32)
         for i in range(self.batch_size):
             rewards = self.rewards[i]
             end_step = self.end_steps[i]
-            discount = 1 / gamma
-            return_ = 0
+            discount = 1.0
+            return_ = 0.0
             for step in range(end_step - 1, -1, -1):
                 return_ = rewards[step] + discount * return_
                 discount *= gamma
@@ -54,9 +54,10 @@ class Stats:
         return returns
 
     def get_credits(self, gamma: float):
-        credits = np.zeros_like(self.rewards)
+        credits = torch.tensor(np.zeros_like(self.rewards), dtype=torch.float32)
         batch_size, steps = credits.shape
         discounts = gamma ** torch.arange(steps)  # [1, 0.9, 0.8, ...]
+        discounts = reversed(discounts)
 
         for i in range(batch_size):
             end_step = self.end_steps[i]
@@ -67,11 +68,17 @@ class Stats:
 
         return credits
 
+    def get_probs(self):
+        probs = [torch.stack(prob) for prob in self.probs]
+        probs = torch.stack(probs).squeeze()
+        return probs
+
     def get_mean_rewards(self):
         rewards = []
         for i in range(self.batch_size):
-            rewards.append(np.mean(self.rewards[i][: self.end_steps[i]]))
-        return np.mean(rewards)
+            end_step = self.end_steps[i]
+            rewards.append(np.mean(self.rewards[i][:end_step]))
+        return float(np.mean(rewards))
 
 
 def train_pg(
@@ -82,7 +89,6 @@ def train_pg(
     run_name=None,
 ):
     env = DoneIgnoreBatchedEnvWrapper(env_class, config.batch_size)
-    env.reset()
     optim = torch.optim.Adam(model.parameters(), lr=config.lr)
     wandb.init(
         name=f"{run_name}_{str(datetime.now().timestamp())[5:10]}",
@@ -108,6 +114,7 @@ def train_pg(
     for episode in range(config.episodes):
         stats = Stats(config.batch_size)  # Stores (reward, policy prob)
         step = 0
+        env.reset()
 
         # Monte Carlo loop
         while not env.is_done("all"):
@@ -127,13 +134,13 @@ def train_pg(
 
             # ======== Step logging =========
 
-            mean_reward = np.mean(rewards)
+            mean_reward = float(np.mean(rewards))
             log.mean_reward = mean_reward
 
             cumulative_done += mean_reward
             log.cumulative_reward = cumulative_reward
 
-            cumulative_done += np.sum(done_list)
+            cumulative_done += float(np.sum(done_list))
             log.cumulative_done = cumulative_done
 
             # TODO: Log policy histograms
@@ -144,7 +151,7 @@ def train_pg(
 
         returns = stats.get_returns(config.gamma_discount_returns)
         credits = stats.get_credits(config.gamma_discount_credits)
-        probs = torch.tensor(stats.probs)
+        probs = stats.get_probs()
 
         loss = -1 * (probs * credits * returns)
         loss = torch.sum(loss)
