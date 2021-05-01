@@ -1,7 +1,0 @@
-lr_critic_real: 0.001
-lr_critic_fake: 0.001
-lr_entropy: 1.0
-lr_gen: 0.01
-
-epochs: 5
-batch_size: 10
