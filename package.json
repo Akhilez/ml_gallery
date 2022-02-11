@@ -27,7 +27,7 @@
     "gatsby-plugin-react-helmet": "^3.3.14",
     "gatsby-plugin-sass": "^2.3.12",
     "google-fonts-plugin": "2.0.2",
-    "node-sass": "^4.14.1",
+    "node-sass": "^7.0.0",
     "pure-react-carousel": "^1.27.6",
     "qs": "^6.9.4",
     "react": "^16.12.0",
